@@ -4,7 +4,7 @@ import vtk
 import threading
 import numpy as np
 from PyQt5 import QtCore, QtWidgets
-from fury import actor
+from fury import actor, utils
 from fury.window import Scene
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtCore import QDir, QTimer
@@ -15,6 +15,7 @@ import os
 import itertools
 from vtk.util import numpy_support
 import pdb
+# from lammps import lammps, PyLammps
 
 import PySimpleGUI as SG
 
@@ -45,6 +46,24 @@ def modified(act):
     act.GetMapper().GetInput().GetPoints().GetData().Modified()
     act.GetMapper().GetInput().ComputeBounds()
 
+def box_edges(box_lx, box_ly, box_lz):
+
+    edge1 = 0.5 * np.array([[box_lx, box_ly, box_lz],
+                            [box_lx, box_ly, -box_lz],
+                            [-box_lx, box_ly, -box_lz],
+                            [-box_lx, box_ly, box_lz],
+                            [box_lx, box_ly, box_lz]])
+    edge2 = 0.5 * np.array([[box_lx, box_ly, box_lz],
+                            [box_lx, -box_ly, box_lz]])
+    edge3 = 0.5 * np.array([[box_lx, box_ly, -box_lz],
+                            [box_lx, -box_ly, -box_lz]])
+    edge4 = 0.5 * np.array([[-box_lx, box_ly, -box_lz],
+                            [-box_lx, -box_ly, -box_lz]])
+    edge5 = 0.5 * np.array([[-box_lx, box_ly, box_lz],
+                            [-box_lx, -box_ly, box_lz]])
+    lines = [edge1, -edge1, edge2, edge3, edge4, edge5]
+    return lines
+
 
 def process_lammps_file(fname):
     global sphere_actor, initial_vertices, no_vertices_per_sphere, total_no_frames, lammps_dix
@@ -58,36 +77,49 @@ def process_lammps_file(fname):
     box_ly = float(lammps_dix['index'][frames_cnt]['box'][1])
     box_lz = float(lammps_dix['index'][frames_cnt]['box'][2])
 
-    box_centers = np.array([[0, 0, 0.]])
-    box_directions = np.array([[0, 1., 0]])
-    box_colors = np.array([[1, 0, 0, 0.2]])
-
+    box_centers = np.array([[0, 0, 0]])
+    box_directions = np.array([[0, 1, 0]])
+    box_colors = np.array([[255, 255, 255]])
     box_actor = actor.box(box_centers, box_directions, box_colors,
-                          size=(box_lx, box_ly, box_lz),
-                          heights=2, vertices=None, faces=None)
+                          scales=(box_lx, box_ly, box_lz))
+    utils.opacity(box_actor, 0.)
+
+    lines = box_edges(box_lx, box_ly, box_lz)
+    line_actor = actor.streamtube(lines, colors=(1, 0.5, 0), linewidth=0.1)
+
     box_actor.GetProperty().SetRepresentationToWireframe()
     box_actor.GetProperty().SetLineWidth(10)
     atom_types = lammps_dix['index'][frames_cnt]['coords'][:, 1]
     pos = lammps_dix['index'][frames_cnt]['coords'][:, 2:5]
     colors = np.ones((no_atoms, 3))
+    first_atom_bond = lammps_dix['index'][frames_cnt]['bonds'][:, 2:3]
+    second_atom_bond = lammps_dix['index'][frames_cnt]['bonds'][:, 3:4]
+    first_atom_bond = first_atom_bond.astype('i8').ravel()
+    second_atom_bond = second_atom_bond.astype('i8').ravel()
+    # x = first_atom_bond[0]
+    # x2 = second_atom_bond[0]
 
+    first_pos_bond = lammps_dix['index'][frames_cnt]['coords'][first_atom_bond - 1, 2:5]
+    second_pos_bond = lammps_dix['index'][frames_cnt]['coords'][second_atom_bond -1, 2:5]
+# np.asscalar(np.array
+    # print(np.asscalar(np.array([first_atom_bond])))
+    # x = np.abs(first_atom_bond[0])
+    bonds = np.hstack((2 *first_pos_bond, 2 *second_pos_bond))
+    bonds = bonds.reshape(4880 , 2, 3)
 
+    bond_actor = actor.streamtube(bonds, colors=(0, 0, 0), linewidth=0.2)
 
     # pdb.set_trace()
     colors[atom_types == 1] = np.array([1., 0, 0])
     colors[atom_types == -1] = np.array([0, 0, 1.])
+    colors[atom_types == 3] = np.array([0, 1, 1.])
+    colors[atom_types == 4] = np.array([1, 0, 1.])
+    colors[atom_types == 5] = np.array([1, 1, 1.])
 
     radii = 0.1 * np.ones(no_atoms)
 
-    print(no_atoms)
-    print(pos.shape)
-    print(colors.shape)
-    print(radii.shape)
-
-    # pdb.set_trace()
-
-    radii[atom_types == 1] = 0.5
-    radii[atom_types == -1] = 0.66
+    radii[atom_types == 1] = 1
+    radii[atom_types == -1] = 1
 
     sphere_actor = actor.sphere(centers=pos,
                                 colors=colors,
@@ -100,6 +132,8 @@ def process_lammps_file(fname):
 
     window.ren.add(sphere_actor)
     window.ren.add(box_actor)
+    window.ren.add(line_actor)
+    window.ren.add(bond_actor)
 
     print('Processed done!')
 
@@ -143,8 +177,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.frame = QtWidgets.QFrame()
         self.setWindowIcon(QIcon('Photo_Water.jpg'))
+        self.setWindowTitle('Furious Atoms (Open Visualization Tool)')
 
-        self.setWindowTitle('Furious Atoms')
         self.vl = QtWidgets.QVBoxLayout()
 
         self.frame.setLayout(self.vl)
@@ -153,6 +187,9 @@ class MainWindow(QtWidgets.QMainWindow):
         # color = QColorDialog.getColor()
         self.createActions()
         self.createMenus()
+        tb = self.addToolBar("Load File")
+        new = QAction(QIcon("Open_file.bmp"),"Load File",self)
+        tb.addAction(new)
 
         edit_menu = bar.addMenu('Edit')
 
@@ -190,6 +227,9 @@ class MainWindow(QtWidgets.QMainWindow):
         process_lammps_file(fname)
         global enable_timer
         enable_timer = True
+
+    def save(self):
+        fname, _ = QFileDialog.getSaveFileName(self, 'Save File', filter = "*.lammp*")
 
     def print_(self):
         dialog = QPrintDialog(self.printer, self)
@@ -240,8 +280,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.openColorDialog = QAction("&Color...", self, shortcut="Ctrl+O",
                 triggered=self.open)
-        self.openAct = QAction("&Open...", self, shortcut="Ctrl+O",
-                triggered=self.open)
+        self.openAct = QAction("&Load File", self, shortcut="Ctrl+O",
+                               triggered=self.open)
 
         self.printAct = QAction("&Print...", self, shortcut="Ctrl+P",
                 enabled=False, triggered=self.print_)
@@ -251,6 +291,9 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.zoomInAct = QAction("Zoom &In (25%)", self, shortcut="Ctrl++",
                 enabled=False, triggered=self.zoomIn)
+
+        self.saveAct = QAction("&Export File", self, shortcut="Ctrl+S",
+                               triggered=self.save)
 
         self.zoomOutAct = QAction("Zoom &Out (25%)", self, shortcut="Ctrl+-",
                 enabled=False, triggered=self.zoomOut)
@@ -267,6 +310,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def createMenus(self):
         self.fileMenu = QMenu("&File", self)
         self.fileMenu.addAction(self.openAct)
+        self.fileMenu.addAction(self.saveAct)
         self.fileMenu.addAction(self.printAct)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.exitAct)
