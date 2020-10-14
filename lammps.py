@@ -17,14 +17,14 @@ def load_lammps(fname, debug=False):
             no_atoms = int(lines[i+1])
             lammps_dix['index'][frames_cnt] = {'box': [],
                                                'coords': [],
-                                               'no_atoms': no_atoms}
+                                               'no_atoms': no_atoms, 'bonds': []}
         if 'box'.upper() in line:
-            line_lx = list(map(float, lines[i+1].split('\n')[0].split('\t')))
-            line_ly = list(map(float, lines[i+2].split('\n')[0].split('\t')))
-            line_lz = list(map(float, lines[i+3].split('\n')[0].split('\t')))
-            box_lx = (np.abs(line_lx[0])+np.abs(line_lx[1]))
-            box_ly = (np.abs(line_ly[0])+np.abs(line_ly[1]))
-            box_lz = (np.abs(line_lz[0])+np.abs(line_lz[1]))
+            # line_lx = list(map(float, lines[i+1].split('\n')[0].split('\t')))
+            # line_ly = list(map(float, lines[i+2].split('\n')[0].split('\t')))
+            # line_lz = list(map(float, lines[i+3].split('\n')[0].split('\t')))
+            box_lx = 50 #(np.abs(line_lx[0])+np.abs(line_lx[1]))
+            box_ly = 50 #(np.abs(line_ly[0])+np.abs(line_ly[1]))
+            box_lz = 50 #(np.abs(line_lz[0])+np.abs(line_lz[1]))
             # print( box_lx, box_ly, box_lz)
             lammps_dix['index'][frames_cnt]['box'] = [box_lx, box_ly, box_lz]
 
@@ -46,6 +46,15 @@ def load_lammps(fname, debug=False):
             frame_as_list_text = lines[i+1: i+1 + no_atoms]
             frame_positions = np.genfromtxt(frame_as_list_text)
             lammps_dix['index'][frames_cnt]['coords'] = frame_positions
+            # frames_cnt += 1
+
+        no_bonds = 4880
+        if 'Bonds' in line:
+            print("bond is found")
+            frame_as_list_text_for_bonds = lines[i+1: i+1 + no_bonds]
+            bond_locations = np.genfromtxt(frame_as_list_text_for_bonds)
+            lammps_dix['index'][frames_cnt]['bonds'] = bond_locations
+            # print(bond_locations)
             frames_cnt += 1
 
     return lammps_dix
