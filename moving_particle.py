@@ -104,7 +104,7 @@ def box_edges(box_lx, box_ly, box_lz):
 
 
 def process_lammps_file(fname):
-    global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames, lammps_dix, no_bonds, bond_actor, initial_vertices_bonds, no_vertices_per_bond,pos, lammps_file,all_vertices,box
+    global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames, no_bonds, bond_actor, no_vertices_per_bond,pos, lammps_file,all_vertices,box
     frames_cnt = 0
     lammps_file,no_bonds = load_lammps(fname)
     n_frames = lammps_file.trajectory.n_frames
@@ -162,9 +162,9 @@ def process_lammps_file(fname):
     all_vertices = utils.vertices_from_actor(sphere_actor)
     num_vertices = all_vertices.shape[0]
     num_objects = no_atoms
-
-    initial_vertices = all_vertices.copy()
     no_vertices_per_sphere = len(all_vertices) / no_atoms
+    initial_vertices = all_vertices.copy() - np.repeat(pos, no_vertices_per_sphere, axis=0)
+
     vcolors = utils.colors_from_actor(sphere_actor, 'colors')
 
     sphere_actor.GetProperty().SetInterpolationToPBR()
@@ -222,23 +222,19 @@ def timer_callback():
     if enable_timer is False:
         return
 
-    global sphere_actor, cnt, initial_vertices, lammps_dix
-    global no_vertices_per_sphere, window, no_atoms, no_bonds, initial_vertices_bonds, no_vertices_per_bond, bond_actor,pos,n_frames,lammps_file,all_vertices, box
+    global sphere_actor, cnt, initial_vertices
+    global no_vertices_per_sphere, window, no_atoms, no_bonds, lammps_file, all_vertices, box, n_frames
 
     if cnt == n_frames:
         return
 
-    # u = lammps_dix['index'][cnt]['u']
-    # for ts in u.trajectory:
-    #     # print("Frame: {0:5d}, Time: {1:8.3f} ps".format(ts.frame, u.trajectory.time))
-    #     # print(ts.positions[:10])
-    #     pos = ts.positions
     if no_bonds==0:
         pos_R = lammps_file.trajectory[cnt].positions.copy().astype('f8')
         pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box, backend='serial')
-        # all_vertices[:] = initial_vertices + \
-        #     np.repeat(pos, no_vertices_per_sphere, axis=0)
-        all_vertices[:] = np.repeat(pos, no_vertices_per_sphere, axis=0)
+
+        all_vertices[:] = initial_vertices + \
+            np.repeat(pos, no_vertices_per_sphere, axis=0)
+
         utils.update_actor(sphere_actor)
 
 
@@ -285,9 +281,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.vtkWidget.GetRenderWindow().AddRenderer(self.ren)
         self.iren = self.vtkWidget.GetRenderWindow().GetInteractor()
-
-        # self.iren.AddObserver("TimerEvent", timer_callback)
-        # timer_id = self.iren.CreateRepeatingTimer(5000)
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
         duration = 200
@@ -309,12 +302,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
     def save(self):
         fname, _ = QFileDialog.getSaveFileName(self, 'Save File', filter = "*.lammp*")
-        ###############################################test
-    def modify(self):
-        fname, _ = QFileDialog.getSaveFileName(self, 'Modify', filter = "*.lammp*")
-    def build(self):
-        fname, _ = QFileDialog.getSaveFileName(self, 'Build', filter = "*.lammp*")
-
 
     def print_(self):
         dialog = QPrintDialog(self.printer, self)
@@ -379,12 +366,6 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.saveAct = QAction("&Export File", self, shortcut="Ctrl+S",
                                triggered=self.save)
-    ###################################################
-        self.buildAct = QAction("&Build", self, shortcut="Ctrl+S",
-                               triggered=self.build)
-        self.modifyAct = QAction("&Modify", self, shortcut="Ctrl+S",
-                               triggered=self.modify)
-    #####################################################
 
         self.zoomOutAct = QAction("Zoom &Out (25%)", self, shortcut="Ctrl+-",
                 enabled=False, triggered=self.zoomOut)
@@ -402,12 +383,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.fileMenu = QMenu("&File", self)
         self.fileMenu.addAction(self.openAct)
         self.fileMenu.addAction(self.saveAct)
-        #####################################
-        self.BuildMenu = QMenu("&Build", self)
-        self.BuildMenu.addAction(self.modifyAct)
-        self.ModifyMenu = QMenu("&Modify", self)
-        self.ModifyMenu.addAction(self.buildAct)
-        #########################
         self.fileMenu.addAction(self.printAct)
         self.fileMenu.addSeparator()
         self.fileMenu.addAction(self.exitAct)
@@ -423,10 +398,6 @@ class MainWindow(QtWidgets.QMainWindow):
         self.helpMenu.addAction(self.aboutAct)
 
         self.menuBar().addMenu(self.fileMenu)
-        ################################
-        self.menuBar().addMenu(self.BuildMenu)
-        self.menuBar().addMenu(self.ModifyMenu)
-        ############################
         self.menuBar().addMenu(self.viewMenu)
         self.menuBar().addMenu(self.helpMenu)
 
@@ -462,12 +433,5 @@ if __name__ == "__main__":
 
     global window
     window = MainWindow()
-
     arr = np.random.rand(10)
-    # t1 = threading.Thread(target=calc_prod, args=(arr, ))
-
-    # t1.start()
-
     sys.exit(app.exec_())
-
-    # t1.join()
