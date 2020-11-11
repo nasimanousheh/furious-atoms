@@ -8,7 +8,7 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QAction, QColorDialog, QFileDialog, QMenu, QMessageBox
 from PyQt5.QtGui import QIcon
-from lammps import load_lammps
+from loadfile import load_files
 from pylammpsmpi import LammpsLibrary
 import os
 from numpy.linalg import norm
@@ -99,22 +99,19 @@ def box_edges(box_lx, box_ly, box_lz):
     edge5 = 0.5 * np.array([[-box_lx, box_ly, box_lz],
                             [-box_lx, -box_ly, box_lz]])
     lines = [edge1, -edge1, edge2, edge3, edge4, edge5]
-    print(box_lx, box_ly, box_lz)
     return lines
 
 
-def process_lammps_file(fname):
-    global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames, no_bonds, bond_actor, no_vertices_per_bond,pos, lammps_file,all_vertices,box
+def process_load_file(fname):
+    global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames, no_bonds, bond_actor, no_vertices_per_bond,pos, load_file,all_vertices,box
     frames_cnt = 0
-    lammps_file,no_bonds = load_lammps(fname)
-    n_frames = lammps_file.trajectory.n_frames
-    print('Total number of frames', n_frames)
-
-    no_atoms = len(lammps_file.atoms)
-    box = lammps_file.trajectory.ts.dimensions
-    box_lx = lammps_file.trajectory.ts.dimensions[0]
-    box_ly = lammps_file.trajectory.ts.dimensions[1]
-    box_lz = lammps_file.trajectory.ts.dimensions[2]
+    load_file,no_bonds = load_files(fname)
+    n_frames = load_file.trajectory.n_frames
+    no_atoms = len(load_file.atoms)
+    box = load_file.trajectory.ts.dimensions
+    box_lx = load_file.trajectory.ts.dimensions[0]
+    box_ly = load_file.trajectory.ts.dimensions[1]
+    box_lz = load_file.trajectory.ts.dimensions[2]
 
     box_centers = np.array([[0, 0, 25]])
     box_directions = np.array([[0, 1, 0]])
@@ -124,21 +121,21 @@ def process_lammps_file(fname):
     box_actor.GetProperty().SetOpacity(0.)
 
     lines = box_edges(box_lx, box_ly, box_lz)
-    line_actor = actor.line(lines, colors=(0.5, 0, 0.5), linewidth=10, fake_tube=True)
+    line_actor = actor.line(lines, colors=(0, 0, 0), linewidth=1, fake_tube=True)
 
     box_actor.GetProperty().SetRepresentationToWireframe()
     box_actor.GetProperty().SetLineWidth(10)
-    np.unique(lammps_file.atoms.types)
-    atom_type = lammps_file.atoms.types
+    np.unique(load_file.atoms.types)
+    atom_type = load_file.atoms.types
     colors = np.ones((no_atoms, 3))
     if no_bonds == 0:
-        pos_R = lammps_file.trajectory[0].positions.copy().astype('f8')
+        pos_R = load_file.trajectory[0].positions.copy().astype('f8')
         pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box, backend='serial')
 
 
     if no_bonds > 0:
-        pos = lammps_file.trajectory[0].positions.copy().astype('f8')
-        bonds = lammps_file.bonds.to_indices()
+        pos = load_file.trajectory[0].positions.copy().astype('f8')
+        bonds = load_file.bonds.to_indices()
         first_pos_bond = pos[(bonds[:,0])]
         second_pos_bond = pos[(bonds[:,1])]
 
@@ -149,11 +146,10 @@ def process_lammps_file(fname):
     avg = np.average(pos, axis=0)
 
     radii = 0.5* np.ones(no_atoms)
-    unique_types = np.unique(lammps_file.atoms.types)
+    unique_types = np.unique(load_file.atoms.types)
     colors_unique_types = np.random.rand(len(unique_types), 3)
 
     for i, typ in enumerate(unique_types):
-        # print(i, typ)
         colors[atom_type == typ] = colors_unique_types[i]
 
     sphere_actor = actor.sphere(centers=pos,
@@ -176,7 +172,7 @@ def process_lammps_file(fname):
     vtk.vtkActor().SetMapper(mapper)
 
     window.ren.UseImageBasedLightingOn()
-    cube_path = 'c:/Users/nasim/Devel/furious-atoms/skybox0'
+    cube_path = 'c:/Users/nasim/Devel/furious-atoms/src/skybox0'
     surface = 'boy'
     if not os.path.isdir(cube_path):
         print('This path does not exist:', cube_path)
@@ -223,13 +219,13 @@ def timer_callback():
         return
 
     global sphere_actor, cnt, initial_vertices
-    global no_vertices_per_sphere, window, no_atoms, no_bonds, lammps_file, all_vertices, box, n_frames
+    global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames
 
     if cnt == n_frames:
         return
 
     if no_bonds==0:
-        pos_R = lammps_file.trajectory[cnt].positions.copy().astype('f8')
+        pos_R = load_file.trajectory[cnt].positions.copy().astype('f8')
         pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box, backend='serial')
 
         all_vertices[:] = initial_vertices + \
@@ -296,7 +292,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def open(self):
         fname, _ = QFileDialog.getOpenFileName(self, 'Open File')#, filter = "*.lammp*")
 
-        process_lammps_file(fname)
+        process_load_file(fname)
         global enable_timer
         enable_timer = True
 
