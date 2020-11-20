@@ -30,7 +30,7 @@ from MDAnalysis import *
 from vtk.util import numpy_support
 from fury import disable_warnings
 from MDAnalysis.analysis import contacts
-from MDAnalysis.tests.datafiles import PSF,DCD
+# from MDAnalysis.tests.datafiles import PSF,DCD
 disable_warnings()
 
 
@@ -163,13 +163,18 @@ def process_load_file(fname):
     if no_bonds > 0:
         pos = load_file.trajectory[0].positions.copy().astype('f8')
         bonds = load_file.bonds.to_indices()
+
         first_pos_bond = pos[(bonds[:,0])]
         second_pos_bond = pos[(bonds[:,1])]
         bonds = np.hstack((first_pos_bond, second_pos_bond))
-        bonds = bonds.reshape(no_bonds, 2, 3)
-        bond_actor = actor.streamtube(bonds, colors=(0.8275, 0.8275, 0.8275), linewidth=0.2)
-        if MainWindow.CheckBox.isChecked() == True:
-            MainWindow.ren.add(bond_actor)
+        bonds = bonds.reshape((no_bonds), 2, 3)
+        bond_colors = (0.8275, 0.8275, 0.8275)
+        bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
+        # if MainWindow.CheckBox.isChecked() == True:
+        # print(load_file.bonds[:1])
+        # load_file.delete_bonds(load_file.bonds[:1])
+        # load_file.delete_bonds(load_file.bonds.to_indices())
+        MainWindow.ren.add(bond_actor)
         unique_types_bond = np.unique(load_file.bonds.types)
         str_no_unique_types_bond = str(len(unique_types_bond))
         MainWindow.particleLineEdit_3.insert(str_no_unique_types_bond)
@@ -270,7 +275,12 @@ def timer_callback():
             utils.update_actor(sphere_actor)
             MainWindow.Timer.setRange(cnt, n_frames)
             str_cnt = str(cnt)
+            MainWindow.horizontalSlider.setMinimum(0)
+            MainWindow.horizontalSlider.setMaximum(n_frames)
+            MainWindow.horizontalSlider.setSingleStep(1)
             MainWindow.horizontalSlider.setValue(cnt)
+
+            MainWindow.horizontalSlider.setTickInterval(1)
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
     cnt += 1
@@ -395,6 +405,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_10 = QtWidgets.QPushButton(self.widget_2)
         MainWindow.pushButton_10.setGeometry(QtCore.QRect(60, 10, 51, 51))
         MainWindow.pushButton_10.setText("")
+
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/play/backward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.pushButton_10.setIcon(icon2)
@@ -421,6 +432,43 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_6.setIcon(icon4)
         MainWindow.pushButton_6.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_6.setObjectName("pushButton_6")
+##########################
+        self.widget_3 = QtWidgets.QWidget(self.centralwidget)
+        self.widget_3.setGeometry(QtCore.QRect(0, 360, 351, 181))
+        self.widget_3.setObjectName("widget_3")
+        self.label_2 = QtWidgets.QLabel(self.widget_3)
+        self.label_2.setGeometry(QtCore.QRect(0, 0, 361, 31))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        font.setBold(True)
+        font.setWeight(75)
+        self.label_2.setFont(font)
+        self.label_2.setStyleSheet("background-color: rgb(204, 204, 204);")
+        self.label_2.setObjectName("label_2")
+        self.atomTypeLabel_7 = QtWidgets.QLabel(self.widget_3)
+        self.atomTypeLabel_7.setGeometry(QtCore.QRect(10, 70, 101, 20))
+        self.atomTypeLabel_7.setObjectName("atomTypeLabel_7")
+        self.atomTypeLineEdit_7 = QtWidgets.QLineEdit(self.widget_3)
+        self.atomTypeLineEdit_7.setGeometry(QtCore.QRect(120, 70, 61, 22))
+        self.atomTypeLineEdit_7.setObjectName("atomTypeLineEdit_7")
+        self.atomTypeLineEdit_8 = QtWidgets.QLineEdit(self.widget_3)
+        self.atomTypeLineEdit_8.setGeometry(QtCore.QRect(120, 100, 61, 22))
+        self.atomTypeLineEdit_8.setObjectName("atomTypeLineEdit_8")
+        self.atomTypeLabel_8 = QtWidgets.QLabel(self.widget_3)
+        self.atomTypeLabel_8.setGeometry(QtCore.QRect(10, 100, 101, 20))
+        self.atomTypeLabel_8.setObjectName("atomTypeLabel_8")
+        self.atomTypeLabel_9 = QtWidgets.QLabel(self.widget_3)
+        self.atomTypeLabel_9.setGeometry(QtCore.QRect(10, 40, 101, 20))
+        self.atomTypeLabel_9.setObjectName("atomTypeLabel_9")
+        self.atomTypeLineEdit_9 = QtWidgets.QLineEdit(self.widget_3)
+        self.atomTypeLineEdit_9.setGeometry(QtCore.QRect(120, 40, 61, 22))
+        self.atomTypeLineEdit_9.setObjectName("atomTypeLineEdit_9")
+
+
+
+########################
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 2990, 21))
@@ -551,6 +599,12 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Furious Atoms (Open Visualization Tool)"))
         MainWindow.CheckBox_3.setText(_translate("MainWindow", "Animation"))
+             ################
+        self.label_2.setText(_translate("MainWindow", "Modify Particle"))
+        self.atomTypeLabel_7.setText(_translate("MainWindow", "Particle Radius"))
+        self.atomTypeLabel_8.setText(_translate("MainWindow", "Particle Shape"))
+        self.atomTypeLabel_9.setText(_translate("MainWindow", "Particle Types"))
+        ###############
         self.particleLabel_2.setText(_translate("MainWindow", "Types of Atom:"))
         self.dcfdLabel.setText(_translate("MainWindow", "Number of Bonds:"))
         self.atomTypeLabel_2.setText(_translate("MainWindow", "Ly"))
@@ -592,6 +646,7 @@ class Ui_MainWindow(object):
         self.actionMean_Square_Desplacement.setText(_translate("MainWindow", "Mean Square Displacement"))
         self.actionParticle.setText(_translate("MainWindow", "Particle"))
         self.actionBond.setText(_translate("MainWindow", "Bond"))
+
         # FURY
 
         self.frame = QtWidgets.QFrame(self.centralwidget)
