@@ -33,7 +33,62 @@ from MDAnalysis.analysis import contacts
 # from MDAnalysis.tests.datafiles import PSF,DCD
 disable_warnings()
 
+def left_click_callback(obj, event):
+    # Get the event position on display and pick
+    # event_pos = pickm.event_position(MainWindow.iren)
+    # picked_info = pickm.pick(event_pos, MainWindow.ren)
+    pickm = pick.PickingManager()
+    event_pos = pickm.event_position(MainWindow.iren)
+    picked_info = pickm.pick(event_pos, MainWindow.ren)
+    vertex_index = picked_info['vertex']
+    # Calculate the objects index
+    vertices = utils.vertices_from_actor(sphere_actor)
+    no_vertices_per_sphere = vertices.shape[0]
+    object_index = np.int(np.floor((vertex_index / no_vertices_per_sphere) *
+                          no_atoms))
+    # Find how many vertices correspond to each object
+    sec = np.int(vertices / object_index)
 
+    selected = np.zeros(no_atoms, dtype=np.bool)
+
+    if not selected[object_index]:
+        scale = 1
+        color_add = np.array([30, 30, 30], dtype='uint8')
+        selected[object_index] = True
+    else:
+        scale = 1
+        color_add = np.array([-30, -30, -30], dtype='uint8')
+        selected[object_index] = False
+
+    # Update vertices positions
+    vertices[object_index * sec: object_index * sec + sec] = scale * \
+        (vertices[object_index * sec: object_index * sec + sec] -
+         pos[object_index]) + pos[object_index]
+    print(object_index)
+
+    # Update colors
+    vcolors = utils.colors_from_actor(sphere_actor, 'colors')
+    vcolors[object_index * sec: object_index * sec + sec] += color_add
+
+    # Tell actor that memory is modified
+    utils.update_actor(sphere_actor)
+
+
+    face_index = picked_info['face']
+    print(str(id(picked_info['actor'])))
+
+    # Show some info
+    text = 'Object ' + str(object_index) + '\n'
+    text += 'Vertex ID ' + str(vertex_index) + '\n'
+    text += 'Face ID ' + str(face_index) + '\n'
+    text += 'World pos ' + str(np.round(picked_info['xyz'], 2)) + '\n'
+    text += 'Actor ID ' + str(id(picked_info['actor']))
+    text_block.message = text
+    # MainWindow.ren()
+    # MainWindow.show()
+    label_actor = actor.label(text='Test')
+    MainWindow.ren.add(label_actor)
+    MainWindow.vtkWidget.GetRenderWindow().Render()
 
 
 global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames
@@ -248,6 +303,7 @@ def process_load_file(fname):
     MainWindow.ren.add(box_actor)
     MainWindow.ren.add(line_actor)
     MainWindow.ren.set_camera(focal_point=avg)
+    sphere_actor.AddObserver('LeftButtonPressEvent', left_click_callback, 1)
 
     print('Processed done!')
 global cnt, enable_timer
