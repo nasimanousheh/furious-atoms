@@ -21,7 +21,7 @@ import numpy as np
 from PyQt5 import QtWidgets
 from fury import window, actor, ui, utils, pick
 from PyQt5.QtWidgets import QAction, QColorDialog, QFileDialog, QMenu, QMessageBox
-from pylammpsmpi import LammpsLibrary
+# from pylammpsmpi import LammpsLibrary
 import os
 from numpy.linalg import norm
 import MDAnalysis as mda
@@ -177,8 +177,8 @@ def process_load_file(fname):
     n_frames = load_file.trajectory.n_frames
     str_no_bonds = str(no_bonds)
     MainWindow.dcfdLineEdit.insert(str_no_bonds)
-    str_n_frames = str(n_frames)
-    MainWindow.dcfdLineEdit_2.insert(str_n_frames)
+    # str_n_frames = str(n_frames)
+    # MainWindow.dcfdLineEdit_2.insert(str_n_frames)
 
     no_atoms = len(load_file.atoms)
     box = load_file.trajectory.ts.dimensions
@@ -266,7 +266,8 @@ def process_load_file(fname):
     vtk.vtkActor().SetMapper(mapper)
 
     MainWindow.ren.UseImageBasedLightingOn()
-    cube_path = 'c:/Users/nasim/Devel/furious-atoms/src/skybox0'
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cube_path = os.path.join(dir_path, 'skybox0')
     surface = 'boy'
     if not os.path.isdir(cube_path):
         print('This path does not exist:', cube_path)
@@ -302,8 +303,9 @@ def process_load_file(fname):
     # if MainWindow.CheckBox_2.isChecked() == True:
     MainWindow.ren.add(box_actor)
     MainWindow.ren.add(line_actor)
-    MainWindow.ren.set_camera(focal_point=avg)
-    sphere_actor.AddObserver('LeftButtonPressEvent', left_click_callback, 1)
+    MainWindow.ren.set_camera(position=(0, 0, 1000), focal_point=(0, 0, 0), view_up=(0, 1, 0))
+
+    # sphere_actor.AddObserver('LeftButtonPressEvent', left_click_callback, 1)
 
     print('Processed done!')
 global cnt, enable_timer
@@ -340,6 +342,19 @@ def timer_callback():
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
     cnt += 1
+
+
+pickm = pick.PickingManager()
+
+def mouse_move_callback(obj, event):
+
+    event_pos = pickm.event_position(MainWindow.iren)
+    picked_info = pickm.pick(event_pos, MainWindow.ren)
+
+    str_event = str(picked_info['vertex'][0]) + ' ' + str(picked_info['vertex'][1]) + ' ' + str(picked_info['vertex'][2])
+    MainWindow.dcfdLineEdit_2.insert(str_event)
+
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -488,7 +503,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_6.setIcon(icon4)
         MainWindow.pushButton_6.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_6.setObjectName("pushButton_6")
-##########################
+        ##########################
         self.widget_3 = QtWidgets.QWidget(self.centralwidget)
         self.widget_3.setGeometry(QtCore.QRect(0, 360, 351, 181))
         self.widget_3.setObjectName("widget_3")
@@ -521,9 +536,7 @@ class Ui_MainWindow(object):
         self.atomTypeLineEdit_9.setGeometry(QtCore.QRect(120, 40, 61, 22))
         self.atomTypeLineEdit_9.setObjectName("atomTypeLineEdit_9")
 
-
-
-########################
+        ########################
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -655,7 +668,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Furious Atoms (Open Visualization Tool)"))
         MainWindow.CheckBox_3.setText(_translate("MainWindow", "Animation"))
-             ################
+        ################
         self.label_2.setText(_translate("MainWindow", "Modify Particle"))
         self.atomTypeLabel_7.setText(_translate("MainWindow", "Particle Radius"))
         self.atomTypeLabel_8.setText(_translate("MainWindow", "Particle Shape"))
@@ -710,10 +723,11 @@ class Ui_MainWindow(object):
 
         # self.frame = QtWidgets.QFrame()
         self.vl = QtWidgets.QVBoxLayout()
+        #self.vl.SetNoConstraint = True
         self.frame.setLayout(self.vl)
         # MainWindow.setCentralWidget(self.frame)
         MainWindow.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-        self.vl.addWidget(MainWindow.vtkWidget)
+        self.vl.addWidget(MainWindow.vtkWidget, stretch=1)
         MainWindow.ren = Scene()
 
         # self.ren.background((0, 0, 0))
@@ -721,14 +735,16 @@ class Ui_MainWindow(object):
         MainWindow.ren.background((1.0, 1.0, 1.0))
 
         MainWindow.vtkWidget.GetRenderWindow().AddRenderer(MainWindow.ren)
-        self.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
+        MainWindow.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
+        #MainWindow.iren.AddObserver("MouseMoveEvent", mouse_move_callback)
+        MainWindow.iren.AddObserver("LeftButtonPressEvent", mouse_move_callback)
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
         duration = 200
         self.timer.start(duration)
 
-        MainWindow.resize(2000, 1000)
-        self.iren.Initialize()
+        # MainWindow.resize(2000, 1000)
+        MainWindow.iren.Initialize()
         # MainWindow.show()
 
 
