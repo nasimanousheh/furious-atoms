@@ -320,6 +320,7 @@ def timer_callback():
 pickm = pick.PickingManager()
 
 def mouse_move_callback(obj, event):
+
     global sphere_actor, cnt, initial_vertices
     global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames, selected, selected_bond, colors_backup, bond, colors_backup_bond, no_vertices_per_bond, no_bonds
 
@@ -378,6 +379,7 @@ def mouse_move_callback(obj, event):
         # bond_actor.GetMapper().Modified()
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
+
 
 
 class Ui_MainWindow(object):
@@ -761,7 +763,6 @@ class Ui_MainWindow(object):
         MainWindow.vtkWidget.GetRenderWindow().AddRenderer(MainWindow.ren)
         MainWindow.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
         #MainWindow.iren.AddObserver("MouseMoveEvent", mouse_move_callback)
-
         MainWindow.iren.AddObserver("LeftButtonPressEvent", mouse_move_callback)
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
