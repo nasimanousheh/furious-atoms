@@ -21,7 +21,7 @@ import numpy as np
 from PyQt5 import QtWidgets
 from fury import window, actor, ui, utils, pick
 from PyQt5.QtWidgets import QAction, QColorDialog, QFileDialog, QMenu, QMessageBox
-from pylammpsmpi import LammpsLibrary
+# from pylammpsmpi import LammpsLibrary
 import os
 from numpy.linalg import norm
 import MDAnalysis as mda
@@ -33,62 +33,6 @@ from MDAnalysis.analysis import contacts
 # from MDAnalysis.tests.datafiles import PSF,DCD
 disable_warnings()
 
-def left_click_callback(obj, event):
-    # Get the event position on display and pick
-    # event_pos = pickm.event_position(MainWindow.iren)
-    # picked_info = pickm.pick(event_pos, MainWindow.ren)
-    pickm = pick.PickingManager()
-    event_pos = pickm.event_position(MainWindow.iren)
-    picked_info = pickm.pick(event_pos, MainWindow.ren)
-    vertex_index = picked_info['vertex']
-    # Calculate the objects index
-    vertices = utils.vertices_from_actor(sphere_actor)
-    no_vertices_per_sphere = vertices.shape[0]
-    object_index = np.int(np.floor((vertex_index / no_vertices_per_sphere) *
-                          no_atoms))
-    # Find how many vertices correspond to each object
-    sec = np.int(vertices / object_index)
-
-    selected = np.zeros(no_atoms, dtype=np.bool)
-
-    if not selected[object_index]:
-        scale = 1
-        color_add = np.array([30, 30, 30], dtype='uint8')
-        selected[object_index] = True
-    else:
-        scale = 1
-        color_add = np.array([-30, -30, -30], dtype='uint8')
-        selected[object_index] = False
-
-    # Update vertices positions
-    vertices[object_index * sec: object_index * sec + sec] = scale * \
-        (vertices[object_index * sec: object_index * sec + sec] -
-         pos[object_index]) + pos[object_index]
-    print(object_index)
-
-    # Update colors
-    vcolors = utils.colors_from_actor(sphere_actor, 'colors')
-    vcolors[object_index * sec: object_index * sec + sec] += color_add
-
-    # Tell actor that memory is modified
-    utils.update_actor(sphere_actor)
-
-
-    face_index = picked_info['face']
-    print(str(id(picked_info['actor'])))
-
-    # Show some info
-    text = 'Object ' + str(object_index) + '\n'
-    text += 'Vertex ID ' + str(vertex_index) + '\n'
-    text += 'Face ID ' + str(face_index) + '\n'
-    text += 'World pos ' + str(np.round(picked_info['xyz'], 2)) + '\n'
-    text += 'Actor ID ' + str(id(picked_info['actor']))
-    text_block.message = text
-    # MainWindow.ren()
-    # MainWindow.show()
-    label_actor = actor.label(text='Test')
-    MainWindow.ren.add(label_actor)
-    MainWindow.vtkWidget.GetRenderWindow().Render()
 
 
 global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames
@@ -171,14 +115,14 @@ def box_edges(box_lx, box_ly, box_lz):
 
 
 def process_load_file(fname):
-    global sphere_actor, initial_vertices, no_vertices_per_sphere, n_frames, no_bonds, bond_actor, no_vertices_per_bond,pos, load_file, all_vertices, box, MainWindow
+    global sphere_actor, initial_vertices_bonds, all_vertices_bonds,bonds,initial_vertices, no_vertices_per_sphere, n_frames, selected_bond, no_bonds, colors_backup_bond, bond_actor, no_vertices_per_bond,pos, load_file, all_vertices, box, MainWindow,no_atoms, colors_backup, selected, no_bonds
     frames_cnt = 0
     load_file,no_bonds = load_files(fname)
     n_frames = load_file.trajectory.n_frames
     str_no_bonds = str(no_bonds)
     MainWindow.dcfdLineEdit.insert(str_no_bonds)
-    str_n_frames = str(n_frames)
-    MainWindow.dcfdLineEdit_2.insert(str_n_frames)
+    # str_n_frames = str(n_frames)
+    # MainWindow.dcfdLineEdit_2.insert(str_n_frames)
 
     no_atoms = len(load_file.atoms)
     box = load_file.trajectory.ts.dimensions
@@ -217,18 +161,23 @@ def process_load_file(fname):
 
     if no_bonds > 0:
         pos = load_file.trajectory[0].positions.copy().astype('f8')
+        # if MainWindow.CheckBox.isChecked() == True:
+        # load_file.delete_bonds(load_file.bonds[5:6])
+        # load_file.delete_bonds(load_file.bonds.to_indices())
         bonds = load_file.bonds.to_indices()
-
-        first_pos_bond = pos[(bonds[:,0])]
-        second_pos_bond = pos[(bonds[:,1])]
+        no_bonds = len(load_file.bonds)
+        first_pos_bond = pos[(bonds[:, 0])]
+        second_pos_bond = pos[(bonds[:, 1])]
         bonds = np.hstack((first_pos_bond, second_pos_bond))
         bonds = bonds.reshape((no_bonds), 2, 3)
-        bond_colors = (0.8275, 0.8275, 0.8275)
+        bond_colors = (0.8275, 0.8275, 0.8275, 0.5)
         bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
-        # if MainWindow.CheckBox.isChecked() == True:
-        # print(load_file.bonds[:1])
-        # load_file.delete_bonds(load_file.bonds[:1])
-        # load_file.delete_bonds(load_file.bonds.to_indices())
+        vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+        colors_backup_bond = vcolors_bond.copy()
+        all_vertices_bonds = utils.vertices_from_actor(bond_actor)
+        no_vertices_per_bond = len(all_vertices_bonds) / no_bonds
+        # initial_vertices_bonds = all_vertices_bonds.copy() - np.repeat(bonds, no_vertices_per_bonds, axis=0)
+
         MainWindow.ren.add(bond_actor)
         unique_types_bond = np.unique(load_file.bonds.types)
         str_no_unique_types_bond = str(len(unique_types_bond))
@@ -246,16 +195,20 @@ def process_load_file(fname):
     for i, typ in enumerate(unique_types):
         colors[atom_type == typ] = colors_unique_types[i]
 
+
+    selected = np.zeros(no_atoms, dtype=np.bool)
+    selected_bond = np.zeros(no_bonds, dtype=np.bool)
     sphere_actor = actor.sphere(centers=pos,
                                 colors=colors,
                                 radii=radii,theta=32, phi=32)
     all_vertices = utils.vertices_from_actor(sphere_actor)
-    num_vertices = all_vertices.shape[0]
-    num_objects = no_atoms
+    # num_vertices = all_vertices.shape[0]
+    # num_objects = no_atoms
     no_vertices_per_sphere = len(all_vertices) / no_atoms
     initial_vertices = all_vertices.copy() - np.repeat(pos, no_vertices_per_sphere, axis=0)
 
     vcolors = utils.colors_from_actor(sphere_actor, 'colors')
+    colors_backup = vcolors.copy()
 
     sphere_actor.GetProperty().SetInterpolationToPBR()
     # Lets use a smooth metallic surface
@@ -266,7 +219,8 @@ def process_load_file(fname):
     vtk.vtkActor().SetMapper(mapper)
 
     MainWindow.ren.UseImageBasedLightingOn()
-    cube_path = 'c:/Users/nasim/Devel/furious-atoms/src/skybox0'
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cube_path = os.path.join(dir_path, 'skybox0')
     surface = 'boy'
     if not os.path.isdir(cube_path):
         print('This path does not exist:', cube_path)
@@ -302,8 +256,9 @@ def process_load_file(fname):
     # if MainWindow.CheckBox_2.isChecked() == True:
     MainWindow.ren.add(box_actor)
     MainWindow.ren.add(line_actor)
-    MainWindow.ren.set_camera(focal_point=avg)
-    sphere_actor.AddObserver('LeftButtonPressEvent', left_click_callback, 1)
+    MainWindow.ren.set_camera(position=(0, 0, 1000), focal_point=(0, 0, 0), view_up=(0, 1, 0))
+
+    # sphere_actor.AddObserver('LeftButtonPressEvent', left_click_callback, 1)
 
     print('Processed done!')
 global cnt, enable_timer
@@ -316,11 +271,31 @@ def timer_callback():
     if enable_timer is False:
         return
 
-    global sphere_actor, cnt, initial_vertices
+    global sphere_actor, cnt, initial_vertices,initial_vertices_bonds,all_vertices_bonds
     global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames
 
     if cnt == n_frames:
         return
+    # if no_bonds > 0:
+    #     pos = load_file.trajectory[0].positions.copy().astype('f8')
+    #     load_file.delete_bonds(load_file.bonds[:800])
+    #     load_file.delete_bonds(load_file.bonds.to_indices())
+    #     bonds = load_file.bonds.to_indices()
+    #     no_bonds = len(load_file.bonds)
+    #     first_pos_bond = pos[(bonds[:,0])]
+    #     second_pos_bond = pos[(bonds[:,1])]
+    #     bonds = np.hstack((first_pos_bond, second_pos_bond))
+    #     bonds = bonds.reshape((no_bonds), 2, 3)
+    #     all_vertices_bonds = utils.vertices_from_actor(bond_actor)
+    #     # no_vertices_per_bonds = len(all_vertices_bonds) / no_bonds
+    #     # initial_vertices_bonds = all_vertices_bonds.copy() - np.repeat(bonds, no_vertices_per_bonds, axis=0)
+    #     # bond_colors = (0.8275, 0.8275, 0.8275, 1)
+    #     # bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
+    #     # vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+    #     # colors_backup_bond = vcolors_bond.copy()
+    #     # all_vertices_bonds[:] = initial_vertices_bonds + \
+    #     #         np.repeat(bonds, no_vertices_per_bond, axis=0)
+    #     utils.update_actor(bond_actor)
 
     if no_bonds==0:
         if MainWindow.CheckBox_3.isChecked() == True:
@@ -340,6 +315,70 @@ def timer_callback():
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
     cnt += 1
+
+
+pickm = pick.PickingManager()
+
+def mouse_move_callback(obj, event):
+    global sphere_actor, cnt, initial_vertices
+    global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames, selected, selected_bond, colors_backup, bond, colors_backup_bond, no_vertices_per_bond, no_bonds
+
+    event_pos = pickm.event_position(MainWindow.iren)
+    picked_info = pickm.pick(event_pos, MainWindow.ren)
+    vertex_index = picked_info['vertex']
+    vertices = utils.vertices_from_actor(sphere_actor)
+    no_vertices_all_sphere = vertices.shape[0]
+    object_index = np.int(np.floor((vertex_index / no_vertices_all_sphere) *
+                          no_atoms))
+    # Find how many vertices correspond to each object
+    sec = np.int(no_vertices_all_sphere / no_atoms)
+    if picked_info['actor'] is sphere_actor:
+        if not selected[object_index]:
+            scale = 1
+            color_add = np.array([255, 0, 0], dtype='uint8')
+            selected[object_index] = True
+        else:
+            scale = 1
+            color_add = colors_backup[object_index]
+            selected[object_index] = False
+
+        # Update vertices positions
+        vertices[object_index * sec: object_index * sec + sec] = scale * \
+            (vertices[object_index * sec: object_index * sec + sec] -
+            pos[object_index]) + pos[object_index]
+
+        # Update colors
+        vcolors = utils.colors_from_actor(sphere_actor, 'colors')
+        vcolors[object_index * sec: object_index * sec + sec] = color_add
+
+        # Tell actor that memory is modified
+        utils.update_actor(sphere_actor)
+
+    if picked_info['actor'] is bond_actor:
+        vertices_bond = utils.vertices_from_actor(bond_actor)
+        no_vertices_all_bond = vertices_bond.shape[0]
+        object_index_bond = np.int(np.floor((vertex_index / no_vertices_all_bond) * no_bonds))
+        sec_bond = np.int(no_vertices_all_bond / no_bonds)
+
+        if not selected_bond[object_index_bond]:
+            scale = 1
+            color_add_bond = np.array([255, 0, 0, 127], dtype='uint8')
+            selected_bond[object_index_bond] = True
+        else:
+            scale = 1
+            color_add_bond = colors_backup_bond[object_index_bond]
+            selected_bond[object_index_bond] = False
+
+        # Update colors
+        vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+        vcolors_bond[object_index_bond * sec_bond: object_index_bond * sec_bond + sec_bond] = color_add_bond
+        utils.update_actor(bond_actor)
+        bond_actor.GetMapper().Update()
+        bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        # bond_actor.GetMapper().Modified()
+
+    MainWindow.vtkWidget.GetRenderWindow().Render()
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -488,7 +527,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_6.setIcon(icon4)
         MainWindow.pushButton_6.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_6.setObjectName("pushButton_6")
-##########################
+        ##########################
         self.widget_3 = QtWidgets.QWidget(self.centralwidget)
         self.widget_3.setGeometry(QtCore.QRect(0, 360, 351, 181))
         self.widget_3.setObjectName("widget_3")
@@ -521,9 +560,7 @@ class Ui_MainWindow(object):
         self.atomTypeLineEdit_9.setGeometry(QtCore.QRect(120, 40, 61, 22))
         self.atomTypeLineEdit_9.setObjectName("atomTypeLineEdit_9")
 
-
-
-########################
+        ########################
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -655,7 +692,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Furious Atoms (Open Visualization Tool)"))
         MainWindow.CheckBox_3.setText(_translate("MainWindow", "Animation"))
-             ################
+        ################
         self.label_2.setText(_translate("MainWindow", "Modify Particle"))
         self.atomTypeLabel_7.setText(_translate("MainWindow", "Particle Radius"))
         self.atomTypeLabel_8.setText(_translate("MainWindow", "Particle Shape"))
@@ -710,10 +747,11 @@ class Ui_MainWindow(object):
 
         # self.frame = QtWidgets.QFrame()
         self.vl = QtWidgets.QVBoxLayout()
+        #self.vl.SetNoConstraint = True
         self.frame.setLayout(self.vl)
         # MainWindow.setCentralWidget(self.frame)
         MainWindow.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-        self.vl.addWidget(MainWindow.vtkWidget)
+        self.vl.addWidget(MainWindow.vtkWidget, stretch=1)
         MainWindow.ren = Scene()
 
         # self.ren.background((0, 0, 0))
@@ -721,14 +759,17 @@ class Ui_MainWindow(object):
         MainWindow.ren.background((1.0, 1.0, 1.0))
 
         MainWindow.vtkWidget.GetRenderWindow().AddRenderer(MainWindow.ren)
-        self.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
+        MainWindow.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
+        #MainWindow.iren.AddObserver("MouseMoveEvent", mouse_move_callback)
+
+        MainWindow.iren.AddObserver("LeftButtonPressEvent", mouse_move_callback)
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
         duration = 200
         self.timer.start(duration)
 
-        MainWindow.resize(2000, 1000)
-        self.iren.Initialize()
+        # MainWindow.resize(2000, 1000)
+        MainWindow.iren.Initialize()
         # MainWindow.show()
 
 
@@ -743,4 +784,3 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
-
