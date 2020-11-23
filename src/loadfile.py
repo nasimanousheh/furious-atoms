@@ -1,13 +1,14 @@
 import re
 import numpy as np
 import string
-from pylammpsmpi import LammpsLibrary
+# from pylammpsmpi import LammpsLibrary
 import MDAnalysis as mda
 import MDAnalysis.analysis.align
 from MDAnalysis import *
 import MDAnalysis as mda
 from MDAnalysis.analysis import contacts
-from MDAnalysis.tests.datafiles import PSF,DCD
+# from MDAnalysis.tests.datafiles import PSF,DCD
+
 
 def load_files(fname, debug=False):
     load_file_export = open(fname, 'r')
