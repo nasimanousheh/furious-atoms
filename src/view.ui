@@ -1,0 +1,828 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>3420</width>
+    <height>1261</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <family>Arial</family>
+    <pointsize>10</pointsize>
+   </font>
+  </property>
+  <property name="mouseTracking">
+   <bool>false</bool>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../../.designer/backup/windows-images/openfile-icon.png</normaloff>../../.designer/backup/windows-images/openfile-icon.png</iconset>
+  </property>
+  <property name="iconSize">
+   <size>
+    <width>40</width>
+    <height>40</height>
+   </size>
+  </property>
+  <property name="animated">
+   <bool>true</bool>
+  </property>
+  <property name="documentMode">
+   <bool>false</bool>
+  </property>
+  <property name="tabShape">
+   <enum>QTabWidget::Triangular</enum>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QWidget" name="widget" native="true">
+    <property name="geometry">
+     <rect>
+      <x>1</x>
+      <y>0</y>
+      <width>361</width>
+      <height>261</height>
+     </rect>
+    </property>
+    <widget class="QRadioButton" name="radioButton_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>180</y>
+       <width>82</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Animation</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="particleLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>208</x>
+       <y>55</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Types of Atom:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="dcfdLineEdit_2">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>201</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="dcfdLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>85</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Number of Bonds:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="particleLineEdit_3">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>85</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="particleLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>125</x>
+       <y>55</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="particleLineEdit_2">
+     <property name="geometry">
+      <rect>
+       <x>300</x>
+       <y>55</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="dragEnabled">
+      <bool>true</bool>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>144</y>
+       <width>21</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ly</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="particleLabel_3">
+     <property name="geometry">
+      <rect>
+       <x>208</x>
+       <y>85</y>
+       <width>91</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Types of Bond:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="particleLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Number of Atoms:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>144</y>
+       <width>21</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Lx</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel_3">
+     <property name="geometry">
+      <rect>
+       <x>206</x>
+       <y>144</y>
+       <width>21</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Lz</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="atomTypeLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>144</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="dcfdLabel_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>201</y>
+       <width>111</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Number of Frames</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="dcfdLineEdit">
+     <property name="geometry">
+      <rect>
+       <x>125</x>
+       <y>85</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>35</y>
+       <width>82</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Particle</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_2">
+     <property name="geometry">
+      <rect>
+       <x>1</x>
+       <y>124</y>
+       <width>82</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Simulation Cell</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="atomTypeLineEdit_2">
+     <property name="geometry">
+      <rect>
+       <x>133</x>
+       <y>144</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="atomTypeLineEdit_3">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>144</y>
+       <width>61</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>361</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(204, 204, 204);</string>
+     </property>
+     <property name="text">
+      <string>Properties</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="widget_2" native="true">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>1170</y>
+      <width>2241</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <widget class="QPushButton" name="pushButton_8">
+     <property name="geometry">
+      <rect>
+       <x>160</x>
+       <y>10</y>
+       <width>51</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>image-icons/play/play.png</normaloff>image-icons/play/play.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>45</width>
+       <height>45</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="Timer">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>61</width>
+       <height>51</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_10">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>10</y>
+       <width>51</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>image-icons/play/backward.png</normaloff>image-icons/play/backward.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>40</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QSlider" name="horizontalSlider">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>10</y>
+       <width>1621</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="tickPosition">
+      <enum>QSlider::TicksBothSides</enum>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_5">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>51</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>image-icons/play/pause.png</normaloff>image-icons/play/pause.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>45</width>
+       <height>45</height>
+      </size>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>10</y>
+       <width>51</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="icon">
+      <iconset>
+       <normaloff>image-icons/play/forward.png</normaloff>image-icons/play/forward.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>40</width>
+       <height>40</height>
+      </size>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="widget_3" native="true">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>290</y>
+      <width>351</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>361</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>Arial</family>
+       <pointsize>12</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(204, 204, 204);</string>
+     </property>
+     <property name="text">
+      <string>Modify Particle</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel_10">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>90</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Particle Radius</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="atomTypeLineEdit_9">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>86</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel_11">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>134</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Particle Shape</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="atomTypeLabel_12">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>44</y>
+       <width>101</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Particle Types</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox_2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>130</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>Sphere</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>image-icons/shape/sphere.png</normaloff>image-icons/shape/sphere.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Cone</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>image-icons/shape/Cone.png</normaloff>image-icons/shape/Cone.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Cube</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</normaloff>image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</iconset>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Arrow</string>
+      </property>
+      <property name="icon">
+       <iconset>
+        <normaloff>image-icons/shape/arrow.png</normaloff>image-icons/shape/arrow.png</iconset>
+      </property>
+     </item>
+    </widget>
+    <widget class="QLineEdit" name="atomTypeLineEdit_10">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>40</y>
+       <width>101</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>3420</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionLoad_file"/>
+    <addaction name="actionSave_file"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionZoom_in"/>
+    <addaction name="actionZoom_Out"/>
+    <addaction name="actionFit_to_Window"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuModify">
+    <property name="title">
+     <string>Modify</string>
+    </property>
+    <addaction name="actionParticle"/>
+    <addaction name="actionBond"/>
+   </widget>
+   <widget class="QMenu" name="menuCompute">
+    <property name="title">
+     <string>Compute</string>
+    </property>
+    <addaction name="actionPCF"/>
+    <addaction name="actionPair_Correlation_Function"/>
+    <addaction name="actionMean_Square_Desplacement"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
+   <addaction name="menuModify"/>
+   <addaction name="menuCompute"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_file">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/file/load.png</normaloff>image-icons/file/load.png</iconset>
+   </property>
+   <property name="text">
+    <string>Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_file">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/file/save.png</normaloff>image-icons/file/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/file/exit.png</normaloff>image-icons/file/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionZoom_in">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/view/zoomin.png</normaloff>image-icons/view/zoomin.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl++</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/view/zoomout.png</normaloff>image-icons/view/zoomout.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom Out</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+-</string>
+   </property>
+  </action>
+  <action name="actionFit_to_Window">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/view/fit-to-width.png</normaloff>image-icons/view/fit-to-width.png</iconset>
+   </property>
+   <property name="text">
+    <string>Fit to Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/about/about.png</normaloff>image-icons/about/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/file/new.png</normaloff>image-icons/file/new.png</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/file/save as.png</normaloff>image-icons/file/save as.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionRemove_Particle">
+   <property name="text">
+    <string>Remove Particle</string>
+   </property>
+  </action>
+  <action name="actionReplace_Particle">
+   <property name="text">
+    <string>Replace Particle</string>
+   </property>
+  </action>
+  <action name="actionRemove">
+   <property name="text">
+    <string>Remove</string>
+   </property>
+  </action>
+  <action name="actionReplace">
+   <property name="text">
+    <string>Replace</string>
+   </property>
+  </action>
+  <action name="actionPCF">
+   <property name="text">
+    <string>Density</string>
+   </property>
+  </action>
+  <action name="actionPair_Correlation_Function">
+   <property name="text">
+    <string>Pair Correlation Function</string>
+   </property>
+  </action>
+  <action name="actionMean_Square_Desplacement">
+   <property name="text">
+    <string>Mean Square Displacement</string>
+   </property>
+  </action>
+  <action name="actionParticle">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/shape/sphere.png</normaloff>image-icons/shape/sphere.png</iconset>
+   </property>
+   <property name="text">
+    <string>Particle</string>
+   </property>
+  </action>
+  <action name="actionBond">
+   <property name="icon">
+    <iconset>
+     <normaloff>image-icons/shape/bond.png</normaloff>image-icons/shape/bond.png</iconset>
+   </property>
+   <property name="text">
+    <string>Bond</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
