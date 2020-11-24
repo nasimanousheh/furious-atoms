@@ -18,16 +18,12 @@ from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
-
-
 import sys
 import vtk
 import numpy as np
 from PyQt5 import QtWidgets
 from fury import window, actor, ui, utils, pick
 from PyQt5.QtWidgets import QAction, QColorDialog, QFileDialog, QMenu, QMessageBox
-# from pylammpsmpi import LammpsLibrary
 import os
 from numpy.linalg import norm
 import MDAnalysis as mda
@@ -36,7 +32,6 @@ from MDAnalysis import *
 from vtk.util import numpy_support
 from fury import disable_warnings
 from MDAnalysis.analysis import contacts
-# from MDAnalysis.tests.datafiles import PSF,DCD
 disable_warnings()
 
 
@@ -159,7 +154,7 @@ def process_load_file(fname):
     np.unique(load_file.atoms.types)
     atom_type = load_file.atoms.types
 
-    colors = np.ones((no_atoms, 3))
+    colors = np.ones((no_atoms, 4))
     if no_bonds == 0:
         pos_R = load_file.trajectory[0].positions.copy().astype('f8')
         pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box, backend='serial')
@@ -179,7 +174,7 @@ def process_load_file(fname):
         bonds = np.hstack((first_pos_bond, second_pos_bond))
         bonds = bonds.reshape((no_bonds), 2, 3)
         bond_colors = (0.8275, 0.8275, 0.8275, 1)
-        bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
+        bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2, opacity=0.995)
         vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
         colors_backup_bond = vcolors_bond.copy()
         all_vertices_bonds = utils.vertices_from_actor(bond_actor)
@@ -195,13 +190,14 @@ def process_load_file(fname):
 
     radii = 0.5* np.ones(no_atoms)
     unique_types = np.unique(load_file.atoms.types)
-    colors_unique_types = np.random.rand(len(unique_types), 3)
+    colors_unique_types = np.random.rand(len(unique_types), 4)
+    colors_unique_types[:, 3] = 1
     str_no_unique_types = str(len(unique_types))
     MainWindow.particleLineEdit_2.insert(str_no_unique_types)
 
 
     for i, typ in enumerate(unique_types):
-        colors[atom_type == typ] = colors_unique_types[i]
+        colors[atom_type == typ] = colors_unique_types[i]############################
 
 
     selected = np.zeros(no_atoms, dtype=np.bool)
@@ -210,8 +206,6 @@ def process_load_file(fname):
                                 colors=colors,
                                 radii=radii,theta=32, phi=32)
     all_vertices = utils.vertices_from_actor(sphere_actor)
-    # num_vertices = all_vertices.shape[0]
-    # num_objects = no_atoms
     no_vertices_per_sphere = len(all_vertices) / no_atoms
     initial_vertices = all_vertices.copy() - np.repeat(pos, no_vertices_per_sphere, axis=0)
 
@@ -261,6 +255,8 @@ def process_load_file(fname):
     # if MainWindow.CheckBox.isChecked() == True:
     MainWindow.ren.add(sphere_actor)
     # if MainWindow.CheckBox_2.isChecked() == True:
+
+
     MainWindow.ren.add(box_actor)
     MainWindow.ren.add(line_actor)
     MainWindow.ren.set_camera(position=(0, 0, 1000), focal_point=(0, 0, 0), view_up=(0, 1, 0))
@@ -305,8 +301,9 @@ def timer_callback():
 pickm = pick.PickingManager()
 
 def mouse_move_callback(obj, event):
+
     global sphere_actor, cnt, initial_vertices
-    global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames, selected, selected_bond, colors_backup, bond, colors_backup_bond, no_vertices_per_bond, no_bonds
+    global no_vertices_per_sphere, color_add_bond, window, sec_bond,no_atoms, no_bonds, load_file, all_vertices, box, n_frames, selected, selected_bond, colors_backup, bond, colors_backup_bond, no_vertices_per_bond, no_bonds
     event_pos = pickm.event_position(MainWindow.iren)
     picked_info = pickm.pick(event_pos, MainWindow.ren)
     vertex_index = picked_info['vertex']
@@ -319,24 +316,28 @@ def mouse_move_callback(obj, event):
     if picked_info['actor'] is sphere_actor:
         if not selected[object_index]:
             scale = 1
-            color_add = np.array([255, 0, 0], dtype='uint8')
+            color_add = np.array([255, 0, 0, 255], dtype='uint8')
             selected[object_index] = True
         else:
             scale = 1
             color_add = colors_backup[object_index]
             selected[object_index] = False
 
-        # Update vertices positions
-        vertices[object_index * sec: object_index * sec + sec] = scale * \
-            (vertices[object_index * sec: object_index * sec + sec] -
-            pos[object_index]) + pos[object_index]
+        # # Update vertices positions
+        # vertices[object_index * sec: object_index * sec + sec] = scale * \
+        #     (vertices[object_index * sec: object_index * sec + sec] -
+        #     pos[object_index]) + pos[object_index]
+
+        # # Update colors
+        # vcolors = utils.colors_from_actor(sphere_actor, 'colors')
+        # vcolors[object_index * sec: object_index * sec + sec] = color_add
 
         # Update colors
         vcolors = utils.colors_from_actor(sphere_actor, 'colors')
         vcolors[object_index * sec: object_index * sec + sec] = color_add
-
-        # Tell actor that memory is modified
         utils.update_actor(sphere_actor)
+        sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
 
     if picked_info['actor'] is bond_actor:
         vertices_bond = utils.vertices_from_actor(bond_actor)
@@ -347,16 +348,6 @@ def mouse_move_callback(obj, event):
             scale = 1
             color_add_bond = np.array([255, 0, 0, 255], dtype='uint8')
             selected_bond[object_index_bond] = True
-            # key = MainWindow.keyPressEvent()
-            # if key == QtCore.Qt.Key_Delete:
-            #     color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
-
-            # if (QtGui.QKeySequence(QtCore.Qt.Key_Delete))== True:
-            # if MainWindow.CheckBox.isChecked() == True:
-            # if (MainWindow.QtCore.Qt.Key_Delete) is True:
-            # if key in (MainWindow.QtCore.Qt.Key_Delete) is True:
-            # if QtCore.Qt.Key_Delete:
-                # color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
         else:
             scale = 1
             color_add_bond = colors_backup_bond[object_index_bond]
@@ -366,7 +357,6 @@ def mouse_move_callback(obj, event):
         vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
         vcolors_bond[object_index_bond * sec_bond: object_index_bond * sec_bond + sec_bond] = color_add_bond
         utils.update_actor(bond_actor)
-        bond_actor.GetMapper().Update()
         bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
     print('Object ' + str(object_index))
 
@@ -638,12 +628,12 @@ class Ui_MainWindow(object):
         icon14 = QtGui.QIcon()
         icon14.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/shape/sphere.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionParticle.setIcon(icon14)
-        self.actionParticle.setObjectName("actionParticle")
+        self.actionParticle.setObjectName("DeleteParticle")
         self.actionBond = QtWidgets.QAction(MainWindow)
         icon15 = QtGui.QIcon()
         icon15.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/shape/bond.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionBond.setIcon(icon15)
-        self.actionBond.setObjectName("actionBond")
+        self.actionBond.setObjectName("DeleteBond")
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionLoad_file)
         self.menuFile.addAction(self.actionSave_file)
@@ -669,17 +659,60 @@ class Ui_MainWindow(object):
 
         self.actionLoad_file.triggered.connect(self.open)
         self.actionSave_file.triggered.connect(self.save)
-        # MainWindow.keyPressEvent(MainWindow, QtGui.QKeyEvent)
-
+        self.actionBond.triggered.connect(self.delete_bonds)
+        self.actionParticle.triggered.connect(self.delete_particles)
     def open(self):
         fname, _ = QFileDialog.getOpenFileName(MainWindow, 'Load')#, filter = "*.lammp*")
         process_load_file(fname)
         global enable_timer
         enable_timer = True
-        def keyPressEvent(self, event):
-            key = event.key()
-            if key in (Qt.Key_Backspace, Qt.Key_Delete):
-                print('Delete key pressed')
+
+    def delete_bonds(self):
+        global color_add_bond, selected_bond, no_bonds, bond_actor
+        vertices_bond = utils.vertices_from_actor(bond_actor)
+        no_vertices_all_bond = vertices_bond.shape[0]
+        object_indices_bonds = np.where(selected_bond == True)[0]
+        sec_bond = np.int(no_vertices_all_bond / no_bonds)
+        color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
+        vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+        for object_index_bond in object_indices_bonds:
+            vcolors_bond[object_index_bond * sec_bond: object_index_bond * sec_bond + sec_bond] = color_add_bond
+        utils.update_actor(bond_actor)
+        bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        print('The bond is deleted')
+
+
+        MainWindow.vtkWidget.GetRenderWindow().SetAlphaBitPlanes(True)
+        MainWindow.vtkWidget.GetRenderWindow().SetMultiSamples(8)
+
+        MainWindow.ren.UseDepthPeelingOn()
+        MainWindow.ren.SetMaximumNumberOfPeels(4)
+        MainWindow.ren.SetOcclusionRatio(0.0)
+        MainWindow.vtkWidget.GetRenderWindow().Render()
+
+    def delete_particles(self):
+        global color_add, selected, no_atoms, sphere_actor
+        vertices = utils.vertices_from_actor(sphere_actor)
+        no_vertices_all_sphere = vertices.shape[0]
+        object_indices_spheres = np.where(selected == True)[0]
+        sec = np.int(no_vertices_all_sphere / no_atoms)
+        color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        vcolors = utils.colors_from_actor(sphere_actor, 'colors')
+        for object_index in object_indices_spheres:
+            vcolors[object_index * sec: object_index * sec + sec] = color_add
+        utils.update_actor(sphere_actor)
+        sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
+        print('The particle is deleted')
+
+        MainWindow.vtkWidget.GetRenderWindow().SetAlphaBitPlanes(True)
+        MainWindow.vtkWidget.GetRenderWindow().SetMultiSamples(8)
+
+        MainWindow.ren.UseDepthPeelingOn()
+        MainWindow.ren.SetMaximumNumberOfPeels(4)
+        MainWindow.ren.SetOcclusionRatio(0.0)
+        MainWindow.vtkWidget.GetRenderWindow().Render()
+
 
 
     def save(self):
@@ -689,12 +722,10 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Furious Atoms (Open Visualization Tool)"))
         MainWindow.CheckBox_3.setText(_translate("MainWindow", "Animation"))
-        ################
         self.label_2.setText(_translate("MainWindow", "Modify Particle"))
         self.atomTypeLabel_7.setText(_translate("MainWindow", "Particle Radius"))
         self.atomTypeLabel_8.setText(_translate("MainWindow", "Particle Shape"))
         self.atomTypeLabel_9.setText(_translate("MainWindow", "Particle Types"))
-        ###############
         self.particleLabel_2.setText(_translate("MainWindow", "Types of Atom:"))
         self.dcfdLabel.setText(_translate("MainWindow", "Number of Bonds:"))
         self.atomTypeLabel_2.setText(_translate("MainWindow", "Ly"))
@@ -710,7 +741,6 @@ class Ui_MainWindow(object):
         self.menuView.setTitle(_translate("MainWindow", "View"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuModify.setTitle(_translate("MainWindow", "Modify"))
-        # self.keyPressEvent.setShortcut(_translate("MainWindow", "Delete")) ############################################
         self.menuCompute.setTitle(_translate("MainWindow", "Compute"))
         self.actionLoad_file.setText(_translate("MainWindow", "Load"))
         self.actionLoad_file.setShortcut(_translate("MainWindow", "Ctrl+O"))
@@ -735,40 +765,36 @@ class Ui_MainWindow(object):
         self.actionPCF.setText(_translate("MainWindow", "Density"))
         self.actionPair_Correlation_Function.setText(_translate("MainWindow", "Pair Correlation Function"))
         self.actionMean_Square_Desplacement.setText(_translate("MainWindow", "Mean Square Displacement"))
-        self.actionParticle.setText(_translate("MainWindow", "Particle"))
-        self.actionBond.setText(_translate("MainWindow", "Bond"))
+        self.actionParticle.setText(_translate("MainWindow", "Delete Particle"))
+        self.actionBond.setText(_translate("MainWindow", "Delete Bond"))
 
 
         # FURY
-
         self.frame = QtWidgets.QFrame(self.centralwidget)
         self.frame.setGeometry(QtCore.QRect(355, -10, 3090, 1302))
-
-        # self.frame = QtWidgets.QFrame()
         self.vl = QtWidgets.QVBoxLayout()
-        #self.vl.SetNoConstraint = True
         self.frame.setLayout(self.vl)
-        # MainWindow.setCentralWidget(self.frame)
         MainWindow.vtkWidget = QVTKRenderWindowInteractor(self.frame)
         self.vl.addWidget(MainWindow.vtkWidget, stretch=1)
         MainWindow.ren = Scene()
-
-        # self.ren.background((0, 0, 0))
-        # self.ren.background((.3, .4, .5))
         MainWindow.ren.background((1.0, 1.0, 1.0))
 
         MainWindow.vtkWidget.GetRenderWindow().AddRenderer(MainWindow.ren)
         MainWindow.iren = MainWindow.vtkWidget.GetRenderWindow().GetInteractor()
-        #MainWindow.iren.AddObserver("MouseMoveEvent", mouse_move_callback)
+
+        MainWindow.vtkWidget.GetRenderWindow().SetAlphaBitPlanes(True)
+        MainWindow.vtkWidget.GetRenderWindow().SetMultiSamples(8)
+
+        MainWindow.ren.UseDepthPeelingOn()
+        MainWindow.ren.SetMaximumNumberOfPeels(4)
+        MainWindow.ren.SetOcclusionRatio(0.0)
+
         MainWindow.iren.AddObserver("LeftButtonPressEvent", mouse_move_callback)
         self.timer = QTimer()
         self.timer.timeout.connect(timer_callback)
         duration = 200
         self.timer.start(duration)
-
-        # MainWindow.resize(2000, 1000)
         MainWindow.iren.Initialize()
-        # MainWindow.show()
 
 
 
