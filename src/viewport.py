@@ -13,6 +13,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFil
 from PyQt5.QtGui import QIcon
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from fury.window import Scene
+from PyQt5.Qt import Qt
+
 
 
 import sys
@@ -163,14 +165,16 @@ def process_load_file(fname):
         pos = load_file.trajectory[0].positions.copy().astype('f8')
         # if MainWindow.CheckBox.isChecked() == True:
         # load_file.delete_bonds(load_file.bonds[5:6])
-        # load_file.delete_bonds(load_file.bonds.to_indices())
+        # load_file.delete_bonds(load_file.bonds[:800])
+
+        load_file.delete_bonds(load_file.bonds.to_indices())
         bonds = load_file.bonds.to_indices()
         no_bonds = len(load_file.bonds)
         first_pos_bond = pos[(bonds[:, 0])]
         second_pos_bond = pos[(bonds[:, 1])]
         bonds = np.hstack((first_pos_bond, second_pos_bond))
         bonds = bonds.reshape((no_bonds), 2, 3)
-        bond_colors = (0.8275, 0.8275, 0.8275, 0.5)
+        bond_colors = (0.8275, 0.8275, 0.8275, 1)
         bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
         vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
         colors_backup_bond = vcolors_bond.copy()
@@ -252,7 +256,6 @@ def process_load_file(fname):
     MainWindow.ren.add(axes_actor)
     # if MainWindow.CheckBox.isChecked() == True:
     MainWindow.ren.add(sphere_actor)
-
     # if MainWindow.CheckBox_2.isChecked() == True:
     MainWindow.ren.add(box_actor)
     MainWindow.ren.add(line_actor)
@@ -264,8 +267,6 @@ def process_load_file(fname):
 global cnt, enable_timer
 cnt = 0
 enable_timer = False
-
-
 def timer_callback():
     global enable_timer
     if enable_timer is False:
@@ -276,26 +277,6 @@ def timer_callback():
 
     if cnt == n_frames:
         return
-    # if no_bonds > 0:
-    #     pos = load_file.trajectory[0].positions.copy().astype('f8')
-    #     load_file.delete_bonds(load_file.bonds[:800])
-    #     load_file.delete_bonds(load_file.bonds.to_indices())
-    #     bonds = load_file.bonds.to_indices()
-    #     no_bonds = len(load_file.bonds)
-    #     first_pos_bond = pos[(bonds[:,0])]
-    #     second_pos_bond = pos[(bonds[:,1])]
-    #     bonds = np.hstack((first_pos_bond, second_pos_bond))
-    #     bonds = bonds.reshape((no_bonds), 2, 3)
-    #     all_vertices_bonds = utils.vertices_from_actor(bond_actor)
-    #     # no_vertices_per_bonds = len(all_vertices_bonds) / no_bonds
-    #     # initial_vertices_bonds = all_vertices_bonds.copy() - np.repeat(bonds, no_vertices_per_bonds, axis=0)
-    #     # bond_colors = (0.8275, 0.8275, 0.8275, 1)
-    #     # bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
-    #     # vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
-    #     # colors_backup_bond = vcolors_bond.copy()
-    #     # all_vertices_bonds[:] = initial_vertices_bonds + \
-    #     #         np.repeat(bonds, no_vertices_per_bond, axis=0)
-    #     utils.update_actor(bond_actor)
 
     if no_bonds==0:
         if MainWindow.CheckBox_3.isChecked() == True:
@@ -320,10 +301,8 @@ def timer_callback():
 pickm = pick.PickingManager()
 
 def mouse_move_callback(obj, event):
-
     global sphere_actor, cnt, initial_vertices
     global no_vertices_per_sphere, window, no_atoms, no_bonds, load_file, all_vertices, box, n_frames, selected, selected_bond, colors_backup, bond, colors_backup_bond, no_vertices_per_bond, no_bonds
-
     event_pos = pickm.event_position(MainWindow.iren)
     picked_info = pickm.pick(event_pos, MainWindow.ren)
     vertex_index = picked_info['vertex']
@@ -360,11 +339,20 @@ def mouse_move_callback(obj, event):
         no_vertices_all_bond = vertices_bond.shape[0]
         object_index_bond = np.int(np.floor((vertex_index / no_vertices_all_bond) * no_bonds))
         sec_bond = np.int(no_vertices_all_bond / no_bonds)
-
         if not selected_bond[object_index_bond]:
             scale = 1
-            color_add_bond = np.array([255, 0, 0, 127], dtype='uint8')
+            color_add_bond = np.array([255, 0, 0, 255], dtype='uint8')
             selected_bond[object_index_bond] = True
+            # key = MainWindow.keyPressEvent()
+            # if key == QtCore.Qt.Key_Delete:
+                # color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
+
+            # if (QtGui.QKeySequence(QtCore.Qt.Key_Delete))== True:
+            # if MainWindow.CheckBox.isChecked() == True:
+            # if (MainWindow.QtCore.Qt.Key_Delete) is True:
+            # if key in (MainWindow.QtCore.Qt.Key_Delete) is True:
+            # if QtCore.Qt.Key_Delete:
+                # color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
         else:
             scale = 1
             color_add_bond = colors_backup_bond[object_index_bond]
@@ -376,7 +364,7 @@ def mouse_move_callback(obj, event):
         utils.update_actor(bond_actor)
         bond_actor.GetMapper().Update()
         bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        # bond_actor.GetMapper().Modified()
+    print('Object ' + str(object_index))
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
 
@@ -427,7 +415,7 @@ class Ui_MainWindow(object):
         MainWindow.particleLineEdit = QtWidgets.QLineEdit(self.widget)
         MainWindow.particleLineEdit.setGeometry(QtCore.QRect(125, 55, 61, 22))
         MainWindow.particleLineEdit.setObjectName("particleLineEdit")
-        MainWindow.particleLineEdit.setReadOnly(True)###########
+        MainWindow.particleLineEdit.setReadOnly(True) ###########
         MainWindow.particleLineEdit_2 = QtWidgets.QLineEdit(self.widget)
         MainWindow.particleLineEdit_2.setGeometry(QtCore.QRect(300, 55, 61, 22))
         MainWindow.particleLineEdit_2.setObjectName("particleLineEdit_2")
@@ -676,16 +664,17 @@ class Ui_MainWindow(object):
 
         self.actionLoad_file.triggered.connect(self.open)
         self.actionSave_file.triggered.connect(self.save)
-        # MainWindow.pushButton_8.
-
-    # def click(self,text):
-    #     self.particleLineEdit.setText(text)
+        # MainWindow.keyPressEvent(MainWindow, QtGui.QKeyEvent)
 
     def open(self):
         fname, _ = QFileDialog.getOpenFileName(MainWindow, 'Load')#, filter = "*.lammp*")
         process_load_file(fname)
         global enable_timer
         enable_timer = True
+
+    # def keyPressEvent(self, event):
+    #     if event.key() == Qt.Key_Delete:
+    #         print('Delete key pressed')
 
     def save(self):
         fname, _ = QFileDialog.getSaveFileName(MainWindow, 'Save')#, filter = "*.lammp*")
@@ -741,6 +730,7 @@ class Ui_MainWindow(object):
         self.actionMean_Square_Desplacement.setText(_translate("MainWindow", "Mean Square Displacement"))
         self.actionParticle.setText(_translate("MainWindow", "Particle"))
         self.actionBond.setText(_translate("MainWindow", "Bond"))
+
 
         # FURY
 
