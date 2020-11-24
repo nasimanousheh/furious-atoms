@@ -1,0 +1,5 @@
+# List required packages in this file, one per line.
+numpy>=1.19.4
+PyQt5>=5.15.2
+MDAnalysis>=1.0.0
+fury>=0.6.1
