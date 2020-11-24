@@ -14,6 +14,10 @@ from PyQt5.QtGui import QIcon
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from fury.window import Scene
 from PyQt5.Qt import Qt
+from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 
 
 
@@ -123,8 +127,8 @@ def process_load_file(fname):
     n_frames = load_file.trajectory.n_frames
     str_no_bonds = str(no_bonds)
     MainWindow.dcfdLineEdit.insert(str_no_bonds)
-    # str_n_frames = str(n_frames)
-    # MainWindow.dcfdLineEdit_2.insert(str_n_frames)
+    str_n_frames = str(n_frames)
+    MainWindow.dcfdLineEdit_2.insert(str_n_frames)
 
     no_atoms = len(load_file.atoms)
     box = load_file.trajectory.ts.dimensions
@@ -167,7 +171,7 @@ def process_load_file(fname):
         # load_file.delete_bonds(load_file.bonds[5:6])
         # load_file.delete_bonds(load_file.bonds[:800])
 
-        load_file.delete_bonds(load_file.bonds.to_indices())
+        # load_file.delete_bonds(load_file.bonds.to_indices())
         bonds = load_file.bonds.to_indices()
         no_bonds = len(load_file.bonds)
         first_pos_bond = pos[(bonds[:, 0])]
@@ -345,7 +349,7 @@ def mouse_move_callback(obj, event):
             selected_bond[object_index_bond] = True
             # key = MainWindow.keyPressEvent()
             # if key == QtCore.Qt.Key_Delete:
-                # color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
+            #     color_add_bond = np.array([255, 0, 0, 0], dtype='uint8')
 
             # if (QtGui.QKeySequence(QtCore.Qt.Key_Delete))== True:
             # if MainWindow.CheckBox.isChecked() == True:
@@ -369,7 +373,7 @@ def mouse_move_callback(obj, event):
     MainWindow.vtkWidget.GetRenderWindow().Render()
 
 
-
+dir_path = os.path.dirname(os.path.realpath(__file__))
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
@@ -381,7 +385,7 @@ class Ui_MainWindow(object):
         MainWindow.setFont(font)
         MainWindow.setMouseTracking(False)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/main.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/main.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.setWindowIcon(icon)
         MainWindow.setIconSize(QtCore.QSize(40, 40))
         MainWindow.setAnimated(True)
@@ -480,7 +484,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_8.setGeometry(QtCore.QRect(160, 10, 51, 51))
         MainWindow.pushButton_8.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/play/play.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/play/play.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.pushButton_8.setIcon(icon1)
         MainWindow.pushButton_8.setIconSize(QtCore.QSize(45, 45))
         MainWindow.pushButton_8.setObjectName("pushButton_8")
@@ -492,7 +496,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_10.setText("")
 
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/play/backward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/play/backward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.pushButton_10.setIcon(icon2)
         MainWindow.pushButton_10.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_10.setObjectName("pushButton_10")
@@ -505,7 +509,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_5.setGeometry(QtCore.QRect(110, 10, 51, 51))
         MainWindow.pushButton_5.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/play/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/play/pause.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.pushButton_5.setIcon(icon3)
         MainWindow.pushButton_5.setIconSize(QtCore.QSize(45, 45))
         MainWindow.pushButton_5.setObjectName("pushButton_5")
@@ -513,7 +517,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_6.setGeometry(QtCore.QRect(210, 10, 51, 51))
         MainWindow.pushButton_6.setText("")
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/play/forward.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/play/forward.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         MainWindow.pushButton_6.setIcon(icon4)
         MainWindow.pushButton_6.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_6.setObjectName("pushButton_6")
@@ -552,6 +556,7 @@ class Ui_MainWindow(object):
 
         ########################
 
+
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 2990, 21))
@@ -572,47 +577,47 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.actionLoad_file = QtWidgets.QAction(MainWindow)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/file/load.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/file/load.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionLoad_file.setIcon(icon5)
         self.actionLoad_file.setObjectName("actionLoad_file")
         self.actionSave_file = QtWidgets.QAction(MainWindow)
         icon6 = QtGui.QIcon()
-        icon6.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/file/save.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon6.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/file/save.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSave_file.setIcon(icon6)
         self.actionSave_file.setObjectName("actionSave_file")
         self.actionExit = QtWidgets.QAction(MainWindow)
         icon7 = QtGui.QIcon()
-        icon7.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/file/exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon7.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/file/exit.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExit.setIcon(icon7)
         self.actionExit.setObjectName("actionExit")
         self.actionZoom_in = QtWidgets.QAction(MainWindow)
         icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/view/zoomin.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon8.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/view/zoomin.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionZoom_in.setIcon(icon8)
         self.actionZoom_in.setObjectName("actionZoom_in")
         self.actionZoom_Out = QtWidgets.QAction(MainWindow)
         icon9 = QtGui.QIcon()
-        icon9.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/view/zoomout.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon9.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/view/zoomout.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionZoom_Out.setIcon(icon9)
         self.actionZoom_Out.setObjectName("actionZoom_Out")
         self.actionFit_to_Window = QtWidgets.QAction(MainWindow)
         icon10 = QtGui.QIcon()
-        icon10.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/view/fit-to-width.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon10.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/view/fit-to-width.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionFit_to_Window.setIcon(icon10)
         self.actionFit_to_Window.setObjectName("actionFit_to_Window")
         self.actionAbout = QtWidgets.QAction(MainWindow)
         icon11 = QtGui.QIcon()
-        icon11.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/about/about.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon11.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/about/about.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAbout.setIcon(icon11)
         self.actionAbout.setObjectName("actionAbout")
         self.actionNew = QtWidgets.QAction(MainWindow)
         icon12 = QtGui.QIcon()
-        icon12.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/file/new.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon12.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/file/new.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionNew.setIcon(icon12)
         self.actionNew.setObjectName("actionNew")
         self.actionSave_as = QtWidgets.QAction(MainWindow)
         icon13 = QtGui.QIcon()
-        icon13.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/file/save as.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon13.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/file/save as.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSave_as.setIcon(icon13)
         self.actionSave_as.setObjectName("actionSave_as")
         self.actionRemove_Particle = QtWidgets.QAction(MainWindow)
@@ -631,12 +636,12 @@ class Ui_MainWindow(object):
         self.actionMean_Square_Desplacement.setObjectName("actionMean_Square_Desplacement")
         self.actionParticle = QtWidgets.QAction(MainWindow)
         icon14 = QtGui.QIcon()
-        icon14.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/shape/sphere.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon14.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/shape/sphere.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionParticle.setIcon(icon14)
         self.actionParticle.setObjectName("actionParticle")
         self.actionBond = QtWidgets.QAction(MainWindow)
         icon15 = QtGui.QIcon()
-        icon15.addPixmap(QtGui.QPixmap("C:/Users/nasim/OneDrive/Desktop/image-icons/shape/bond.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon15.addPixmap(QtGui.QPixmap(os.path.join(dir_path, "image-icons/shape/bond.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionBond.setIcon(icon15)
         self.actionBond.setObjectName("actionBond")
         self.menuFile.addAction(self.actionNew)
@@ -671,10 +676,11 @@ class Ui_MainWindow(object):
         process_load_file(fname)
         global enable_timer
         enable_timer = True
+        def keyPressEvent(self, event):
+            key = event.key()
+            if key in (Qt.Key_Backspace, Qt.Key_Delete):
+                print('Delete key pressed')
 
-    # def keyPressEvent(self, event):
-    #     if event.key() == Qt.Key_Delete:
-    #         print('Delete key pressed')
 
     def save(self):
         fname, _ = QFileDialog.getSaveFileName(MainWindow, 'Save')#, filter = "*.lammp*")
@@ -704,6 +710,7 @@ class Ui_MainWindow(object):
         self.menuView.setTitle(_translate("MainWindow", "View"))
         self.menuHelp.setTitle(_translate("MainWindow", "Help"))
         self.menuModify.setTitle(_translate("MainWindow", "Modify"))
+        # self.keyPressEvent.setShortcut(_translate("MainWindow", "Delete")) ############################################
         self.menuCompute.setTitle(_translate("MainWindow", "Compute"))
         self.actionLoad_file.setText(_translate("MainWindow", "Load"))
         self.actionLoad_file.setShortcut(_translate("MainWindow", "Ctrl+O"))
