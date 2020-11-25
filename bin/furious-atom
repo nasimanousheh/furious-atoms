@@ -1,0 +1,108 @@
+# Standard package
+import sys
+import os
+import getopt
+import time
+
+# 3rd party package
+# import PySide2
+from PySide2 import QtCore
+from PySide2 import QtGui
+from PySide2 import QtWidgets
+
+# Local package
+import furiousatoms
+from furiousatoms import io
+from furiousatoms.constants import APP_NAME
+from furiousatoms.mainwindow import FuriousAtomsApp
+
+
+# _dirname = os.path.dirname(PySide2.__file__)
+# _plugin_path = os.path.join(_dirname, 'plugins', 'platforms')
+# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = _plugin_path
+# os.environ['QT_DEBUG_PLUGINS '] = '1'
+
+
+def usage():
+    """Help for user"""
+    print(r"""
+        User Interface usage:
+        --------------------
+
+        ./furious-atoms
+
+        Command line: ./furious-atoms [option[value]] my_file
+        Example: ./furious-atoms.py my_file.dat
+
+        Options:
+        --------
+
+        -h           Display this message
+        """)
+
+
+def start_gui(app_folder=None, files=None):
+    """Start Furious Atoms app
+
+    Parameters
+    -----------
+    app_folder : str
+        folder where the application is running.
+        All files like config and log will be created
+        on this folder
+    """
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+    app = QtWidgets.QApplication(sys.argv)
+    app.setApplicationDisplayName('progname')
+    app.setApplicationVersion(furiousatoms.__version__)
+
+    # Start the Splashscreen
+    pix = QtGui.QPixmap(io.get_resources_file("mpsts_splash.png"))
+    splash = QtWidgets.QSplashScreen(pix)
+    splash.show()
+    app.processEvents()
+    splash.showMessage("Equation 6 Ltd Software...",
+                       QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
+    time.sleep(2)
+    # Init interface
+    win = FuriousAtomsApp(app_path=app_folder)
+    win.setWindowTitle("{0} version {1}".format(APP_NAME,
+                                                furiousatoms.__version__))
+
+    win.showMaximized()
+    # win.showMinimized()
+    # win.showNormal()
+    splash.finish(win)
+
+    return app.exec_()
+
+
+def parse_arguments():
+    """Parse arguments."""
+    try:
+        options, args = getopt.getopt(sys.argv[1:], 'h:')
+    except getopt.GetoptError:
+        # print help information and exit
+        print("Argument error in {0}".format(str(sys.argv[1:])))
+        usage()
+        sys.exit(2)
+
+    # Todo, list all files to open
+    for args in args:
+        pass
+
+    for opt, val in options:
+        if opt == '-h':
+            usage()
+            sys.exit()
+
+    return
+
+
+if __name__ == '__main__':
+    app_path = io.get_application_path()
+    if __file__:
+        app_path = os.path.dirname(os.path.realpath(__file__))
+
+    files = parse_arguments()
+    sys.exit(start_gui(app_path, files))
