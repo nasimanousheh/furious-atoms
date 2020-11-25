@@ -1,5 +1,6 @@
 from os import path
 from setuptools import setup, find_packages
+from glob import glob
 import sys
 import versioneer
 
@@ -59,7 +60,8 @@ setup(
         ]
     },
     install_requires=requirements,
-    license="Commercial"  # "BSD (3-clause)",
+    license="Commercial",  # "BSD (3-clause)",
+    scripts=glob(path.join('bin', '*')),
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Natural Language :: English',
