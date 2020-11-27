@@ -30,6 +30,8 @@ venv/
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+installer_dist/
+installer_build/
 
 # Installer logs
 pip-log.txt
@@ -80,3 +82,5 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+#
