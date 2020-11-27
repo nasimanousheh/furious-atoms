@@ -8,6 +8,20 @@ from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
 
+def is_frozen():
+    return getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS')
+
+
+def get_frozen_path():
+    base_path = ''
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return base_path
+
+
 def get_package_path():
     """Returns package path."""
     package_path = os.path.dirname(os.path.realpath(furiousatoms.__file__))
@@ -18,13 +32,22 @@ def get_package_path():
 def get_application_path():
     """Returns application path."""
     app_path = get_package_path()
-    if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    if is_frozen():
         app_path = os.path.dirname(sys.executable)
     return app_path
 
 
+def get_languages_path():
+    base_path = get_frozen_path() if is_frozen() else get_application_path()
+    l_path = os.path.join(base_path, "languages")
+    if not os.path.isdir(l_path):
+        os.mkdir(l_path)
+    return l_path
+
+
 def get_resources_file(fname):
-    return os.path.join(get_application_path(), "resources", fname)
+    base_path = get_frozen_path() if is_frozen() else get_application_path()
+    return os.path.join(base_path, "resources", fname)
 
 
 def load_ui_widget(uifilename, cls_to_register=None, parent=None):
@@ -35,12 +58,13 @@ def load_ui_widget(uifilename, cls_to_register=None, parent=None):
         for cls in cls_to_register:
             loader.registerCustomWidget(cls)
 
-    ui_fpath = os.path.join(get_application_path(), "forms", uifilename)
+    base_path = get_frozen_path() if is_frozen() else get_application_path()
+    ui_fpath = os.path.join(base_path, "forms", uifilename)
     if not os.path.isfile(ui_fpath):
         msg = '{} does not exist'.format(ui_fpath)
         raise ValueError(msg)
 
-    print("Loading UI file: {0}".format(os.path.join(get_application_path(),
+    print("Loading UI file: {0}".format(os.path.join(base_path,
                                         "forms", uifilename)))
     uifile = QtCore.QFile(ui_fpath)
     uifile.open(QtCore.QFile.ReadOnly | QtCore.QIODevice.Text)
@@ -67,7 +91,7 @@ def load_files(fname, debug=False):
 
     frames_cnt = 0
     load_file = MDAnalysis.Universe(fname, format=format_data)
-    if format_data == None:
+    if format_data is None:
         bonds = load_file.bonds.to_indices()
         no_bonds = len(load_file.bonds)
     return load_file, no_bonds
