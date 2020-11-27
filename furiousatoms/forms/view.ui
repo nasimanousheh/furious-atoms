@@ -9,8 +9,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
+<<<<<<< HEAD:furiousatoms/view.ui
     <width>2789</width>
     <height>1274</height>
+=======
+    <width>1440</width>
+    <height>855</height>
+>>>>>>> 86abf1e50ef5d959f0898ea88f0a33aec8447c77:furiousatoms/forms/view.ui
    </rect>
   </property>
   <property name="minimumSize">
@@ -1689,8 +1694,13 @@ alternate-background-color: rgb(255, 255, 255);
     <rect>
      <x>0</x>
      <y>0</y>
+<<<<<<< HEAD:furiousatoms/view.ui
      <width>2789</width>
      <height>21</height>
+=======
+     <width>1440</width>
+     <height>22</height>
+>>>>>>> 86abf1e50ef5d959f0898ea88f0a33aec8447c77:furiousatoms/forms/view.ui
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
