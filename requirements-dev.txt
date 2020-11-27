@@ -12,3 +12,4 @@ numpydoc
 sphinx-copybutton
 sphinx_rtd_theme
 pyinstaller>=4.1
+click>=7.1.2

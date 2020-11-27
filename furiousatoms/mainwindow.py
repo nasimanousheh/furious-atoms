@@ -89,7 +89,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         default_locale = default_locale.split('_')[0]  # e.g. "de"
 
         # Get languages
-        self.m_lang_path = os.path.join(io.get_application_path(), "languages")
+        self.m_lang_path = io.get_languages_path()
         f_names = fnmatch.filter(os.listdir(self.m_lang_path), "*.qm")
 
         for f in f_names:
