@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1440</width>
-    <height>855</height>
+    <width>2789</width>
+    <height>1274</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -187,7 +187,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       <string>Simulation cell</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="Button_particletypes">
+    <widget class="QPushButton" name="Button_particle">
      <property name="geometry">
       <rect>
        <x>249</x>
@@ -202,7 +202,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       </font>
      </property>
      <property name="text">
-      <string>Particle types</string>
+      <string>Particle</string>
      </property>
     </widget>
     <widget class="QCheckBox" name="Box_bonds">
@@ -241,7 +241,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       <string>File Name</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="button_bondtypes">
+    <widget class="QPushButton" name="button_bond">
      <property name="geometry">
       <rect>
        <x>3</x>
@@ -256,7 +256,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       </font>
      </property>
      <property name="text">
-      <string>Bond types</string>
+      <string>Bond</string>
      </property>
      <property name="autoDefault">
       <bool>false</bool>
@@ -265,7 +265,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="button_angletypes">
+    <widget class="QPushButton" name="button_angle">
      <property name="geometry">
       <rect>
        <x>125</x>
@@ -280,7 +280,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       </font>
      </property>
      <property name="text">
-      <string>Angle types</string>
+      <string>Angle</string>
      </property>
      <property name="autoDefault">
       <bool>false</bool>
@@ -289,7 +289,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       <bool>false</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="button_dihedraltypes">
+    <widget class="QPushButton" name="button_dihedral">
      <property name="geometry">
       <rect>
        <x>249</x>
@@ -304,7 +304,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
       </font>
      </property>
      <property name="text">
-      <string>Dihedral types</string>
+      <string>Dihedral</string>
      </property>
      <property name="autoDefault">
       <bool>false</bool>
@@ -1689,8 +1689,8 @@ alternate-background-color: rgb(255, 255, 255);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1440</width>
-     <height>22</height>
+     <width>2789</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
