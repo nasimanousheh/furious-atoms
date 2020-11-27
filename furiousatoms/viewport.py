@@ -124,7 +124,6 @@ def process_load_file(fname):
     MainWindow.dcfdLineEdit.insert(str_no_bonds)
     str_n_frames = str(n_frames)
     MainWindow.dcfdLineEdit_2.insert(str_n_frames)
-
     no_atoms = len(load_file.atoms)
     box = load_file.trajectory.ts.dimensions
     box_lx = load_file.trajectory.ts.dimensions[0]
@@ -155,6 +154,14 @@ def process_load_file(fname):
     atom_type = load_file.atoms.types
 
     colors = np.ones((no_atoms, 4))
+    pos = load_file.trajectory[0].positions.copy().astype('f8')
+    #######################
+    # s = load_file.universe.atoms[:]
+    # t = load_file.universe.atoms[0:1]
+    # b = s.difference(t)
+    # load_file = MDAnalysis.core.groups.AtomGroup(b)
+    ########################
+
     if no_bonds == 0:
         pos_R = load_file.trajectory[0].positions.copy().astype('f8')
         pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box, backend='serial')
@@ -163,9 +170,7 @@ def process_load_file(fname):
     if no_bonds > 0:
         pos = load_file.trajectory[0].positions.copy().astype('f8')
         # if MainWindow.CheckBox.isChecked() == True:
-        # load_file.delete_bonds(load_file.bonds[5:6])
-        # load_file.delete_bonds(load_file.bonds[:800])
-
+        # load_file.delete_bonds(load_file.bonds[first_index_bond:first_index_bond+1])
         # load_file.delete_bonds(load_file.bonds.to_indices())
         bonds = load_file.bonds.to_indices()
         no_bonds = len(load_file.bonds)
@@ -194,11 +199,8 @@ def process_load_file(fname):
     colors_unique_types[:, 3] = 1
     str_no_unique_types = str(len(unique_types))
     MainWindow.particleLineEdit_2.insert(str_no_unique_types)
-
-
     for i, typ in enumerate(unique_types):
-        colors[atom_type == typ] = colors_unique_types[i]############################
-
+        colors[atom_type == typ] = colors_unique_types[i]
 
     selected = np.zeros(no_atoms, dtype=np.bool)
     selected_bond = np.zeros(no_bonds, dtype=np.bool)
