@@ -55,10 +55,11 @@ def create_package():
 
 d_command = {"installer": create_installer,
              "clean-installer": clean_installer,
-             "clean-dist": clean_dist,
+             "package": create_package,
+             "clean-package": clean_dist,
              "clean": clean,
-             "install": install,
-             "package": create_package}
+             "install": install
+             }
 
 
 @click.command()
