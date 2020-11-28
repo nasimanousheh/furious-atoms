@@ -5,7 +5,7 @@ import getopt
 import time
 
 # 3rd party package
-# import PySide2
+import PySide2
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
@@ -17,10 +17,10 @@ from furiousatoms.constants import APP_NAME
 from furiousatoms.mainwindow import FuriousAtomsApp
 
 
-# _dirname = os.path.dirname(PySide2.__file__)
-# _plugin_path = os.path.join(_dirname, 'plugins', 'platforms')
-# os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = _plugin_path
-# os.environ['QT_DEBUG_PLUGINS '] = '1'
+_dirname = os.path.dirname(PySide2.__file__)
+_plugin_path = os.path.join(_dirname, 'plugins', 'platforms')
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = _plugin_path
+os.environ['QT_DEBUG_PLUGINS '] = '1'
 
 
 def usage():
