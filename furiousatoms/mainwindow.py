@@ -6,6 +6,9 @@ import fnmatch
 # Local package
 from furiousatoms import io
 from furiousatoms.objects import mobius, box_edges
+from fury import disable_warnings
+
+disable_warnings()
 
 # 3rd Party package
 import vtk
@@ -31,7 +34,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         self.app_path = app_path or io.application_path()
         self.scene = window.Scene()
-        self.showm = window.ShowManager(scene=self.scene)
+        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.qvtkwidget = QVTKRenderWindowInteractor(parent=self.ui.view_frame,
                                                      rw=self.showm.window,
                                                      iren=self.showm.iren)
@@ -185,20 +188,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         sphere_actor.GetProperty().SetInterpolationToPBR()
         # Lets use a smooth metallic surface
         # Build the pipeline
-        mapper = vtk.vtkPolyDataMapper()
-        source = mobius()
-        utils.set_input(mapper, source)
-        # mapper.SetInputData(source)
-        vtk.vtkActor().SetMapper(mapper)
+        # mapper = vtk.vtkPolyDataMapper()
+        # source = mobius()
+        # utils.set_input(mapper, source)
+        # # mapper.SetInputData(source)
+        # vtk.vtkActor().SetMapper(mapper)
 
         self.scene.UseImageBasedLightingOn()
         dir_path = os.path.dirname(os.path.realpath(__file__))
         cube_path = os.path.join(dir_path, 'skybox0')
-        surface = 'boy'
+        # surface = 'boy'
         if not os.path.isdir(cube_path):
             print('This path does not exist:', cube_path)
             return
-        surface = surface.lower()
+        # surface = surface.lower()
         cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
         self.scene.SetEnvironmentTexture(cubemap)
         sphere_actor.GetProperty().SetInterpolationToPBR()
@@ -219,8 +222,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         ssao.SetKernelSize(128)
         ssao.BlurOff()
         ssao.SetDelegatePass(basic_passes)
-        glrenderer = vtk.vtkOpenGLRenderer.SafeDownCast(self.scene)
-        glrenderer.SetPass(ssao)
+        # glrenderer = vtk.vtkOpenGLRenderer.SafeDownCast(self.scene)
+        # glrenderer.SetPass(ssao)
         axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
 
