@@ -351,12 +351,3 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.m_translator,
             QtCore.QDir(self.m_lang_path).filePath("{0}.qm").format(self.m_curr_lang))
         print(self.tr("Current Language changed to {0}").format(language_name))
-
-
-if __name__ == '__main__':
-    import sys
-    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
-    app = QtWidgets.QApplication(sys.argv)
-    b = FuriousAtomsApp()
-    b.show()
-    app.exec_()
