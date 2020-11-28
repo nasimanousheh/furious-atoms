@@ -6,6 +6,7 @@ import furiousatoms
 
 from PySide2 import QtCore, QtUiTools
 import MDAnalysis
+import vtk
 
 
 def is_frozen():
@@ -95,3 +96,58 @@ def load_files(fname, debug=False):
         bonds = load_file.bonds.to_indices()
         no_bonds = len(load_file.bonds)
     return load_file, no_bonds
+
+
+def read_cubemap(folderRoot, fileRoot, ext, key):
+    """Read the cube map.
+
+    Parameters
+    ----------
+    folderRoot: str
+        The folder where the cube maps are stored.
+    fileRoot : str
+        The root of the individual cube map file names.
+    ext : str
+        The extension of the cube map files.
+    key: str
+        The key to data used to build the full file name.
+
+    Returns
+    -------
+    texture : vtkTexture
+        The cubemap texture.
+
+    """
+    # A map of cube map naming conventions and the corresponding file name
+    # components.
+    fileNames = {
+        0: ['right', 'left', 'top', 'bottom', 'front', 'back'],
+        1: ['posx', 'negx', 'posy', 'negy', 'posz', 'negz'],
+        2: ['-px', '-nx', '-py', '-ny', '-pz', '-nz'],
+        3: ['0', '1', '2', '3', '4', '5']}
+    if key in fileNames:
+        fns = fileNames[key]
+    else:
+        print('ReadCubeMap(): invalid key, unable to continue.')
+        sys.exit()
+    texture = vtk.vtkTexture()
+    texture.CubeMapOn()
+    # Build the file names.
+    for i in range(0, len(fns)):
+        fns[i] = folderRoot + fileRoot + fns[i] + ext
+        if not os.path.isfile(fns[i]):
+            print('Nonexistent texture file:', fns[i])
+            return texture
+    i = 0
+    for fn in fns:
+        # Read the images
+        readerFactory = vtk.vtkImageReader2Factory()
+        imgReader = readerFactory.CreateImageReader2(fn)
+        imgReader.SetFileName(fn)
+
+        flip = vtk.vtkImageFlip()
+        flip.SetInputConnection(imgReader.GetOutputPort())
+        flip.SetFilteredAxis(1)  # flip y axis
+        texture.SetInputConnection(i, flip.GetOutputPort(0))
+        i += 1
+    return texture
