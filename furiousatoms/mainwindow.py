@@ -229,7 +229,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.scene.add(box_actor)
         self.scene.add(line_actor)
 
-        self.scene.set_camera(position=(0, 0, 1000), focal_point=(0, 0, 0),
+        self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
     def quit_fired(self):
