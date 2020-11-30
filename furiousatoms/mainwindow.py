@@ -13,17 +13,18 @@ disable_warnings()
 # 3rd Party package
 import vtk
 import numpy as np
-from fury import window, actor, utils
+from fury import window, actor, utils, pick, ui
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
+from furiousatoms.sharedmem import SharedMemory
 
+SM = SharedMemory()
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
-    """
-
+    """ Main Furious Atoms Class
     """
 
     def __init__(self, app_path=None, parent=None):
@@ -59,8 +60,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
-        # self.actionBond.triggered.connect(delete_bonds)
-        # self.actionParticle.triggered.connect(delete_particles)
+        self.ui.actionBond.triggered.connect(self.delete_bonds)
+        self.ui.actionParticle.triggered.connect(self.delete_particles)
 
     def open(self):
         # , filter = "*.lammp*")
@@ -77,14 +78,36 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
         print('saving {}'.format(fname))
 
+    def delete_particles(self):
+        object_indices_spheres = np.where(SM.selected_particle == True)[0]
+        SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        for object_index in object_indices_spheres:
+            SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+        print('The particle is deleted')
+
+    def delete_bonds(self):
+        object_indices_bonds = np.where(SM.selected_bond == True)[0]
+        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+        for object_index_bond in object_indices_bonds:
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = object_index_bond
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+        print('The bond is deleted')
+
     def update_bonds_ui(self, load_file, no_bonds, box_shape,
                         no_unique_types_bond):
         if len(box_shape) != 3:
             msg = "Wrong Box Shape size. Should be 3"
             raise ValueError(msg)
-        n_frames = load_file.trajectory.n_frames
-        no_atoms = len(load_file.atoms)
-        no_unique_types = len(np.unique(load_file.atoms.types))
+        SM.n_frames = load_file.trajectory.n_frames
+        SM.no_atoms = len(load_file.atoms)
+        no_unique_types_particles = len(np.unique(load_file.atoms.types))
         # TODO: Update widget name
         # self.ui.dcfdLineEdit.insert(str(no_bonds))
         # self.ui.dcfdLineEdit_2.insert(str(n_frames))
@@ -92,13 +115,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # self.ui.atomTypeLineEdit.insert(str(box_shape[0]))
         # self.ui.atomTypeLineEdit_2.insert(str(box_shape[1]))
         # self.ui.atomTypeLineEdit_3.insert(str(box_shape[2]))
-        # self.ui.particleLineEdit_2.insert(str(no_unique_types))
+        # self.ui.particleLineEdit_2.insert(str(no_unique_types_particles))
         # self.ui.particleLineEdit_3.insert(str(no_unique_types_bond))
 
     def process_load_file(self, fname):
-        load_file, no_bonds = io.load_files(fname)
 
-        no_atoms = len(load_file.atoms)
+        load_file, SM.no_bonds = io.load_files(fname)
+
+        SM.no_atoms = len(load_file.atoms)
         box = load_file.trajectory.ts.dimensions
         box_lx = load_file.trajectory.ts.dimensions[0]
         box_ly = load_file.trajectory.ts.dimensions[1]
@@ -119,7 +143,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # np.unique(load_file.atoms.types)
         atom_type = load_file.atoms.types
 
-        colors = np.ones((no_atoms, 4))
+        colors = np.ones((SM.no_atoms, 4))
         pos = load_file.trajectory[0].positions.copy().astype('f8')
         #######################
         # s = load_file.universe.atoms[:]
@@ -129,39 +153,39 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         ########################
 
         unique_types_bond = 0
-        if no_bonds == 0:
+        if SM.no_bonds == 0:
             pos_R = load_file.trajectory[0].positions.copy().astype('f8')
             pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box,
                                                           backend='serial')
 
-        if no_bonds > 0:
+        if SM.no_bonds > 0:
             pos = load_file.trajectory[0].positions.copy().astype('f8')
             # if MainWindow.CheckBox.isChecked() == True:
             # load_file.delete_bonds(load_file.bonds[first_index_bond:first_index_bond+1])
             # load_file.delete_bonds(load_file.bonds.to_indices())
             bonds = load_file.bonds.to_indices()
-            no_bonds = len(load_file.bonds)
+            SM.no_bonds = len(load_file.bonds)
             first_pos_bond = pos[(bonds[:, 0])]
             second_pos_bond = pos[(bonds[:, 1])]
             bonds = np.hstack((first_pos_bond, second_pos_bond))
-            bonds = bonds.reshape((no_bonds), 2, 3)
+            bonds = bonds.reshape((SM.no_bonds), 2, 3)
             bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2,
+            SM.bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2,
                                           opacity=0.995)
-            vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
-            colors_backup_bond = vcolors_bond.copy()
-            all_vertices_bonds = utils.vertices_from_actor(bond_actor)
-            no_vertices_per_bond = len(all_vertices_bonds) / no_bonds
+            SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+            SM.colors_backup_bond = SM.vcolors_bond.copy()
+            SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
+            SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
             # initial_vertices_bonds = all_vertices_bonds.copy() - \
             #   np.repeat(bonds, no_vertices_per_bonds, axis=0)
 
-            self.scene.add(bond_actor)
+            self.scene.add(SM.bond_actor)
             unique_types_bond = np.unique(load_file.bonds.types)
             str_no_unique_types_bond = str(len(unique_types_bond))
 
         avg = np.average(pos, axis=0)
 
-        radii = 0.5 * np.ones(no_atoms)
+        radii = 0.5 * np.ones(SM.no_atoms)
         unique_types = np.unique(load_file.atoms.types)
         colors_unique_types = np.random.rand(len(unique_types), 4)
         colors_unique_types[:, 3] = 1
@@ -169,23 +193,28 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, typ in enumerate(unique_types):
             colors[atom_type == typ] = colors_unique_types[i]
 
-        selected = np.zeros(no_atoms, dtype=np.bool)
-        selected_bond = np.zeros(no_bonds, dtype=np.bool)
-        sphere_actor = actor.sphere(centers=pos,
+        SM.selected_particle = np.zeros(SM.no_atoms, dtype=np.bool)
+        SM.selected_bond = np.zeros(SM.no_bonds, dtype=np.bool)
+        SM.sphere_actor = actor.sphere(centers=pos,
                                     colors=colors,
                                     radii=radii, theta=32, phi=32)
-        all_vertices = utils.vertices_from_actor(sphere_actor)
-        no_vertices_per_sphere = len(all_vertices) / no_atoms
-        initial_vertices = all_vertices.copy() - np.repeat(pos, no_vertices_per_sphere, axis=0)
-
-        self.update_bonds_ui(load_file, no_bonds,
+        SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+        SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(pos, SM.no_vertices_per_particle, axis=0)
+        vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_all_particles = vertices_particle.shape[0]
+        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+        vertices_bond = utils.vertices_from_actor(SM.bond_actor)
+        SM.no_vertices_all_bonds = vertices_bond.shape[0]
+        SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
+        self.update_bonds_ui(load_file, SM.no_bonds,
                              box_shape=[box_lx, box_ly, box_lz],
                              no_unique_types_bond=unique_types_bond)
 
-        vcolors = utils.colors_from_actor(sphere_actor, 'colors')
-        colors_backup = vcolors.copy()
+        SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        SM.colors_backup_particles = SM.vcolors_particle.copy()
 
-        sphere_actor.GetProperty().SetInterpolationToPBR()
+        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         # Lets use a smooth metallic surface
         # Build the pipeline
         # mapper = vtk.vtkPolyDataMapper()
@@ -204,15 +233,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # surface = surface.lower()
         cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
         self.scene.SetEnvironmentTexture(cubemap)
-        sphere_actor.GetProperty().SetInterpolationToPBR()
+        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
 
         # configure the basic properties
         metallicCoefficient = 0.5  # 0
         roughnessCoefficient = 0.1  # 1
         colors_sky = vtk.vtkNamedColors()
-        sphere_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        sphere_actor.GetProperty().SetMetallic(metallicCoefficient)
-        sphere_actor.GetProperty().SetRoughness(roughnessCoefficient)
+        SM.sphere_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
+        SM.sphere_actor.GetProperty().SetMetallic(metallicCoefficient)
+        SM.sphere_actor.GetProperty().SetRoughness(roughnessCoefficient)
 
         basic_passes = vtk.vtkRenderStepsPass()
         ssao = vtk.vtkSSAOPass()
@@ -228,12 +257,59 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
 
         self.scene.add(axes_actor)
-        self.scene.add(sphere_actor)
+        self.scene.add(SM.sphere_actor)
         self.scene.add(box_actor)
         self.scene.add(line_actor)
 
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
+
+        SM.sphere_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_particle_callback)
+        SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
+
+        self.pickm = pick.PickingManager()
+
+    def left_button_press_particle_callback(self, obj, event):
+
+        event_pos = self.pickm.event_position(iren=self.showm.iren)
+        picked_info = self.pickm.pick(event_pos, self.showm.scene)
+
+        vertex_index = picked_info['vertex']
+        vertices = utils.vertices_from_actor(obj)
+        SM.no_vertices_all_particles = vertices.shape[0]
+        object_index = np.int(np.floor((vertex_index / SM.no_vertices_all_particles) * SM.no_atoms))
+
+        if not SM.selected_particle[object_index]:
+            SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
+            SM.selected_particle[object_index] = True
+        else:
+            SM.particle_color_add = SM.colors_backup_particles[object_index]
+            SM.selected_particle[object_index] = False
+
+        SM.vcolors_particle = utils.colors_from_actor(obj, 'colors')
+        SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
+        utils.update_actor(obj)
+        obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
+    def left_button_press_bond_callback(self, obj, event):
+        event_pos = self.pickm.event_position(iren=self.showm.iren)
+        picked_info = self.pickm.pick(event_pos, self.showm.scene)
+        vertex_index = picked_info['vertex']
+        vertices_bonds = utils.vertices_from_actor(obj)
+        SM.no_vertices_all_bonds = vertices_bonds.shape[0]
+        object_index_bond = np.int(np.floor((vertex_index / SM.no_vertices_all_bonds) * SM.no_bonds))
+        # Find how many vertices correspond to each object
+        if not SM.selected_bond[object_index_bond]:
+            SM.bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
+            SM.selected_bond[object_index_bond] = True
+        else:
+            SM.bond_color_add = SM.colors_backup_bond[object_index_bond]
+            SM.selected_bond[object_index_bond] = False
+
+        SM.vcolors_bond = utils.colors_from_actor(obj, 'colors')
+        SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+        utils.update_actor(obj)
+        obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
     def quit_fired(self):
         reply = QtWidgets.QMessageBox.warning(
