@@ -4,7 +4,7 @@ import numpy as np
 class SharedMemory(object):
 
     def __init__(self):
-        # self.enable_timer = True
+
         self.cnt = 0
         self.no_vertices_per_particle = 0
         self.initial_vertices_particles = 0
