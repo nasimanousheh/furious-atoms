@@ -20,6 +20,9 @@ class SharedMemory(object):
         self.selected_particle = 0
         self.sec_particle = 0
         self.no_vertices_all_particles = 0
+        self.particle_color_add = 0
+        self.colors = 0
+        self.colors_unique_types = 0
 
         self.bonds = 0
         self.bond_actor = None
