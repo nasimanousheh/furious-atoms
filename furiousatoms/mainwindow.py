@@ -62,6 +62,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
+        self.ui.Box_simulationcell.setChecked(True)
+        self.ui.Box_particles.setChecked(True)
+        self.ui.Box_bonds.setChecked(True)
+
 
     def open(self):
         # , filter = "*.lammp*")
@@ -94,7 +98,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = object_index_bond
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
@@ -170,8 +174,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             bonds = np.hstack((first_pos_bond, second_pos_bond))
             bonds = bonds.reshape((SM.no_bonds), 2, 3)
             bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2,
-                                          opacity=0.995)
+            SM.bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
             SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
@@ -274,10 +277,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
 
-        vertex_index = picked_info['vertex']
+        vertex_index_bond = picked_info['vertex']
         vertices = utils.vertices_from_actor(obj)
         SM.no_vertices_all_particles = vertices.shape[0]
-        object_index = np.int(np.floor((vertex_index / SM.no_vertices_all_particles) * SM.no_atoms))
+        object_index = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_particles) * SM.no_atoms))
 
         if not SM.selected_particle[object_index]:
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
@@ -294,10 +297,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def left_button_press_bond_callback(self, obj, event):
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
-        vertex_index = picked_info['vertex']
+        vertex_index_particle = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
         SM.no_vertices_all_bonds = vertices_bonds.shape[0]
-        object_index_bond = np.int(np.floor((vertex_index / SM.no_vertices_all_bonds) * SM.no_bonds))
+        object_index_bond = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_bonds) * SM.no_bonds))
         # Find how many vertices correspond to each object
         if not SM.selected_bond[object_index_bond]:
             SM.bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
