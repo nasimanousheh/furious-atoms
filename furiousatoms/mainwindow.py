@@ -60,11 +60,51 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
-        self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
+        self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Box_simulationcell.setChecked(True)
+
         self.ui.Box_particles.setChecked(True)
+        self.ui.Box_particles.stateChanged.connect(self.check_particles)
         self.ui.Box_bonds.setChecked(True)
+        self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
+
+
+
+    def check_particles(self, state):
+        select_all_particles = np.zeros(SM.no_atoms, dtype=np.bool)
+        object_indices_particles = np.where(select_all_particles == False)[0]
+        if (state == QtCore.Qt.Checked):
+            for object_index in object_indices_particles:
+                SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+        else:
+            SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+            for object_index in object_indices_particles:
+                SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
+
+
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+        print('All particles are deleted')
+
+    def check_bonds(self, state):
+        # if SM.no_bonds > 0:
+        select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+        object_indices_bonds = np.where(select_all_bonds == False)[0]
+        if (state == QtCore.Qt.Checked):
+            for object_index in object_indices_bonds:
+                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+        else:
+            SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+            for object_index in object_indices_bonds:
+                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+        print('All bonds are deleted')
+
 
 
     def open(self):
@@ -83,10 +123,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('saving {}'.format(fname))
 
     def delete_particles(self):
-        object_indices_spheres = np.where(SM.selected_particle == True)[0]
+        object_indices_particles = np.where(SM.selected_particle == True)[0]
+        print(object_indices_particles)
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
-        for object_index in object_indices_spheres:
+        for object_index in object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -190,11 +231,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         radii = 0.5 * np.ones(SM.no_atoms)
         unique_types = np.unique(load_file.atoms.types)
-        colors_unique_types = np.random.rand(len(unique_types), 4)
-        colors_unique_types[:, 3] = 1
+        SM.colors_unique_types = np.random.rand(len(unique_types), 4)
+        SM.colors_unique_types[:, 3] = 1
 
         for i, typ in enumerate(unique_types):
-            colors[atom_type == typ] = colors_unique_types[i]
+            colors[atom_type == typ] = SM.colors_unique_types[i]
 
         SM.selected_particle = np.zeros(SM.no_atoms, dtype=np.bool)
         SM.selected_bond = np.zeros(SM.no_bonds, dtype=np.bool)
