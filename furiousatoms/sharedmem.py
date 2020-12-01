@@ -35,3 +35,13 @@ class SharedMemory(object):
         self.all_vertices_bonds = 0
         self.sec_bond = 0
         self.no_vertices_all_bonds = 0
+
+        self.box_colors = 0
+        self.box_actor = None
+        self.vcolors_box = 0
+        self.colors_backup_box = 0
+        self.colors_line = 0
+        self.vcolors_line_actor = 0
+        self.colors_backup_line = 0
+        self.line_color_add = 0
+        self.line_actor = None
