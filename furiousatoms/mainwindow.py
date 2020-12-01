@@ -63,42 +63,38 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Box_simulationcell.setChecked(True)
+        self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
 
         self.ui.Box_particles.setChecked(True)
         self.ui.Box_particles.stateChanged.connect(self.check_particles)
         self.ui.Box_bonds.setChecked(True)
         self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
 
+    def check_simulationcell(self, state):
+        if (state == QtCore.Qt.Checked):
+            SM.line_actor.VisibilityOn()
+        else:
+            SM.line_actor.VisibilityOff()
+        utils.update_actor(SM.line_actor)
+        SM.line_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
 
 
     def check_particles(self, state):
-        select_all_particles = np.zeros(SM.no_atoms, dtype=np.bool)
-        object_indices_particles = np.where(select_all_particles == False)[0]
         if (state == QtCore.Qt.Checked):
-            for object_index in object_indices_particles:
-                SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+            SM.sphere_actor.VisibilityOn()
         else:
-            SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
-            for object_index in object_indices_particles:
-                SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
-
-
+            SM.sphere_actor.VisibilityOff()
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
         print('All particles are deleted')
 
     def check_bonds(self, state):
-        # if SM.no_bonds > 0:
-        select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
-        object_indices_bonds = np.where(select_all_bonds == False)[0]
         if (state == QtCore.Qt.Checked):
-            for object_index in object_indices_bonds:
-                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+            SM.bond_actor.VisibilityOn()
         else:
-            SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
-            for object_index in object_indices_bonds:
-                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+            SM.bond_actor.VisibilityOff()
 
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -175,14 +171,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         box_centers = np.array([[0, 0, 25]])
         box_directions = np.array([[0, 1, 0]])
-        box_colors = np.array([[255, 255, 255]])
-        box_actor = actor.box(box_centers, box_directions, box_colors,
+        SM.box_colors = np.array([[255, 255, 255, 255]])
+        box_actor = actor.box(box_centers, box_directions, SM.box_colors,
                               scales=(box_lx, box_ly, box_lz))
+        # SM.vcolors_box = utils.colors_from_actor(SM.box_actor, 'colors')
+        SM.colors_backup_box = SM.vcolors_box
         box_actor.GetProperty().SetOpacity(0.)
         box_actor.GetProperty().SetRepresentationToWireframe()
         box_actor.GetProperty().SetLineWidth(10)
 
-        line_actor, _ = box_edges(box_lx, box_ly, box_lz, colors=(0, 0, 0),
+        SM.line_actor, _ = box_edges(box_lx, box_ly, box_lz, colors=(0, 0, 0),
                                   linewidth=1, fake_tube=True)
 
         # np.unique(load_file.atoms.types)
@@ -220,12 +218,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
+            vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
+            SM.no_vertices_all_bonds = vertices_bonds.shape[0]
+            SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
+            self.update_bonds_ui(load_file, SM.no_bonds,
+                                box_shape=[box_lx, box_ly, box_lz],
+                                no_unique_types_bond=unique_types_bond)
             # initial_vertices_bonds = all_vertices_bonds.copy() - \
             #   np.repeat(bonds, no_vertices_per_bonds, axis=0)
 
             self.scene.add(SM.bond_actor)
             unique_types_bond = np.unique(load_file.bonds.types)
             str_no_unique_types_bond = str(len(unique_types_bond))
+            SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
 
         avg = np.average(pos, axis=0)
 
@@ -248,13 +253,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_all_particles = vertices_particle.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
-        vertices_bond = utils.vertices_from_actor(SM.bond_actor)
-        SM.no_vertices_all_bonds = vertices_bond.shape[0]
-        SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-        self.update_bonds_ui(load_file, SM.no_bonds,
-                             box_shape=[box_lx, box_ly, box_lz],
-                             no_unique_types_bond=unique_types_bond)
-
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
 
@@ -303,13 +301,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.scene.add(axes_actor)
         self.scene.add(SM.sphere_actor)
         self.scene.add(box_actor)
-        self.scene.add(line_actor)
-
+        self.scene.add(SM.line_actor)
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
         SM.sphere_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_particle_callback)
-        SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
+        # SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
 
         self.pickm = pick.PickingManager()
 
