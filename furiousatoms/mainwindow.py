@@ -62,13 +62,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
-        self.ui.Box_simulationcell.setChecked(True)
-        self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
 
-        self.ui.Box_particles.setChecked(True)
-        self.ui.Box_particles.stateChanged.connect(self.check_particles)
-        self.ui.Box_bonds.setChecked(True)
-        self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
+        self.ui.button_animation.setChecked(True)
 
     def check_simulationcell(self, state):
         if (state == QtCore.Qt.Checked):
@@ -95,7 +90,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.bond_actor.VisibilityOn()
         else:
             SM.bond_actor.VisibilityOff()
-
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
@@ -164,10 +158,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         load_file, SM.no_bonds = io.load_files(fname)
 
         SM.no_atoms = len(load_file.atoms)
+        if SM.no_atoms > 0:
+            self.ui.Box_particles.setChecked(True)
+            self.ui.Box_particles.stateChanged.connect(self.check_particles)
+
         box = load_file.trajectory.ts.dimensions
         box_lx = load_file.trajectory.ts.dimensions[0]
         box_ly = load_file.trajectory.ts.dimensions[1]
         box_lz = load_file.trajectory.ts.dimensions[2]
+        if box_lx > 0:
+            self.ui.Box_simulationcell.setChecked(True)
+            self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
 
         box_centers = np.array([[0, 0, 25]])
         box_directions = np.array([[0, 1, 0]])
@@ -202,6 +203,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                                           backend='serial')
 
         if SM.no_bonds > 0:
+            self.ui.Box_bonds.setChecked(True)
             pos = load_file.trajectory[0].positions.copy().astype('f8')
             # if MainWindow.CheckBox.isChecked() == True:
             # load_file.delete_bonds(load_file.bonds[first_index_bond:first_index_bond+1])
@@ -224,10 +226,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.update_bonds_ui(load_file, SM.no_bonds,
                                 box_shape=[box_lx, box_ly, box_lz],
                                 no_unique_types_bond=unique_types_bond)
-            # initial_vertices_bonds = all_vertices_bonds.copy() - \
-            #   np.repeat(bonds, no_vertices_per_bonds, axis=0)
 
             self.scene.add(SM.bond_actor)
+            self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
             unique_types_bond = np.unique(load_file.bonds.types)
             str_no_unique_types_bond = str(len(unique_types_bond))
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
