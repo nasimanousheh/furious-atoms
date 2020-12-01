@@ -63,7 +63,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
 
-        self.ui.button_animation.setChecked(True)
 
     def check_simulationcell(self, state):
         if (state == QtCore.Qt.Checked):
@@ -105,8 +104,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         self.process_load_file(fname)
-        global enable_timer
-        enable_timer = True
+        SM.enable_timer = True
 
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
@@ -140,9 +138,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if len(box_shape) != 3:
             msg = "Wrong Box Shape size. Should be 3"
             raise ValueError(msg)
-        SM.n_frames = load_file.trajectory.n_frames
-        SM.no_atoms = len(load_file.atoms)
-        no_unique_types_particles = len(np.unique(load_file.atoms.types))
+        SM.n_frames = SM.load_file.trajectory.n_frames
+        SM.no_atoms = len(SM.load_file.atoms)
+        no_unique_types_particles = len(np.unique(SM.load_file.atoms.types))
         # TODO: Update widget name
         # self.ui.dcfdLineEdit.insert(str(no_bonds))
         # self.ui.dcfdLineEdit_2.insert(str(n_frames))
@@ -155,17 +153,29 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def process_load_file(self, fname):
 
-        load_file, SM.no_bonds = io.load_files(fname)
+        SM.load_file, SM.no_bonds = io.load_files(fname)
 
-        SM.no_atoms = len(load_file.atoms)
+        file_directory, extension = os.path.splitext(fname)
+        self.ui.Edit_directory.insert(str(file_directory))
+        file_name = os.path.basename(fname)
+        self.ui.Edit_currentfile.insert(str(file_name))
+        self.ui.Edit_fileformat.insert((str(extension)).upper())
+        SM.no_atoms = len(SM.load_file.atoms)
+        SM.n_frames = SM.load_file.trajectory.n_frames
+        self.ui.Edit_number_of_frames.insert(str(SM.n_frames))
+
+
         if SM.no_atoms > 0:
             self.ui.Box_particles.setChecked(True)
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
 
-        box = load_file.trajectory.ts.dimensions
-        box_lx = load_file.trajectory.ts.dimensions[0]
-        box_ly = load_file.trajectory.ts.dimensions[1]
-        box_lz = load_file.trajectory.ts.dimensions[2]
+        SM.box = SM.load_file.trajectory.ts.dimensions
+        box_lx = SM.load_file.trajectory.ts.dimensions[0]
+        box_ly = SM.load_file.trajectory.ts.dimensions[1]
+        box_lz = SM.load_file.trajectory.ts.dimensions[2]
+        self.ui.Edit_widthX.insert(str(box_lx))
+        self.ui.Edit_lengthY.insert(str(box_ly))
+        self.ui.Edit_hightZ.insert(str(box_lz))
         if box_lx > 0:
             self.ui.Box_simulationcell.setChecked(True)
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
@@ -185,10 +195,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                   linewidth=1, fake_tube=True)
 
         # np.unique(load_file.atoms.types)
-        atom_type = load_file.atoms.types
+        atom_type = SM.load_file.atoms.types
 
         colors = np.ones((SM.no_atoms, 4))
-        pos = load_file.trajectory[0].positions.copy().astype('f8')
+        pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
         #######################
         # s = load_file.universe.atoms[:]
         # t = load_file.universe.atoms[0:1]
@@ -198,18 +208,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         unique_types_bond = 0
         if SM.no_bonds == 0:
-            pos_R = load_file.trajectory[0].positions.copy().astype('f8')
-            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, box,
+            pos_R = SM.load_file.trajectory[0].positions.copy().astype('f8')
+            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box,
                                                           backend='serial')
 
         if SM.no_bonds > 0:
             self.ui.Box_bonds.setChecked(True)
-            pos = load_file.trajectory[0].positions.copy().astype('f8')
+            pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
             # if MainWindow.CheckBox.isChecked() == True:
             # load_file.delete_bonds(load_file.bonds[first_index_bond:first_index_bond+1])
             # load_file.delete_bonds(load_file.bonds.to_indices())
-            bonds = load_file.bonds.to_indices()
-            SM.no_bonds = len(load_file.bonds)
+            bonds = SM.load_file.bonds.to_indices()
+            SM.no_bonds = len(SM.load_file.bonds)
             first_pos_bond = pos[(bonds[:, 0])]
             second_pos_bond = pos[(bonds[:, 1])]
             bonds = np.hstack((first_pos_bond, second_pos_bond))
@@ -223,20 +233,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_all_bonds = vertices_bonds.shape[0]
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-            self.update_bonds_ui(load_file, SM.no_bonds,
+            self.update_bonds_ui(SM.load_file, SM.no_bonds,
                                 box_shape=[box_lx, box_ly, box_lz],
                                 no_unique_types_bond=unique_types_bond)
 
             self.scene.add(SM.bond_actor)
             self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
-            unique_types_bond = np.unique(load_file.bonds.types)
+            unique_types_bond = np.unique(SM.load_file.bonds.types)
             str_no_unique_types_bond = str(len(unique_types_bond))
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
 
         avg = np.average(pos, axis=0)
 
         radii = 0.5 * np.ones(SM.no_atoms)
-        unique_types = np.unique(load_file.atoms.types)
+        unique_types = np.unique(SM.load_file.atoms.types)
         SM.colors_unique_types = np.random.rand(len(unique_types), 4)
         SM.colors_unique_types[:, 3] = 1
 
@@ -285,17 +295,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
         SM.sphere_actor.GetProperty().SetMetallic(metallicCoefficient)
         SM.sphere_actor.GetProperty().SetRoughness(roughnessCoefficient)
-
-        basic_passes = vtk.vtkRenderStepsPass()
-        ssao = vtk.vtkSSAOPass()
-        sceneSize = 2000
-        ssao.SetRadius(0.1 * sceneSize)
-        ssao.SetBias(0.001 * sceneSize)
-        ssao.SetKernelSize(128)
-        ssao.BlurOff()
-        ssao.SetDelegatePass(basic_passes)
-        # glrenderer = vtk.vtkOpenGLRenderer.SafeDownCast(self.scene)
-        # glrenderer.SetPass(ssao)
         axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
 
@@ -307,9 +306,42 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                               view_up=(0, 1, 0))
 
         SM.sphere_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_particle_callback)
-        # SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
 
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.timer_callback)
+        duration = 200
+        self.timer.start(duration)
+        # Timer_animation
+        # self.showm.add_timer_callback(True, 1, self.timer_callback)
         self.pickm = pick.PickingManager()
+
+    SM.enable_timer = False
+
+    def timer_callback(self):
+        # print('number of frames: ' ,SM.n_frames)
+        SM.cnt += 1
+        if SM.enable_timer is False:
+            return
+        if SM.cnt == SM.n_frames:
+            return
+        if SM.n_frames > 0:
+            self.ui.button_animation.setChecked(True)
+            pos_R = SM.load_file.trajectory[SM.cnt].positions.copy().astype('f8')
+            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
+            SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
+                np.repeat(pos, SM.no_vertices_per_particle, axis=0)
+            utils.update_actor(SM.sphere_actor)
+        self.qvtkwidget.GetRenderWindow().Render()
+            # MainWindow.Timer.setRange(SM.cnt, n_frames)
+            # str_cnt = str(SM.cnt)
+            # MainWindow.horizontalSlider.setMinimum(0)
+            # MainWindow.horizontalSlider.setMaximum(n_frames)
+            # MainWindow.horizontalSlider.setSingleStep(1)
+            # MainWindow.horizontalSlider.setValue(SM.cnt)
+            # MainWindow.horizontalSlider.setTickInterval(1)
+
+
+
 
     def left_button_press_particle_callback(self, obj, event):
 
