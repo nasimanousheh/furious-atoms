@@ -215,9 +215,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.no_bonds > 0:
             self.ui.Box_bonds.setChecked(True)
             pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
-            # if MainWindow.CheckBox.isChecked() == True:
-            # load_file.delete_bonds(load_file.bonds[first_index_bond:first_index_bond+1])
-            # load_file.delete_bonds(load_file.bonds.to_indices())
             bonds = SM.load_file.bonds.to_indices()
             SM.no_bonds = len(SM.load_file.bonds)
             first_pos_bond = pos[(bonds[:, 0])]
@@ -230,6 +227,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
+            SM.initial_vertices_bonds = SM.all_vertices_bonds.copy() - np.repeat(pos, SM.no_vertices_per_bond, axis=0)
+
             vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_all_bonds = vertices_bonds.shape[0]
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
@@ -319,28 +318,33 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def timer_callback(self):
         # print('number of frames: ' ,SM.n_frames)
-        SM.cnt += 1
         if SM.enable_timer is False:
             return
         if SM.cnt == SM.n_frames:
             return
-        if SM.n_frames > 0:
-            self.ui.button_animation.setChecked(True)
+        if SM.n_frames > 1:
+            # self.ui.button_animation.setChecked(True)
             pos_R = SM.load_file.trajectory[SM.cnt].positions.copy().astype('f8')
             pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
+
+            # SM.all_vertices_bonds[:] = SM.initial_vertices_bonds + \
+            #     np.repeat(pos, SM.no_vertices_per_bond, axis=0)
+            # utils.update_actor(SM.bond_actor)
+            # self.timer = QtCore.QTimer()
+            # self.Timer.setRange(SM.cnt, SM.n_frames)
+            # if (self.ui.Button_play.isClicked()):
+        # self.ui.Edit_framenumber.insert(str(SM.cnt))
+        self.ui.horizontalSlider_animation.setMinimum(0)
+        self.ui.horizontalSlider_animation.setMaximum(SM.n_frames)
+        self.ui.horizontalSlider_animation.setSingleStep(1)
+        self.ui.horizontalSlider_animation.setValue(SM.cnt)
+        self.ui.horizontalSlider_animation.setTickInterval(1)
+# Timer_animation
         self.qvtkwidget.GetRenderWindow().Render()
-            # MainWindow.Timer.setRange(SM.cnt, n_frames)
-            # str_cnt = str(SM.cnt)
-            # MainWindow.horizontalSlider.setMinimum(0)
-            # MainWindow.horizontalSlider.setMaximum(n_frames)
-            # MainWindow.horizontalSlider.setSingleStep(1)
-            # MainWindow.horizontalSlider.setValue(SM.cnt)
-            # MainWindow.horizontalSlider.setTickInterval(1)
-
-
+        SM.cnt += 1
 
 
     def left_button_press_particle_callback(self, obj, event):
