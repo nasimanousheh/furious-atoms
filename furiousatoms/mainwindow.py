@@ -227,7 +227,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
-            SM.initial_vertices_bonds = SM.all_vertices_bonds.copy() - np.repeat(pos, SM.no_vertices_per_bond, axis=0)
+            # SM.initial_vertices_bonds = SM.all_vertices_bonds.copy() - np.repeat(pos, SM.no_vertices_per_bond, axis=0)
 
             vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
             SM.no_vertices_all_bonds = vertices_bonds.shape[0]
