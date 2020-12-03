@@ -62,6 +62,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
+        self.ui.Button_bondcolor.clicked.connect(self.openColorDialog)
 
 
     def check_simulationcell(self, state):
@@ -95,7 +96,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('All bonds are deleted')
 
 
-
     def open(self):
         # , filter = "*.lammp*")
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
@@ -106,9 +106,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.process_load_file(fname)
         SM.enable_timer = True
 
+
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
         print('saving {}'.format(fname))
+
 
     def delete_particles(self):
         object_indices_particles = np.where(SM.selected_particle == True)[0]
@@ -122,6 +124,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.qvtkwidget.GetRenderWindow().Render()
         print('The particle is deleted')
 
+
     def delete_bonds(self):
         object_indices_bonds = np.where(SM.selected_bond == True)[0]
         SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
@@ -132,6 +135,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
         print('The bond is deleted')
+
+
+    def openColorDialog(self):
+        selected_color = QtWidgets.QColorDialog.getColor()
+        select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+        object_indices_bonds = np.where(select_all_bonds == False)[0]
+        for object_index in object_indices_bonds:
+            SM.bond_color_add = selected_color.getRgb()
+            SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
 
     def update_bonds_ui(self, load_file, no_bonds, box_shape,
                         no_unique_types_bond):
@@ -221,8 +237,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             second_pos_bond = pos[(bonds[:, 1])]
             bonds = np.hstack((first_pos_bond, second_pos_bond))
             bonds = bonds.reshape((SM.no_bonds), 2, 3)
-            bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.bond_actor = actor.streamtube(bonds, bond_colors, linewidth=0.2)
+            SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
+            SM.bond_actor = actor.streamtube(bonds, SM.bond_colors, linewidth=0.2)
             SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
