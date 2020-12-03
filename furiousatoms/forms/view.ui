@@ -282,7 +282,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -728,122 +728,47 @@ alternate-background-color: rgb(255, 255, 255);</string>
 alternate-background-color: rgb(255, 255, 255);</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="4" column="1" colspan="3">
-               <widget class="QLineEdit" name="LineEdit_name_of_particle_type">
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
+              <item row="7" column="2" colspan="2">
+               <widget class="QComboBox" name="comboBox_particleshape">
+                <property name="duplicatesEnabled">
                  <bool>true</bool>
                 </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_radius">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Radius:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QLineEdit" name="Edit_num_of_particletypes">
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_particletypename">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Name:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="4">
-               <widget class="QLabel" name="label_particleproperties">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>15</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(204, 204, 204);</string>
-                </property>
-                <property name="text">
-                 <string>Particle properties</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_particlecolor">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="1" colspan="3">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="text">
-                 <string>PushButton</string>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" colspan="3">
-               <widget class="QLabel" name="label_num_of_particletypes">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Number of particle types:</string>
-                </property>
+                <item>
+                 <property name="text">
+                  <string>Sphere</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../image-icons/shape/sphere.png</normaloff>../image-icons/shape/sphere.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Cone</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../image-icons/shape/Cone.png</normaloff>../image-icons/shape/Cone.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Cube</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Arrow</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>../image-icons/shape/arrow.png</normaloff>../image-icons/shape/arrow.png</iconset>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="2" column="0" colspan="4">
@@ -934,51 +859,136 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </widget>
               </item>
-              <item row="7" column="2" colspan="2">
-               <widget class="QComboBox" name="comboBox_particleshape">
-                <property name="duplicatesEnabled">
+              <item row="1" column="3">
+               <widget class="QLineEdit" name="Edit_num_of_particletypes">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
                  <bool>true</bool>
                 </property>
-                <item>
-                 <property name="text">
-                  <string>Sphere</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/sphere.png</normaloff>../image-icons/shape/sphere.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cone</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/Cone.png</normaloff>../image-icons/shape/Cone.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cube</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Arrow</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/arrow.png</normaloff>../image-icons/shape/arrow.png</iconset>
-                 </property>
-                </item>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="1" colspan="3">
+               <widget class="QPushButton" name="Button_particlecolor">
+                <property name="text">
+                 <string>PushButton</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="1" colspan="3">
+               <widget class="QLineEdit" name="LineEdit_name_of_particle_type">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_radius">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Radius:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_particlecolor">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="3">
+               <widget class="QLabel" name="label_num_of_particletypes">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Number of particle types:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="4">
+               <widget class="QLabel" name="label_particleproperties">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>15</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>Arial</family>
+                  <pointsize>12</pointsize>
+                  <weight>75</weight>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(204, 204, 204);</string>
+                </property>
+                <property name="text">
+                 <string>Particle properties</string>
+                </property>
+               </widget>
+              </item>
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_particletypename">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Name:</string>
+                </property>
                </widget>
               </item>
               <item row="5" column="1" colspan="3">
-               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius"/>
+               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+               </widget>
               </item>
              </layout>
             </widget>
