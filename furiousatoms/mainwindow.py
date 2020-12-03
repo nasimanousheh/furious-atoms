@@ -62,7 +62,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
-        self.ui.Button_bondcolor.clicked.connect(self.openColorDialog)
+        self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
+        self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
 
 
     def check_simulationcell(self, state):
@@ -136,13 +137,26 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.qvtkwidget.GetRenderWindow().Render()
         print('The bond is deleted')
 
+    def openColorDialog_particle(self):
+        selected_color_particle = QtWidgets.QColorDialog.getColor()
+        select_all_particles = np.zeros(SM.no_atoms, dtype=np.bool)
+        object_indices_particles = np.where(select_all_particles == False)[0]
+        for object_index in object_indices_particles:
+            SM.particle_color_add = selected_color_particle.getRgb()
+            SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
 
-    def openColorDialog(self):
-        selected_color = QtWidgets.QColorDialog.getColor()
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+
+
+
+    def openColorDialog_bond(self):
+        selected_color_bond = QtWidgets.QColorDialog.getColor()
         select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
         object_indices_bonds = np.where(select_all_bonds == False)[0]
         for object_index in object_indices_bonds:
-            SM.bond_color_add = selected_color.getRgb()
+            SM.bond_color_add = selected_color_bond.getRgb()
             SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
 
         utils.update_actor(SM.bond_actor)
