@@ -9,11 +9,11 @@ class SharedMemory(object):
         self.enable_timer = None
         self.load_file = None
         self.no_vertices_per_particle = 0
-        self.initial_vertices_particles = 0
+        self.initial_vertices_particles = np.array([0, 0, 0.])
         self.n_frames = 0
-        self.pos = 0
+        self.pos = None
         self.sphere_actor = None
-        self.all_vertices_particles = 0
+        self.all_vertices_particles = np.array([0, 0, 0.])
         self.box = None
         self.MainWindow = 0
         self.no_atoms = 0
@@ -29,6 +29,8 @@ class SharedMemory(object):
         self.radii_spheres = 0
         self.radii_unique_types = 0
         self.colors_particles = 0
+        self.set_value_radius = 0
+
 
         self.bonds = 0
         self.bond_actor = None
@@ -41,6 +43,8 @@ class SharedMemory(object):
         self.all_vertices_bonds = 0
         self.sec_bond = 0
         self.no_vertices_all_bonds = 0
+        self.bond_pos = 0
+        self.line_thickness = 0
 
         self.box_colors = 0
         self.box_actor = None
@@ -51,3 +55,6 @@ class SharedMemory(object):
         self.colors_backup_line = 0
         self.line_color_add = 0
         self.line_actor = None
+        self.file_directory = None
+        self.extension = None
+        self.file_name = None
