@@ -30,6 +30,7 @@ class SharedMemory(object):
         self.radii_unique_types = 0
         self.colors_particles = 0
         self.set_value_radius = 0
+        self.unique_types = None
 
 
         self.bonds = 0
@@ -45,7 +46,7 @@ class SharedMemory(object):
         self.no_vertices_all_bonds = 0
         self.bond_pos = 0
         self.line_thickness = 0
-
+        self.atom_type = None
         self.box_colors = 0
         self.box_actor = None
         self.vcolors_box = 0
@@ -58,3 +59,4 @@ class SharedMemory(object):
         self.file_directory = None
         self.extension = None
         self.file_name = None
+        self.center_bond = None
