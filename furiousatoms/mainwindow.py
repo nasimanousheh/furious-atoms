@@ -64,7 +64,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
-        self.ui.SpinBox_atom_radius.textChanged.connect(self.change_particle_size)
+        # self.ui.SpinBox_atom_radius.textChanged.connect(self.change_particle_size)
         # self.ui.SpinBox_bond_thickness.textChanged.connect(self.change_bond_thickness)
 
 
@@ -99,7 +99,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         self.qvtkwidget.GetRenderWindow().Render()
 
-
     def check_simulationcell(self, state):
         if (state == QtCore.Qt.Checked):
             SM.line_actor.VisibilityOn()
@@ -108,7 +107,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.line_actor)
         SM.line_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-
 
     def check_particles(self, state):
         if (state == QtCore.Qt.Checked):
@@ -137,7 +135,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         self.process_load_file(fname)
         SM.enable_timer = True
-
 
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
@@ -170,16 +167,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def openColorDialog_particle(self):
         selected_color_particle = QtWidgets.QColorDialog.getColor()
-        select_all_particles = np.zeros(SM.no_atoms, dtype=np.bool)
-        object_indices_particles = np.where(select_all_particles == False)[0]
-        for object_index in object_indices_particles:
-            SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
-            SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+        for i, atom_typ in enumerate(SM.unique_types):
+
+            if self.h_box.itemAt(i).wid.isChecked():
+                print(i, atom_typ, 'checked')
+
+                object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
+
+                for object_index in object_indices_particles:
+                    SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
+                    SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-
-
 
     def openColorDialog_bond(self):
         selected_color_bond = QtWidgets.QColorDialog.getColor()
@@ -243,7 +244,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                   linewidth=1, fake_tube=True)
 
         # np.unique(load_file.atoms.types)
-        atom_type = SM.load_file.atoms.types
+        SM.atom_type = SM.load_file.atoms.types
+        # if (len(SM.atom_type) > 0):
         SM.pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
         #######################
         # s = load_file.universe.atoms[:]
@@ -283,25 +285,36 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
-        unique_types = np.unique(SM.load_file.atoms.types)
-        SM.colors_unique_types = np.random.rand(len(unique_types), 4)
+        SM.unique_types = np.unique(SM.load_file.atoms.types)
+        print(SM.unique_types)
+        SM.colors_unique_types = np.random.rand(len(SM.unique_types), 4)
         SM.colors_unique_types[:, 3] = 1
-
-        for i, typ in enumerate(unique_types):
-            colors[atom_type == typ] = SM.colors_unique_types[i]
+        num = 1
+        for i, typ in enumerate(SM.unique_types):
+            colors[SM.atom_type == typ] = SM.colors_unique_types[i]
 
         SM.radii_spheres = np.ones((SM.no_atoms))
-        SM.radii_unique_types = np.random.rand(len(unique_types))
-        for i, typ in enumerate(unique_types):
-            SM.radii_spheres[atom_type == typ] = SM.radii_unique_types[i]
-            SM.set_value_radius = SM.radii_spheres[atom_type == typ][0]
+        SM.radii_unique_types = np.random.rand(len(SM.unique_types))
+        ##############Should be moved to up
+        self.toggles = []
+        self.lay = QtWidgets.QVBoxLayout()
+        self.h_box = QtWidgets.QGridLayout()
+        for i, typ in enumerate(SM.unique_types):
+            SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
+            SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            self.ui.btn = QtWidgets.QRadioButton(str(typ) , self)
+            self.ui.scrollArea_all_types_of_prticles.setLayout(self.lay)
+            print(self.ui.btn.text())
+            num = num + 1
+            self.h_box.addWidget(self.ui.btn,i,1,1,1)
+        self.lay.addLayout(self.h_box)
+        ########################
 
         SM.selected_particle = np.zeros(SM.no_atoms, dtype=np.bool)
         SM.selected_bond = np.zeros(SM.no_bonds, dtype=np.bool)
         SM.sphere_actor = actor.sphere(centers=SM.pos,
                                     colors=colors,
                                     radii=SM.radii_spheres, theta=32, phi=32)
-
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
