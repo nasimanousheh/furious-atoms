@@ -719,6 +719,20 @@ alternate-background-color: rgb(255, 255, 255);</string>
           </attribute>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
+            <widget class="QLabel" name="label_particleproperties">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Particle Properties</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QWidget" name="widget_particleproperties" native="true">
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -728,7 +742,56 @@ alternate-background-color: rgb(255, 255, 255);</string>
 alternate-background-color: rgb(255, 255, 255);</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="7" column="2" colspan="2">
+              <item row="2" column="4" colspan="2">
+               <spacer name="horizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>378</width>
+                  <height>17</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_num_of_particletypes">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Number of particle types:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QPushButton" name="Button_particlecolor">
+                <property name="text">
+                 <string>PushButton</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="11" column="1">
                <widget class="QComboBox" name="comboBox_particleshape">
                 <property name="duplicatesEnabled">
                  <bool>true</bool>
@@ -771,95 +834,20 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </item>
                </widget>
               </item>
-              <item row="2" column="0" colspan="4">
-               <widget class="QScrollArea" name="scrollArea_all_types_of_prticles">
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);
-</string>
+              <item row="10" column="1">
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="frameShape">
-                 <enum>QFrame::HLine</enum>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
                 </property>
-                <property name="frameShadow">
-                 <enum>QFrame::Raised</enum>
-                </property>
-                <property name="widgetResizable">
-                 <bool>true</bool>
-                </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents">
-                 <property name="geometry">
-                  <rect>
-                   <x>0</x>
-                   <y>0</y>
-                   <width>536</width>
-                   <height>236</height>
-                  </rect>
-                 </property>
-                 <layout class="QFormLayout" name="formLayout">
-                  <item row="0" column="0">
-                   <widget class="QPushButton" name="Button_particletype1">
-                    <property name="text">
-                     <string>Type</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="1">
-                   <widget class="QLineEdit" name="Edit_particletype1">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0">
-                   <widget class="QPushButton" name="Button_particletype2">
-                    <property name="text">
-                     <string>Type</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1">
-                   <widget class="QLineEdit" name="Edit_particletype2">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="0">
-                   <widget class="QPushButton" name="Button_particletype3">
-                    <property name="text">
-                     <string>Type</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="2" column="1">
-                   <widget class="QLineEdit" name="Edit_particletype3">
-                    <property name="enabled">
-                     <bool>false</bool>
-                    </property>
-                    <property name="frame">
-                     <bool>false</bool>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </widget>
+               </spacer>
               </item>
-              <item row="7" column="0" colspan="2">
-               <widget class="QLabel" name="Label_particleshape">
-                <property name="text">
-                 <string>Particle Shape:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
+              <item row="0" column="1">
                <widget class="QLineEdit" name="Edit_num_of_particletypes">
                 <property name="autoFillBackground">
                  <bool>false</bool>
@@ -875,18 +863,142 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </widget>
               </item>
-              <item row="6" column="1" colspan="3">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="text">
-                 <string>PushButton</string>
+              <item row="11" column="0">
+               <widget class="QLabel" name="Label_particleshape">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
                 </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
+                <property name="text">
+                 <string>Particle Shape:</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="1" colspan="3">
+              <item row="5" column="1">
+               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+                <property name="acceptDrops">
+                 <bool>true</bool>
+                </property>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                </property>
+                <property name="decimals">
+                 <number>5</number>
+                </property>
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0">
+               <widget class="QScrollArea" name="scrollArea_all_types_of_prticles">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(255, 255, 255);
+alternate-background-color: rgb(255, 255, 255);
+</string>
+                </property>
+                <property name="frameShape">
+                 <enum>QFrame::HLine</enum>
+                </property>
+                <property name="frameShadow">
+                 <enum>QFrame::Raised</enum>
+                </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOn</enum>
+                </property>
+                <property name="widgetResizable">
+                 <bool>true</bool>
+                </property>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>124</width>
+                   <height>113</height>
+                  </rect>
+                 </property>
+                 <layout class="QFormLayout" name="formLayout">
+                  <item row="0" column="1">
+                   <widget class="QLabel" name="label_Particletype1">
+                    <property name="autoFillBackground">
+                     <bool>false</bool>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_Particletype2">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="label_Particletype3">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLabel" name="label_Particletype4">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QLabel" name="label_Particletype5">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+              <item row="4" column="1">
+               <spacer name="verticalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_particlecolor">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
                <widget class="QLineEdit" name="LineEdit_name_of_particle_type">
+                <property name="acceptDrops">
+                 <bool>false</bool>
+                </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
@@ -914,57 +1026,7 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </widget>
               </item>
-              <item row="6" column="0">
-               <widget class="QLabel" name="label_particlecolor">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" colspan="3">
-               <widget class="QLabel" name="label_num_of_particletypes">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Number of particle types:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="4">
-               <widget class="QLabel" name="label_particleproperties">
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>15</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <family>Arial</family>
-                  <pointsize>12</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: rgb(204, 204, 204);</string>
-                </property>
-                <property name="text">
-                 <string>Particle properties</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
+              <item row="3" column="0">
                <widget class="QLabel" name="label_particletypename">
                 <property name="font">
                  <font>
@@ -977,27 +1039,31 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </widget>
               </item>
-              <item row="5" column="1" colspan="3">
-               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
-                <property name="acceptDrops">
-                 <bool>true</bool>
+              <item row="0" column="5">
+               <spacer name="horizontalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
                 </property>
-                <property name="correctionMode">
-                 <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>258</width>
+                  <height>20</height>
+                 </size>
                 </property>
-                <property name="decimals">
-                 <number>5</number>
+               </spacer>
+              </item>
+              <item row="14" column="2">
+               <spacer name="verticalSpacer_7">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="minimum">
-                 <double>0.010000000000000</double>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>68</height>
+                 </size>
                 </property>
-                <property name="singleStep">
-                 <double>0.100000000000000</double>
-                </property>
-                <property name="value">
-                 <double>1.000000000000000</double>
-                </property>
-               </widget>
+               </spacer>
               </item>
              </layout>
             </widget>
