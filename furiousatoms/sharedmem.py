@@ -31,6 +31,8 @@ class SharedMemory(object):
         self.colors_particles = 0
         self.set_value_radius = 0
         self.unique_types = None
+        self.metallicCoefficient_particle = 0
+        self.roughnessCoefficient_particle =0
 
 
         self.bonds = 0
