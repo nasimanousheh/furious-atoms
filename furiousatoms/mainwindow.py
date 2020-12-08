@@ -67,27 +67,43 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # self.ui.SpinBox_atom_radius.textChanged.connect(self.change_particle_size)
         # self.ui.tabWidget.clicked.connect(self.change_particle_size)
         # self.ui.SpinBox_bond_thickness.textChanged.connect(self.change_bond_thickness)
+        # self.ui.horizontalSlider_metallicity_particle.setValue(int(SM.metallicCoefficient_particle*100))
         self.ui.horizontalSlider_metallicity_particle.valueChanged[int].connect(self.metallicity_particle)
-        # self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
+        self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
 
     def metallicity_particle(self, metallicity_degree_particle):
+        for i, atom_typ in enumerate(SM.unique_types):
 
-        metallicCoefficient_particle = metallicity_degree_particle/100
+            if self.h_box.itemAt(i).wid.isChecked():
+                print(i, atom_typ, 'checked')
+
+                object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
+
+                for object_index in object_indices_particles:
+                    SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
+                    SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+
+        SM.metallicCoefficient_particle = metallicity_degree_particle/100
         roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
-        SM.sphere_actor.GetProperty().SetMetallic(metallicCoefficient_particle)
+        SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
         SM.sphere_actor.GetProperty().SetRoughness(roughnessCoefficient_particle)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         self.qvtkwidget.GetRenderWindow().Render()
 
-    # def metallicity_bond(self, metallicity_degree_bond):
-    #     metallicCoefficient_bond = metallicity_degree_bond/100
-    #     roughnessCoefficient_bond = 1.0 - metallicity_degree_bond/100
-    #     SM.bond_actor.GetProperty().SetMetallic(metallicCoefficient_bond)
-    #     SM.bond_actor.GetProperty().SetRoughness(roughnessCoefficient_bond)
-    #     utils.update_actor(SM.bond_actor)
-    #     SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-    #     self.qvtkwidget.GetRenderWindow().Render()
+
+    def metallicity_bond(self, metallicity_degree_bond):
+        metallicCoefficient_bond = metallicity_degree_bond/100
+        roughnessCoefficient_bond = 1.0 - metallicity_degree_bond/100
+        SM.bond_actor.GetProperty().SetMetallic(metallicCoefficient_bond)
+        SM.bond_actor.GetProperty().SetRoughness(roughnessCoefficient_bond)
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
 
 
     def change_particle_size(self, selected_value_radius):
@@ -230,12 +246,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.no_atoms > 0:
             self.ui.Box_particles.setChecked(True)
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
+            self.ui.Edit_num_of_particles.insert(str(SM.no_atoms))
+            self.ui.Edit_num_of_particle_types.insert(str(len(SM.unique_types)))
         if ((SM.box_lx > 0) or (SM.box_ly > 0) or (SM.box_lz > 0)):
             self.ui.Box_simulationcell.setChecked(True)
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
         if SM.no_bonds > 0:
             self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
 
+        self.ui.Edit_num_of_bonds.insert(str(SM.no_bonds))
         self.ui.Edit_widthX.insert(str(SM.box_lx))
         self.ui.Edit_lengthY.insert(str(SM.box_ly))
         self.ui.Edit_hightZ.insert(str(SM.box_lz))
@@ -386,20 +405,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.scene.SetEnvironmentTexture(cubemap)
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
 
-        # configure the basic properties
-        metallicCoefficient = 0.5  # 0
-        roughnessCoefficient = 0.1  # 1
+        SM.metallicCoefficient_particle = 0.5  # 0
+        SM.roughnessCoefficient_particle = 0.1  # 1
         colors_sky = vtk.vtkNamedColors()
         SM.sphere_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        SM.sphere_actor.GetProperty().SetMetallic(metallicCoefficient)
-        SM.sphere_actor.GetProperty().SetRoughness(roughnessCoefficient)
+        SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
+        SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
         axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
 
         if (SM.no_bonds > 0):
             SM.bond_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-            SM.bond_actor.GetProperty().SetMetallic(metallicCoefficient)
-            SM.bond_actor.GetProperty().SetRoughness(roughnessCoefficient)
+            SM.bond_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
+            SM.bond_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
             self.scene.add(SM.bond_actor)
 
         self.scene.add(axes_actor)
@@ -411,8 +429,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         SM.sphere_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_particle_callback)
         self.update_bonds_ui()
-
-
 
         # if self.ui.button_animation.isChecked():
         self.timer = QtCore.QTimer()
@@ -473,10 +489,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def left_button_press_bond_callback(self, obj, event):
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
-        vertex_index_particle = picked_info['vertex']
+        vertex_index_bond = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
         SM.no_vertices_all_bonds = vertices_bonds.shape[0]
-        object_index_bond = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_bonds) * SM.no_bonds))
+        object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * SM.no_bonds))
         # Find how many vertices correspond to each object
         if not SM.selected_bond[object_index_bond]:
             SM.bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
