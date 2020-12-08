@@ -59,4 +59,6 @@ class SharedMemory(object):
         self.file_directory = None
         self.extension = None
         self.file_name = None
+        self.unique_types_bond = 0
         self.center_bond = None
+        self.bond_type = None
