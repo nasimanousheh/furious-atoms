@@ -257,7 +257,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -708,6 +708,19 @@ alternate-background-color: rgb(255, 255, 255);</string>
             </widget>
            </item>
            <item>
+            <spacer name="horizontalSpacer_4">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>258</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
             <widget class="QWidget" name="widget_particleproperties" native="true">
              <property name="layoutDirection">
               <enum>Qt::LeftToRight</enum>
@@ -717,18 +730,148 @@ alternate-background-color: rgb(255, 255, 255);</string>
 alternate-background-color: rgb(255, 255, 255);</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="15" column="2">
-               <spacer name="verticalSpacer_7">
+              <item row="8" column="1">
+               <spacer name="verticalSpacer_6">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>17</width>
-                  <height>68</height>
+                  <width>20</width>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_choose_type_of_particle">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Choose a type of particle:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_num_of_particles">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Number of particles:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="Edit_num_of_particles">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_particlecolor">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="13" column="1">
+               <spacer name="verticalSpacer_8">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>18</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="9" column="1">
+               <widget class="QSlider" name="horizontalSlider_metallicity_particle">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="tickPosition">
+                 <enum>QSlider::TicksBothSides</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_radius">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Radius:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="11" column="1">
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="15" column="0">
+               <widget class="QLabel" name="Label_particleshape">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Particle Shape:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QPushButton" name="Button_particlecolor">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Change color</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
               </item>
               <item row="15" column="1">
                <widget class="QComboBox" name="comboBox_particleshape">
@@ -773,42 +916,6 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </item>
                </widget>
               </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_particlecolor">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="1">
-               <widget class="QSlider" name="horizontalSlider_metallicity_particle">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBothSides</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_radius">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Radius:</string>
-                </property>
-               </widget>
-              </item>
               <item row="9" column="0">
                <widget class="QLabel" name="label_metallicity_particle">
                 <property name="font">
@@ -817,79 +924,46 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Metalicity</string>
+                 <string>Metallicity</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="4" colspan="2">
-               <spacer name="horizontalSpacer">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>378</width>
-                  <height>17</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_num_of_particletypes">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Number of particle types:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="1">
-               <spacer name="verticalSpacer_6">
+              <item row="15" column="2">
+               <spacer name="verticalSpacer_7">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>20</width>
-                  <height>40</height>
+                  <width>17</width>
+                  <height>68</height>
                  </size>
                 </property>
                </spacer>
               </item>
-              <item row="11" column="1">
-               <spacer name="verticalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="Edit_num_of_particletypes">
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
+              <item row="12" column="1">
+               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+                <property name="acceptDrops">
                  <bool>true</bool>
                 </property>
-                <property name="readOnly">
-                 <bool>true</bool>
+                <property name="correctionMode">
+                 <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                </property>
+                <property name="decimals">
+                 <number>5</number>
+                </property>
+                <property name="minimum">
+                 <double>0.010000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>0.100000000000000</double>
+                </property>
+                <property name="value">
+                 <double>1.000000000000000</double>
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
+              <item row="3" column="0">
                <widget class="QScrollArea" name="scrollArea_all_types_of_prticles">
                 <property name="styleSheet">
                  <string notr="true">background-color: rgb(255, 255, 255);
@@ -914,7 +988,7 @@ alternate-background-color: rgb(255, 255, 255);
                    <x>0</x>
                    <y>0</y>
                    <width>126</width>
-                   <height>114</height>
+                   <height>120</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -973,73 +1047,203 @@ alternate-background-color: rgb(255, 255, 255);
                 </widget>
                </widget>
               </item>
-              <item row="0" column="5">
-               <spacer name="horizontalSpacer_4">
+              <item row="5" column="2">
+               <spacer name="horizontalSpacer">
                 <property name="orientation">
                  <enum>Qt::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
-                  <width>258</width>
-                  <height>20</height>
+                  <width>378</width>
+                  <height>17</height>
                  </size>
                 </property>
                </spacer>
               </item>
-              <item row="15" column="0">
-               <widget class="QLabel" name="Label_particleshape">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
+              <item row="2" column="1" rowspan="2">
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="text">
-                 <string>Particle Shape:</string>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>188</height>
+                 </size>
                 </property>
-               </widget>
+               </spacer>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="label">
+               <widget class="QLabel" name="label_num_of_particletypes">
                 <property name="font">
                  <font>
+                  <family>.SF NS Text</family>
                   <pointsize>10</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Choose a type of particle:</string>
+                 <string>Number of particle types:</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Change color</string>
-                </property>
-                <property name="autoRepeat">
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="Edit_num_of_particle_types">
+                <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
                </widget>
               </item>
-              <item row="13" column="1">
-               <spacer name="verticalSpacer_8">
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="bond_tab">
+          <attribute name="title">
+           <string>Bond</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label_bondproperties">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string>Bond Properties</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_7">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>258</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QWidget" name="widget_bondproperties_2" native="true">
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
+alternate-background-color: rgb(255, 255, 255);</string>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_6">
+              <item row="5" column="1">
+               <spacer name="verticalSpacer_12">
                 <property name="orientation">
                  <enum>Qt::Vertical</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
                   <width>20</width>
-                  <height>18</height>
+                  <height>40</height>
                  </size>
                 </property>
                </spacer>
               </item>
-              <item row="12" column="1">
-               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_num_of_bonds">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Number of bonds:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="6" column="0">
+               <widget class="QLabel" name="label_metallicity_bond">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Metallicity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="2">
+               <spacer name="verticalSpacer_9">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>68</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="8" column="0">
+               <widget class="QLabel" name="label_thickness">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Thickness:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="7" column="1">
+               <spacer name="verticalSpacer_10">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="0" column="1">
+               <widget class="QLineEdit" name="Edit_num_of_bonds">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="8" column="1">
+               <widget class="QDoubleSpinBox" name="SpinBox_bond_thickness">
                 <property name="acceptDrops">
                  <bool>true</bool>
                 </property>
@@ -1060,25 +1264,69 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </widget>
               </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="bond_tab">
-          <attribute name="title">
-           <string>Bond</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QWidget" name="widget_bondproperties" native="true">
-             <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_5">
-              <item row="2" column="0" colspan="2">
-               <widget class="QScrollArea" name="scrollArea_Particle_Types_2">
+              <item row="4" column="0">
+               <widget class="QLabel" name="label_bondcolor">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="12" column="1">
+               <spacer name="verticalSpacer_11">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="6" column="1">
+               <widget class="QSlider" name="horizontalSlider_metallicity_bond">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="tickPosition">
+                 <enum>QSlider::TicksBothSides</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="1" rowspan="2">
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>188</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_choose_type_of_bond">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Choose a type of bond:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QScrollArea" name="scrollArea_all_types_of_bonds">
                 <property name="styleSheet">
                  <string notr="true">background-color: rgb(255, 255, 255);
 alternate-background-color: rgb(255, 255, 255);
@@ -1090,342 +1338,168 @@ alternate-background-color: rgb(255, 255, 255);
                 <property name="frameShadow">
                  <enum>QFrame::Raised</enum>
                 </property>
+                <property name="verticalScrollBarPolicy">
+                 <enum>Qt::ScrollBarAlwaysOn</enum>
+                </property>
                 <property name="widgetResizable">
                  <bool>true</bool>
                 </property>
-                <widget class="QWidget" name="scrollAreaWidgetContents_3">
+                <widget class="QWidget" name="scrollAreaWidgetContents_2">
                  <property name="geometry">
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>536</width>
-                   <height>364</height>
+                   <width>112</width>
+                   <height>120</height>
                   </rect>
                  </property>
-                 <layout class="QFormLayout" name="formLayout_2">
+                 <layout class="QFormLayout" name="formLayout_4">
                   <item row="0" column="1">
-                   <widget class="QWidget" name="widget_bondproperties_2" native="true">
-                    <property name="layoutDirection">
-                     <enum>Qt::LeftToRight</enum>
+                   <widget class="QLabel" name="label_bondtype1">
+                    <property name="autoFillBackground">
+                     <bool>false</bool>
                     </property>
-                    <property name="styleSheet">
-                     <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+                    <property name="text">
+                     <string/>
                     </property>
-                    <layout class="QGridLayout" name="gridLayout_6">
-                     <item row="2" column="1">
-                      <widget class="QPushButton" name="Button_bondcolor">
-                       <property name="text">
-                        <string>PushButton</string>
-                       </property>
-                       <property name="autoRepeat">
-                        <bool>false</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="4" column="1">
-                      <widget class="QSlider" name="horizontalSlider_metallicity_bond">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TicksBothSides</enum>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="5">
-                      <spacer name="horizontalSpacer_5">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>258</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="2" column="0">
-                      <widget class="QLabel" name="label_bondcolor">
-                       <property name="font">
-                        <font>
-                         <family>.SF NS Text</family>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Color:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="1">
-                      <widget class="QLineEdit" name="Edit_num_of_bonds">
-                       <property name="autoFillBackground">
-                        <bool>false</bool>
-                       </property>
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="dragEnabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="readOnly">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="6" column="1">
-                      <widget class="QDoubleSpinBox" name="SpinBox_bond_thickness">
-                       <property name="acceptDrops">
-                        <bool>true</bool>
-                       </property>
-                       <property name="correctionMode">
-                        <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-                       </property>
-                       <property name="decimals">
-                        <number>5</number>
-                       </property>
-                       <property name="minimum">
-                        <double>0.010000000000000</double>
-                       </property>
-                       <property name="singleStep">
-                        <double>0.100000000000000</double>
-                       </property>
-                       <property name="value">
-                        <double>1.000000000000000</double>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="10" column="1">
-                      <spacer name="verticalSpacer_11">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="11" column="0">
-                      <widget class="QLabel" name="Label_bondshape">
-                       <property name="font">
-                        <font>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Bond Shape:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="1" column="0">
-                      <widget class="QScrollArea" name="scrollArea_all_types_of_bonds">
-                       <property name="styleSheet">
-                        <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);
-</string>
-                       </property>
-                       <property name="frameShape">
-                        <enum>QFrame::HLine</enum>
-                       </property>
-                       <property name="frameShadow">
-                        <enum>QFrame::Raised</enum>
-                       </property>
-                       <property name="verticalScrollBarPolicy">
-                        <enum>Qt::ScrollBarAlwaysOn</enum>
-                       </property>
-                       <property name="widgetResizable">
-                        <bool>true</bool>
-                       </property>
-                       <widget class="QWidget" name="scrollAreaWidgetContents_2">
-                        <property name="geometry">
-                         <rect>
-                          <x>0</x>
-                          <y>-14</y>
-                          <width>110</width>
-                          <height>107</height>
-                         </rect>
-                        </property>
-                        <layout class="QFormLayout" name="formLayout_4">
-                         <item row="0" column="1">
-                          <widget class="QLabel" name="label_bondtype1">
-                           <property name="autoFillBackground">
-                            <bool>false</bool>
-                           </property>
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="1">
-                          <widget class="QLabel" name="label_bondtype2">
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="2" column="1">
-                          <widget class="QLabel" name="label_bondtype3">
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="3" column="1">
-                          <widget class="QLabel" name="label_bondtype4">
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="4" column="1">
-                          <widget class="QLabel" name="label_bondtype5">
-                           <property name="text">
-                            <string/>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </widget>
-                     </item>
-                     <item row="3" column="1">
-                      <spacer name="verticalSpacer_12">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_num_of_bondtypes">
-                       <property name="font">
-                        <font>
-                         <family>.SF NS Text</family>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Number of bond types:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="2" column="4" colspan="2">
-                      <spacer name="horizontalSpacer_2">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>378</width>
-                         <height>17</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="14" column="2">
-                      <spacer name="verticalSpacer_9">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>17</width>
-                         <height>68</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item row="11" column="1">
-                      <widget class="QComboBox" name="comboBox_bondshape">
-                       <property name="duplicatesEnabled">
-                        <bool>true</bool>
-                       </property>
-                       <item>
-                        <property name="text">
-                         <string>Line</string>
-                        </property>
-                        <property name="icon">
-                         <iconset>
-                          <normaloff>image-icons/shape/bond.png</normaloff>image-icons/shape/bond.png</iconset>
-                        </property>
-                       </item>
-                       <item>
-                        <property name="text">
-                         <string>Cylinder</string>
-                        </property>
-                        <property name="icon">
-                         <iconset>
-                          <normaloff>image-icons/shape/Cylinder.png</normaloff>image-icons/shape/Cylinder.png</iconset>
-                        </property>
-                       </item>
-                      </widget>
-                     </item>
-                     <item row="4" column="0">
-                      <widget class="QLabel" name="label_metallicity_bond">
-                       <property name="font">
-                        <font>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Metalicity</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="6" column="0">
-                      <widget class="QLabel" name="label_thickness">
-                       <property name="font">
-                        <font>
-                         <family>.SF NS Text</family>
-                         <pointsize>10</pointsize>
-                        </font>
-                       </property>
-                       <property name="text">
-                        <string>Thickness:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="5" column="1">
-                      <spacer name="verticalSpacer_10">
-                       <property name="orientation">
-                        <enum>Qt::Vertical</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>20</width>
-                         <height>40</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
                    </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLabel" name="label_bondtype2">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QLabel" name="label_bondtype3">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QLabel" name="label_bondtype4">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QLabel" name="label_bondtype5">
+                    <property name="text">
+                     <string/>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="0">
+                   <spacer name="horizontalSpacer_8">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>58</width>
+                      <height>17</height>
+                     </size>
+                    </property>
+                   </spacer>
                   </item>
                  </layout>
                 </widget>
                </widget>
               </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_bondproperties">
+              <item row="4" column="1">
+               <widget class="QPushButton" name="Button_bondcolor">
                 <property name="font">
                  <font>
-                  <pointsize>11</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
+                  <pointsize>10</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Bond Properties</string>
+                 <string>Change Color</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="0">
+               <widget class="QLabel" name="Label_bondshape">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Bond Shape:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="16" column="1">
+               <widget class="QComboBox" name="comboBox_bondshape">
+                <property name="duplicatesEnabled">
+                 <bool>true</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Line</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/shape/bond.png</normaloff>image-icons/shape/bond.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Cylinder</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/shape/Cylinder.png</normaloff>image-icons/shape/Cylinder.png</iconset>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item row="4" column="2">
+               <spacer name="horizontalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>378</width>
+                  <height>17</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="1" column="0">
+               <widget class="QLabel" name="label_num_of_bondtypes">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Number of bond types:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="1">
+               <widget class="QLineEdit" name="Edit_num_of_bonds_types">
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>

@@ -293,7 +293,6 @@ def timer_callback():
             MainWindow.horizontalSlider.setMaximum(n_frames)
             MainWindow.horizontalSlider.setSingleStep(1)
             MainWindow.horizontalSlider.setValue(cnt)
-
             MainWindow.horizontalSlider.setTickInterval(1)
 
     MainWindow.vtkWidget.GetRenderWindow().Render()
@@ -514,6 +513,7 @@ class Ui_MainWindow(object):
         MainWindow.pushButton_6.setIconSize(QtCore.QSize(40, 40))
         MainWindow.pushButton_6.setObjectName("pushButton_6")
         ##########################
+
         self.widget_3 = QtWidgets.QWidget(self.centralwidget)
         self.widget_3.setGeometry(QtCore.QRect(0, 360, 351, 181))
         self.widget_3.setObjectName("widget_3")
@@ -793,7 +793,8 @@ class Ui_MainWindow(object):
 
         MainWindow.iren.AddObserver("LeftButtonPressEvent", mouse_move_callback)
         self.timer = QTimer()
-        self.timer.timeout.connect(timer_callback)
+        showm.add_timer_callback(True, gm.tm_step, timer_callback)
+        # self.timer.timeout.connect(timer_callback)
         duration = 200
         self.timer.start(duration)
         MainWindow.iren.Initialize()
