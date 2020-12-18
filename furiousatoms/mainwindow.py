@@ -271,11 +271,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Edit_directory.insert(str(SM.file_directory))
         self.ui.Edit_fileformat.insert((str(SM.extension)).upper())
         self.ui.Edit_currentfile.insert(str(SM.file_name))
+        self.ui.SpinBox_atom_radius.setMinimum(0.1)
+        self.ui.SpinBox_atom_radius.setMaximum(1.0)
         self.ui.horizontalSlider_animation.setMinimum(0)
         self.ui.horizontalSlider_animation.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setSingleStep(1)
         self.ui.horizontalSlider_animation.setValue(SM.cnt)
-        self.ui.horizontalSlider_animation.setTickInterval(1)
+        self.ui.Timer_animation.setMaximum(SM.n_frames)
         for i, atom_typ in enumerate(SM.unique_types):
 
             if self.h_box.itemAt(i).wid.isChecked():
@@ -339,14 +341,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
         SM.unique_types = np.unique(SM.load_file.atoms.types)
-        # print(len(SM.unique_types))
         SM.colors_unique_types = np.random.rand(len(SM.unique_types), 4)
         SM.colors_unique_types[:, 3] = 1
         for i, typ in enumerate(SM.unique_types):
             colors[SM.atom_type == typ] = SM.colors_unique_types[i]
 
         SM.radii_spheres = np.ones((SM.no_atoms))
-        SM.radii_unique_types = 0.8 + np.zeros(len(SM.unique_types)) #np.random.rand(len(SM.unique_types))
+        SM.radii_unique_types = 0.5 + np.zeros(len(SM.unique_types))
         ##############Should be moved to up
         self.toggles = []
         self.lay = QtWidgets.QVBoxLayout()
@@ -432,7 +433,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.Timer_animation.setValue(SM.cnt)
             self.ui.Edit_framenumber.setText(str(SM.cnt))
             self.ui.horizontalSlider_animation.setValue(SM.cnt)
-            # self.ui.horizontalSlider_animation.re
 
         self.qvtkwidget.GetRenderWindow().Render()
         SM.cnt = SM.cnt + 1 * SM.play_factor
