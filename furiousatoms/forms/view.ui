@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>image-icons/main.png</normaloff>image-icons/main.png</iconset>
+    <normaloff>../../../../.designer/backup/image-icons/main.png</normaloff>../../../../.designer/backup/image-icons/main.png</iconset>
   </property>
   <property name="accessibleDescription">
    <string/>
@@ -67,6 +67,130 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
+    <item row="1" column="0" colspan="3">
+     <widget class="QWidget" name="widget_Animation" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QSpinBox" name="Timer_animation"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_backward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../../.designer/backup/image-icons/backward.png</normaloff>../../../../.designer/backup/image-icons/backward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_pause">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../../.designer/backup/image-icons/pause.png</normaloff>../../../../.designer/backup/image-icons/pause.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_play">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../../.designer/backup/image-icons/play.png</normaloff>../../../../.designer/backup/image-icons/play.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_forward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>../../../../.designer/backup/image-icons/forward.png</normaloff>../../../../.designer/backup/image-icons/forward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_animation">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBothSides</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QFrame" name="view_frame">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>900</width>
+        <height>700</height>
+       </size>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::StyledPanel</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Raised</enum>
+      </property>
+      <property name="lineWidth">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
     <item row="0" column="1">
      <widget class="QWidget" name="widget_display_input" native="true">
       <property name="maximumSize">
@@ -788,7 +912,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/sphere.png</normaloff>image-icons/sphere.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/sphere.png</normaloff>../../../../.designer/backup/image-icons/sphere.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -797,7 +921,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/Cone.png</normaloff>image-icons/Cone.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/Cone.png</normaloff>../../../../.designer/backup/image-icons/Cone.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -806,7 +930,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/blue_cube.png</normaloff>image-icons/blue_cube.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/blue_cube.png</normaloff>../../../../.designer/backup/image-icons/blue_cube.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -815,7 +939,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/arrow.png</normaloff>image-icons/arrow.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/arrow.png</normaloff>../../../../.designer/backup/image-icons/arrow.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -1354,7 +1478,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/bond.png</normaloff>image-icons/bond.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/bond.png</normaloff>../../../../.designer/backup/image-icons/bond.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -1363,7 +1487,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/Cylinder.png</normaloff>image-icons/Cylinder.png</iconset>
+                   <normaloff>../../../../.designer/backup/image-icons/Cylinder.png</normaloff>../../../../.designer/backup/image-icons/Cylinder.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -1425,130 +1549,6 @@ alternate-background-color: rgb(255, 255, 255);
            <string>Dihedral</string>
           </attribute>
          </widget>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="0" column="2">
-     <widget class="QFrame" name="view_frame">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>900</width>
-        <height>700</height>
-       </size>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <property name="lineWidth">
-       <number>5</number>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="0" colspan="3">
-     <widget class="QWidget" name="widget_Animation" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>50</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSpinBox" name="Timer_animation"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_backward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>image-icons/backward.png</normaloff>image-icons/backward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_pause">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>image-icons/pause.png</normaloff>image-icons/pause.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_play">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>image-icons/play.png</normaloff>image-icons/play.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_forward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>image-icons/forward.png</normaloff>image-icons/forward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_animation">
-         <property name="mouseTracking">
-          <bool>true</bool>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
         </widget>
        </item>
       </layout>
@@ -1632,7 +1632,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionLoad_file">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/load.png</normaloff>image-icons/load.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/load.png</normaloff>../../../../.designer/backup/image-icons/load.png</iconset>
    </property>
    <property name="text">
     <string>Load</string>
@@ -1644,7 +1644,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionSave_file">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/save.png</normaloff>image-icons/save.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/save.png</normaloff>../../../../.designer/backup/image-icons/save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -1656,7 +1656,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionExit">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/exit.png</normaloff>image-icons/exit.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/exit.png</normaloff>../../../../.designer/backup/image-icons/exit.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -1668,7 +1668,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionZoom_in">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/zoomin.png</normaloff>image-icons/zoomin.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/zoomin.png</normaloff>../../../../.designer/backup/image-icons/zoomin.png</iconset>
    </property>
    <property name="text">
     <string>Zoom In</string>
@@ -1680,7 +1680,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionZoom_Out">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/zoomout.png</normaloff>image-icons/zoomout.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/zoomout.png</normaloff>../../../../.designer/backup/image-icons/zoomout.png</iconset>
    </property>
    <property name="text">
     <string>Zoom Out</string>
@@ -1692,7 +1692,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionFit_to_Window">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/fit-to-width.png</normaloff>image-icons/fit-to-width.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/fit-to-width.png</normaloff>../../../../.designer/backup/image-icons/fit-to-width.png</iconset>
    </property>
    <property name="text">
     <string>Fit to Window</string>
@@ -1704,7 +1704,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionAbout">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/about.png</normaloff>image-icons/about.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/about.png</normaloff>../../../../.designer/backup/image-icons/about.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -1713,9 +1713,9 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionNew_File">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/new.png</normaloff>
-     <normalon>image-icons/file/new.png</normalon>
-     <activeon>image-icons/file/new.png</activeon>image-icons/new.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/new.png</normaloff>
+     <normalon>../../../../.designer/backup/image-icons/file/new.png</normalon>
+     <activeon>../../../../.designer/backup/image-icons/file/new.png</activeon>../../../../.designer/backup/image-icons/new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -1727,7 +1727,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionSave_as_File">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/save_as.png</normaloff>image-icons/save_as.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/save_as.png</normaloff>../../../../.designer/backup/image-icons/save_as.png</iconset>
    </property>
    <property name="text">
     <string>Save as</string>
@@ -1771,7 +1771,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionParticle">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/sphere.png</normaloff>image-icons/sphere.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/sphere.png</normaloff>../../../../.designer/backup/image-icons/sphere.png</iconset>
    </property>
    <property name="text">
     <string>Delete particle</string>
@@ -1780,7 +1780,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionBond">
    <property name="icon">
     <iconset>
-     <normaloff>image-icons/bond.png</normaloff>image-icons/bond.png</iconset>
+     <normaloff>../../../../.designer/backup/image-icons/bond.png</normaloff>../../../../.designer/backup/image-icons/bond.png</iconset>
    </property>
    <property name="text">
     <string>Delete bond</string>
