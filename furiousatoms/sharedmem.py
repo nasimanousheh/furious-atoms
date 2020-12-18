@@ -33,6 +33,11 @@ class SharedMemory(object):
         self.unique_types = None
         self.metallicCoefficient_particle = 0
         self.roughnessCoefficient_particle =0
+        self.value_n_nanotube = 0
+        self.value_m_nanotube =0
+        self.repeate_units_nanotube = 0
+        self.bond_length_nanotube = 0
+        self.diameter_tube = 0
 
 
         self.bonds = 0
@@ -64,3 +69,5 @@ class SharedMemory(object):
         self.unique_types_bond = 0
         self.center_bond = None
         self.bond_type = None
+
+        self.play_factor = 0
