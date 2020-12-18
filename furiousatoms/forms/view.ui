@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1702</width>
-    <height>839</height>
+    <width>2621</width>
+    <height>1270</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../Devel/.designer/backup/windows-images/openfile-icon.png</normaloff>../../Devel/.designer/backup/windows-images/openfile-icon.png</iconset>
+    <normaloff>image-icons/main.png</normaloff>image-icons/main.png</iconset>
   </property>
   <property name="accessibleDescription">
    <string/>
@@ -67,99 +67,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0" colspan="3">
-     <widget class="QWidget" name="widget_Animation" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>50</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSpinBox" name="Timer_animation"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_backward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../image-icons/play/backward.png</normaloff>../image-icons/play/backward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_pause">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../image-icons/play/pause.png</normaloff>../image-icons/play/pause.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_play">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../image-icons/play/play.png</normaloff>../image-icons/play/play.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_forward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset>
-           <normaloff>../image-icons/play/forward.png</normaloff>../image-icons/play/forward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_animation">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QWidget" name="widget_display_input" native="true">
       <property name="maximumSize">
@@ -257,7 +164,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
        <item>
         <widget class="QTabWidget" name="tabWidget">
          <property name="currentIndex">
-          <number>3</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -730,19 +637,6 @@ alternate-background-color: rgb(255, 255, 255);</string>
 alternate-background-color: rgb(255, 255, 255);</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="8" column="1">
-               <spacer name="verticalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
               <item row="2" column="0">
                <widget class="QLabel" name="label_choose_type_of_particle">
                 <property name="font">
@@ -751,7 +645,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Choose a type of particle:</string>
+                 <string>Choose type of particle:</string>
                 </property>
                </widget>
               </item>
@@ -784,18 +678,18 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_particlecolor">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
-                 </font>
+              <item row="8" column="1">
+               <spacer name="verticalSpacer_6">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="text">
-                 <string>Color:</string>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
                 </property>
-               </widget>
+               </spacer>
               </item>
               <item row="13" column="1">
                <spacer name="verticalSpacer_8">
@@ -810,18 +704,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                </spacer>
               </item>
-              <item row="9" column="1">
-               <widget class="QSlider" name="horizontalSlider_metallicity_particle">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBothSides</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="12" column="0">
-               <widget class="QLabel" name="label_radius">
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_particlecolor">
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
@@ -829,102 +713,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Radius:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="11" column="1">
-               <spacer name="verticalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="15" column="0">
-               <widget class="QLabel" name="Label_particleshape">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Particle Shape:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="1">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Change color</string>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="15" column="1">
-               <widget class="QComboBox" name="comboBox_particleshape">
-                <property name="duplicatesEnabled">
-                 <bool>true</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Sphere</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/sphere.png</normaloff>../image-icons/shape/sphere.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cone</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/Cone.png</normaloff>../image-icons/shape/Cone.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Cube</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</normaloff>../image-icons/shape/kissclipart-blue-cube-clipart-cube-clip-art-026e1f368ffd227d.png</iconset>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Arrow</string>
-                 </property>
-                 <property name="icon">
-                  <iconset>
-                   <normaloff>../image-icons/shape/arrow.png</normaloff>../image-icons/shape/arrow.png</iconset>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <widget class="QLabel" name="label_metallicity_particle">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Metallicity</string>
+                 <string>Color:</string>
                 </property>
                </widget>
               </item>
@@ -940,6 +729,19 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="12" column="0">
+               <widget class="QLabel" name="label_radius">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Radius:</string>
+                </property>
+               </widget>
               </item>
               <item row="12" column="1">
                <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
@@ -961,6 +763,61 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="value">
                  <double>1.000000000000000</double>
                 </property>
+               </widget>
+              </item>
+              <item row="15" column="0">
+               <widget class="QLabel" name="Label_particleshape">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Particle Shape:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="15" column="1">
+               <widget class="QComboBox" name="comboBox_particleshape">
+                <property name="duplicatesEnabled">
+                 <bool>true</bool>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>Sphere</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/sphere.png</normaloff>image-icons/sphere.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Cone</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/Cone.png</normaloff>image-icons/Cone.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Cube</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/blue_cube.png</normaloff>image-icons/blue_cube.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Arrow</string>
+                 </property>
+                 <property name="icon">
+                  <iconset>
+                   <normaloff>image-icons/arrow.png</normaloff>image-icons/arrow.png</iconset>
+                 </property>
+                </item>
                </widget>
               </item>
               <item row="3" column="0">
@@ -987,8 +844,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>126</width>
-                   <height>120</height>
+                   <width>124</width>
+                   <height>121</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -1060,6 +917,34 @@ alternate-background-color: rgb(255, 255, 255);
                 </property>
                </spacer>
               </item>
+              <item row="11" column="1">
+               <spacer name="verticalSpacer_5">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item row="5" column="1">
+               <widget class="QPushButton" name="Button_particlecolor">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Change color</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
               <item row="2" column="1" rowspan="2">
                <spacer name="verticalSpacer_4">
                 <property name="orientation">
@@ -1072,6 +957,28 @@ alternate-background-color: rgb(255, 255, 255);
                  </size>
                 </property>
                </spacer>
+              </item>
+              <item row="9" column="0">
+               <widget class="QLabel" name="label_metallicity_particle">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Metallicity</string>
+                </property>
+               </widget>
+              </item>
+              <item row="9" column="1">
+               <widget class="QSlider" name="horizontalSlider_metallicity_particle">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="tickPosition">
+                 <enum>QSlider::TicksBothSides</enum>
+                </property>
+               </widget>
               </item>
               <item row="1" column="0">
                <widget class="QLabel" name="label_num_of_particletypes">
@@ -1321,7 +1228,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Choose a type of bond:</string>
+                 <string>Choose type of bond:</string>
                 </property>
                </widget>
               </item>
@@ -1349,8 +1256,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>112</width>
-                   <height>120</height>
+                   <width>110</width>
+                   <height>121</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_4">
@@ -1447,7 +1354,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/shape/bond.png</normaloff>image-icons/shape/bond.png</iconset>
+                   <normaloff>image-icons/bond.png</normaloff>image-icons/bond.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -1456,7 +1363,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>image-icons/shape/Cylinder.png</normaloff>image-icons/shape/Cylinder.png</iconset>
+                   <normaloff>image-icons/Cylinder.png</normaloff>image-icons/Cylinder.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -1546,16 +1453,118 @@ alternate-background-color: rgb(255, 255, 255);
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
+      <property name="lineWidth">
+       <number>5</number>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="3">
+     <widget class="QWidget" name="widget_Animation" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QSpinBox" name="Timer_animation"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_backward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image-icons/backward.png</normaloff>image-icons/backward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_pause">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image-icons/pause.png</normaloff>image-icons/pause.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_play">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image-icons/play.png</normaloff>image-icons/play.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_forward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset>
+           <normaloff>image-icons/forward.png</normaloff>image-icons/forward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_animation">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBothSides</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
+   <zorder>view_frame</zorder>
+   <zorder>widget_Animation</zorder>
+   <zorder>widget_display_input</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1702</width>
+     <width>2621</width>
      <height>21</height>
     </rect>
    </property>
@@ -1598,17 +1607,32 @@ alternate-background-color: rgb(255, 255, 255);
     <addaction name="actionPair_Correlation_Function"/>
     <addaction name="actionMean_Square_Desplacement"/>
    </widget>
+   <widget class="QMenu" name="menuBuild">
+    <property name="title">
+     <string>Build</string>
+    </property>
+    <widget class="QMenu" name="menuBuild_Nanostructure">
+     <property name="title">
+      <string>Build Nanostructure</string>
+     </property>
+     <addaction name="actionGraphene_2"/>
+     <addaction name="actionSingle_Wall_Nanotube"/>
+     <addaction name="actionMulti_Wall_nanotube"/>
+    </widget>
+    <addaction name="menuBuild_Nanostructure"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
    <addaction name="menuModify"/>
    <addaction name="menuCompute"/>
+   <addaction name="menuBuild"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad_file">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/file/load.png</normaloff>../image-icons/file/load.png</iconset>
+     <normaloff>image-icons/load.png</normaloff>image-icons/load.png</iconset>
    </property>
    <property name="text">
     <string>Load</string>
@@ -1620,7 +1644,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionSave_file">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/file/save.png</normaloff>../image-icons/file/save.png</iconset>
+     <normaloff>image-icons/save.png</normaloff>image-icons/save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -1632,7 +1656,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionExit">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/file/exit.png</normaloff>../image-icons/file/exit.png</iconset>
+     <normaloff>image-icons/exit.png</normaloff>image-icons/exit.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -1644,7 +1668,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionZoom_in">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/view/zoomin.png</normaloff>../image-icons/view/zoomin.png</iconset>
+     <normaloff>image-icons/zoomin.png</normaloff>image-icons/zoomin.png</iconset>
    </property>
    <property name="text">
     <string>Zoom In</string>
@@ -1656,7 +1680,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionZoom_Out">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/view/zoomout.png</normaloff>../image-icons/view/zoomout.png</iconset>
+     <normaloff>image-icons/zoomout.png</normaloff>image-icons/zoomout.png</iconset>
    </property>
    <property name="text">
     <string>Zoom Out</string>
@@ -1668,7 +1692,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionFit_to_Window">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/view/fit-to-width.png</normaloff>../image-icons/view/fit-to-width.png</iconset>
+     <normaloff>image-icons/fit-to-width.png</normaloff>image-icons/fit-to-width.png</iconset>
    </property>
    <property name="text">
     <string>Fit to Window</string>
@@ -1680,7 +1704,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionAbout">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/about/about.png</normaloff>../image-icons/about/about.png</iconset>
+     <normaloff>image-icons/about.png</normaloff>image-icons/about.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -1689,7 +1713,9 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionNew_File">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/file/new.png</normaloff>../image-icons/file/new.png</iconset>
+     <normaloff>image-icons/new.png</normaloff>
+     <normalon>image-icons/file/new.png</normalon>
+     <activeon>image-icons/file/new.png</activeon>image-icons/new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -1701,7 +1727,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionSave_as_File">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/file/save as.png</normaloff>../image-icons/file/save as.png</iconset>
+     <normaloff>image-icons/save_as.png</normaloff>image-icons/save_as.png</iconset>
    </property>
    <property name="text">
     <string>Save as</string>
@@ -1745,7 +1771,7 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionParticle">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/shape/sphere.png</normaloff>../image-icons/shape/sphere.png</iconset>
+     <normaloff>image-icons/sphere.png</normaloff>image-icons/sphere.png</iconset>
    </property>
    <property name="text">
     <string>Delete particle</string>
@@ -1754,10 +1780,30 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionBond">
    <property name="icon">
     <iconset>
-     <normaloff>../image-icons/shape/bond.png</normaloff>../image-icons/shape/bond.png</iconset>
+     <normaloff>image-icons/bond.png</normaloff>image-icons/bond.png</iconset>
    </property>
    <property name="text">
     <string>Delete bond</string>
+   </property>
+  </action>
+  <action name="actionGraphene">
+   <property name="text">
+    <string>Graphene</string>
+   </property>
+  </action>
+  <action name="actionSingle_Wall_Nanotube">
+   <property name="text">
+    <string>Single-Wall-Nanotube</string>
+   </property>
+  </action>
+  <action name="actionMulti_Wall_nanotube">
+   <property name="text">
+    <string>Multi-Wall-Nanotube</string>
+   </property>
+  </action>
+  <action name="actionGraphene_2">
+   <property name="text">
+    <string>Graphene Sheet</string>
    </property>
   </action>
  </widget>
