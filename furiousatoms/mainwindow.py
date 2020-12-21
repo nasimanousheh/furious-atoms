@@ -14,13 +14,15 @@ disable_warnings()
 import vtk
 import numpy as np
 from fury import window, actor, utils, pick, ui
+from fury.utils import numpy_to_vtk_points
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
 from furiousatoms.sharedmem import SharedMemory
-from furiousatoms.forms.widget_nanotube import Ui_NanoTube
+from furiousatoms.forms.widget_SWNT import Ui_Form_SWNT
+from furiousatoms.forms.widget_graphene import Ui_Form_graphene
 from furiousatoms.nanostructure_builder import nanotube_builder, graphene_builder
 
 SM = SharedMemory()
@@ -63,12 +65,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.open_widget_nano_tube)
+        self.ui.actionGraphene_sheet.triggered.connect(self.open_widget_graphene)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
-        self.ui.SpinBox_atom_radius.textChanged.connect(self.change_particle_size)
-        # self.ui.SpinBox_bond_thickness.textChanged.connect(self.change_bond_thickness)
+        self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         # self.ui.horizontalSlider_metallicity_particle.setValue(int(SM.metallicCoefficient_particle*100))
         self.ui.horizontalSlider_metallicity_particle.valueChanged[int].connect(self.metallicity_particle)
         self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
@@ -98,36 +100,71 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def open_widget_nano_tube(self):
         self.Nanotube = QtWidgets.QWidget()
-        self.tube = Ui_NanoTube()
+        self.tube = Ui_Form_SWNT()
         self.tube.setupUi(self.Nanotube)
         self.Nanotube.show()
-        self.tube.pushButton_build_nanotube.clicked.connect(self.def_nanotube_builder)
+        self.tube.pushButton_build_SWNT.clicked.connect(self.def_SWNT_builder)
+        self.tube.lineEdit_bond_length_SWNT.insert(str(1.421))
 
-    def def_nanotube_builder(self):
+    def open_widget_graphene(self):
+        self.graphenesheet = QtWidgets.QWidget()
+        self.graphene = Ui_Form_graphene()
+        self.graphene.setupUi(self.graphenesheet)
+        self.graphenesheet.show()
+        self.graphene.pushButton_build_graphene.clicked.connect(self.def_graphene_builder)
+        self.graphene.lineEdit_bond_length_graphene.insert(str(1.421))
+
+    def def_graphene_builder(self):
+        SM.value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
+        SM.value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
+        SM.repeate_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
+        SM.bond_length_graphene = 1.421 #float(self.graphene.lineEdit_bond_length.text())
+        graphene_builder(SM.value_n_graphene, SM.value_n_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=('C', 'C'), centered=True)
+        # self.graphene.lineEdit_diameter_graphene.insert(str((SM.diameter_graphene)))
+        fname = 'C:/Users/nasim/Devel/furious-atoms/graphene_structure.pdb'
+        self.process_load_file(fname)
+        self.qvtkwidget.GetRenderWindow().Render()
+
+    def def_SWNT_builder(self):
+        SM.value_n_SWNT = int(self.tube.spinBox_chirality_N_SWNT.text())
+        SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
+        SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
+        SM.bond_length_SWNT = 1.421 #float(self.tube.lineEdit_bond_length.text())
+        nanotube_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=('C', 'C'), centered=True)
+        self.tube.lineEdit_diameter_SWNT.insert(str((SM.diameter_SWNT)))
+        fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
+        self.process_load_file(fname)
+        self.qvtkwidget.GetRenderWindow().Render()
+
+    def def_graphen_builder(self):
         SM.value_n_nanotube = int(self.tube.spinBox_chirality_N.text())
         SM.value_m_nanotube = int(self.tube.spinBox_chirality_M.text())
         SM.repeate_units_nanotube = int(self.tube.spinBox_repeat_units.text())
-        SM.bond_length_nanotube = float(self.tube.lineEdit_bond_length.text())
+        SM.bond_length_nanotube = 1.421 #float(self.tube.lineEdit_bond_length.text())
         nanotube_builder(SM.value_n_nanotube, SM.value_m_nanotube, SM.repeate_units_nanotube, length=None, a=SM.bond_length_nanotube, species=('C', 'C'), centered=True)
         self.tube.lineEdit_diameter_nanotube.insert(str((SM.diameter_tube)))
         fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
         self.process_load_file(fname)
         self.qvtkwidget.GetRenderWindow().Render()
 
-    def change_particle_size(self, selected_value_radius):
+
+    def update_particle_size(self, selected_value_radius):
         for i, atom_typ in enumerate(SM.unique_types):
             if self.h_box.itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
                 SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-                self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
+                # self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
+                self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 all_vertices_radii = all_vertices_radii[:, None]
                 # all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
                 # all_vertices_radii = all_vertices_radii[:, None]
+                # SM.all_vertices_particles[:] = all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 SM.all_vertices_particles[:] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         self.qvtkwidget.GetRenderWindow().Render()
+
 
     def metallicity_particle(self, metallicity_degree_particle):
         SM.metallicCoefficient_particle = metallicity_degree_particle/100
@@ -256,6 +293,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
             self.ui.Edit_num_of_particles.insert(str(SM.no_atoms))
             self.ui.Edit_num_of_particle_types.insert(str(len(SM.unique_types)))
+            self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
         if ((SM.box_lx > 0) or (SM.box_ly > 0) or (SM.box_lz > 0)):
             self.ui.Box_simulationcell.setChecked(True)
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
@@ -271,8 +309,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Edit_directory.insert(str(SM.file_directory))
         self.ui.Edit_fileformat.insert((str(SM.extension)).upper())
         self.ui.Edit_currentfile.insert(str(SM.file_name))
-        self.ui.SpinBox_atom_radius.setMinimum(0.1)
-        self.ui.SpinBox_atom_radius.setMaximum(1.0)
+        # self.ui.SpinBox_atom_radius.setMaximum(1.5)
+        # self.ui.SpinBox_atom_radius.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setMinimum(0)
         self.ui.horizontalSlider_animation.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setSingleStep(1)
@@ -311,11 +349,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         SM.atom_type = SM.load_file.atoms.types
         SM.pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
-        if SM.no_bonds == 0:
-            SM.pos_R = SM.load_file.trajectory[0].positions.copy().astype('f8')
-            SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
-                                                          backend='serial')
-
         if SM.no_bonds > 0:
             self.ui.Box_bonds.setChecked(True)
             SM.pos = SM.load_file.trajectory[0].positions.copy().astype('f8')
@@ -335,8 +368,31 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
             SM.unique_types_bond = np.unique(SM.load_file.bonds.types)
-
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
+        if SM.no_bonds == 0:
+            SM.pos_R = SM.load_file.trajectory[0].positions.copy().astype('f8')
+            SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
+                                                          backend='serial')
+            open_initial_structur = True
+            if open_initial_structur is True:
+                SM.load_file_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
+                SM.pos_initial_structure = SM.load_file_initial_structure.trajectory[0].positions.copy().astype('f8')
+                SM.bonds_initial_structure = SM.load_file_initial_structure.bonds.to_indices()###
+                SM.no_bonds = len(SM.load_file_initial_structure.bonds)
+                first_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 0])]###
+                second_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 1])]###
+                SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))##
+                SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
+                SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
+                SM.line_thickness = 0.2
+                SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+                SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+                SM.colors_backup_bond = SM.vcolors_bond.copy()
+                SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
+                SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
+                SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
+                SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
+                SM.unique_types_bond = np.unique(SM.load_file_initial_structure.bonds.types)
 
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
@@ -347,7 +403,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             colors[SM.atom_type == typ] = SM.colors_unique_types[i]
 
         SM.radii_spheres = np.ones((SM.no_atoms))
-        SM.radii_unique_types = 0.5 + np.zeros(len(SM.unique_types))
+        SM.radii_unique_types = 0.55 + np.zeros(len(SM.unique_types)) #np.random.rand(len(SM.unique_types))
         ##############Should be moved to up
         self.toggles = []
         self.lay = QtWidgets.QVBoxLayout()
@@ -358,7 +414,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
             self.ui.btn = QtWidgets.QRadioButton(str(typ) , self)
             self.ui.scrollArea_all_types_of_prticles.setLayout(self.lay)
-            # print(SM.set_value_radius)
             self.h_box.addWidget(self.ui.btn,i,1,1,1)
         self.lay.addLayout(self.h_box)
 
@@ -430,6 +485,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
+            open_initial_structur = True
+            if open_initial_structur is True:
+                SM.bonds_initial_structure = SM.load_file_initial_structure.bonds.to_indices()
+                first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
+                second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
+                SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
+                SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
+                points_array_bonds = np.vstack(SM.bonds)
+
+                # Set Points to vtk array format
+                vtk_points2 = numpy_to_vtk_points(points_array_bonds)
+                SM.bond_actor.poly_data.SetPoints(vtk_points2)
+
             self.ui.Timer_animation.setValue(SM.cnt)
             self.ui.Edit_framenumber.setText(str(SM.cnt))
             self.ui.horizontalSlider_animation.setValue(SM.cnt)
