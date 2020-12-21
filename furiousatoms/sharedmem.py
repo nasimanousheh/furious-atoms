@@ -33,11 +33,7 @@ class SharedMemory(object):
         self.unique_types = None
         self.metallicCoefficient_particle = 0
         self.roughnessCoefficient_particle =0
-        self.value_n_nanotube = 0
-        self.value_m_nanotube =0
-        self.repeate_units_nanotube = 0
-        self.bond_length_nanotube = 0
-        self.diameter_tube = 0
+        self.bond_center = 0
 
 
         self.bonds = 0
@@ -71,3 +67,20 @@ class SharedMemory(object):
         self.bond_type = None
 
         self.play_factor = 0
+        self.bonds_initial_structure = 0
+        self.load_file_initial_structure = None
+
+
+        ############graphene##########
+        self.value_n_graphene = 0
+        self.value_m_graphene = 0
+        self.bond_length_graphene = 0
+        self.repeate_units_graphene = 0
+
+        #########SWNT#################
+        self.value_n_SWNT = 0
+        self.value_m_SWNT = 0
+        self.repeate_units_SWNT = 0
+        self.bond_length_SWNT = 0
+        self.diameter_SWNT = 0
+
