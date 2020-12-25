@@ -36,6 +36,7 @@ class SharedMemory(object):
         self.bond_center = 0
 
 
+
         self.bonds = 0
         self.bond_actor = None
         self.no_bonds = 0
@@ -76,6 +77,8 @@ class SharedMemory(object):
         self.value_m_graphene = 0
         self.bond_length_graphene = 0
         self.repeate_units_graphene = 0
+        self.graphene_type_1 = None
+        self.graphene_type_2 = None
 
         #########SWNT#################
         self.value_n_SWNT = 0
@@ -83,4 +86,6 @@ class SharedMemory(object):
         self.repeate_units_SWNT = 0
         self.bond_length_SWNT = 0
         self.diameter_SWNT = 0
+        self.SWNT_type_1 = None
+        self.SWNT_type_2 = None
 
