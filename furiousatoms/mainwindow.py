@@ -119,8 +119,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
         SM.repeate_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         SM.bond_length_graphene = 1.421 #float(self.graphene.lineEdit_bond_length.text())
-        graphene_builder(SM.value_n_graphene, SM.value_n_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=('C', 'C'), centered=True)
-        # self.graphene.lineEdit_diameter_graphene.insert(str((SM.diameter_graphene)))
+        SM.graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
+        SM.graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
+        graphene_builder(SM.value_n_graphene, SM.value_m_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=(SM.graphene_type_1, SM.graphene_type_2), centered=True)
         fname = 'C:/Users/nasim/Devel/furious-atoms/graphene_structure.pdb'
         self.process_load_file(fname)
         self.qvtkwidget.GetRenderWindow().Render()
@@ -130,23 +131,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
         SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
         SM.bond_length_SWNT = 1.421 #float(self.tube.lineEdit_bond_length.text())
-        nanotube_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=('C', 'C'), centered=True)
+        SM.SWNT_type_1 = self.tube.comboBox_type1_SWNT.currentText()
+        SM.SWNT_type_2 = self.tube.comboBox_type2_SWNT.currentText()
+        nanotube_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
         self.tube.lineEdit_diameter_SWNT.insert(str((SM.diameter_SWNT)))
         fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
         self.process_load_file(fname)
         self.qvtkwidget.GetRenderWindow().Render()
-
-    def def_graphen_builder(self):
-        SM.value_n_nanotube = int(self.tube.spinBox_chirality_N.text())
-        SM.value_m_nanotube = int(self.tube.spinBox_chirality_M.text())
-        SM.repeate_units_nanotube = int(self.tube.spinBox_repeat_units.text())
-        SM.bond_length_nanotube = 1.421 #float(self.tube.lineEdit_bond_length.text())
-        nanotube_builder(SM.value_n_nanotube, SM.value_m_nanotube, SM.repeate_units_nanotube, length=None, a=SM.bond_length_nanotube, species=('C', 'C'), centered=True)
-        self.tube.lineEdit_diameter_nanotube.insert(str((SM.diameter_tube)))
-        fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
-        self.process_load_file(fname)
-        self.qvtkwidget.GetRenderWindow().Render()
-
 
     def update_particle_size(self, selected_value_radius):
         for i, atom_typ in enumerate(SM.unique_types):
@@ -245,7 +236,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-        print(len(SM.load_file.atoms))
+        print(object_indices_particles)
 
 
     def delete_bonds(self):
