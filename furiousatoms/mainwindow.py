@@ -23,7 +23,7 @@ import MDAnalysis
 from furiousatoms.sharedmem import SharedMemory
 from furiousatoms.forms.widget_SWNT import Ui_Form_SWNT
 from furiousatoms.forms.widget_graphene import Ui_Form_graphene
-from furiousatoms.nanostructure_builder import nanotube_builder, graphene_builder
+from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder
 
 SM = SharedMemory()
 
@@ -118,7 +118,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
         SM.value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
         SM.repeate_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
-        SM.bond_length_graphene = 1.421 #float(self.graphene.lineEdit_bond_length.text())
+        SM.bond_length_graphene = 1.421
         SM.graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         SM.graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
         graphene_builder(SM.value_n_graphene, SM.value_m_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=(SM.graphene_type_1, SM.graphene_type_2), centered=True)
@@ -133,7 +133,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_length_SWNT = 1.421 #float(self.tube.lineEdit_bond_length.text())
         SM.SWNT_type_1 = self.tube.comboBox_type1_SWNT.currentText()
         SM.SWNT_type_2 = self.tube.comboBox_type2_SWNT.currentText()
-        nanotube_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
+        SM.H_termination_SWNT = self.tube.comboBox_H_termination_SWNT.currentText()
+        # print(SM.H_termination_SWNT)
+        SWNT_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
         self.tube.lineEdit_diameter_SWNT.insert(str((SM.diameter_SWNT)))
         fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
         self.process_load_file(fname)
@@ -237,6 +239,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
         print(object_indices_particles)
+        # print(SM.pos[object_indices_particles])
 
 
     def delete_bonds(self):
