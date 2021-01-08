@@ -88,4 +88,4 @@ class SharedMemory(object):
         self.diameter_SWNT = 0
         self.SWNT_type_1 = None
         self.SWNT_type_2 = None
-
+        self.H_termination_SWNT = None
