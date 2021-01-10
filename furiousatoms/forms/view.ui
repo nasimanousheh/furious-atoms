@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/main.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/main.png</iconset>
+    <normaloff>../image-icons/main.png</normaloff>../image-icons/main.png</iconset>
   </property>
   <property name="accessibleDescription">
    <string/>
@@ -85,8 +85,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/backward.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/backward.png</iconset>
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/backward.png</normaloff>:/icons/backward.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -102,8 +102,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/pause.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/pause.png</iconset>
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -119,8 +119,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/play.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/play.png</iconset>
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -136,8 +136,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset>
-           <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/forward.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/forward.png</iconset>
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -787,8 +787,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   <string>Sphere</string>
                  </property>
                  <property name="icon">
-                  <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/sphere.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/sphere.png</iconset>
+                  <iconset resource="icons.qrc">
+                   <normaloff>:/icons/sphere.png</normaloff>:/icons/sphere.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -796,8 +796,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   <string>Cone</string>
                  </property>
                  <property name="icon">
-                  <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/Cone.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/Cone.png</iconset>
+                  <iconset resource="icons.qrc">
+                   <normaloff>:/icons/cone.png</normaloff>:/icons/cone.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -805,8 +805,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   <string>Cube</string>
                  </property>
                  <property name="icon">
-                  <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/blue_cube.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/blue_cube.png</iconset>
+                  <iconset resource="icons.qrc">
+                   <normaloff>:/icons/cube.png</normaloff>:/icons/cube.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -814,8 +814,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   <string>Arrow</string>
                  </property>
                  <property name="icon">
-                  <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/arrow.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/arrow.png</iconset>
+                  <iconset resource="icons.qrc">
+                   <normaloff>:/icons/arrow.png</normaloff>:/icons/arrow.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -1383,8 +1383,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>29</width>
-                   <height>111</height>
+                   <width>110</width>
+                   <height>121</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_4">
@@ -1481,7 +1481,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/bond.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/bond.png</iconset>
+                   <normaloff>../image-icons/bond.png</normaloff>../image-icons/bond.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -1490,7 +1490,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/Cylinder.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/Cylinder.png</iconset>
+                   <normaloff>../image-icons/Cylinder.png</normaloff>../image-icons/Cylinder.png</iconset>
                  </property>
                 </item>
                </widget>
@@ -1634,8 +1634,8 @@ alternate-background-color: rgb(255, 255, 255);
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad_file">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/load.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/load.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/load.png</normaloff>:/icons/load.png</iconset>
    </property>
    <property name="text">
     <string>Load</string>
@@ -1646,8 +1646,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionSave_file">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/save.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/save.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -1658,8 +1658,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/exit.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/exit.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -1670,8 +1670,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionZoom_in">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/zoomin.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/zoomin.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/zoomin.png</normaloff>:/icons/zoomin.png</iconset>
    </property>
    <property name="text">
     <string>Zoom In</string>
@@ -1682,8 +1682,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionZoom_Out">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/zoomout.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/zoomout.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/zoomout.png</normaloff>:/icons/zoomout.png</iconset>
    </property>
    <property name="text">
     <string>Zoom Out</string>
@@ -1694,8 +1694,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionFit_to_Window">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/fit-to-width.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/fit-to-width.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/fit-to-width.png</normaloff>:/icons/fit-to-width.png</iconset>
    </property>
    <property name="text">
     <string>Fit to Window</string>
@@ -1706,8 +1706,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionAbout">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/about.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/about.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/about.png</normaloff>:/icons/about.png</iconset>
    </property>
    <property name="text">
     <string>About</string>
@@ -1715,10 +1715,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionNew_File">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/new.png</normaloff>
-     <normalon>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/new.png</normalon>
-     <activeon>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/new.png</activeon>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/new.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/new.png</normaloff>:/icons/new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -1729,8 +1727,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionSave_as_File">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/save_as.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/save_as.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/save_as.png</normaloff>:/icons/save_as.png</iconset>
    </property>
    <property name="text">
     <string>Save as</string>
@@ -1773,8 +1771,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionParticle">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/sphere.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/sphere.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/sphere.png</normaloff>:/icons/sphere.png</iconset>
    </property>
    <property name="text">
     <string>Delete particle</string>
@@ -1782,8 +1780,8 @@ alternate-background-color: rgb(255, 255, 255);
   </action>
   <action name="actionBond">
    <property name="icon">
-    <iconset>
-     <normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/bond.png</normaloff>C:/Users/nasim/Devel/furious-atoms/furiousatoms/image-icons/bond.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/bond.png</normaloff>:/icons/bond.png</iconset>
    </property>
    <property name="text">
     <string>Delete bond</string>
@@ -1810,6 +1808,8 @@ alternate-background-color: rgb(255, 255, 255);
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections/>
 </ui>
