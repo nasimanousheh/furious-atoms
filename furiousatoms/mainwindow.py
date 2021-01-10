@@ -24,6 +24,9 @@ from furiousatoms.sharedmem import SharedMemory
 from furiousatoms.forms.widget_SWNT import Ui_Form_SWNT
 from furiousatoms.forms.widget_graphene import Ui_Form_graphene
 from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder
+import math
+from numpy.linalg import norm
+from fractions import gcd
 
 SM = SharedMemory()
 
@@ -103,22 +106,50 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.tube = Ui_Form_SWNT()
         self.tube.setupUi(self.Nanotube)
         self.Nanotube.show()
+        SM.bond_length_SWNT = 1.421 # default value of C-C bond length
+        self.tube.lineEdit_bond_length_SWNT.insert(str(SM.bond_length_SWNT))
+        self.tube.lineEdit_bond_length_SWNT.textChanged.connect(self.SWNT_diameter_changed)
+        self.tube.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
+        self.tube.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
+        self.tube.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.tube.pushButton_build_SWNT.clicked.connect(self.def_SWNT_builder)
-        self.tube.lineEdit_bond_length_SWNT.insert(str(1.421))
+
+    def SWNT_diameter_changed(self):
+        SM.bond_length_SWNT = self.tube.lineEdit_bond_length_SWNT.text()
+        SM.bond_length_SWNT = float(SM.bond_length_SWNT)
+        SM.value_n_SWNT = int(self.tube.spinBox_chirality_N_SWNT.text())
+        SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
+        SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
+        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
+        Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
+        d = gcd(SM.value_n_SWNT, SM.value_m_SWNT)
+        dR = 3*d if (SM.value_n_SWNT-SM.value_m_SWNT) % (3*d) == 0 else d
+        t1 = (2*SM.value_m_SWNT+SM.value_n_SWNT)//dR
+        t2 = -(2*SM.value_n_SWNT+SM.value_m_SWNT)//dR
+        T = t1*a1+t2*a2
+        SM.diameter_SWNT = float(norm(Ch)/np.pi)
+        SM.diameter_SWNT = "{:.2f}".format(SM.diameter_SWNT)
+        length_SWNT = norm(T) * SM.repeate_units_SWNT
+        length_SWNT = "{:.2f}".format(float(length_SWNT))
+        self.tube.lineEdit_diameter_SWNT.setText(str(SM.diameter_SWNT))
+        self.tube.lineEdit_length_SWNT.setText(str(length_SWNT))
 
     def open_widget_graphene(self):
         self.graphenesheet = QtWidgets.QWidget()
         self.graphene = Ui_Form_graphene()
         self.graphene.setupUi(self.graphenesheet)
         self.graphenesheet.show()
+        SM.bond_length_graphene = 1.421 # default value of C-C bond length
+        self.graphene.lineEdit_bond_length_graphene.insert(str(SM.bond_length_graphene))
         self.graphene.pushButton_build_graphene.clicked.connect(self.def_graphene_builder)
-        self.graphene.lineEdit_bond_length_graphene.insert(str(1.421))
 
     def def_graphene_builder(self):
+        SM.bond_length_graphene = self.graphene.lineEdit_bond_length_graphene.text()
+        SM.bond_length_graphene = float(SM.bond_length_graphene)
         SM.value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
         SM.value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
         SM.repeate_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
-        SM.bond_length_graphene = 1.421
         SM.graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         SM.graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
         graphene_builder(SM.value_n_graphene, SM.value_m_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=(SM.graphene_type_1, SM.graphene_type_2), centered=True)
@@ -130,14 +161,22 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.value_n_SWNT = int(self.tube.spinBox_chirality_N_SWNT.text())
         SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
         SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
-        SM.bond_length_SWNT = 1.421 #float(self.tube.lineEdit_bond_length.text())
+        # SM.bond_length_SWNT = 1.421
+        # self.tube.lineEdit_bond_length_SWNT.insert(str(1.421))
+        # SM.bond_length_SWNT = float(self.tube.lineEdit_bond_length_SWNT.text())
         SM.SWNT_type_1 = self.tube.comboBox_type1_SWNT.currentText()
         SM.SWNT_type_2 = self.tube.comboBox_type2_SWNT.currentText()
         SM.H_termination_SWNT = self.tube.comboBox_H_termination_SWNT.currentText()
-        # print(SM.H_termination_SWNT)
+        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
+        Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
         SWNT_builder(SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
-        self.tube.lineEdit_diameter_SWNT.insert(str((SM.diameter_SWNT)))
-        fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
+        if SM.H_termination_SWNT == 'Both ends':
+            fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure_both_ends.pdb'
+        if SM.H_termination_SWNT == 'One end':
+            fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure_one_end.pdb'
+        if SM.H_termination_SWNT == 'None':
+            fname = 'C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb'
         self.process_load_file(fname)
         self.qvtkwidget.GetRenderWindow().Render()
 
@@ -158,7 +197,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         self.qvtkwidget.GetRenderWindow().Render()
 
-
     def metallicity_particle(self, metallicity_degree_particle):
         SM.metallicCoefficient_particle = metallicity_degree_particle/100
         roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
@@ -167,7 +205,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-
 
     def metallicity_bond(self, metallicity_degree_bond):
         metallicCoefficient_bond = metallicity_degree_bond/100
