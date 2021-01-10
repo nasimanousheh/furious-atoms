@@ -1,0 +1,24 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>icons/about.png</file>
+    <file>icons/arrow.png</file>
+    <file>icons/backward.png</file>
+    <file>icons/cube.png</file>
+    <file>icons/bond.png</file>
+    <file>icons/cone.png</file>
+    <file>icons/exit.png</file>
+    <file>icons/fit-to-width.png</file>
+    <file>icons/forward.png</file>
+    <file>icons/main.png</file>
+    <file>icons/new.png</file>
+    <file>icons/pause.png</file>
+    <file>icons/play.png</file>
+    <file>icons/save.png</file>
+    <file>icons/save_as.png</file>
+    <file>icons/sphere.png</file>
+    <file>icons/triangle.png</file>
+    <file>icons/zoomin.png</file>
+    <file>icons/zoomout.png</file>
+    <file>icons/load.png</file>
+</qresource>
+</RCC>
