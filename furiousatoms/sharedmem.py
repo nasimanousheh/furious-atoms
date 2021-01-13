@@ -89,3 +89,5 @@ class SharedMemory(object):
         self.SWNT_type_1 = None
         self.SWNT_type_2 = None
         self.H_termination_SWNT = None
+        #############File################
+        self.universe_file = None
