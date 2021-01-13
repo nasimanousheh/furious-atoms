@@ -30,9 +30,8 @@ thre = 1e-10
 vacuum = 4
 SM = SharedMemory()
 
+def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
 
-def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
-    SM = SharedMemory()
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
@@ -54,7 +53,6 @@ def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
                 for k in range(N):
                     pts.append((sp, pt+k*T))
     SM.diameter_SWNT = norm(Ch)/np.pi
-    print(SM.diameter_SWNT)
     def gr2tube(v):
         phi = 2*np.pi*v.dot(Ch_proj)
         return np.array((SM.diameter_SWNT/2*np.cos(phi),
@@ -73,12 +71,10 @@ def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
     swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=10)
     swnt.atoms.positions = coord_array_swnt
     all_bonds_swnt = np.array(fragments['bonds'])
-    swnt.trajectory.ts.dimensions[0] = lx
-    swnt.trajectory.ts.dimensions[1] = ly
-    swnt.trajectory.ts.dimensions[2] = lz
     swnt.add_TopologyAttr('name', atom_types_swnt)
     swnt.add_bonds(all_bonds_swnt)
-    swnt.atoms.write('C:/Users/nasim/Devel/furious-atoms/nanotube_structure.pdb')
+    if H_termination_SWNT == 'None':
+        return swnt
     #########################################################
     half_n_atoms_swnt = int(n_atoms_swnt/2)
     n_hydrogen = 0
@@ -88,8 +84,8 @@ def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
         if len(indices_of_a) == 1:
             end_atom_indices = (all_bonds_swnt[indices_of_a])
             if end_atom_indices[0][0] == a:
-                end_atom_indices = (all_bonds_swnt[indices_of_a]) #[2735 2447] main= 2735
-                f_connec_to_end_atom_index = end_atom_indices[0][1] # 2447
+                end_atom_indices = (all_bonds_swnt[indices_of_a])
+                f_connec_to_end_atom_index = end_atom_indices[0][1]
                 core_connections = all_bonds_swnt[np.where(all_bonds_swnt == f_connec_to_end_atom_index)[0]]
                 Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
                 Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
@@ -142,27 +138,21 @@ def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
         assert coord_array_H_indice.shape == (n_hydrogen, 3)
         h.atoms.positions = coord_array_H_indice
         h.add_TopologyAttr('name', ['H']*n_hydrogen)
-        combined_one_end = MDAnalysis.Merge(swnt.atoms, h.atoms)
-        combined_one_end.add_bonds(all_bonds_swnt)
-        n_hydrogen = 0
-        for x in range(half_n_atoms_swnt):
-            indices_of_a = np.where(all_bonds_swnt == x)
-            if len(indices_of_a[0]) == 1:
-                combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen)])
-                combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen + 1)])
-                n_hydrogen = n_hydrogen + 2
-            if len(indices_of_a[0]) == 2:
-                combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen)])
-                n_hydrogen = n_hydrogen + 1
+    combined_one_end = MDAnalysis.Merge(swnt.atoms, h.atoms)
+    combined_one_end.add_bonds(all_bonds_swnt)
+    n_hydrogen = 0
+    for x in range(half_n_atoms_swnt):
+        indices_of_a = np.where(all_bonds_swnt == x)
+        if len(indices_of_a[0]) == 1:
+            combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen)])
+            combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen + 1)])
+            n_hydrogen = n_hydrogen + 2
+        if len(indices_of_a[0]) == 2:
+            combined_one_end.add_bonds([(x, n_atoms_swnt + n_hydrogen)])
+            n_hydrogen = n_hydrogen + 1
 
-        combined_one_end.trajectory.ts.dimensions[0] = lx
-        combined_one_end.trajectory.ts.dimensions[1] = ly
-        combined_one_end.trajectory.ts.dimensions[2] = lz
-        # print(SM.H_termination_SWNT)
-        # if SM.H_termination_SWNT == 'Both ends':
-        combined_one_end.atoms.write('C:/Users/nasim/Devel/furious-atoms/nanotube_structure_one_end.pdb')
-
-
+    if H_termination_SWNT == 'One end':
+        return combined_one_end
 
 #########################################################
     n_hydrogen = 0
@@ -244,8 +234,9 @@ def SWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
     combined.trajectory.ts.dimensions[1] = ly
     combined.trajectory.ts.dimensions[2] = lz
     # print(SM.H_termination_SWNT)
-    # if SM.H_termination_SWNT == 'Both ends':
-    combined.atoms.write('C:/Users/nasim/Devel/furious-atoms/nanotube_structure_both_ends.pdb')
+    if H_termination_SWNT == 'Both ends':
+        return combined
+    # combined.atoms.write('C:/Users/nasim/Devel/furious-atoms/nanotube_structure_both_ends.pdb')
 
 def MWNT_nanotube_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
     SM = SharedMemory()
