@@ -17,6 +17,7 @@ from fury import window, actor, utils, pick, ui
 from fury.utils import numpy_to_vtk_points
 from PySide2 import QtCore
 from PySide2 import QtGui
+from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
@@ -25,6 +26,8 @@ from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder
 from numpy.linalg import norm
 from fractions import gcd
 import sys
+import furiousatoms.forms.icons
+
 
 SM = SharedMemory()
 
