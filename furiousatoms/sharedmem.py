@@ -71,23 +71,5 @@ class SharedMemory(object):
         self.bonds_initial_structure = 0
         self.load_file_initial_structure = None
 
-
-        ############graphene##########
-        self.value_n_graphene = 0
-        self.value_m_graphene = 0
-        self.bond_length_graphene = 0
-        self.repeate_units_graphene = 0
-        self.graphene_type_1 = None
-        self.graphene_type_2 = None
-
-        #########SWNT#################
-        self.value_n_SWNT = 0
-        self.value_m_SWNT = 0
-        self.repeate_units_SWNT = 0
-        self.bond_length_SWNT = 0
-        self.diameter_SWNT = 0
-        self.SWNT_type_1 = None
-        self.SWNT_type_2 = None
-        self.H_termination_SWNT = None
         #############File################
-        self.universe_file = None
+        self.universe = None
