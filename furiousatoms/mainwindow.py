@@ -21,8 +21,6 @@ from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
 from furiousatoms.sharedmem import SharedMemory
-from furiousatoms.forms.widget_SWNT import Ui_Form_SWNT
-from furiousatoms.forms.widget_graphene import Ui_Form_graphene
 from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder
 from numpy.linalg import norm
 from fractions import gcd
@@ -30,13 +28,17 @@ import sys
 
 SM = SharedMemory()
 
-class Ui_SWNT(QtWidgets.QWidget):
-    """ Widget for SWNT Class
+class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
+    """ Ui_SWNT class creates a widget for building single-wall nanotube (SWNT)
     """
     def __init__(self, app_path=None, parent=None):
         super(Ui_SWNT, self).__init__(parent)
         self.SWNT = io.load_ui_widget("widget_SWNT.ui")
         self.v_layout = QtWidgets.QVBoxLayout()
+        self.v_layout.addWidget(self.SWNT)
+        self.setCentralWidget(self.SWNT)
+        self.setLayout(self.v_layout)
+        self.resize(247, 285)
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
@@ -46,52 +48,85 @@ class Ui_SWNT(QtWidgets.QWidget):
         pass
 
     def create_connections(self):
-        SM.bond_length_SWNT = 1.421 # default value of C-C bond length
-        self.SWNT.lineEdit_bond_length_SWNT.insert(str(SM.bond_length_SWNT))
+        bond_length_SWNT = 1.421 # default value of C-C bond length
+        self.SWNT.lineEdit_bond_length_SWNT.insert(str(bond_length_SWNT))
         self.SWNT.lineEdit_bond_length_SWNT.textChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-        self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder)
+        self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder_callback)
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
 
     def SWNT_diameter_changed(self):
-        SM.H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
-        SM.bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
-        SM.bond_length_SWNT = float(SM.bond_length_SWNT)
-        SM.value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
-        SM.value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
-        SM.repeate_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
-        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
-        Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
-        d = gcd(SM.value_n_SWNT, SM.value_m_SWNT)
-        dR = 3*d if (SM.value_n_SWNT-SM.value_m_SWNT) % (3*d) == 0 else d
-        t1 = (2*SM.value_m_SWNT+SM.value_n_SWNT)//dR
-        t2 = -(2*SM.value_n_SWNT+SM.value_m_SWNT)//dR
+        H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
+        bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
+        bond_length_SWNT = float(bond_length_SWNT)
+        value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
+        value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
+        repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
+        a1 = np.array((np.sqrt(3)*bond_length_SWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*bond_length_SWNT, -3*bond_length_SWNT/2))
+        Ch = value_n_SWNT*a1+value_m_SWNT*a2
+        d = gcd(value_n_SWNT, value_m_SWNT)
+        dR = 3*d if (value_n_SWNT-value_m_SWNT) % (3*d) == 0 else d
+        t1 = (2*value_m_SWNT+value_n_SWNT)//dR
+        t2 = -(2*value_n_SWNT+value_m_SWNT)//dR
         T = t1*a1+t2*a2
-        SM.diameter_SWNT = float(np.linalg.norm(Ch)/np.pi)
-        SM.diameter_SWNT = "{:.2f}".format(SM.diameter_SWNT)
-        length_SWNT = np.linalg.norm(T) * SM.repeate_units_SWNT
+        diameter_SWNT = float(np.linalg.norm(Ch)/np.pi)
+        diameter_SWNT = "{:.2f}".format(diameter_SWNT)
+        length_SWNT = np.linalg.norm(T) * repeat_units_SWNT
         length_SWNT = "{:.2f}".format(float(length_SWNT))
-        self.SWNT.lineEdit_diameter_SWNT.setText(str(SM.diameter_SWNT))
+        self.SWNT.lineEdit_diameter_SWNT.setText(str(diameter_SWNT))
         self.SWNT.lineEdit_length_SWNT.setText(str(length_SWNT))
 
-    def SWNT_builder(self):
-        SM.value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
-        SM.value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
-        SM.repeate_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
-        SM.SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
-        SM.SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
-        Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
-        SM.universe_file = SWNT_builder(SM.H_termination_SWNT, SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
-        fname = 'fname.pdb'
-        SM.universe_file.atoms.write(fname)
-        self.process_load_file(fname)
-        self.process_universe(SM.universe_file)
-        self.qvtkwidget.GetRenderWindow().Render()
+    def SWNT_builder_callback(self):
+        value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
+        value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
+        repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
+        SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
+        SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
+        universe = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
+        file_name = 'fname.pdb'
+        universe.atoms.write(file_name)
+        self.win.process_load_file(fname=file_name)
+
+class Ui_Form_graphene(QtWidgets.QMainWindow): #QWidget
+    """ Ui_Graphene class creates a widget for building graphenes
+    """
+    def __init__(self, app_path=None, parent=None):
+        super(Ui_Form_graphene, self).__init__(parent)
+        self.graphene = io.load_ui_widget("widget_graphene.ui")
+        self.v_layout = QtWidgets.QVBoxLayout()
+        self.v_layout.addWidget(self.graphene)
+        self.setCentralWidget(self.graphene)
+        self.setLayout(self.v_layout)
+        self.resize(244, 226)
+        self.scene = window.Scene()
+        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
+        self.init_settings()
+        self.create_connections()
+
+    def init_settings(self):
+        pass
+
+    def create_connections(self):
+        bond_length_graphene = 1.421 # default value of C-C bond length
+        self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
+        self.graphene.pushButton_build_graphene.clicked.connect(self.graphene_builder_callback)
+
+    def graphene_builder_callback(self):
+        H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
+        bond_length_graphene = self.graphene.lineEdit_bond_length_graphene.text()
+        bond_length_graphene = float(bond_length_graphene)
+        value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
+        value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
+        repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
+        graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
+        graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
+        SM.universe = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
+        file_name = 'fname.pdb'
+        SM.universe.atoms.write(file_name)
+        self.win.process_load_file(fname=file_name)
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
     """ Main Furious Atoms Class
@@ -99,7 +134,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def __init__(self, app_path=None, parent=None):
         super(FuriousAtomsApp, self).__init__(parent)
-
         self.ui = io.load_ui_widget("view.ui")
         self.setCentralWidget(self.ui)
         self.app_path = app_path or io.application_path()
@@ -129,8 +163,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
-        self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
-        self.ui.actionGraphene_sheet.triggered.connect(self.open_widget_graphene)
+        # self.ui.actionGraphene_sheet.triggered.connect(self.open_widget_graphene)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
@@ -144,10 +177,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_forward.clicked.connect(self.forward_movie)
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
+        self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
+        self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
 
     def single_wall(self):
-        swnt = Ui_SWNT(parent=self)
-        swnt.show()
+        self.swnt = Ui_SWNT()
+        self.swnt.win = self
+        self.swnt.show()
+        self.swnt.showNormal()
+
+    def graphene(self):
+        self.gr = Ui_Form_graphene()
+        self.gr.win = self
+        self.gr.show()
+        self.gr.showNormal()
 
     def slider_changing(self):
         SM.cnt = self.ui.horizontalSlider_animation.value()
@@ -166,80 +209,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def backward_movie(self):
         SM.play_factor = 5
-
-    # def open_widget_nano_tube(self):
-    #     self.Nanotube = QtWidgets.QWidget()
-    #     self.tube = Ui_Form_SWNT()
-    #     self.tube.setupUi(self.Nanotube)
-    #     self.Nanotube.show()
-    #     SM.bond_length_SWNT = 1.421 # default value of C-C bond length
-    #     self.tube.lineEdit_bond_length_SWNT.insert(str(SM.bond_length_SWNT))
-    #     self.tube.lineEdit_bond_length_SWNT.textChanged.connect(self.SWNT_diameter_changed)
-    #     self.tube.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-    #     self.tube.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-    #     self.tube.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-    #     self.tube.pushButton_build_SWNT.clicked.connect(self.SWNT_builder)
-    #     self.tube.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
-
-    # def SWNT_diameter_changed(self):
-    #     SM.H_termination_SWNT = self.tube.comboBox_H_termination_SWNT.currentText()
-    #     SM.bond_length_SWNT = self.tube.lineEdit_bond_length_SWNT.text()
-    #     SM.bond_length_SWNT = float(SM.bond_length_SWNT)
-    #     SM.value_n_SWNT = int(self.tube.spinBox_chirality_N_SWNT.text())
-    #     SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
-    #     SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
-    #     a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
-    #     a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
-    #     Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
-    #     d = gcd(SM.value_n_SWNT, SM.value_m_SWNT)
-    #     dR = 3*d if (SM.value_n_SWNT-SM.value_m_SWNT) % (3*d) == 0 else d
-    #     t1 = (2*SM.value_m_SWNT+SM.value_n_SWNT)//dR
-    #     t2 = -(2*SM.value_n_SWNT+SM.value_m_SWNT)//dR
-    #     T = t1*a1+t2*a2
-    #     SM.diameter_SWNT = float(np.linalg.norm(Ch)/np.pi)
-    #     SM.diameter_SWNT = "{:.2f}".format(SM.diameter_SWNT)
-    #     length_SWNT = np.linalg.norm(T) * SM.repeate_units_SWNT
-    #     length_SWNT = "{:.2f}".format(float(length_SWNT))
-    #     self.tube.lineEdit_diameter_SWNT.setText(str(SM.diameter_SWNT))
-    #     self.tube.lineEdit_length_SWNT.setText(str(length_SWNT))
-    # def SWNT_builder(self):
-    #     SM.value_n_SWNT = int(self.tube.spinBox_chirality_N_SWNT.text())
-    #     SM.value_m_SWNT = int(self.tube.spinBox_chirality_M_SWNT.text())
-    #     SM.repeate_units_SWNT = int(self.tube.spinBox_repeat_units_SWNT.text())
-    #     SM.SWNT_type_1 = self.tube.comboBox_type1_SWNT.currentText()
-    #     SM.SWNT_type_2 = self.tube.comboBox_type2_SWNT.currentText()
-    #     a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
-    #     a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
-    #     Ch = SM.value_n_SWNT*a1+SM.value_m_SWNT*a2
-    #     SM.universe_file = SWNT_builder(SM.H_termination_SWNT, SM.value_n_SWNT, SM.value_m_SWNT, SM.repeate_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SM.SWNT_type_1, SM.SWNT_type_2), centered=True)
-    #     fname = 'fname.pdb'
-    #     SM.universe_file.atoms.write(fname)
-    #     self.process_load_file(fname)
-    #     self.process_universe(SM.universe_file)
-    #     self.qvtkwidget.GetRenderWindow().Render()
-
-
-    def open_widget_graphene(self):
-        self.graphenesheet = QtWidgets.QWidget()
-        self.graphene = Ui_Form_graphene()
-        self.graphene.setupUi(self.graphenesheet)
-        self.graphenesheet.show()
-        SM.bond_length_graphene = 1.421 # default value of C-C bond length
-        self.graphene.lineEdit_bond_length_graphene.insert(str(SM.bond_length_graphene))
-        self.graphene.pushButton_build_graphene.clicked.connect(self.def_graphene_builder)
-
-    def def_graphene_builder(self):
-        SM.bond_length_graphene = self.graphene.lineEdit_bond_length_graphene.text()
-        SM.bond_length_graphene = float(SM.bond_length_graphene)
-        SM.value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
-        SM.value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
-        SM.repeate_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
-        SM.graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
-        SM.graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
-        graphene_builder(SM.value_n_graphene, SM.value_m_graphene, SM.repeate_units_graphene, length=None, a=SM.bond_length_graphene, species=(SM.graphene_type_1, SM.graphene_type_2), centered=True)
-        fname = 'C:/Users/nasim/Devel/furious-atoms/graphene_structure.pdb'
-        self.process_load_file(fname)
-        self.qvtkwidget.GetRenderWindow().Render()
 
     def update_particle_size(self, selected_value_radius):
         for i, atom_typ in enumerate(SM.unique_types):
@@ -309,7 +278,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
         if not fname:
             return
-
         self.process_load_file(fname)
         SM.enable_timer = True
 
@@ -317,8 +285,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
         # fname = open(fname, 'w')
         # MS.load_file = MDAnalysis.Universe(MS.load_file)
-        # SM.load_file = u.select_atoms("MS.load_file")
-        SM.load_file.atoms.write(fname)
+        # SM.universe = u.select_atoms("MS.load_file")
+        SM.universe.atoms.write(fname)
         print('saving {}'.format(fname))
 
     def delete_particles(self):
@@ -327,10 +295,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
-        s = SM.load_file.universe.atoms[:]
-        t = SM.load_file.universe.atoms[object_indices_particles]
+        s = SM.universe.universe.atoms[:]
+        t = SM.universe.universe.atoms[object_indices_particles]
         b = s.difference(t)
-        SM.load_file = MDAnalysis.core.groups.AtomGroup(b)
+        SM.universe = MDAnalysis.core.groups.AtomGroup(b)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
@@ -344,12 +312,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for object_index_bond in object_indices_bonds:
             SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
 
-        SM.load_file.delete_bonds(SM.load_file.bonds[object_indices_bonds])
-        # SM.load_file.delete_bonds(SM.load_file.bonds.to_indices()) #delete if it is lammps
+        SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
+        # SM.universe.delete_bonds(SM.universe.bonds.to_indices()) #delete if it is lammps
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-        print(len(SM.load_file.bonds))
+        print(len(SM.universe.bonds))
 
 
     def openColorDialog_particle(self):
@@ -398,8 +366,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Edit_directory.insert(str(SM.file_directory))
         self.ui.Edit_fileformat.insert((str(SM.extension)).upper())
         self.ui.Edit_currentfile.insert(str(SM.file_name))
-        # self.ui.SpinBox_atom_radius.setMaximum(1.5)
-        # self.ui.SpinBox_atom_radius.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setMinimum(0)
         self.ui.horizontalSlider_animation.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setSingleStep(1)
@@ -412,20 +378,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
 
     def process_load_file(self, fname):
-        SM.universe_file, SM.no_bonds = io.load_files(fname) #change it to universe
+        SM.universe, SM.no_bonds = io.load_files(fname) #change it to universe
         SM.file_directory, SM.extension = os.path.splitext(fname)
         SM.file_name = os.path.basename(fname)
-        self.process_universe(SM.universe_file)
+        self.process_universe(universe=SM.universe)
 
 
-    def process_universe(self, fname):
-        SM.no_atoms = len(SM.universe_file.atoms)
-        SM.n_frames = SM.universe_file.trajectory.n_frames
-        SM.box = SM.universe_file.trajectory.ts.dimensions
-        SM.box_lx = SM.universe_file.trajectory.ts.dimensions[0]
-        SM.box_ly = SM.universe_file.trajectory.ts.dimensions[1]
-        SM.box_lz = SM.universe_file.trajectory.ts.dimensions[2]
-        SM.no_unique_types_particles = len(np.unique(SM.universe_file.atoms.types))
+    def process_universe(self, universe):
+        SM.no_atoms = len(SM.universe.atoms)
+        SM.n_frames = SM.universe.trajectory.n_frames
+        SM.box = SM.universe.trajectory.ts.dimensions
+        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
+        SM.no_unique_types_particles = len(np.unique(SM.universe.atoms.types))
         box_centers = np.array([[0, 0, 25]])
         box_directions = np.array([[0, 1, 0]])
         SM.box_colors = np.array([[255, 255, 255, 255]])
@@ -438,13 +404,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.line_actor, _ = box_edges(SM.box_lx, SM.box_ly, SM.box_lz, colors=(0, 0, 0),
                                   linewidth=1, fake_tube=True)
 
-        SM.atom_type = SM.universe_file.atoms.types
-        SM.pos = SM.universe_file.trajectory[0].positions.copy().astype('f8')
+        SM.atom_type = SM.universe.atoms.types
+        SM.pos = SM.universe.trajectory[0].positions.copy().astype('f8')
         if SM.no_bonds > 0:
             self.ui.Box_bonds.setChecked(True)
-            SM.pos = SM.universe_file.trajectory[0].positions.copy().astype('f8')
-            bonds = SM.universe_file.bonds.to_indices()
-            SM.no_bonds = len(SM.universe_file.bonds)
+            SM.pos = SM.universe.trajectory[0].positions.copy().astype('f8')
+            bonds = SM.universe.bonds.to_indices()
+            SM.no_bonds = len(SM.universe.bonds)
             first_pos_bond = SM.pos[(bonds[:, 0])]
             second_pos_bond = SM.pos[(bonds[:, 1])]
             bonds = np.hstack((first_pos_bond, second_pos_bond))
@@ -458,18 +424,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
             SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-            SM.unique_types_bond = np.unique(SM.universe_file.bonds.types)
+            SM.unique_types_bond = np.unique(SM.universe.bonds.types)
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
         if SM.no_bonds == 0:
-            SM.pos_R = SM.universe_file.trajectory[0].positions.copy().astype('f8')
+            SM.pos_R = SM.universe.trajectory[0].positions.copy().astype('f8')
             SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
                                                           backend='serial')
             open_initial_structur = True
             if open_initial_structur is True:
-                SM.universe_file_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
-                SM.pos_initial_structure = SM.universe_file_initial_structure.trajectory[0].positions.copy().astype('f8')
-                SM.bonds_initial_structure = SM.universe_file_initial_structure.bonds.to_indices()###
-                SM.no_bonds = len(SM.universe_file_initial_structure.bonds)
+                SM.universe_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
+                SM.pos_initial_structure = SM.universe_initial_structure.trajectory[0].positions.copy().astype('f8')
+                SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()###
+                SM.no_bonds = len(SM.universe_initial_structure.bonds)
                 first_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 0])]###
                 second_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 1])]###
                 SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))##
@@ -483,11 +449,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
                 SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
                 SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-                SM.unique_types_bond = np.unique(SM.universe_file_initial_structure.bonds.types)
+                SM.unique_types_bond = np.unique(SM.universe_initial_structure.bonds.types)
 
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
-        SM.unique_types = np.unique(SM.universe_file.atoms.types)
+        SM.unique_types = np.unique(SM.universe.atoms.types)
         SM.colors_unique_types = np.random.rand(len(SM.unique_types), 4)
         SM.colors_unique_types[:, 3] = 1
         for i, typ in enumerate(SM.unique_types):
@@ -571,14 +537,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            SM.pos_R = SM.load_file.trajectory[SM.cnt].positions.copy().astype('f8')
+            SM.pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
             SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
             open_initial_structur = True
             if open_initial_structur is True:
-                SM.bonds_initial_structure = SM.load_file_initial_structure.bonds.to_indices()
+                SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
                 first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
                 second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
                 SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
