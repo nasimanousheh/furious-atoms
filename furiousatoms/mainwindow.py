@@ -22,7 +22,7 @@ from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
 from furiousatoms.sharedmem import SharedMemory
-from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder
+from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder, MWNT_builder
 from numpy.linalg import norm
 from fractions import gcd
 import sys
@@ -30,6 +30,75 @@ import furiousatoms.forms.icons
 
 
 SM = SharedMemory()
+
+class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
+    """ Ui_MWNT class creates a widget for building multple-walls nanotube (MWNT)
+    """
+    def __init__(self, app_path=None, parent=None):
+        super(Ui_MWNT, self).__init__(parent)
+        self.MWNT = io.load_ui_widget("widget_MWNT.ui")
+        self.v_layout = QtWidgets.QVBoxLayout()
+        self.v_layout.addWidget(self.MWNT)
+        self.setCentralWidget(self.MWNT)
+        self.setLayout(self.v_layout)
+        self.resize(248, 313)
+        self.scene = window.Scene()
+        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
+        self.init_settings()
+        self.create_connections()
+
+    def init_settings(self):
+        pass
+
+    def create_connections(self):
+        bond_length_MWNT = 1.421 # default value of C-C bond length
+        self.MWNT.lineEdit_bond_length_MWNT.insert(str(bond_length_MWNT))
+        self.MWNT.lineEdit_bond_length_MWNT.textChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.spinBox_chirality_N_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
+        self.MWNT.comboBox_H_termination_MWNT.currentTextChanged.connect(self.MWNT_diameter_changed)
+
+    def MWNT_diameter_changed(self):
+        # H_termination_MWNT = self.MWNT.comboBox_H_termination_MWNT.currentText()
+        SM.bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
+        SM.bond_length_MWNT = float(SM.bond_length_MWNT)
+        value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
+        value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
+        # SM.number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
+        repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
+        a1 = np.array((np.sqrt(3)*SM.bond_length_MWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*SM.bond_length_MWNT, -3*SM.bond_length_MWNT/2))
+        Ch = value_n_MWNT*a1+value_m_MWNT*a2
+        d = gcd(value_n_MWNT, value_m_MWNT)
+        dR = 3*d if (value_n_MWNT-value_m_MWNT) % (3*d) == 0 else d
+        t1 = (2*value_m_MWNT+value_n_MWNT)//dR
+        t2 = -(2*value_n_MWNT+value_m_MWNT)//dR
+        T = t1*a1+t2*a2
+        diameter_MWNT = float(np.linalg.norm(Ch)/np.pi)
+        diameter_MWNT = "{:.2f}".format(diameter_MWNT)
+        length_MWNT = np.linalg.norm(T) * repeat_units_MWNT
+        length_MWNT = "{:.2f}".format(float(length_MWNT))
+        self.MWNT.lineEdit_diameter_MWNT.setText(str(diameter_MWNT))
+        self.MWNT.lineEdit_length_MWNT.setText(str(length_MWNT))
+
+    def MWNT_builder_callback(self):
+        SM.number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
+        value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
+        value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
+        repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
+        MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
+        MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
+        i = 1
+        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        for i in range(SM.number_of_walls):
+            next_universe = nanotube(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+            universe = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
+        file_name = 'fname.pdb'
+        universe.atoms.write(file_name)
+        self.win.process_load_file(fname=file_name)
+
 
 class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
     """ Ui_SWNT class creates a widget for building single-wall nanotube (SWNT)
@@ -61,14 +130,14 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
 
     def SWNT_diameter_changed(self):
-        H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
+        SM.H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
-        bond_length_SWNT = float(bond_length_SWNT)
+        SM.bond_length_SWNT = float(bond_length_SWNT)
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
         value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
         repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
-        a1 = np.array((np.sqrt(3)*bond_length_SWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*bond_length_SWNT, -3*bond_length_SWNT/2))
+        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
         Ch = value_n_SWNT*a1+value_m_SWNT*a2
         d = gcd(value_n_SWNT, value_m_SWNT)
         dR = 3*d if (value_n_SWNT-value_m_SWNT) % (3*d) == 0 else d
@@ -88,7 +157,7 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        universe = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
+        universe = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
         file_name = 'fname.pdb'
         universe.atoms.write(file_name)
         self.win.process_load_file(fname=file_name)
@@ -134,7 +203,6 @@ class Ui_Form_graphene(QtWidgets.QMainWindow): #QWidget
 class FuriousAtomsApp(QtWidgets.QMainWindow):
     """ Main Furious Atoms Class
     """
-
     def __init__(self, app_path=None, parent=None):
         super(FuriousAtomsApp, self).__init__(parent)
         self.ui = io.load_ui_widget("view.ui")
@@ -166,7 +234,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
-        # self.ui.actionGraphene_sheet.triggered.connect(self.open_widget_graphene)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
         self.ui.actionBond.triggered.connect(self.delete_bonds)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
@@ -180,8 +247,36 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_forward.clicked.connect(self.forward_movie)
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
+        self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
+        self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
+        self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
+
+    def change_particle_shape(self):
+        comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
+        print(comboBox_particleshape)
+        colors = np.ones((SM.no_atoms, 4))
+        if comboBox_particleshape == 'Point':
+            SM.sphere_actor.VisibilityOff()
+            SM.sphere_actor = actor.point(SM.pos, colors)
+            # SM.sphere_actor = actor.sphere(centers=SM.pos,
+            #                         colors=colors,
+            #                         radii=SM.radii_spheres, theta=32, phi=32)
+            SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+            SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+            SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+            vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+            SM.no_vertices_all_particles = vertices_particle.shape[0]
+            SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+            SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+            SM.colors_backup_particles = SM.vcolors_particle.copy()
+            SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
+                np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+            self.scene.add(SM.sphere_actor)
+            utils.update_actor(SM.sphere_actor)
+            SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+            self.qvtkwidget.GetRenderWindow().Render()
 
     def single_wall(self):
         self.swnt = Ui_SWNT()
@@ -194,6 +289,40 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.gr.win = self
         self.gr.show()
         self.gr.showNormal()
+
+    def multiple_walls(self):
+        self.smnt = Ui_MWNT()
+        self.smnt.win = self
+        self.smnt.show()
+        self.smnt.showNormal()
+
+    def calculate_distance(self):
+        object_indices_particles = np.where(SM.selected_particle == True)[0]
+        SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        if len(object_indices_particles)==2:
+            distance_particle_particle = np.linalg.norm(SM.pos[object_indices_particles[0]] - SM.pos[object_indices_particles[1]])
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        distance = "{:.2f}".format(distance_particle_particle)
+        avg = np.average(SM.pos[object_indices_particles], axis=0)
+        label_actor = actor.label(text=(str(distance)), pos= avg, scale=(0.5, 0.5, 0.5), color=(0, 0, 0))
+        first_pos_bond = SM.pos[object_indices_particles[0]]
+        second_pos_bond = SM.pos[object_indices_particles[1]]
+        bonds = np.hstack((first_pos_bond, second_pos_bond))
+        bonds = bonds.reshape(1 , 2, 3)
+        bonds += np.array([0, 0, 0.5])
+        line_colors = (0, 0, 0, 1)
+        line_actor = actor.line(bonds, line_colors, linewidth=5)
+        self.scene.add(label_actor)
+        # line_actor.GetProperty().SetLineStipplePattern(0xFFFF)#0xf0f0) #0xA1A1
+        # line_actor.GetProperty().SetLineStippleRepeatFactor(2)
+        # line_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        line_actor.VisibilityOff()
+        self.scene.add(line_actor)
+        self.qvtkwidget.GetRenderWindow().Render()
+        print('distance of particles', (distance_particle_particle))
+        # self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),view_up=(0, 1, 0))
 
     def slider_changing(self):
         SM.cnt = self.ui.horizontalSlider_animation.value()
@@ -419,8 +548,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             bonds = np.hstack((first_pos_bond, second_pos_bond))
             SM.bonds = bonds.reshape((SM.no_bonds), 2, 3)
             SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.line_thickness = 0.2
-            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+            SM.line_thickness = 1
+            SM.bond_actor = actor.line(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+            # SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
             SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
@@ -481,6 +611,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         SM.selected_particle = np.zeros(SM.no_atoms, dtype=np.bool)
         SM.selected_bond = np.zeros(SM.no_bonds, dtype=np.bool)
+        # SM.sphere_actor = actor.point(SM.pos, colors)
         SM.sphere_actor = actor.sphere(centers=SM.pos,
                                     colors=colors,
                                     radii=SM.radii_spheres, theta=32, phi=32)
