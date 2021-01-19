@@ -1,5 +1,7 @@
 <!DOCTYPE RCC><RCC version="1.0">
 <qresource>
+    <file>icons/point.png</file>
+    <file>icons/line.png</file>
     <file>icons/about.png</file>
     <file>icons/arrow.png</file>
     <file>icons/backward.png</file>
