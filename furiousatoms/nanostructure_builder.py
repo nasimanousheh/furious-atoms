@@ -21,7 +21,7 @@ SM = SharedMemory()
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
-  that atom that is at located na1+ma2 away from your original atom. a1 and a2 are lattice vectors.
+  that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
@@ -251,9 +251,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
     if H_termination_SWNT == 'Both ends':
         return combined
 
-
-def MWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
-
+def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=False):
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
@@ -262,11 +260,13 @@ def MWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
     a2 = np.array((np.sqrt(3)/2*a, -3*a/2))
     Ch = n*a1+m*a2
     T = t1*a1+t2*a2
-    if length:
-        N = int(np.ceil(length/np.linalg.norm(T)))
-    Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
+    # if length:
+    #     N = int(np.ceil(length/norm(T)))
+    Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
     basis = [np.array((0, 0)), (a1+a2)/3]
     pts = []
+    xyz = []
+    atom_types_swnt = []
     for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
@@ -274,23 +274,26 @@ def MWNT_builder(n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=F
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
                 for k in range(N):
                     pts.append((sp, pt+k*T))
-    SM.diameter_MWNT = np.linalg.norm(Ch)/np.pi
+    diameter = norm(Ch)/np.pi
+    print(diameter)
     def gr2tube(v):
         phi = 2*np.pi*v.dot(Ch_proj)
-        return np.array((SM.diameter_SWNT/2*np.cos(phi),
-                         SM.diameter_MWNT/2*np.sin(phi),
-                         v.dot(T_proj)*np.linalg.norm(T)))
+        return np.array((diameter/2*np.cos(phi),
+                         diameter/2*np.sin(phi),
+                         v.dot(T_proj)*norm(T)))
     xyz = [gr2tube(v) for _, v in pts]
-    atom_types = [v for v, _ in pts]
-    m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-    fragments = m.to_json(scale =1)
-    n_atoms = len(xyz)
-    SM.pos = np.array(xyz)
-    assert SM.pos.shape == (n_atoms, 3)
-    u = MDAnalysis.Universe.empty(n_atoms, trajectory=True, n_residues=10)
-    u.atoms.positions = SM.pos
-    SM.bonds = np.array(fragments['bonds'])
-    u.add_bonds(SM.bonds)
+    atom_types_swnt = [v for v, _ in pts]
+    mol_1 = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
+    fragments = mol_1.to_json(scale =1)
+    n_atoms_swnt = len(xyz)
+    coord_array_swnt = np.array(xyz)
+    assert coord_array_swnt.shape == (n_atoms_swnt, 3)
+    swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=2)
+    swnt.atoms.positions = coord_array_swnt
+    all_bonds_swnt = np.array(fragments['bonds'])
+    swnt.add_TopologyAttr('name', atom_types_swnt)
+    swnt.add_bonds(all_bonds_swnt)
+    return swnt
 
 def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
 
