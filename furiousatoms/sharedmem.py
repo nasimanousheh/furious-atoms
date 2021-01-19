@@ -73,3 +73,6 @@ class SharedMemory(object):
 
         #############File################
         self.universe = None
+        self.H_termination_SWNT = None
+        self.bond_length_SWNT = 0
+        self.number_of_walls =0

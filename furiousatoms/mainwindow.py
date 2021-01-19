@@ -93,7 +93,7 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         i = 1
         universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
         for i in range(SM.number_of_walls):
-            next_universe = nanotube(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+            next_universe = MWNT_builder(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
             universe = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
         file_name = 'fname.pdb'
         universe.atoms.write(file_name)
