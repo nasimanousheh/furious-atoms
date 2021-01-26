@@ -1,0 +1,2243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>620</width>
+    <height>699</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTabWidget" name="label_num_cation_5">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>621</width>
+     <height>501</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(223, 223, 223);</string>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <widget class="QWidget" name="tab_5">
+    <attribute name="title">
+     <string>Add electrolyte</string>
+    </attribute>
+    <widget class="QLabel" name="label_num_type_cation">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>How many types of cation:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labl_properties_cation">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>-1</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Cation properties:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_num_type_cation">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>30</y>
+       <width>51</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>5</number>
+     </property>
+     <property name="value">
+      <number>0</number>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>96</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of cation 2:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>131</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of cation 3:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>167</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of cation 4:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_cation_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>201</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of cation 5:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_type_anion">
+     <property name="geometry">
+      <rect>
+       <x>7</x>
+       <y>271</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>How many types of anion:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>337</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of anion 2:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>7</x>
+       <y>442</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of anion 5:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labl_properties_anion">
+     <property name="geometry">
+      <rect>
+       <x>2</x>
+       <y>240</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Anion properties:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spinBox_num_type_anion">
+     <property name="geometry">
+      <rect>
+       <x>167</x>
+       <y>271</y>
+       <width>51</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="maximum">
+      <number>5</number>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>7</x>
+       <y>372</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of anion 3:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>303</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of anion 1:</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>8</x>
+       <y>408</y>
+       <width>111</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of anion 4:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>62</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of cations:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>61</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>cation concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>61</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>63</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>352</x>
+       <y>92</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>538</x>
+       <y>94</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>423</x>
+       <y>93</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of cations:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>202</x>
+       <y>92</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>cation concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>128</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>129</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of cations:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>128</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>cation concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>130</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>164</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>165</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of cations:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>164</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>cation concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>166</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_cation_5">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>200</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_cation_5">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>200</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>cation concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_cation_5">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>202</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>440</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>anion concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>442</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>423</x>
+       <y>333</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of anion:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>406</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>441</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of anion:</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>404</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>368</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>anion concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>440</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>301</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>404</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>anion concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>369</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of anion:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>202</x>
+       <y>332</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>anion concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>538</x>
+       <y>334</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>352</x>
+       <y>332</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_con_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>203</x>
+       <y>301</y>
+       <width>151</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>anion concentration (M):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>303</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>302</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of anion:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>424</x>
+       <y>405</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of anion:</string>
+     </property>
+    </widget>
+    <widget class="QDoubleSpinBox" name="SpinBox_con_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>353</x>
+       <y>368</y>
+       <width>62</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>539</x>
+       <y>370</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>121</x>
+       <y>59</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_cation_3">
+     <property name="geometry">
+      <rect>
+       <x>121</x>
+       <y>126</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_cation_4">
+     <property name="geometry">
+      <rect>
+       <x>121</x>
+       <y>162</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_cation_5">
+     <property name="geometry">
+      <rect>
+       <x>121</x>
+       <y>198</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_cation_2">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>90</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_anion_4">
+     <property name="geometry">
+      <rect>
+       <x>112</x>
+       <y>403</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_anion_5">
+     <property name="geometry">
+      <rect>
+       <x>112</x>
+       <y>439</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_anion_3">
+     <property name="geometry">
+      <rect>
+       <x>112</x>
+       <y>367</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_anion_1">
+     <property name="geometry">
+      <rect>
+       <x>112</x>
+       <y>300</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_anion_2">
+     <property name="geometry">
+      <rect>
+       <x>111</x>
+       <y>331</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_cation_6">
+     <property name="geometry">
+      <rect>
+       <x>427</x>
+       <y>200</y>
+       <width>111</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of cations:</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_cation_1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>91</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Type of cation 1</string>
+     </property>
+    </widget>
+    <zorder>label_num_type_cation</zorder>
+    <zorder>labl_properties_cation</zorder>
+    <zorder>spinBox_num_type_cation</zorder>
+    <zorder>radioButton_cation_2</zorder>
+    <zorder>radioButton_cation_3</zorder>
+    <zorder>radioButton_cation_4</zorder>
+    <zorder>radioButton_cation_5</zorder>
+    <zorder>label_num_type_anion</zorder>
+    <zorder>radioButton_anion_2</zorder>
+    <zorder>radioButton_anion_5</zorder>
+    <zorder>labl_properties_anion</zorder>
+    <zorder>radioButton_anion_3</zorder>
+    <zorder>radioButton_anion_1</zorder>
+    <zorder>radioButton_anion_4</zorder>
+    <zorder>spinBox_num_type_anion</zorder>
+    <zorder>label_num_cation_1</zorder>
+    <zorder>label_con_cation_1</zorder>
+    <zorder>SpinBox_con_cation_1</zorder>
+    <zorder>lineEdit_num_cation_1</zorder>
+    <zorder>lineEdit_num_cation_2</zorder>
+    <zorder>label_num_cation_2</zorder>
+    <zorder>label_con_cation_2</zorder>
+    <zorder>SpinBox_con_cation_2</zorder>
+    <zorder>label_num_cation_3</zorder>
+    <zorder>label_con_cation_3</zorder>
+    <zorder>lineEdit_num_cation_3</zorder>
+    <zorder>SpinBox_con_cation_3</zorder>
+    <zorder>label_num_cation_4</zorder>
+    <zorder>label_con_cation_4</zorder>
+    <zorder>lineEdit_num_cation_4</zorder>
+    <zorder>label_con_cation_5</zorder>
+    <zorder>lineEdit_num_cation_5</zorder>
+    <zorder>SpinBox_con_cation_4</zorder>
+    <zorder>SpinBox_con_cation_5</zorder>
+    <zorder>label_con_anion_5</zorder>
+    <zorder>lineEdit_num_anion_5</zorder>
+    <zorder>label_num_anion_2</zorder>
+    <zorder>lineEdit_num_anion_4</zorder>
+    <zorder>label_num_anion_5</zorder>
+    <zorder>label_con_anion_3</zorder>
+    <zorder>label_con_anion_4</zorder>
+    <zorder>label_num_anion_3</zorder>
+    <zorder>label_con_anion_2</zorder>
+    <zorder>lineEdit_num_anion_2</zorder>
+    <zorder>SpinBox_con_anion_2</zorder>
+    <zorder>label_con_anion_1</zorder>
+    <zorder>lineEdit_num_anion_1</zorder>
+    <zorder>label_num_anion_1</zorder>
+    <zorder>label_num_anion_4</zorder>
+    <zorder>SpinBox_con_anion_3</zorder>
+    <zorder>lineEdit_num_anion_3</zorder>
+    <zorder>SpinBox_con_anion_1</zorder>
+    <zorder>SpinBox_con_anion_5</zorder>
+    <zorder>SpinBox_con_anion_4</zorder>
+    <zorder>lineEdit_type_cation_1</zorder>
+    <zorder>lineEdit_type_cation_3</zorder>
+    <zorder>lineEdit_type_cation_4</zorder>
+    <zorder>lineEdit_type_cation_5</zorder>
+    <zorder>lineEdit_type_cation_2</zorder>
+    <zorder>lineEdit_type_anion_4</zorder>
+    <zorder>lineEdit_type_anion_5</zorder>
+    <zorder>lineEdit_type_anion_3</zorder>
+    <zorder>lineEdit_type_anion_1</zorder>
+    <zorder>lineEdit_type_anion_2</zorder>
+    <zorder>label_num_cation_6</zorder>
+    <zorder>pushButton_cation_1</zorder>
+   </widget>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Simulation box</string>
+    </attribute>
+    <widget class="QLabel" name="label_properties_box">
+     <property name="geometry">
+      <rect>
+       <x>5</x>
+       <y>-1</y>
+       <width>201</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Simulation box  properties:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit__lx_CG">
+     <property name="geometry">
+      <rect>
+       <x>53</x>
+       <y>30</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_lx">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>28</y>
+       <width>41</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>lx (A):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_ly_CG">
+     <property name="geometry">
+      <rect>
+       <x>53</x>
+       <y>64</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_ly">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>65</y>
+       <width>41</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>ly (A):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_lz_CG">
+     <property name="geometry">
+      <rect>
+       <x>53</x>
+       <y>100</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_lz">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>100</y>
+       <width>41</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>lz (A):</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_lx_periodic">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>33</y>
+       <width>131</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Periodic in x direction</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_ly_periodic">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>68</y>
+       <width>121</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Periodic in y direction</string>
+     </property>
+    </widget>
+    <widget class="QRadioButton" name="radioButton_lz_periodic">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>102</y>
+       <width>131</width>
+       <height>17</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Periodic in z direction</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_dummy_wall">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>130</y>
+       <width>151</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Create dummy wall on:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labl_properties_box_CG_6">
+     <property name="geometry">
+      <rect>
+       <x>169</x>
+       <y>130</y>
+       <width>41</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_grid_size">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>160</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Grid size on the wall:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_grid_size">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>160</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_surface_charge">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>191</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Surface Charge density (C.m&lt;span style=&quot; vertical-align:super;&quot;&gt;-2&lt;/span&gt;):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_surface_charge">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>190</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_counterion">
+     <property name="geometry">
+      <rect>
+       <x>289</x>
+       <y>220</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Added counterions:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_counterion">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>220</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_valency_counterion">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>251</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_valency_counterion">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>251</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Valency of counterion:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_type_counterion">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>220</y>
+       <width>131</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Type of counterion:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_num_mesh_points">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>160</y>
+       <width>211</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Number of mesh points on the wall:</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_num_mesh_points">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>160</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_mesh_charge">
+     <property name="geometry">
+      <rect>
+       <x>490</x>
+       <y>190</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_mesh_charge">
+     <property name="geometry">
+      <rect>
+       <x>285</x>
+       <y>190</y>
+       <width>191</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Partial Charge on mesh (C.m&lt;span style=&quot; vertical-align:super;&quot;&gt;-2&lt;/span&gt;):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_type_counterion">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>220</y>
+       <width>71</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Add water</string>
+    </attribute>
+    <widget class="QLabel" name="label_water_con">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>150</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Water concentration (mol):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_total_num_water">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>122</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_space_diameter">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>60</y>
+       <width>121</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Space diameter (A):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_total_num_water">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>120</y>
+       <width>191</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Total number of water molecule:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_water_diameter">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>33</y>
+       <width>171</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Water molecule diameter (A):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_space_diameter">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>61</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_water_diameter">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>33</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_space_bet_water">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>91</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="acceptDrops">
+      <bool>false</bool>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_space_bet_water">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>90</y>
+       <width>211</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Space between water molecules (A):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_water_con">
+     <property name="geometry">
+      <rect>
+       <x>230</x>
+       <y>150</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labl_properties_water">
+     <property name="geometry">
+      <rect>
+       <x>3</x>
+       <y>0</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Properties of water:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_water_con_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>230</y>
+       <width>161</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Choose the water model:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_water_con_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>304</y>
+       <width>271</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Partial charge on Hydrogen (electron charge):</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_water_con_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>270</y>
+       <width>301</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="text">
+      <string>Partial charge on Oxygen (electron charge):</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_water_con_3">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>270</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit_water_con_4">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>304</y>
+       <width>91</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="clearButtonEnabled">
+      <bool>false</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labl_properties_water_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>190</y>
+       <width>141</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="text">
+      <string>Water model:</string>
+     </property>
+    </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>297</x>
+       <y>230</y>
+       <width>69</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_total_anion_con">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>635</y>
+     <width>171</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Tota anion concentration (M):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_total_anion_con">
+   <property name="geometry">
+    <rect>
+     <x>189</x>
+     <y>636</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labl_properties_box_CG_9">
+   <property name="geometry">
+    <rect>
+     <x>7</x>
+     <y>567</y>
+     <width>151</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <underline>true</underline>
+    </font>
+   </property>
+   <property name="text">
+    <string>Salt  properties:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_total_cation_con">
+   <property name="geometry">
+    <rect>
+     <x>189</x>
+     <y>601</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_total_cation_con">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>600</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Tota cation concentration (M):</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labl_properties_box_CG_10">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>500</y>
+     <width>101</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <underline>true</underline>
+    </font>
+   </property>
+   <property name="text">
+    <string>Box properties</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_lx_final">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>530</y>
+     <width>61</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_lx_final">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>530</y>
+     <width>41</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>lx (A):</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_ly_final">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>530</y>
+     <width>41</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>ly (A):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_ly_final">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>530</y>
+     <width>61</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_lz_final">
+   <property name="geometry">
+    <rect>
+     <x>272</x>
+     <y>530</y>
+     <width>61</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_lz_final">
+   <property name="geometry">
+    <rect>
+     <x>232</x>
+     <y>530</y>
+     <width>41</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>lz (A):</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditl_surface_charge_final">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>530</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="acceptDrops">
+    <bool>false</bool>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_surface_charge_final">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>530</y>
+     <width>191</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Surface Charge density (C.m&lt;span style=&quot; vertical-align:super;&quot;&gt;-2&lt;/span&gt;):&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_total_counter_con">
+   <property name="geometry">
+    <rect>
+     <x>357</x>
+     <y>600</y>
+     <width>181</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Tota number of concentrations:</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="labl_properties_box_CG_11">
+   <property name="geometry">
+    <rect>
+     <x>354</x>
+     <y>567</y>
+     <width>151</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>10</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+     <underline>true</underline>
+    </font>
+   </property>
+   <property name="text">
+    <string>Counterion  properties:</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_total_counterion_con">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>600</y>
+     <width>71</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+   <property name="clearButtonEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_build_electrolyte">
+   <property name="geometry">
+    <rect>
+     <x>139</x>
+     <y>670</y>
+     <width>151</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Build electrolyte system</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_help_electrolyte">
+   <property name="geometry">
+    <rect>
+     <x>309</x>
+     <y>670</y>
+     <width>151</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Help</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
