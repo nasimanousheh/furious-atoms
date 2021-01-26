@@ -22,183 +22,17 @@ from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import MDAnalysis
 from furiousatoms.sharedmem import SharedMemory
-from furiousatoms.nanostructure_builder import SWNT_builder, graphene_builder, MWNT_builder
 from numpy.linalg import norm
 from fractions import gcd
 import sys
 import furiousatoms.forms.icons
-
+from furiousatoms.periodic_table import Ui_periodic
+from furiousatoms.SWNT_builder import  Ui_SWNT
+from furiousatoms.graphene_builder import  Ui_graphene
+from furiousatoms.MWNT_builder import  Ui_MWNT
+from furiousatoms.electrolyte_builder import Ui_electrolyte
 
 SM = SharedMemory()
-
-class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
-    """ Ui_MWNT class creates a widget for building multple-walls nanotube (MWNT)
-    """
-    def __init__(self, app_path=None, parent=None):
-        super(Ui_MWNT, self).__init__(parent)
-        self.MWNT = io.load_ui_widget("widget_MWNT.ui")
-        self.v_layout = QtWidgets.QVBoxLayout()
-        self.v_layout.addWidget(self.MWNT)
-        self.setCentralWidget(self.MWNT)
-        self.setLayout(self.v_layout)
-        self.resize(248, 313)
-        self.scene = window.Scene()
-        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
-        self.init_settings()
-        self.create_connections()
-
-    def init_settings(self):
-        pass
-
-    def create_connections(self):
-        bond_length_MWNT = 1.421 # default value of C-C bond length
-        self.MWNT.lineEdit_bond_length_MWNT.insert(str(bond_length_MWNT))
-        self.MWNT.lineEdit_bond_length_MWNT.textChanged.connect(self.MWNT_diameter_changed)
-        self.MWNT.spinBox_chirality_N_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
-        self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
-        self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
-        self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
-        self.MWNT.comboBox_H_termination_MWNT.currentTextChanged.connect(self.MWNT_diameter_changed)
-
-    def MWNT_diameter_changed(self):
-        # H_termination_MWNT = self.MWNT.comboBox_H_termination_MWNT.currentText()
-        SM.bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
-        SM.bond_length_MWNT = float(SM.bond_length_MWNT)
-        value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
-        value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
-        # SM.number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
-        repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
-        a1 = np.array((np.sqrt(3)*SM.bond_length_MWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*SM.bond_length_MWNT, -3*SM.bond_length_MWNT/2))
-        Ch = value_n_MWNT*a1+value_m_MWNT*a2
-        d = gcd(value_n_MWNT, value_m_MWNT)
-        dR = 3*d if (value_n_MWNT-value_m_MWNT) % (3*d) == 0 else d
-        t1 = (2*value_m_MWNT+value_n_MWNT)//dR
-        t2 = -(2*value_n_MWNT+value_m_MWNT)//dR
-        T = t1*a1+t2*a2
-        diameter_MWNT = float(np.linalg.norm(Ch)/np.pi)
-        diameter_MWNT = "{:.2f}".format(diameter_MWNT)
-        length_MWNT = np.linalg.norm(T) * repeat_units_MWNT
-        length_MWNT = "{:.2f}".format(float(length_MWNT))
-        self.MWNT.lineEdit_diameter_MWNT.setText(str(diameter_MWNT))
-        self.MWNT.lineEdit_length_MWNT.setText(str(length_MWNT))
-
-    def MWNT_builder_callback(self):
-        SM.number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
-        value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
-        value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
-        repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
-        MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
-        MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        i = 1
-        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-        for i in range(SM.number_of_walls):
-            next_universe = MWNT_builder(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-            universe = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
-        file_name = 'fname.pdb'
-        universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
-
-
-class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
-    """ Ui_SWNT class creates a widget for building single-wall nanotube (SWNT)
-    """
-    def __init__(self, app_path=None, parent=None):
-        super(Ui_SWNT, self).__init__(parent)
-        self.SWNT = io.load_ui_widget("widget_SWNT.ui")
-        self.v_layout = QtWidgets.QVBoxLayout()
-        self.v_layout.addWidget(self.SWNT)
-        self.setCentralWidget(self.SWNT)
-        self.setLayout(self.v_layout)
-        self.resize(247, 285)
-        self.scene = window.Scene()
-        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
-        self.init_settings()
-        self.create_connections()
-
-    def init_settings(self):
-        pass
-
-    def create_connections(self):
-        bond_length_SWNT = 1.421 # default value of C-C bond length
-        self.SWNT.lineEdit_bond_length_SWNT.insert(str(bond_length_SWNT))
-        self.SWNT.lineEdit_bond_length_SWNT.textChanged.connect(self.SWNT_diameter_changed)
-        self.SWNT.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-        self.SWNT.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-        self.SWNT.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
-        self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder_callback)
-        self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
-
-    def SWNT_diameter_changed(self):
-        SM.H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
-        bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
-        SM.bond_length_SWNT = float(bond_length_SWNT)
-        value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
-        value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
-        repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
-        a1 = np.array((np.sqrt(3)*SM.bond_length_SWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*SM.bond_length_SWNT, -3*SM.bond_length_SWNT/2))
-        Ch = value_n_SWNT*a1+value_m_SWNT*a2
-        d = gcd(value_n_SWNT, value_m_SWNT)
-        dR = 3*d if (value_n_SWNT-value_m_SWNT) % (3*d) == 0 else d
-        t1 = (2*value_m_SWNT+value_n_SWNT)//dR
-        t2 = -(2*value_n_SWNT+value_m_SWNT)//dR
-        T = t1*a1+t2*a2
-        diameter_SWNT = float(np.linalg.norm(Ch)/np.pi)
-        diameter_SWNT = "{:.2f}".format(diameter_SWNT)
-        length_SWNT = np.linalg.norm(T) * repeat_units_SWNT
-        length_SWNT = "{:.2f}".format(float(length_SWNT))
-        self.SWNT.lineEdit_diameter_SWNT.setText(str(diameter_SWNT))
-        self.SWNT.lineEdit_length_SWNT.setText(str(length_SWNT))
-
-    def SWNT_builder_callback(self):
-        value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
-        value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
-        repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
-        SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
-        SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        universe = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
-        file_name = 'fname.pdb'
-        universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
-
-class Ui_Form_graphene(QtWidgets.QMainWindow): #QWidget
-    """ Ui_Graphene class creates a widget for building graphenes
-    """
-    def __init__(self, app_path=None, parent=None):
-        super(Ui_Form_graphene, self).__init__(parent)
-        self.graphene = io.load_ui_widget("widget_graphene.ui")
-        self.v_layout = QtWidgets.QVBoxLayout()
-        self.v_layout.addWidget(self.graphene)
-        self.setCentralWidget(self.graphene)
-        self.setLayout(self.v_layout)
-        self.resize(244, 226)
-        self.scene = window.Scene()
-        self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
-        self.init_settings()
-        self.create_connections()
-
-    def init_settings(self):
-        pass
-
-    def create_connections(self):
-        bond_length_graphene = 1.421 # default value of C-C bond length
-        self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
-        self.graphene.pushButton_build_graphene.clicked.connect(self.graphene_builder_callback)
-
-    def graphene_builder_callback(self):
-        H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
-        bond_length_graphene = self.graphene.lineEdit_bond_length_graphene.text()
-        bond_length_graphene = float(bond_length_graphene)
-        value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
-        value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
-        repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
-        graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
-        graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
-        SM.universe = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
-        file_name = 'fname.pdb'
-        SM.universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
     """ Main Furious Atoms Class
@@ -239,7 +73,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
-        # self.ui.horizontalSlider_metallicity_particle.setValue(int(SM.metallicCoefficient_particle*100))
         self.ui.horizontalSlider_metallicity_particle.valueChanged[int].connect(self.metallicity_particle)
         self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
         self.ui.Button_play.clicked.connect(self.play_movie)
@@ -248,53 +81,67 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
         self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
+        self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
+        self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
 
     def change_particle_shape(self):
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
-        print(comboBox_particleshape)
-        colors = np.ones((SM.no_atoms, 4))
         if comboBox_particleshape == 'Point':
             SM.sphere_actor.VisibilityOff()
-            SM.sphere_actor = actor.point(SM.pos, colors)
-            # SM.sphere_actor = actor.sphere(centers=SM.pos,
-            #                         colors=colors,
-            #                         radii=SM.radii_spheres, theta=32, phi=32)
-            SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
-            SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-            SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-            vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
-            SM.no_vertices_all_particles = vertices_particle.shape[0]
-            SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
-            SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
-            SM.colors_backup_particles = SM.vcolors_particle.copy()
-            SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
-                np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-            self.scene.add(SM.sphere_actor)
-            utils.update_actor(SM.sphere_actor)
-            SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-            self.qvtkwidget.GetRenderWindow().Render()
+        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
+        #     # all_vertices_radii = all_vertices_radii[:, None]
+        #     SM.all_vertices_particles[:] = 0.1 * SM.all_vertices_particles[:] #- np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        if comboBox_particleshape == 'Sphere':
+            SM.sphere_actor.VisibilityOn()
+        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
+        #     # all_vertices_radii = all_vertices_radii[:, None]
+        #     SM.all_vertices_particles[:] = 0.55 * SM.all_vertices_particles[:] #- np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+
+    def change_bond_shape(self):
+        comboBox_bondshape = self.ui.comboBox_bondshape.currentText()
+        if comboBox_bondshape == 'Line':
+            SM.bond_actor.VisibilityOff()
+            SM.bond_actor = actor.line(SM.bonds, SM.bond_colors, linewidth=2)
+            self.scene.add(SM.bond_actor)
+        if comboBox_bondshape == 'Cylinder':
+            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+            self.scene.add(SM.bond_actor)
+        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+        SM.colors_backup_bond = SM.vcolors_bond
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        self.qvtkwidget.GetRenderWindow().Render()
+
+    def electrolyte(self):
+        Ui_electrolyte.electrolyte = Ui_electrolyte()
+        Ui_electrolyte.electrolyte.win = self
+        Ui_electrolyte.electrolyte.show()
+        Ui_electrolyte.electrolyte.showNormal()
 
     def single_wall(self):
-        self.swnt = Ui_SWNT()
-        self.swnt.win = self
-        self.swnt.show()
-        self.swnt.showNormal()
+        Ui_SWNT.swnt = Ui_SWNT()
+        Ui_SWNT.swnt.win = self
+        Ui_SWNT.swnt.show()
+        Ui_SWNT.swnt.showNormal()
 
     def graphene(self):
-        self.gr = Ui_Form_graphene()
-        self.gr.win = self
-        self.gr.show()
-        self.gr.showNormal()
+        Ui_graphene.gr = Ui_graphene()
+        Ui_graphene.gr.win = self
+        Ui_graphene.gr.show()
+        Ui_graphene.gr.showNormal()
 
     def multiple_walls(self):
-        self.smnt = Ui_MWNT()
-        self.smnt.win = self
-        self.smnt.show()
-        self.smnt.showNormal()
+        Ui_MWNT.smnt = Ui_MWNT()
+        Ui_MWNT.smnt.win = self
+        Ui_MWNT.smnt.show()
+        Ui_MWNT.smnt.showNormal()
 
     def calculate_distance(self):
         object_indices_particles = np.where(SM.selected_particle == True)[0]
@@ -315,14 +162,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         line_colors = (0, 0, 0, 1)
         line_actor = actor.line(bonds, line_colors, linewidth=5)
         self.scene.add(label_actor)
-        # line_actor.GetProperty().SetLineStipplePattern(0xFFFF)#0xf0f0) #0xA1A1
-        # line_actor.GetProperty().SetLineStippleRepeatFactor(2)
-        # line_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         line_actor.VisibilityOff()
         self.scene.add(line_actor)
         self.qvtkwidget.GetRenderWindow().Render()
         print('distance of particles', (distance_particle_particle))
-        # self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),view_up=(0, 1, 0))
 
     def slider_changing(self):
         SM.cnt = self.ui.horizontalSlider_animation.value()
@@ -515,6 +358,23 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.file_name = os.path.basename(fname)
         self.process_universe(universe=SM.universe)
 
+    def sky_box_effect(self, actor):
+        self.scene.UseImageBasedLightingOn()
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        cube_path = os.path.join(dir_path, 'skybox0')
+        if not os.path.isdir(cube_path):
+            print('This path does not exist:', cube_path)
+            return
+        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
+        self.scene.SetEnvironmentTexture(cubemap)
+        actor.GetProperty().SetInterpolationToPBR()
+        SM.metallicCoefficient_particle = 0.5
+        SM.roughnessCoefficient_particle = 0.1
+        colors_sky = vtk.vtkNamedColors()
+        actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
+        actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
+        actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
+
 
     def process_universe(self, universe):
         SM.no_atoms = len(SM.universe.atoms)
@@ -548,9 +408,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             bonds = np.hstack((first_pos_bond, second_pos_bond))
             SM.bonds = bonds.reshape((SM.no_bonds), 2, 3)
             SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.line_thickness = 1
-            SM.bond_actor = actor.line(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
-            # SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+            SM.line_thickness = 0.2
+            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
             SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
             SM.colors_backup_bond = SM.vcolors_bond.copy()
             SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
@@ -559,30 +418,30 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
             SM.unique_types_bond = np.unique(SM.universe.bonds.types)
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
-        if SM.no_bonds == 0:
-            SM.pos_R = SM.universe.trajectory[0].positions.copy().astype('f8')
-            SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
-                                                          backend='serial')
-            open_initial_structur = True
-            if open_initial_structur is True:
-                SM.universe_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
-                SM.pos_initial_structure = SM.universe_initial_structure.trajectory[0].positions.copy().astype('f8')
-                SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()###
-                SM.no_bonds = len(SM.universe_initial_structure.bonds)
-                first_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 0])]###
-                second_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 1])]###
-                SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))##
-                SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
-                SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
-                SM.line_thickness = 0.2
-                SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
-                SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-                SM.colors_backup_bond = SM.vcolors_bond.copy()
-                SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
-                SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
-                SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
-                SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-                SM.unique_types_bond = np.unique(SM.universe_initial_structure.bonds.types)
+        # if SM.no_bonds == 0:
+        #     SM.pos_R = SM.universe.trajectory[0].positions.copy().astype('f8')
+        #     SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
+        #                                                   backend='serial')
+        #     open_initial_structur = True
+        #     if open_initial_structur is True:
+        #         SM.universe_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
+        #         SM.pos_initial_structure = SM.universe_initial_structure.trajectory[0].positions.copy().astype('f8')
+        #         SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()###
+        #         SM.no_bonds = len(SM.universe_initial_structure.bonds)
+        #         first_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 0])]###
+        #         second_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 1])]###
+        #         SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))##
+        #         SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
+        #         SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
+        #         SM.line_thickness = 0.2
+        #         SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=SM.line_thickness)
+        #         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+        #         SM.colors_backup_bond = SM.vcolors_bond.copy()
+        #         SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
+        #         SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
+        #         SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
+        #         SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
+        #         SM.unique_types_bond = np.unique(SM.universe_initial_structure.bonds.types)
 
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
@@ -611,7 +470,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         SM.selected_particle = np.zeros(SM.no_atoms, dtype=np.bool)
         SM.selected_bond = np.zeros(SM.no_bonds, dtype=np.bool)
-        # SM.sphere_actor = actor.point(SM.pos, colors)
         SM.sphere_actor = actor.sphere(centers=SM.pos,
                                     colors=colors,
                                     radii=SM.radii_spheres, theta=32, phi=32)
@@ -624,29 +482,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
 
-        self.scene.UseImageBasedLightingOn()
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        cube_path = os.path.join(dir_path, 'skybox0')
-        if not os.path.isdir(cube_path):
-            print('This path does not exist:', cube_path)
-            return
-        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
-        self.scene.SetEnvironmentTexture(cubemap)
-        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
+        self.sky_box_effect(SM.sphere_actor)
 
-        SM.metallicCoefficient_particle = 0.5
-        SM.roughnessCoefficient_particle = 0.1
-        colors_sky = vtk.vtkNamedColors()
-        SM.sphere_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
         axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
 
         if (SM.no_bonds > 0):
-            SM.bond_actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-            SM.bond_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-            SM.bond_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
             self.scene.add(SM.bond_actor)
 
         self.scene.add(axes_actor)
@@ -676,18 +517,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
-            open_initial_structur = True
-            if open_initial_structur is True:
-                SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
-                first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
-                second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
-                SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
-                SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
-                points_array_bonds = np.vstack(SM.bonds)
+            # open_initial_structure = True
+            # if open_initial_structure is True:
+            #     SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
+            #     first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
+            #     second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
+            #     SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
+            #     SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
+            #     points_array_bonds = np.vstack(SM.bonds)
 
-                # Set Points to vtk array format
-                vtk_points2 = numpy_to_vtk_points(points_array_bonds)
-                SM.bond_actor.poly_data.SetPoints(vtk_points2)
+            #     # Set Points to vtk array format
+            #     vtk_points2 = numpy_to_vtk_points(points_array_bonds)
+            #     SM.bond_actor.poly_data.SetPoints(vtk_points2)
 
             self.ui.Timer_animation.setValue(SM.cnt)
             self.ui.Edit_framenumber.setText(str(SM.cnt))
