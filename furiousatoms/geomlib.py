@@ -570,3 +570,4 @@ for row in elems:
             pass
 elems_symbol = {row['symbol']: row for row in elems}
 elems_number = {row['number']: row for row in elems}
+print(elems_symbol['H'])
