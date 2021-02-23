@@ -46,7 +46,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.qvtkwidget = QVTKRenderWindowInteractor(parent=self.ui.view_frame,
                                                      rw=self.showm.window,
-                                                     iren=self.showm.iren)
+                                                     iren=self.showm.iren) ### It should be seperated;
         self.init_settings()
         self.init_interface()
         self.create_language_menu()
