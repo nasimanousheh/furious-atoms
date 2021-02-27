@@ -22,5 +22,6 @@
     <file>icons/zoomin.png</file>
     <file>icons/zoomout.png</file>
     <file>icons/load.png</file>
+    <file>icons/alert-icon.png</file>
 </qresource>
 </RCC>
