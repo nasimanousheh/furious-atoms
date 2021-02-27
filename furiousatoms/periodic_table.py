@@ -156,7 +156,8 @@ class Ui_periodic(QtWidgets.QMainWindow):
 
     def create_connections(self):
         self.periodic.buttonGroup_all_elements.buttonClicked.connect(self.get_element_info)
-        self.periodic.pushButton_select.clicked.connect(lambda:self.close())
+        self.periodic.buttonGroup_all_elements.buttonClicked.connect(lambda:self.close())
+
 
     def get_element_info(self, button):
         SM.info_element = (button.text())
@@ -180,4 +181,5 @@ class Ui_periodic(QtWidgets.QMainWindow):
         SM.all_information_element = elems_symbol[SM.info_element_symbol]
         self.current_edit_symbol.setText(str(SM.all_information_element['symbol']))
         self.current_edit_valency.setText(str(SM.all_information_element['valency']))
+        self.current_edit_mass.setText(str(SM.all_information_element['mass']))
         return SM.all_information_element
