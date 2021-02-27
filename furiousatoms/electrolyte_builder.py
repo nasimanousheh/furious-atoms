@@ -15,7 +15,9 @@ from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.sharedmem import SharedMemory
 from furiousatoms.periodic_table import Ui_periodic
+from furiousatoms.warning_message import Ui_warning_charge_salt_1, Ui_warning_oppos_charge
 import sys
+import math
 SM = SharedMemory()
 class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
 
@@ -38,44 +40,74 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         pass
 
     def create_connections(self):
-        # self.elect.pushButton_type_counterion.clicked.connect(self.show_periodic_table)
+
+        # conncet counterion, ions and anions icons to periodic table to get information of ion (type, valency and mass):
         self.elect.pushButton_type_counterion.clicked.connect(self.info_counterion)
+        # self.elect.pushButton_type_counterion.clicked.connect(self.check_neutrality)
+        self.elect.lineEdit_type_counterion.textChanged[str].connect(self.check_neutrality)
 
+        self.elect.pushButton_cation_salt_1.clicked.connect(self.info_cation_salt_1)
+        self.elect.pushButton_anion_salt_1.clicked.connect(self.info_anion_salt_1)
+        self.elect.pushButton_cation_salt_2.clicked.connect(self.info_cation_salt_2)
+        self.elect.pushButton_anion_salt_2.clicked.connect(self.info_anion_salt_2)
+        self.elect.pushButton_cation_salt_3.clicked.connect(self.info_cation_salt_3)
+        self.elect.pushButton_anion_salt_3.clicked.connect(self.info_anion_salt_3)
+        self.elect.pushButton_cation_salt_4.clicked.connect(self.info_cation_salt_4)
+        self.elect.pushButton_anion_salt_4.clicked.connect(self.info_anion_salt_4)
 
-        self.elect.pushButton_cation_1.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_cation_2.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_cation_3.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_cation_4.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_cation_5.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_anion_1.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_anion_2.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_anion_3.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_anion_4.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_anion_5.clicked.connect(self.show_periodic_table)
-        self.elect.pushButton_cation_1.clicked.connect(self.info_cation_1)
-        self.elect.pushButton_cation_2.clicked.connect(self.info_cation_2)
-        self.elect.pushButton_cation_3.clicked.connect(self.info_cation_3)
-        self.elect.pushButton_cation_4.clicked.connect(self.info_cation_4)
-        self.elect.pushButton_cation_5.clicked.connect(self.info_cation_5)
-        self.elect.pushButton_anion_1.clicked.connect(self.info_anion_1)
-        self.elect.pushButton_anion_2.clicked.connect(self.info_anion_2)
-        self.elect.pushButton_anion_3.clicked.connect(self.info_anion_3)
-        self.elect.pushButton_anion_4.clicked.connect(self.info_anion_4)
-        self.elect.pushButton_anion_5.clicked.connect(self.info_anion_5)
+        self.elect.SpinBox_con_cation_salt_1.valueChanged.connect(self.add_salt)
+        self.elect.SpinBox_con_cation_salt_2.valueChanged.connect(self.add_salt)
+        self.elect.SpinBox_con_cation_salt_3.valueChanged.connect(self.add_salt)
+        self.elect.SpinBox_con_cation_salt_4.valueChanged.connect(self.add_salt)
 
-        self.elect.SpinBox_con_cation_1.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_cation_2.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_cation_3.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_cation_4.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_cation_5.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_anion_1.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_anion_2.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_anion_3.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_anion_4.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_con_anion_5.valueChanged.connect(self.calculate_parameters)
         self.elect.pushButton_build_electrolyte.clicked.connect(self.build_electrolyte)
-        self.elect.lineEdit_type_counterion.textChanged[str].connect(self.calculate_parameters)###############
-        # self.elect.pushButton_type_counterion.clicked.connect(self.calculate_parameters)
+
+        self.elect.lineEdit_type_counterion.textChanged[str].connect(self.dummy_wall)
+        self.elect.lineEdit_valency_counterion.textChanged[str].connect(self.dummy_wall)
+        self.elect.lineEdit_mass_counterion.textChanged[str].connect(self.dummy_wall)
+        self.elect.SpinBox_lx.valueChanged.connect(self.dummy_wall)
+        self.elect.SpinBox_lz.valueChanged.connect(self.dummy_wall)
+        self.elect.SpinBox_lx.valueChanged.connect(self.add_water)
+        self.elect.SpinBox_lz.valueChanged.connect(self.add_water)
+        self.elect.lineEdit_surface_charge.textChanged[str].connect(self.dummy_wall)
+        self.elect.SpinBox_lx.valueChanged.connect(self.add_salt)
+        self.elect.SpinBox_lz.valueChanged.connect(self.add_salt)
+
+
+        self.elect.lineEdit_type_cation_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_cation_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_cation_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_cation_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_cation_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_cation_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_cation_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_cation_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_cation_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_cation_salt_4.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_cation_salt_4.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_cation_salt_4.textChanged[str].connect(self.add_salt)
+
+        self.elect.lineEdit_type_anion_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_anion_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_anion_salt_1.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_anion_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_anion_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_anion_salt_2.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_anion_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_anion_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_anion_salt_3.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_type_anion_salt_4.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_valency_anion_salt_4.textChanged[str].connect(self.add_salt)
+        self.elect.lineEdit_mass_anion_salt_4.textChanged[str].connect(self.add_salt)
+
+
+
+        self.elect.lineEdit_water_diameter.textChanged[str].connect(self.add_water)
+        self.elect.lineEdit_space_diameter.textChanged[str].connect(self.add_water)
+        self.elect.lineEdit_valency_anion_salt_1.textChanged[str].connect(self.add_salt)
+
+
+        self.elect.comboBox_water_model.currentTextChanged.connect(self.add_water)
 
 
         SM.water_diameter = self.elect.lineEdit_water_diameter.setText(str(3.16555789))
@@ -83,163 +115,146 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         SM.spacing = self.elect.lineEdit_space_bet_water.setText(str(3.16555789))
         SM.charge_density = self.elect.lineEdit_surface_charge.setText(str(0.0))
 
-        self.elect.lineEdit_water_diameter.textChanged[str].connect(self.calculate_parameters)
-        self.elect.lineEdit_space_diameter.textChanged[str].connect(self.calculate_parameters)
-        self.elect.lineEdit_surface_charge.textChanged[str].connect(self.calculate_parameters)
-        self.elect.SpinBox_lx.valueChanged.connect(self.calculate_parameters)
-        self.elect.SpinBox_lz.valueChanged.connect(self.calculate_parameters)
-        self.elect.comboBox_water_model.currentTextChanged.connect(self.calculate_parameters)
-
-
     def info_counterion(self):
+        self.elect.lineEdit_type_counterion.setText(str(None))
         self.show_periodic_table()
         Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_counterion
         Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_counterion
-        # TEST = self.elect.lineEdit_type_counterion.textChanged()
-        # print(TEST, 'HOOOOOOOOOOOOO')
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_counterion
 
+    def info_cation_salt_1(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_1
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_1
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_1
+    def info_anion_salt_1(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_1
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_1
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_1
+    def info_cation_salt_2(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_2
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_2
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_2
+    def info_anion_salt_2(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_2
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_2
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_2
+    def info_cation_salt_3(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_3
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_3
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_3
+    def info_anion_salt_3(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_3
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_3
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_3
+    def info_cation_salt_4(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_4
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_4
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_4
+    def info_anion_salt_4(self):
+        self.show_periodic_table()
+        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_4
+        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_4
+        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_4
 
-
-
-        # SM.mass_counter = float(SM.all_information_element['mass'])
-        # SM.charge_counter = int(SM.all_information_element['valency'])
-        # SM.type_counter =  str(SM.all_information_element['symbol'])
-
-        # SM.charge_density = float(self.elect.lineEdit_surface_charge.text())
-        # SM.box_lx = SM.box_ly = self.elect.SpinBox_lx.value()
-        # SM.box_lz = self.elect.SpinBox_lz.value()
-        # SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
-        # try:
-        #     SM.counterions = int(2.0 * abs(SM.total_surface_charge)/SM.charge_counter)
-        # except ZeroDivisionError:
-        #     SM.counterions = 0
-        # self.elect.lineEdit_type_counterion.setText(str(SM.type_counter))
-        # self.elect.lineEdit_valency_counterion.setText(str(SM.charge_counter))
-        # self.elect.lineEdit_num_counterion.setText(str(SM.counterions))
-        # self.elect.lineEdit_total_counter_final.setText(str(SM.counterions))
-        # self.elect.lineEdit_type_counter_final.setText(str(SM.type_counter))
-        # self.elect.lineEdit_valency_counter_final.setText(str(SM.charge_counter))
-
-    def info_cation_1(self):
-        try:
-            SM.all_information_element = Ui_periodic.pt.show_atom_type()
-            SM.mass_cat_1 = SM.all_information_element['mass']
-            SM.charge_cat_1 = SM.all_information_element['valency']
-            SM.type_cat_1 =  str(SM.all_information_element['symbol'])
-        except TypeError:
-            SM.mass_cat_1 = 0
-            SM.charge_cat_1 = 0
-            SM.type_cat_1 = None
-        self.elect.lineEdit_type_cat_1.setText(str(SM.type_cat_1))#, ',' ,str(SM.charge_cat_1))
-
-
-    def info_cation_2(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_cat_2 = SM.all_information_element['mass']
-        SM.charge_cat_2 = SM.all_information_element['valency']
-        SM.type_cat_2 =  str(SM.all_information_element['symbol'])
-    def info_cation_3(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_cat_3 = SM.all_information_element['mass']
-        SM.charge_cat_3 = SM.all_information_element['valency']
-        SM.type_cat_3 =  str(SM.all_information_element['symbol'])
-    def info_cation_4(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_cat_4 = SM.all_information_element['mass']
-        SM.charge_cat_4 = SM.all_information_element['valency']
-        SM.type_cat_4 =  str(SM.all_information_element['symbol'])
-    def info_cation_5(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_cat_5 = SM.all_information_element['mass']
-        SM.charge_cat_5 = SM.all_information_element['valency']
-        SM.type_cat_5 =  str(SM.all_information_element['symbol'])
-
-
-    def info_anion_1(self):
-        try:
-            SM.all_information_element = Ui_periodic.pt.show_atom_type()
-            SM.mass_an_1 = SM.all_information_element['mass']
-            SM.charge_an_1 = SM.all_information_element['valency']
-            SM.type_an_1 =  str(SM.all_information_element['symbol'])
-        except TypeError:
-            SM.mass_an_1 = 0
-            SM.charge_an_1 = 0
-            SM.type_an_1 = None
-        # self.elect.lineEdit_type_an_1.setText(str(SM.type_an_1))
-
-    def info_anion_2(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_an_2 = SM.all_information_element['mass']
-        SM.charge_an_2 = SM.all_information_element['valency']
-        SM.type_an_2 =  str(SM.all_information_element['symbol'])
-    def info_anion_3(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_an_3 = SM.all_information_element['mass']
-        SM.charge_an_3 = SM.all_information_element['valency']
-        SM.type_an_3 =  str(SM.all_information_element['symbol'])
-    def info_anion_4(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_an_4 = SM.all_information_element['mass']
-        SM.charge_an_4 = SM.all_information_element['valency']
-        SM.type_an_4 =  str(SM.all_information_element['symbol'])
-    def info_anion_5(self):
-        SM.all_information_element = Ui_periodic.pt.show_atom_type()
-        SM.mass_an_5 = SM.all_information_element['mass']
-        SM.charge_an_5 = SM.all_information_element['valency']
-        SM.type_an_5 =  str(SM.all_information_element['symbol'])
+    def show_warning_salt_1(self):
+        Ui_warning_charge_salt_1.msg = Ui_warning_charge_salt_1()
+        Ui_warning_charge_salt_1.msg.win = self
+        Ui_warning_charge_salt_1.msg.show()
+    def show_warning_opposite_charge(self):
+        Ui_warning_oppos_charge.msg_coun = Ui_warning_oppos_charge()
+        Ui_warning_oppos_charge.msg_coun.win = self
+        Ui_warning_oppos_charge.msg_coun.show()
     def show_periodic_table(self):
         Ui_periodic.pt = Ui_periodic()
         Ui_periodic.pt.win = self
         Ui_periodic.pt.show()
 
-
-    def calculate_parameters(self):
-        SM.type_counter =  str(self.elect.lineEdit_type_counterion.text())
-
-        try:
-            SM.charge_counter = float(self.elect.lineEdit_valency_counterion.text())
-        except ValueError:
-            SM.charge_counter  = 0
-        try:
-            SM.charge_density = float(self.elect.lineEdit_surface_charge.text())
-        except ValueError:
-            SM.charge_density = 0
-
-        SM.box_lx = SM.box_ly = self.elect.SpinBox_lx.value()
-        SM.box_lz = self.elect.SpinBox_lz.value()
-        SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
-        print( ' SM.total_surface_charge is:  ', SM.total_surface_charge)
-        print( ' SM.charge_counter is:  ', SM.charge_counter)
-        try:
-            SM.counterions = int(2.0 * abs(SM.total_surface_charge)/SM.charge_counter)
-        except ZeroDivisionError:
-            SM.counterions = 0
-
-        self.elect.lineEdit_num_counterion.setText(str(SM.counterions))
-        self.elect.lineEdit_total_counter_final.setText(str(SM.counterions))
-        self.elect.lineEdit_type_counter_final.setText(str(SM.type_counter))
-        self.elect.lineEdit_valency_counter_final.setText(str(SM.charge_counter))
-        self.elect.lineEdit_type_cat_1.setText(str(SM.type_cat_1)) #, ',' ,str(SM.charge_cat_1))
-        self.elect.lineEdit_type_an_1.setText(str(SM.type_an_1))
-        self.elect.lineEdit_oxygen_charge.text()
-        self.elect.lineEdit_hydrogen_charge.text()
+    def add_water(self):
         SM.water_diameter = self.elect.lineEdit_water_diameter.text()
         SM.spacing_dia = self.elect.lineEdit_space_diameter.text()
-        SM.spacing_dia = float( SM.spacing_dia)
+        try:
+            SM.spacing_dia = float( SM.spacing_dia)
+        except ValueError:
+            SM.spacing_dia = 0
         SM.water_diameter = float( SM.water_diameter)
         SM.spacing =  SM.spacing_dia *  SM.water_diameter
         self.elect.lineEdit_space_bet_water.setText(str( SM.spacing))
-###################SIMULATION BOX###################
+        self.elect.lineEdit_oxygen_charge.text()
+        self.elect.lineEdit_hydrogen_charge.text()
+        try:
+            water_amount = float( SM.box_lx/ SM.spacing *  SM.box_ly/ SM.spacing *  SM.box_lz/ SM.spacing)
+            SM.total_water_inside = int(int( SM.box_lx/ SM.spacing) * int( SM.box_ly/ SM.spacing) * int( SM.box_lz/ SM.spacing))
+            water_concentration = water_amount / (0.602214076 * ( SM.box_lx) * ( SM.box_ly) * ( SM.box_lz- SM.water_diameter) * 0.001)
+        except ZeroDivisionError:
+            SM.total_water_inside = water_amount = water_concentration = 0
+        self.elect.lineEdit_total_num_water.setText(str(SM.total_water_inside))
+        self.elect.lineEdit_total_num_water_final.setText(str(SM.total_water_inside))
+        self.elect.lineEdit_water_con.setText(str(str("{:.5f}".format(water_concentration))))
+        self.elect.lineEdit_water_con_final.setText(str("{:.5f}".format(water_concentration)))
+# Choose the water model in the system:
+        comboBox_water_model = self.elect.comboBox_water_model.currentText()
+        if comboBox_water_model == 'SPC':
+            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.82))
+            charge_hydrogen = self.elect.lineEdit_hydrogen_charge.setText(str(0.41))
+        if comboBox_water_model == 'SPC/E':
+            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.8476))
+            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.4238))
+        if comboBox_water_model == 'TIPS':
+            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.80))
+            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.40))
+        if comboBox_water_model == 'TIP3P (Jorgensen)':
+            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.834))
+            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.417))
+        if comboBox_water_model == 'TIP3P (Price)':
+            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.830))
+            charge_hydrogen = self.elect.lineEdit_hydrogen_charge.setText(str(0.415))
+
+###################STEP 1###################
+    def check_neutrality(self):
+        try:
+            SM.valency_counterion = float(self.elect.lineEdit_valency_counterion.text())
+        except ValueError:
+            SM.valency_counterion = 0
+
+        if SM.charge_density != 0:
+            SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
+        try:
+            SM.counterions = int(2.0 * abs(SM.total_surface_charge/SM.valency_counterion))
+        except ZeroDivisionError:
+            SM.counterions = 0
+        print("valency_counterion ", SM.valency_counterion)
+        print("counterions ", SM.counterions)
+        print("total surface charge ", SM.total_surface_charge)
+        charge_system = SM.valency_counterion * SM.counterions + SM.total_surface_charge * 2.0
+        print("total charge in the system ", charge_system)
+        if (charge_system == 0):
+            print("system is charge neutral")
+        else:
+            print("system is not electroneutral; aborting..." )
+            self.show_warning_opposite_charge()
+
+    def dummy_wall(self):
+        SM.box_lx = SM.box_ly = self.elect.SpinBox_lx.value()
+        SM.box_lz = self.elect.SpinBox_lz.value()
         self.elect.lineEdit_lx_final.setText(str(SM.box_lx))
         self.elect.lineEdit_ly_final.setText(str(SM.box_ly))
         self.elect.lineEdit_lz_final.setText(str(SM.box_lz))
         self.elect.lineEdit_ly.setText(str(SM.box_ly))
-        SM.charge_density = self.elect.lineEdit_surface_charge.text()
-        self.elect.lineEdit_surface_charge_final.setText(str(SM.charge_density))
-################### Number of mesh points###################
+        SM.type_counter = str(self.elect.lineEdit_type_counterion.text())
+        SM.mass_counter = str(self.elect.lineEdit_mass_counterion.text())
+        try:
+            SM.valency_counterion = float(self.elect.lineEdit_valency_counterion.text())
+        except ValueError:
+            SM.valency_counterion = 0.0
         width = 2  #A ; note CG width 3 A with lx = 15 nm
-        self.elect.lineEdit_grid_size.setText(str(width))
-################### Number of mesh points###################
+# Create two dummy walls on z direction:
         coordinates_wallR = []
         SM.box_lx = float(SM.box_lx)
         SM.box_ly = float(SM.box_ly)
@@ -254,142 +269,315 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
                 xyz_wallR = np.array([x, y, z])
                 coordinates_wallR.append(xyz_wallR)
         SM.wallR = np.array(coordinates_wallR)
-        self.elect.lineEdit_num_mesh_points.setText(str(len(SM.wallR)))
-################### Number ofcounterions###################
+
+# Define surface charge density on the walls and number of counterions to keep the system electroneutral:
+        SM.charge_density = self.elect.lineEdit_surface_charge.text()
         try:
             SM.charge_density = float(SM.charge_density)
         except ValueError:
             SM.charge_density = 0
-            self.elect.lineEdit_surface_charge_final.setText(str(SM.charge_density))
-        SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
-        if SM.charge_density==0 or SM.charge_counter==0:
+            # self.elect.lineEdit_surface_charge_final.setText(str(SM.charge_density))
+        if SM.charge_density == 0:
+            SM.type_counter = None
+            SM.mass_counterion = 0.0
+            SM.valency_counterion = 0.0
             SM.counterions = 0
-        else:
-            unitcharge = 1.60217646 * pow(10.0 , -19)
-            surface_area =  SM.box_lx *  SM.box_ly * 0.01 * pow(10.0 , -18) # in unit of squared meter;
-            SM.counterions = int(2.0 * abs(SM.total_surface_charge)/SM.charge_counter)
-
-################### Charge of mesh points###################
+        # self.elect.lineEdit_type_counterion.setText(SM.type_counter)
+        self.elect.lineEdit_type_counter_final.setText(SM.type_counter)
+        # self.elect.lineEdit_valency_counterion.setText(str(SM.valency_counterion))
+        # self.elect.lineEdit_mass_counterion.setText(str(SM.mass_counterion))
+        unitcharge = 1.60217646 * pow(10.0 , -19)
+        SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
+        surface_area =  SM.box_lx *  SM.box_ly * 0.01 * pow(10.0 , -18) # in unit of squared meter;
+        try:
+            SM.counterions = int(2.0 * abs(SM.total_surface_charge/SM.valency_counterion))
+        except ZeroDivisionError:
+            SM.counterions = 0
         if (len(SM.wallR) > 0):
             num_type_wall = 2
             SM.charge_meshpoint = (SM.total_surface_charge * 1.0) / len(SM.wallR)
         else:
             num_type_wall = 0
             SM.charge_meshpoint = 0
-        self.elect.lineEdit_mesh_charge.setText(str(SM.charge_meshpoint))
-        volume_box =  SM.box_lx* SM.box_ly* SM.box_lz*0.001
-        try:
-            water_amount = float( SM.box_lx/ SM.spacing *  SM.box_ly/ SM.spacing *  SM.box_lz/ SM.spacing)
-            SM.total_water_inside = int(int( SM.box_lx/ SM.spacing) * int( SM.box_ly/ SM.spacing) * int( SM.box_lz/ SM.spacing))
-            water_concentration = water_amount / (0.602214076 * ( SM.box_lx) * ( SM.box_ly) * ( SM.box_lz- SM.water_diameter) * 0.001)
-        except ZeroDivisionError:
-            SM.total_water_inside = water_amount = water_concentration = 0
+        self.elect.lineEdit_grid_size.setText(str(width))
+        self.elect.lineEdit_mesh_charge.setText(str("{:.5f}".format(SM.charge_meshpoint)))
+        # self.elect.lineEdit_mesh_charge.setText(str(SM.charge_meshpoint))
 
-        self.elect.lineEdit_total_num_water.setText(str(SM.total_water_inside))
-        self.elect.lineEdit_water_con.setText(str(water_concentration))
-        comboBox_water_model = self.elect.comboBox_water_model.currentText()
-        if comboBox_water_model == 'SPC':
-            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.82))
-            charge_hydrogen = self.elect.lineEdit_hydrogen_charge.setText(str(0.41))
-        if comboBox_water_model == 'SPC/E':
-            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.8476))
-            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.4238))
-        if comboBox_water_model == 'TIPS':
-            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.80))
-            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.40))
-        if comboBox_water_model == 'TIP3P (Jorgensen)':
-            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.834))
-            charge_hydrogen =self.elect.lineEdit_hydrogen_charge.setText(str(0.417))
-
-        if comboBox_water_model == 'TIP3P (Price)':
-            charge_oxygen = self.elect.lineEdit_oxygen_charge.setText(str(-0.830))
-            charge_hydrogen = self.elect.lineEdit_hydrogen_charge.setText(str(0.415))
-
-        SM.charge_density = self.elect.lineEdit_surface_charge.text()
         self.elect.lineEdit_surface_charge_final.setText(str(SM.charge_density))
+        self.elect.lineEdit_num_counterion.setText(str(SM.counterions))
+        self.elect.lineEdit_num_mesh_points.setText(str(len(SM.wallR)))
+        self.elect.lineEdit_num_mesh_points_final.setText(str(len(SM.wallR)))
 
-        ###############create electrolyte
+        self.elect.lineEdit_total_counter_final.setText(str(SM.counterions))
+        self.elect.lineEdit_type_counter_final.setText(str(SM.type_counter))
+        self.elect.lineEdit_valency_counter_final.setText(str(SM.valency_counterion))
 
-        num_type_cat_1=num_type_cat_2=num_type_cat_3=num_type_cat_4=num_type_cat_5=num_type_an_1=num_type_an_2=num_type_an_3=num_type_an_4=num_type_an_5=0
-        con_cat_1 = float(self.elect.SpinBox_con_cation_1.text())
-        con_cat_2 = float(self.elect.SpinBox_con_cation_2.text())
-        con_cat_3 = float(self.elect.SpinBox_con_cation_3.text())
-        con_cat_4 = float(self.elect.SpinBox_con_cation_4.text())
-        con_cat_5 = float(self.elect.SpinBox_con_cation_5.text())
-        con_an_1 = float(self.elect.SpinBox_con_anion_1.text())
-        con_an_2 = float(self.elect.SpinBox_con_anion_2.text())
-        con_an_3 = float(self.elect.SpinBox_con_anion_3.text())
-        con_an_4 = float(self.elect.SpinBox_con_anion_4.text())
-        con_an_5 = float(self.elect.SpinBox_con_anion_5.text())
-        if con_cat_1 > 0:
-            num_type_cat_1 = 1
-        if con_cat_2 > 0:
-            num_type_cat_2 = 1
-        if con_cat_3 > 0:
-            num_type_cat_3 = 1
-        if con_cat_4 > 0:
-            num_type_cat_4 = 1
-        if con_cat_5 > 0:
-            num_type_cat_5 = 1
+###################STEP 2###################
+    def add_salt(self):
+        #Get the valiables from widget:
+        SM.type_cation_salt_1 = str(self.elect.lineEdit_type_cation_salt_1.text())
+        SM.charge_cation_salt_1 = self.elect.lineEdit_valency_cation_salt_1.text()
+        SM.mass_cation_salt_1 = self.elect.lineEdit_mass_cation_salt_1.text()
+        SM.type_anion_salt_1 = str(self.elect.lineEdit_type_anion_salt_1.text())
+        SM.charge_anion_salt_1 = self.elect.lineEdit_valency_anion_salt_1.text()
+        SM.mass_anion_salt_1 = self.elect.lineEdit_mass_anion_salt_1.text()
+        SM.type_cation_salt_2 = str(self.elect.lineEdit_type_cation_salt_2.text())
+        SM.charge_cation_salt_2 = self.elect.lineEdit_valency_cation_salt_2.text()
+        SM.mass_cation_salt_2 = self.elect.lineEdit_mass_cation_salt_2.text()
+        SM.type_anion_salt_2 = str(self.elect.lineEdit_type_anion_salt_2.text())
+        SM.charge_anion_salt_2 = self.elect.lineEdit_valency_anion_salt_2.text()
+        SM.mass_anion_salt_2 = self.elect.lineEdit_mass_anion_salt_2.text()
+        SM.type_cation_salt_3 = str(self.elect.lineEdit_type_cation_salt_3.text())
+        SM.charge_cation_salt_3 = self.elect.lineEdit_valency_cation_salt_3.text()
+        SM.mass_cation_salt_3 = self.elect.lineEdit_mass_cation_salt_3.text()
+        SM.type_anion_salt_3 = str(self.elect.lineEdit_type_anion_salt_3.text())
+        SM.charge_anion_salt_3 = self.elect.lineEdit_valency_anion_salt_3.text()
+        SM.mass_anion_salt_3 = self.elect.lineEdit_mass_anion_salt_3.text()
+        SM.type_cation_salt_4 = str(self.elect.lineEdit_type_cation_salt_4.text())
+        SM.charge_cation_salt_4 = self.elect.lineEdit_valency_cation_salt_4.text()
+        SM.mass_cation_salt_4 = self.elect.lineEdit_mass_cation_salt_4.text()
+        SM.type_anion_salt_4 = str(self.elect.lineEdit_type_anion_salt_4.text())
+        SM.charge_anion_salt_4 = self.elect.lineEdit_valency_anion_salt_4.text()
+        SM.mass_anion_salt_4 = self.elect.lineEdit_mass_anion_salt_4.text()
 
-        if con_an_1 > 0:
-            num_type_an_1 = 1
-        if con_an_2 > 0:
-            num_type_an_2 = 1
-        if con_an_3 > 0:
-            num_type_an_3 = 1
-        if con_an_4 > 0:
-            num_type_an_4 = 1
-        if con_an_5 > 0:
-            num_type_an_5 = 1
-        SM.total_num_salt_types = num_type_cat_1 + num_type_cat_2 + num_type_cat_3 + num_type_cat_4 + num_type_cat_5 + num_type_an_1 + num_type_an_2 + num_type_an_3 + num_type_an_4 + num_type_an_5
-        SM.total_pions_1 = int((con_cat_1 * 0.6022) * (volume_box))
-        SM.total_pions_2 = int((con_cat_2 * 0.6022) * (volume_box))
-        SM.total_pions_3 = int((con_cat_3 * 0.6022) * (volume_box))
-        SM.total_pions_4 = int((con_cat_4 * 0.6022) * (volume_box))
-        SM.total_pions_5 = int((con_cat_5 * 0.6022) * (volume_box))
-        SM.total_pions_inside = int(SM.total_pions_1 + SM.total_pions_2 + SM.total_pions_3 + SM.total_pions_4 + SM.total_pions_5)
-        self.elect.lineEdit_num_cation_1.setText(str(SM.total_pions_1))
-        self.elect.lineEdit_num_cation_2.setText(str(SM.total_pions_2))
-        self.elect.lineEdit_num_cation_3.setText(str(SM.total_pions_3))
-        self.elect.lineEdit_num_cation_4.setText(str(SM.total_pions_4))
-        self.elect.lineEdit_num_cation_5.setText(str(SM.total_pions_5))
+        # Here we add the final types of ions in page 3:
+        self.elect.lineEdit_type_cation_salt_1_final.setText(str(SM.type_cation_salt_1))
+        self.elect.lineEdit_type_anion_salt_1_final.setText(str(SM.type_anion_salt_1))
+        self.elect.lineEdit_type_cation_salt_2_final.setText(str(SM.type_cation_salt_2))
+        self.elect.lineEdit_type_anion_salt_2_final.setText(str(SM.type_anion_salt_2))
+        self.elect.lineEdit_type_cation_salt_3_final.setText(str(SM.type_cation_salt_3))
+        self.elect.lineEdit_type_anion_salt_3_final.setText(str(SM.type_anion_salt_3))
+        self.elect.lineEdit_type_cation_salt_4_final.setText(str(SM.type_cation_salt_4))
+        self.elect.lineEdit_type_anion_salt_4_final.setText(str(SM.type_anion_salt_4))
 
-        SM.total_nions_1 = int((con_an_1 * 0.6022) * (volume_box))
-        SM.total_nions_2 = int((con_an_2 * 0.6022) * (volume_box))
-        SM.total_nions_3 = int((con_an_3 * 0.6022) * (volume_box))
-        SM.total_nions_4 = int((con_an_4 * 0.6022) * (volume_box))
-        SM.total_nions_5 = int((con_an_5 * 0.6022) * (volume_box))
-        SM.total_nions_inside = int(SM.total_nions_1 + SM.total_nions_2 + SM.total_nions_3 + SM.total_nions_4 + SM.total_nions_5)
+        num_type_cation_salt_1 = num_type_anion_salt_1 = num_type_cation_salt_2 = num_type_anion_salt_2 = num_type_cation_salt_3 = num_type_cation_salt_3 = num_type_anion_salt_3 = num_type_cation_salt_4 = num_type_anion_salt_4 = 0
 
-        self.elect.lineEdit_num_anion_1.setText(str(SM.total_nions_1))
-        self.elect.lineEdit_num_anion_2.setText(str(SM.total_nions_2))
-        self.elect.lineEdit_num_anion_3.setText(str(SM.total_nions_3))
-        self.elect.lineEdit_num_anion_4.setText(str(SM.total_nions_4))
-        self.elect.lineEdit_num_anion_5.setText(str(SM.total_nions_5))
+        # We get the values of cation concentration from spin box. If the spin box does not have value, to prevent getting error,
+        # we use Errors and Exceptions
+        try:
+            SM.con_cation_salt_1 = float(self.elect.SpinBox_con_cation_salt_1.value())
+        except TypeError:
+            SM.con_cation_salt_1 = 0
+        try:
+            SM.con_cation_salt_2 = float(self.elect.SpinBox_con_cation_salt_2.value())
+        except TypeError:
+            SM.con_cation_salt_2 = 0
+        try:
+            SM.con_cation_salt_3 = float(self.elect.SpinBox_con_cation_salt_3.value())
+        except TypeError:
+            SM.con_cation_salt_3 = 0
+        try:
+            SM.con_cation_salt_4 = float(self.elect.SpinBox_con_cation_salt_4.value())
+        except TypeError:
+            SM.con_cation_salt_4 = 0
 
+    # We get the values of cation and anion charges from widget. If the there is no value, to prevent getting error,
+    # we use Errors and Exceptions
+        try:
+            SM.charge_cation_salt_1 = float(SM.charge_cation_salt_1)
+        except ValueError:
+            SM.charge_cation_salt_1 = 0
+        try:
+            SM.charge_anion_salt_1 = float(SM.charge_anion_salt_1)
+        except ValueError:
+            SM.charge_anion_salt_1 = 0
+        try:
+            SM.charge_cation_salt_2 = float(SM.charge_cation_salt_2)
+        except ValueError:
+            SM.charge_cation_salt_2 = 0
+        try:
+            SM.charge_anion_salt_2 = float(SM.charge_anion_salt_2)
+        except ValueError:
+            SM.charge_anion_salt_2 = 0
+        try:
+            SM.charge_cation_salt_3 = float(SM.charge_cation_salt_3)
+        except ValueError:
+            SM.charge_cation_salt_3 = 0
+        try:
+            SM.charge_anion_salt_3 = float(SM.charge_anion_salt_3)
+        except ValueError:
+            SM.charge_anion_salt_3 = 0
+        try:
+            SM.charge_cation_salt_4 = float(SM.charge_cation_salt_4)
+        except ValueError:
+            SM.charge_cation_salt_4 = 0
+        try:
+            SM.charge_anion_salt_4 = float(SM.charge_anion_salt_4)
+        except ValueError:
+            SM.charge_anion_salt_4 = 0
+
+    # We define the concentration of anions based on concentration of cations.
+        volume_box =  SM.box_lx* SM.box_ly* SM.box_lz*0.001
+        SM.total_cation_salt_1 =int((SM.con_cation_salt_1 * 0.6022) * (volume_box))
+        try:
+            if ((SM.total_cation_salt_1 % SM.charge_anion_salt_1) !=0):
+                SM.total_cation_salt_1 = int(abs(SM.total_cation_salt_1 - (SM.total_cation_salt_1 % SM.charge_anion_salt_1) + SM.charge_anion_salt_1))
+            SM.total_anion_salt_1 = int(abs(SM.charge_cation_salt_1 * SM.total_cation_salt_1 / SM.charge_anion_salt_1))
+            SM.con_anion_salt_1  = SM.total_anion_salt_1 / (0.6022 * (volume_box))
+
+        except ZeroDivisionError:
+            SM.charge_cation_salt_1 = SM.total_cation_salt_1 = 0
+        SM.con_anion_salt_1 = round(SM.con_anion_salt_1, 1)
+        self.elect.lineEdit_con_anion_salt_1.setText(str("{:.1f}".format(SM.con_anion_salt_1)))
+        self.elect.lineEdit_num_cation_salt_1.setText(str(SM.total_cation_salt_1))
+        self.elect.lineEdit_num_anion_salt_1.setText(str(SM.total_anion_salt_1))
+
+
+        SM.total_cation_salt_2 =int((SM.con_cation_salt_2 * 0.6022) * (volume_box))
+        try:
+            if ((SM.total_cation_salt_2 % SM.charge_anion_salt_2) !=0):
+                SM.total_cation_salt_2 = SM.total_cation_salt_2 - (SM.total_cation_salt_2 % SM.charge_anion_salt_2) + SM.charge_anion_salt_2
+            SM.total_anion_salt_2 = int(abs(SM.charge_cation_salt_2) * SM.total_cation_salt_2 / SM.charge_anion_salt_2)
+            SM.con_anion_salt_2  = SM.total_anion_salt_2 / (0.6022 * (volume_box))
+
+        except ZeroDivisionError:
+            SM.charge_cation_salt_2 = SM.total_cation_salt_2 = 0
+        SM.con_anion_salt_2 = round(SM.con_anion_salt_2, 1)
+        self.elect.lineEdit_con_anion_salt_2.setText(str("{:.1f}".format(SM.con_anion_salt_2)))
+        self.elect.lineEdit_num_cation_salt_2.setText(str(SM.total_cation_salt_2))
+        self.elect.lineEdit_num_anion_salt_2.setText(str(SM.total_anion_salt_2))
+
+
+
+        SM.total_cation_salt_3 =int((SM.con_cation_salt_3 * 0.6022) * (volume_box))
+        try:
+            if ((SM.total_cation_salt_3 % SM.charge_anion_salt_3) !=0):
+                SM.total_cation_salt_3 = SM.total_cation_salt_3 - (SM.total_cation_salt_3 % SM.charge_anion_salt_3) + SM.charge_anion_salt_3
+            SM.total_anion_salt_3 = int(abs(SM.charge_cation_salt_3) * SM.total_cation_salt_3 / SM.charge_anion_salt_3)
+            SM.con_anion_salt_3  = SM.total_anion_salt_3 / (0.6022 * (volume_box))
+
+        except ZeroDivisionError:
+            SM.charge_cation_salt_3 = SM.total_cation_salt_3 = 0
+        SM.con_anion_salt_3 = round(SM.con_anion_salt_3, 1)
+        self.elect.lineEdit_con_anion_salt_3.setText(str("{:.1f}".format(SM.con_anion_salt_3)))
+        self.elect.lineEdit_num_cation_salt_3.setText(str(SM.total_cation_salt_3))
+        self.elect.lineEdit_num_anion_salt_3.setText(str(SM.total_anion_salt_3))
+
+        SM.total_cation_salt_4 =int((SM.con_cation_salt_4 * 0.6022) * (volume_box))
+        try:
+            if ((SM.total_cation_salt_4 % SM.charge_anion_salt_4) !=0):
+                SM.total_cation_salt_4 = SM.total_cation_salt_4 - (SM.total_cation_salt_4 % SM.charge_anion_salt_4) + SM.charge_anion_salt_4
+            SM.total_anion_salt_4 = int(abs(SM.charge_cation_salt_4) * SM.total_cation_salt_4 / SM.charge_anion_salt_4)
+            SM.con_anion_salt_4  = SM.total_anion_salt_4 / (0.6022 * (volume_box))
+
+        except ZeroDivisionError:
+            SM.charge_cation_salt_4 = SM.total_cation_salt_4 = 0
+        SM.con_anion_salt_4 = round(SM.con_anion_salt_4, 1)
+        self.elect.lineEdit_con_anion_salt_4.setText(str("{:.1f}".format(SM.con_anion_salt_4)))
+        self.elect.lineEdit_num_cation_salt_4.setText(str(SM.total_cation_salt_4))
+        self.elect.lineEdit_num_anion_salt_4.setText(str(SM.total_anion_salt_4))
+
+
+
+        # total_saltions_inside = int(total_nions_inside + total_pions_inside + counterions)
+
+
+        SM.total_cation_salt_2 =int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
+        SM.total_anion_salt_2 =int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
+        SM.total_cation_salt_3 =int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        SM.total_anion_salt_3 =int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        SM.total_cation_salt_4 =int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
+        SM.total_anion_salt_4 =int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
+        self.elect.lineEdit_num_cation_salt_2.setText(str(SM.total_cation_salt_2))
+        self.elect.lineEdit_num_anion_salt_2.setText(str(SM.total_anion_salt_2))
+        self.elect.lineEdit_num_cation_salt_3.setText(str(SM.total_cation_salt_3))
+        self.elect.lineEdit_num_anion_salt_3.setText(str(SM.total_anion_salt_3))
+        self.elect.lineEdit_num_cation_salt_4.setText(str(SM.total_cation_salt_4))
+        self.elect.lineEdit_num_anion_salt_4.setText(str(SM.total_anion_salt_4))
+        if SM.con_anion_salt_1 > 0:
+            num_type_cation_salt_1 = 1
+        if SM.con_anion_salt_1 > 0:
+            num_type_anion_salt_1 = 1
+        if SM.con_anion_salt_2 > 0:
+            num_type_cation_salt_2 = 1
+        if SM.con_anion_salt_2 > 0:
+            num_type_anion_salt_2 = 1
+
+        if SM.con_anion_salt_3 > 0:
+            num_type_cation_salt_3 = 1
+        if SM.con_anion_salt_3 > 0:
+            num_type_anion_salt_3 = 1
+        if SM.con_anion_salt_4 > 0:
+            num_type_cation_salt_4 = 1
+        if SM.con_anion_salt_4 > 0:
+            num_type_anion_salt_4 = 1
+
+        SM.total_num_salt_types = num_type_cation_salt_1 + num_type_anion_salt_1 + num_type_cation_salt_2 + num_type_anion_salt_2 + num_type_cation_salt_3 + num_type_cation_salt_3 + num_type_anion_salt_3 + num_type_cation_salt_4 + num_type_anion_salt_4
+        SM.total_saltions_inside = int(SM.total_cation_salt_1 + SM.total_anion_salt_1 + SM.total_cation_salt_2 + SM.total_anion_salt_2 + SM.total_cation_salt_3 + SM.total_anion_salt_3 + SM.total_cation_salt_4 + SM.total_anion_salt_4)
+
+        self.elect.lineEdit_total_ion_number_final.setText(str(SM.total_saltions_inside))
+        try:
+            SM.total_ions_concentration = ((SM.total_saltions_inside + SM.counterions) / (0.6022 * volume_box))
+        except ZeroDivisionError:
+            SM.total_ions_concentration = 0
+
+        self.elect.lineEdit_total_ion_con_final.setText(str("{:.5f}".format(SM.total_ions_concentration)))
 
     def build_electrolyte(self):
+
+        try:
+            SM.charge_cation_salt_1 = float(SM.charge_cation_salt_1)
+        except ValueError:
+            SM.charge_cation_salt_1 = 0
+        try:
+            SM.charge_anion_salt_1 = float(SM.charge_anion_salt_1)
+        except ValueError:
+            SM.charge_anion_salt_1 = 0
+        try:
+            SM.charge_cation_salt_2 = float(SM.charge_cation_salt_2)
+        except ValueError:
+            SM.charge_cation_salt_2 = 0
+        try:
+            SM.charge_anion_salt_2 = float(SM.charge_anion_salt_2)
+        except ValueError:
+            SM.charge_anion_salt_2 = 0
+        try:
+            SM.charge_cation_salt_3 = float(SM.charge_cation_salt_3)
+        except ValueError:
+            SM.charge_cation_salt_3 = 0
+        try:
+            SM.charge_anion_salt_3 = float(SM.charge_anion_salt_3)
+        except ValueError:
+            SM.charge_anion_salt_3 = 0
+        try:
+            SM.charge_cation_salt_4 = float(SM.charge_cation_salt_4)
+        except ValueError:
+            SM.charge_cation_salt_4 = 0
+        try:
+            SM.charge_anion_salt_4 = float(SM.charge_anion_salt_4)
+        except ValueError:
+            SM.charge_anion_salt_4 = 0
         #test if the system is electroneutral:
-        total_charge_pions = int((SM.charge_cat_1 * SM.total_pions_1) + (SM.charge_cat_2 * SM.total_pions_2) + (SM.charge_cat_3 * SM.total_pions_3) + (SM.charge_cat_4 * SM.total_pions_4) + (SM.charge_cat_5 * SM.total_pions_5))
-        total_charge_nions = int((SM.charge_an_1 * SM.total_nions_1) + (SM.charge_an_2 * SM.total_nions_2) + (SM.charge_an_3 * SM.total_nions_3) + (SM.charge_an_4 * SM.total_nions_4) + (SM.charge_an_5 * SM.total_nions_5))
-        if (total_charge_pions + total_charge_nions != 0):
-            print('The electrolyte is not electroneutral; Abortion')
+        total_charge_ions = int((SM.charge_cation_salt_1 * SM.total_cation_salt_1) + (SM.charge_anion_salt_1 * SM.total_anion_salt_1) + (SM.charge_cation_salt_2 * SM.total_cation_salt_2) + (SM.charge_anion_salt_2 * SM.total_anion_salt_2) + (SM.charge_cation_salt_3 * SM.total_cation_salt_3) + (SM.charge_anion_salt_3 * SM.total_anion_salt_3) + (SM.charge_cation_salt_4 * SM.total_cation_salt_4) + (SM.charge_anion_salt_4 * SM.total_anion_salt_4))
+        # total_charge_nions = int((SM.charge_cation_salt_3 * SM.total_cation_salt_3) + (SM.charge_anion_salt_3 * SM.total_anion_salt_3) + (SM.charge_cation_salt_4 * SM.total_cation_salt_4) + (SM.charge_anion_salt_4 * SM.total_anion_salt_4))
+        if (total_charge_ions != 0):
+            print('SM.charge_cation_salt_1', SM.charge_cation_salt_1, 'SM.total_cation_salt_1',SM.total_cation_salt_1)
+            print('SM.charge_anion_salt_4', SM.charge_anion_salt_4, 'SM.total_anion_salt_4',SM.total_anion_salt_4)
+            print('The electrolyte is not electroneutral; Abortion', total_charge_ions)
+            self.show_warning_message_salt()
+            return
             # return
-        total_saltions_inside = int(SM.total_nions_inside + SM.total_pions_inside)
+        SM.charge_density = self.elect.lineEdit_surface_charge.text()
+        try:
+            SM.charge_density = float(SM.charge_density)
+        except ValueError:
+            SM.charge_density = 0
+        SM.total_surface_charge = int( SM.charge_density *  SM.box_lx *  SM.box_ly / 16) # lx and ly are in A
 
         print("total surface charge ", SM.total_surface_charge)
-        charge_system = SM.charge_counter * SM.counterions + SM.total_surface_charge * 2.0
+        charge_system = SM.valency_counterion * SM.counterions + SM.total_surface_charge * 2.0
 
         print("total charge in the system ", charge_system)
         if (charge_system == 0):
             print("system is charge neutral")
         else:
-            print("system is not electroneutral; aborting..." )
-            # return
-
-        total_saltions_inside = total_saltions_inside + SM.counterions
-        SM.total_water_inside = SM.total_water_inside - total_saltions_inside
+            print("system is not electroneutral; aborting..., charge_system is", charge_system)
+            self.show_warning_message_salt()
+            return
+            print('SM.total_saltions_inside issssssssssssss', SM.total_saltions_inside)
+        SM.total_saltions_inside = SM.total_saltions_inside + SM.counterions
+        if SM.total_water_inside > 0 :
+            SM.total_water_inside = SM.total_water_inside - SM.total_saltions_inside
 
         print("SM.total_water_inside:  ", SM.total_water_inside)
         print("total SM.counterions is: ", SM.counterions)
@@ -401,7 +589,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             final_water_concentration = (SM.total_water_inside) /(0.6022 * ( SM.box_lx) * ( SM.box_ly) * ( SM.box_lz- SM.water_diameter) * 0.001)
         print("final water conc (in M): ", final_water_concentration)
         try:
-
             num_molecul_in_lx = int( SM.box_lx /  SM.spacing)
             num_molecul_in_ly = int( SM.box_ly /  SM.spacing)
             num_molecul_in_lz = int( SM.box_lz /  SM.spacing)
@@ -411,17 +598,17 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         for i in range(num_molecul_in_lx):
             for j in range(num_molecul_in_ly):
                 for k in range(num_molecul_in_lz):
-                    if (len(coordinates_ions) < (total_saltions_inside + SM.total_water_inside)):
+                    if (len(coordinates_ions) < (SM.total_saltions_inside + SM.total_water_inside)):
                         x = float((- SM.box_lx/2 + (0.5* SM.spacing)) + i *  SM.spacing)
                         y = float((- SM.box_ly/2 + (0.5* SM.spacing)) + j *  SM.spacing)
                         z = float((- SM.box_lz/2 + (0.5* SM.spacing)) + k *  SM.spacing)
                         if ((x > ( SM.box_lx/2 - 0.5 *  SM.spacing)) or (y > ( SM.box_ly/2 - 0.5 *  SM.spacing)) or (z > ( SM.box_lz/2 - 0.5 *  SM.spacing))):
                             continue
                         position = np.array([x, y, z])
-                        coordinates_ions.append(position)#.T)
+                        coordinates_ions.append(position)
         ions = np.array(coordinates_ions)
 
-        total_atoms = (SM.total_water_inside * 3) + total_saltions_inside + (2 * len(SM.wallR))
+        total_atoms = (SM.total_water_inside * 3) + SM.total_saltions_inside + (2 * len(SM.wallR))
         if SM.total_water_inside > 0:
             num_type_atom_water = 2
         else:
@@ -436,7 +623,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             num_type_wall = 0
 
         total_type_atom_in_system = SM.total_num_salt_types + num_type_atom_water + num_type_counterion + num_type_wall
-        self.elect.lineEdit_mesh_charge.setText(str(SM.charge_meshpoint))
         mass_hydrogen ='1.008'
         type_hydrogen = 'H'
         mass_oxygen ='15.9994'
@@ -449,12 +635,15 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         charge_hydrogen = float(self.elect.lineEdit_hydrogen_charge.text())
         print("total mesh points on each surface: ", len(SM.wallR))
         print("charge on each meshpoint ", SM.charge_meshpoint, " e")
-        charge_system = SM.charge_meshpoint * 2 * len(SM.wallR) + SM.counterions
-        print("recheck: total charge in the system ", charge_system)
+        charge_system = SM.charge_meshpoint * 2 * len(SM.wallR) + SM.counterions * SM.valency_counterion
+        # charge_system = SM.valency_counterion * SM.counterions + SM.total_surface_charge * 2.0
+        print("recheck: total charge in the system ", SM.counterions)
         if charge_system == 0:
             print("system is charge neutral again")
         else:
             print("system is not electroneutral; aborting...")
+            self.show_warning_message_salt()
+            return
         file_name = 'many_particle.data'
         outdump = open(file_name, "w")
         outdump.write("LAMMPS data file\n\n")
@@ -481,27 +670,25 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             outdump.write("{}\t{} \n".format(type_oxygen, mass_oxygen))
         if SM.counterions > 0:
             outdump.write("{}\t{} \n".format(SM.type_counter, SM.mass_counter))
-        if SM.total_pions_1 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cat_1, SM.mass_cat_1))
-        if SM.total_pions_2 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cat_2, SM.charge_cat_2))
-        if SM.total_pions_3 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cat_3, SM.mass_cat_3))
-        if SM.total_pions_4 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cat_4, SM.mass_cat_4))
-        if SM.total_pions_5 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cat_5, SM.mass_cat_5))
+        if SM.total_cation_salt_1 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_cation_salt_1, SM.mass_cation_salt_1))
+        if SM.total_anion_salt_1 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_anion_salt_1, SM.mass_anion_salt_1))
+        if SM.total_cation_salt_2 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_cation_salt_2, SM.mass_cation_salt_2))
+        if SM.total_anion_salt_2 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_anion_salt_2, SM.mass_anion_salt_2))
 
-        if SM.total_nions_1 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_an_1, SM.mass_an_1))
-        if SM.total_nions_2 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_an_2, SM.mass_an_2))
-        if SM.total_nions_3 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_an_3, SM.mass_an_3))
-        if SM.total_nions_4 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_an_4, SM.mass_an_4))
-        if SM.total_nions_5 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_an_5, SM.mass_an_5))
+
+        if SM.total_cation_salt_3 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_cation_salt_3, SM.mass_cation_salt_3))
+        if SM.total_anion_salt_3 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_anion_salt_3, SM.mass_anion_salt_3))
+        if SM.total_cation_salt_4 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_cation_salt_4, SM.mass_cation_salt_4))
+        if SM.total_anion_salt_4 > 0:
+            outdump.write("{}\t{} \n".format(SM.type_anion_salt_4, SM.mass_anion_salt_4))
+
 
         if len(SM.wallR) > 0:
             outdump.write("{}\t{} \n".format(type_Rwall, mass_Rwall))
@@ -519,51 +706,59 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
 
         if SM.counterions > 0:
             num_molecules = 0
-            for j in range(SM.total_water_inside, (SM.total_pions_inside+SM.total_water_inside)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_counter, SM.charge_counter, ions[j][0], ions[j][1], ions[j][2],  '0   0   0 '))
+            for j in range(SM.total_water_inside, (SM.counterions+SM.total_water_inside)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_counter, SM.valency_counterion, ions[j][0], ions[j][1], ions[j][2],  '0   0   0 '))
 
         # crystal pack of counter ions (in this system, it is the same as positive ions):
-        if SM.total_pions_1 > 0:
-            for j in range((SM.counterions+SM.total_water_inside), (SM.counterions+SM.total_water_inside+SM.total_pions_1)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cat_1, SM.charge_cat_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_pions_2 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_1), (SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cat_2, SM.charge_cat_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_pions_3 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2), (SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2 +SM.total_pions_3)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cat_3, SM.charge_cat_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_pions_4 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2+SM.total_pions_3), (SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2 +SM.total_pions_3+SM.total_pions_4)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cat_4, SM.charge_cat_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_pions_5 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2+SM.total_pions_3+SM.total_pions_4), (SM.counterions+SM.total_water_inside+SM.total_pions_1+SM.total_pions_2 +SM.total_pions_3+SM.total_pions_4+SM.total_pions_5)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cat_5, SM.charge_cat_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-
+        if SM.total_cation_salt_1 > 0:
+            for j in range((SM.counterions+SM.total_water_inside), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_1, SM.charge_cation_salt_1, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_anion_salt_1 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_1, SM.charge_anion_salt_1, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_cation_salt_2 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_2, SM.charge_cation_salt_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_anion_salt_2 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_2, SM.charge_anion_salt_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_cation_salt_3 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_3, SM.charge_cation_salt_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_anion_salt_3 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_3, SM.charge_anion_salt_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_cation_salt_4 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_4, SM.charge_cation_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        if SM.total_anion_salt_4 > 0:
+            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4+SM.total_anion_salt_4)):
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_4, SM.charge_anion_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
 
         # # crystal pack of negative ions: //the diameter of Cl is 5 A, we should pack them with more space;
 
-        if SM.total_nions_1 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_inside), (SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_1, SM.charge_an_1, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_nions_2 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1), (SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_2, SM.charge_an_2, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_nions_3 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2), (SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2 +SM.total_nions_3)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_3, SM.charge_an_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_nions_4 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2+SM.total_nions_3), (SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_pions_1+SM.total_pions_2 +SM.total_pions_3+SM.total_pions_4)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_4, SM.charge_an_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_nions_5 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2+SM.total_nions_3+SM.total_nions_4), (SM.counterions+SM.total_water_inside+SM.total_pions_inside+SM.total_nions_1+SM.total_nions_2 +SM.total_nions_3+SM.total_nions_4+SM.total_nions_5)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_5, SM.charge_an_5, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        # if SM.total_cation_salt_3 > 0:
+        #     for j in range((SM.counterions+SM.total_water_inside+SM.total_saltions_inside), (SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3)):
+        #         outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_3, SM.charge_cation_salt_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        # if SM.total_anion_salt_3 > 0:
+        #     for j in range((SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3), (SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3)):
+        #         outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_3, SM.charge_anion_salt_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        # if SM.total_cation_salt_4 > 0:
+        #     for j in range((SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3), (SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3 +SM.total_cation_salt_4)):
+        #         outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_4, SM.charge_cation_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        # if SM.total_anion_salt_4 > 0:
+        #     for j in range((SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4), (SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2)):
+        #         outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_4, SM.charge_anion_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
+        # # if SM.total_ncation_salt_3 > 0:
+        # #     for j in range((SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4+SM.total_anion_salt_4), (SM.counterions+SM.total_water_inside+SM.total_saltions_inside+SM.total_cation_salt_3+SM.total_anion_salt_3 +SM.total_cation_salt_4+SM.total_anion_salt_4+SM.total_ncation_salt_3)):
+        # #         outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_an_5, SM.charge_an_5, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
 
         if (len(SM.wallR) > 0):
             for r  in range(len(SM.wallR)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((r + 1 + (3 * SM.total_water_inside) + total_saltions_inside),  "0" , type_Rwall, SM.charge_meshpoint, SM.wallR[r][0], SM.wallR[r][1], SM.wallR[r][2], '0   0   0 '))
-            # mesh points on left wall; the same as right wall with opposite sign in z direction
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((r + 1 + (3 * SM.total_water_inside) + SM.total_saltions_inside),  "0" , type_Rwall, SM.charge_meshpoint, SM.wallR[r][0], SM.wallR[r][1], SM.wallR[r][2], '0   0   0 '))
+            # mesh points on left wall; the same as right wall with oppositee sign in z direction
             for l  in range(len(SM.wallR)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((l + 1 + (3 * SM.total_water_inside) + total_saltions_inside + len(SM.wallR)),  "0" , type_Lwall, SM.charge_meshpoint, SM.wallR[l][0], SM.wallR[l][1], SM.wallR[l][2] * -1, '0   0   0 '))
+                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((l + 1 + (3 * SM.total_water_inside) + SM.total_saltions_inside + len(SM.wallR)),  "0" , type_Lwall, SM.charge_meshpoint, SM.wallR[l][0], SM.wallR[l][1], SM.wallR[l][2] * -1, '0   0   0 '))
         outdump.write("\n")
         outdump.write("Bonds\n\n")
 
@@ -626,62 +821,62 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
 
         #  SM.charge_density = -0.01
         # counter_type = 'Na'
-        # SM.charge_counter = 1
+        # SM.valency_counterion = 1
 
-        # SM.charge_cat_1 = 1
-        # SM.charge_cat_2 = 1
-        # SM.charge_cat_3 = 1
-        # SM.charge_cat_4 = 1
-        # SM.charge_cat_5 = 1
-        # SM.type_cat_1 = 'Na'
-        # SM.type_cat_2 = 'K'
-        # SM.type_cat_3 = 'Cs'
-        # SM.type_cat_4 = 'Rb'
-        # SM.type_cat_5 = 'H'
-        # con_cat_1 = 0.1
-        # con_cat_2 = 0.1
-        # con_cat_3 = 0.1
-        # con_cat_4 = 0.1
-        # con_cat_5 = 0.1
+        # SM.charge_cation_salt_1 = 1
+        # SM.charge_anion_salt_1 = 1
+        # SM.charge_cation_salt_2 = 1
+        # SM.charge_anion_salt_2 = 1
+        # SM.charge_cation_salt_3 = 1
+        # SM.type_cation_salt_1 = 'Na'
+        # SM.type_anion_salt_1 = 'K'
+        # SM.type_cation_salt_2 = 'Cs'
+        # SM.type_anion_salt_2 = 'Rb'
+        # SM.type_cation_salt_3 = 'H'
+        # SM.con_anion_salt_1 = 0.1
+        # SM.con_anion_salt_1 = 0.1
+        # SM.con_anion_salt_2 = 0.1
+        # SM.con_anion_salt_2 = 0.1
+        # SM.con_anion_salt_3 = 0.1
 
-        # SM.charge_an_1 = -1
-        # SM.charge_an_2 = -1
-        # SM.charge_an_3 = -1
-        # SM.charge_an_4 = -1
+        # SM.charge_cation_salt_3 = -1
+        # SM.charge_anion_salt_3 = -1
+        # SM.charge_cation_salt_4 = -1
+        # SM.charge_anion_salt_4 = -1
         # SM.charge_an_5 = -1
-        # SM.type_an_1 = 'Cl'
-        # SM.type_an_2 = 'B'
-        # SM.type_an_3 = 'I'
-        # SM.type_an_4 = 'F'
+        # SM.type_cation_salt_3 = 'Cl'
+        # SM.type_anion_salt_3 = 'B'
+        # SM.type_cation_salt_4 = 'I'
+        # SM.type_anion_salt_4 = 'F'
         # SM.type_an_5 = 'At'
-        # con_an_1 = 0.1
-        # con_an_2 = 0.1
-        # con_an_3 = 0.1
-        # con_an_4 = 0.1
+        # SM.con_anion_salt_3 = 0.1
+        # SM.con_anion_salt_3 = 0.1
+        # SM.con_anion_salt_4 = 0.1
+        # SM.con_anion_salt_4 = 0.1
         # con_an_5 = 0.1
 
 
 
-        # SM.total_pions_1 = int((con_cat_1 * 0.6022) * (volume_box))
-        # SM.total_pions_2 = int((con_cat_2 * 0.6022) * (volume_box))
-        # SM.total_pions_3 = int((con_cat_3 * 0.6022) * (volume_box))
-        # SM.total_pions_4 = int((con_cat_4 * 0.6022) * (volume_box))
-        # SM.total_pions_5 = int((con_cat_5 * 0.6022) * (volume_box))
-        # SM.total_pions_inside = int(SM.total_pions_1 + SM.total_pions_2 + SM.total_pions_3 + SM.total_pions_4 + SM.total_pions_5)
+        # SM.total_cation_salt_1 = int((SM.con_anion_salt_1 * 0.6022) * (volume_box))
+        # SM.total_anion_salt_1 = int((SM.con_anion_salt_1 * 0.6022) * (volume_box))
+        # SM.total_cation_salt_2 = int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
+        # SM.total_anion_salt_2 = int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
+        # SM.total_cation_salt_3 = int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        # SM.total_saltions_inside = int(SM.total_cation_salt_1 + SM.total_anion_salt_1 + SM.total_cation_salt_2 + SM.total_anion_salt_2 + SM.total_cation_salt_3)
 
-        # SM.total_nions_1 = int((con_an_1 * 0.6022) * (volume_box))
-        # SM.total_nions_2 = int((con_an_2 * 0.6022) * (volume_box))
-        # SM.total_nions_3 = int((con_an_3 * 0.6022) * (volume_box))
-        # SM.total_nions_4 = int((con_an_4 * 0.6022) * (volume_box))
-        # SM.total_nions_5 = int((con_an_5 * 0.6022) * (volume_box))
-        # SM.total_nions_inside = int(SM.total_nions_1 + SM.total_nions_2 + SM.total_nions_3 + SM.total_nions_4 + SM.total_nions_5)
-        # total_charge_pions = int((con_cat_1 * SM.total_pions_1) + (con_cat_2 * SM.total_pions_2) + (con_cat_3 * SM.total_pions_3) + (con_cat_4 * SM.total_pions_4) + (con_cat_5 * SM.total_pions_5))
-        # total_charge_nions = int((con_an_1 * SM.total_nions_1) + (con_an_2 * SM.total_nions_2) + (con_an_3 * SM.total_nions_3) + (con_an_4 * SM.total_nions_4) + (con_an_5 * SM.total_nions_5))
+        # SM.total_cation_salt_3 = int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        # SM.total_anion_salt_3 = int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        # SM.total_cation_salt_4 = int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
+        # SM.total_anion_salt_4 = int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
+        # SM.total_ncation_salt_3 = int((con_an_5 * 0.6022) * (volume_box))
+        # SM.total_nions_inside = int(SM.total_cation_salt_3 + SM.total_anion_salt_3 + SM.total_cation_salt_4 + SM.total_anion_salt_4 + SM.total_ncation_salt_3)
+        # total_charge_pions = int((SM.con_anion_salt_1 * SM.total_cation_salt_1) + (SM.con_anion_salt_1 * SM.total_anion_salt_1) + (SM.con_anion_salt_2 * SM.total_cation_salt_2) + (SM.con_anion_salt_2 * SM.total_anion_salt_2) + (SM.con_anion_salt_3 * SM.total_cation_salt_3))
+        # total_charge_nions = int((SM.con_anion_salt_3 * SM.total_cation_salt_3) + (SM.con_anion_salt_3 * SM.total_anion_salt_3) + (SM.con_anion_salt_4 * SM.total_cation_salt_4) + (SM.con_anion_salt_4 * SM.total_anion_salt_4) + (con_an_5 * SM.total_ncation_salt_3))
         # if (total_charge_pions != total_charge_nions):
         #     print('The electrolyte is not electroneutral; Abortion')
         #     return
 
-        # total_saltions_inside = int(SM.total_nions_inside + SM.total_pions_inside)
+        # SM.total_saltions_inside = int(SM.total_nions_inside + SM.total_saltions_inside)
 
         # n_residues = SM.total_water_inside
         # n_atoms = n_residues * 3
@@ -766,9 +961,9 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
 
 
 
-    # def create_electrolyte( SM.box_lx,  SM.box_ly,  SM.box_lz,  SM.water_diameter,  spacing_dia, charge_hydrogen, charge_oxygen,  SM.charge_density, counter_type, SM.charge_counter, SM.type_cat_1, SM.type_cat_2, SM.type_cat_3, SM.type_cat_4, SM.type_cat_5,
-    #                 SM.charge_cat_1, SM.charge_cat_2, SM.charge_cat_3, SM.charge_cat_4, SM.charge_cat_5, con_cat_1, con_cat_2, con_cat_3, con_cat_4, con_cat_5, SM.type_an_1, SM.type_an_2, SM.type_an_3, SM.type_an_4,
-    #                 SM.type_an_5, SM.charge_an_1, SM.charge_an_2, SM.charge_an_3, SM.charge_an_4, SM.charge_an_5, con_an_1, con_an_2, con_an_3, con_an_4, con_an_5):
+    # def create_electrolyte( SM.box_lx,  SM.box_ly,  SM.box_lz,  SM.water_diameter,  spacing_dia, charge_hydrogen, charge_oxygen,  SM.charge_density, counter_type, SM.valency_counterion, SM.type_cation_salt_1, SM.type_anion_salt_1, SM.type_cation_salt_2, SM.type_anion_salt_2, SM.type_cation_salt_3,
+    #                 SM.charge_cation_salt_1, SM.charge_anion_salt_1, SM.charge_cation_salt_2, SM.charge_anion_salt_2, SM.charge_cation_salt_3, SM.con_anion_salt_1, SM.con_anion_salt_1, SM.con_anion_salt_2, SM.con_anion_salt_2, SM.con_anion_salt_3, SM.type_cation_salt_3, SM.type_anion_salt_3, SM.type_cation_salt_4, SM.type_anion_salt_4,
+    #                 SM.type_an_5, SM.charge_cation_salt_3, SM.charge_anion_salt_3, SM.charge_cation_salt_4, SM.charge_anion_salt_4, SM.charge_an_5, SM.con_anion_salt_3, SM.con_anion_salt_3, SM.con_anion_salt_4, SM.con_anion_salt_4, con_an_5):
 
 
 
