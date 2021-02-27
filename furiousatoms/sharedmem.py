@@ -85,12 +85,12 @@ class SharedMemory(object):
         self.box_lz = 0
         self.charge_density = 0.0
         self.all_information_element = 0
-        self.charge_counter = 0.0
+        self.valency_counterion = 0.0
         self.mass_counter = 0.0
         self.type_counter = None
 
-        self.mass_cat_1 = 0.0
-        self.mass_cat_2 = 0.0
+        self.mass_cation_salt_1 = 0.0
+        self.mass_anion_salt_1 = 0.0
         self.mass_cat_3 = 0.0
         self.mass_cat_4 = 0.0
         self.mass_cat_5 = 0.0
@@ -99,8 +99,8 @@ class SharedMemory(object):
         self.mass_an_3 = 0.0
         self.mass_an_4 = 0.0
         self.mass_an_5 = 0.0
-        self.charge_cat_1 = 0.0
-        self.charge_cat_2 = 0.0
+        self.charge_p_cation_salt_1 = 0.0
+        self.charge_n_cation_salt_1 = 0.0
         self.charge_cat_3 = 0.0
         self.charge_cat_4 = 0.0
         self.charge_cat_5 = 0.0
@@ -119,18 +119,20 @@ class SharedMemory(object):
         self.type_an_3 =  None
         self.type_an_4 =  None
         self.type_an_5 =  None
-        self.total_nions_inside = 0
-        self.total_pions_inside =0
-        self.total_pions_1 = 0
-        self.total_pions_2 = 0
-        self.total_pions_3 = 0
-        self.total_pions_4 = 0
-        self.total_pions_5 = 0
-        self.total_nions_1 = 0
-        self.total_nions_2 = 0
-        self.total_nions_3 = 0
-        self.total_nions_4 = 0
-        self.total_nions_5 = 0
+        self.type_cation_salt_1 = None
+        self.type_anion_salt_1 = None
+        self.total_ions_inside = 0
+        self.total_ions_inside =0
+        self.total_p_cation_salt_1 = 0
+        self.total_n_cation_salt_1 = 0
+        self.total_cation_salt_2 = 0
+        self.total_anion_salt_2 = 0
+        self.total_cation_salt_3 = 0
+        self.total_anion_salt_3 = 0
+        self.total_cation_salt_4 = 0
+        self.total_anion_salt_4 = 0
+        self.total_ions_inside = 0
+        self.total_ions_concentration = 0
         self.wallR = None
 
         self.con_an_5 = 0
@@ -138,3 +140,18 @@ class SharedMemory(object):
         self.total_surface_charge = 0
         self.counterions = 0
         self.info_element = None
+        self.total_saltions_inside = 0
+        self.charge_anion_salt_1 = 0
+        self.charge_cation_salt_1 = 0
+        self.total_anion_salt_1 = 0
+        self.total_cation_salt_1 =0
+        self.con_cation_salt_1 = 0
+        self.con_cation_salt_2 = 0
+        self.con_cation_salt_3 = 0
+        self.con_cation_salt_4 = 0
+        self.con_anion_salt_1 = 0
+        self.con_anion_salt_2 = 0
+        self.con_anion_salt_3 = 0
+        self.con_anion_salt_4 = 0
+
+
