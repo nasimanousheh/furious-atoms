@@ -86,4 +86,4 @@ class Ui_warning_charge_salt_1(QtWidgets.QMainWindow):
         self.msg.pushButton_Ok.clicked.connect(lambda:self.close())
 
     def open_period_table(self):
-        self.msg_coun.win.elect.pushButton_type_anion_salt_1.click()
+        self.msg_coun.win.elect.pushButton_type_cation_salt_1.click()
