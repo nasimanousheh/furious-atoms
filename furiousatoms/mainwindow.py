@@ -31,6 +31,7 @@ from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
+from furiousatoms.fullerenes_database import load_CC1_file
 
 SM = SharedMemory()
 
@@ -87,6 +88,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
+        self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
 
     def change_particle_shape(self):
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
@@ -254,6 +256,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not fname:
             return
         self.process_load_file(fname)
+        SM.enable_timer = True
+    def open_dataset_fullerene(self):
+        dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
+        fullerene_folder = os.path.join(dir_fullerene_folder, 'fullerene_dataset')
+        fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),fullerene_folder,filter = "*.cc1*", options=QtWidgets.QFileDialog.ShowDirsOnly)
+        file_name = load_CC1_file(fname)
+        if not file_name:
+            return
+        self.process_load_file(file_name)
         SM.enable_timer = True
 
     def save(self):
