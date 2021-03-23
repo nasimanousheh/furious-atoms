@@ -55,10 +55,11 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
-        SM.universe = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
-        file_name = 'fname.pdb'
-        SM.universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
+        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
+        # file_name = 'fname.pdb'
+        # SM.universe.atoms.write(file_name)
+        # self.win.process_load_file(fname=file_name)
+        self.win.process_universe(structure_info)
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
@@ -97,11 +98,14 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
     # Atom coordinates:
     coord_array_graphene = np.array(xyz)
     assert coord_array_graphene.shape == (num_atoms_graphene, 3)
-    graphene = MDAnalysis.Universe.empty(num_atoms_graphene, trajectory=True, n_residues=10)
+    graphene = MDAnalysis.Universe.empty(num_atoms_graphene, trajectory=True, n_residues=1)
     graphene.atoms.positions = coord_array_graphene
+    n_residues = 1
     # Bonds information connected the atoms:
     all_bonds_graphene = np.array(fragments['bonds'])
     graphene.add_TopologyAttr('name', atom_types_graphene)
+    graphene.add_TopologyAttr('type', atom_types_graphene)
+    graphene.add_TopologyAttr('resname', ['MOL']*n_residues)
     graphene.add_bonds(all_bonds_graphene)
     # If the user chooses "None", only graphene structure without hydrogens will be returned:
     if H_termination_graphene == 'None':
@@ -168,11 +172,14 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                 num_hydrogen = num_hydrogen + 1
 
     if num_hydrogen > 0:
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=10)
+        n_residues =1
+        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
         coord_array_H_indice = np.array(H_coordinaes)
         assert coord_array_H_indice.shape == (num_hydrogen, 3)
         h.atoms.positions = coord_array_H_indice
         h.add_TopologyAttr('name', ['H']*num_hydrogen)
+        h.add_TopologyAttr('type', ['H']*num_hydrogen)
+        h.add_TopologyAttr('resname', ['H']*n_residues)
     graphene_with_hydrogen = MDAnalysis.Merge(graphene.atoms, h.atoms)
     graphene_with_hydrogen.add_bonds(all_bonds_graphene)
     num_hydrogen = 0
