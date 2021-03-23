@@ -44,6 +44,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.setCentralWidget(self.ui)
         self.app_path = app_path or io.application_path()
         self.scene = window.Scene()
+        self.view = QtWidgets.QGraphicsView()
+
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.qvtkwidget = QVTKRenderWindowInteractor(parent=self.ui.view_frame,
                                                      rw=self.showm.window,
@@ -67,6 +69,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def create_connections(self):
         self.ui.actionLoad_file.triggered.connect(self.open)
         self.ui.actionSave_file.triggered.connect(self.save)
+        self.ui.actionZoom_in.triggered.connect(self.slotZoomIn)
+        self.ui.actionZoom_out.triggered.connect(self.slotZoomOut)
+        self.ui.actionFit_to_Window.triggered.connect(self.slotZoomFit)
         self.ui.actionExit.triggered.connect(self.quit_fired)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.actionParticle.triggered.connect(self.delete_particles)
@@ -89,6 +94,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
+
 
     def change_particle_shape(self):
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
@@ -187,6 +193,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def backward_movie(self):
         SM.play_factor = 5
 
+    def slotZoomIn(self):
+        self.scene.zoom(1.25)
+        self.qvtkwidget.GetRenderWindow().Render()
+    def slotZoomOut(self):
+        self.scene.zoom(0.75)
+        self.qvtkwidget.GetRenderWindow().Render()
+    def slotZoomFit(self):
+        self.scene.ResetCamera()
+        self.qvtkwidget.GetRenderWindow().Render()
+
     def update_particle_size(self, selected_value_radius):
         for i, atom_typ in enumerate(SM.unique_types):
             if self.h_box.itemAt(i).wid.isChecked():
@@ -261,18 +277,21 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
         fullerene_folder = os.path.join(dir_fullerene_folder, 'fullerene_dataset')
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),fullerene_folder,filter = "*.cc1*", options=QtWidgets.QFileDialog.ShowDirsOnly)
-        file_name = load_CC1_file(fname)
-        if not file_name:
-            return
-        self.process_load_file(file_name)
+        # load_CC1_file(fname)
+        # file_name = load_CC1_file(fname)
+        # if not file_name:
+        #     return
+        # self.process_load_file(file_name)
+        SM.structure_info = load_CC1_file(fname)
+        self.process_universe(SM.structure_info)
         SM.enable_timer = True
 
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
         # fname = open(fname, 'w')
         # MS.load_file = MDAnalysis.Universe(MS.load_file)
-        # SM.universe = u.select_atoms("MS.load_file")
-        SM.universe.atoms.write(fname)
+        # SM.structure_info = u.select_atoms("MS.load_file")
+        SM.structure_info.atoms.write(fname)
         print('saving {}'.format(fname))
 
     def delete_particles(self):
@@ -281,10 +300,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
-        s = SM.universe.universe.atoms[:]
-        t = SM.universe.universe.atoms[object_indices_particles]
+        s = SM.structure_info.universe.atoms[:]
+        t = SM.structure_info.universe.atoms[object_indices_particles]
         b = s.difference(t)
-        SM.universe = MDAnalysis.core.groups.AtomGroup(b)
+        SM.structure_info = MDAnalysis.core.groups.AtomGroup(b)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
@@ -298,12 +317,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for object_index_bond in object_indices_bonds:
             SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
 
-        SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
-        # SM.universe.delete_bonds(SM.universe.bonds.to_indices()) #delete if it is lammps
+        SM.structure_info.delete_bonds(SM.structure_info.bonds[object_indices_bonds])
+        # SM.structure_info.delete_bonds(SM.structure_info.bonds.to_indices()) #delete if it is lammps
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.qvtkwidget.GetRenderWindow().Render()
-        print(len(SM.universe.bonds))
+        print(len(SM.structure_info.bonds))
 
 
     def openColorDialog_particle(self):
@@ -364,10 +383,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
 
     def process_load_file(self, fname):
-        SM.universe, SM.no_bonds = io.load_files(fname) #change it to universe
+        SM.structure_info, SM.no_bonds = io.load_files(fname) #change it to universe
         SM.file_directory, SM.extension = os.path.splitext(fname)
         SM.file_name = os.path.basename(fname)
-        self.process_universe(universe=SM.universe)
+        self.process_universe(SM.structure_info)
 
     def sky_box_effect(self, actor):
         self.scene.UseImageBasedLightingOn()
@@ -387,14 +406,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
 
 
-    def process_universe(self, universe):
-        SM.no_atoms = len(SM.universe.atoms)
-        SM.n_frames = SM.universe.trajectory.n_frames
-        SM.box = SM.universe.trajectory.ts.dimensions
-        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
-        SM.no_unique_types_particles = len(np.unique(SM.universe.atoms.types))
+    def process_universe(self, structure_info):
+        SM.no_atoms = len(structure_info.atoms)
+        SM.n_frames = structure_info.trajectory.n_frames
+        SM.box = structure_info.trajectory.ts.dimensions
+        SM.box_lx = structure_info.trajectory.ts.dimensions[0]
+        SM.box_ly = structure_info.trajectory.ts.dimensions[1]
+        SM.box_lz = structure_info.trajectory.ts.dimensions[2]
+        SM.no_unique_types_particles = len(np.unique(structure_info.atoms.types))
         box_centers = np.array([[0, 0, 25]])
         box_directions = np.array([[0, 1, 0]])
         SM.box_colors = np.array([[255, 255, 255, 255]])
@@ -407,13 +426,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.line_actor, _ = box_edges(SM.box_lx, SM.box_ly, SM.box_lz, colors=(0, 0, 0),
                                   linewidth=1, fake_tube=True)
 
-        SM.atom_type = SM.universe.atoms.types
-        SM.pos = SM.universe.trajectory[0].positions.copy().astype('f8')
+        SM.atom_type = structure_info.atoms.types
+        SM.pos = structure_info.trajectory[0].positions.copy().astype('f8')
+        try:
+            SM.no_bonds = len(structure_info.bonds)
+        except MDAnalysis.exceptions.NoDataError:
+            SM.no_bonds = 0
+        # SM.no_bonds = len(SM.structure_info.bonds)
         if SM.no_bonds > 0:
             self.ui.Box_bonds.setChecked(True)
-            SM.pos = SM.universe.trajectory[0].positions.copy().astype('f8')
-            bonds = SM.universe.bonds.to_indices()
-            SM.no_bonds = len(SM.universe.bonds)
+            SM.pos = structure_info.trajectory[0].positions.copy().astype('f8')
+            bonds = structure_info.bonds.to_indices()
+            SM.no_bonds = len(structure_info.bonds)
             first_pos_bond = SM.pos[(bonds[:, 0])]
             second_pos_bond = SM.pos[(bonds[:, 1])]
             bonds = np.hstack((first_pos_bond, second_pos_bond))
@@ -427,18 +451,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
             SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
             SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-            SM.unique_types_bond = np.unique(SM.universe.bonds.types)
+            SM.unique_types_bond = np.unique(structure_info.bonds.types)
             SM.bond_actor.AddObserver("LeftButtonPressEvent", self.left_button_press_bond_callback)
+            SM.structure_info = structure_info
         # if SM.no_bonds == 0:
-        #     SM.pos_R = SM.universe.trajectory[0].positions.copy().astype('f8')
+        #     SM.pos_R = SM.structure_info.trajectory[0].positions.copy().astype('f8')
         #     SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box,
         #                                                   backend='serial')
         #     open_initial_structur = True
         #     if open_initial_structur is True:
-        #         SM.universe_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
-        #         SM.pos_initial_structure = SM.universe_initial_structure.trajectory[0].positions.copy().astype('f8')
-        #         SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()###
-        #         SM.no_bonds = len(SM.universe_initial_structure.bonds)
+        #         SM.structure_info_initial_structure = MDAnalysis.Universe('C:/Users/nasim\Devel/furious-atoms/examples/Polymers/PVDF.data')
+        #         SM.pos_initial_structure = SM.structure_info_initial_structure.trajectory[0].positions.copy().astype('f8')
+        #         SM.bonds_initial_structure = SM.structure_info_initial_structure.bonds.to_indices()###
+        #         SM.no_bonds = len(SM.structure_info_initial_structure.bonds)
         #         first_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 0])]###
         #         second_pos_bond = SM.pos_initial_structure[(SM.bonds_initial_structure[:, 1])]###
         #         SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))##
@@ -452,11 +477,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         #         SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / SM.no_bonds
         #         SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
         #         SM.sec_bond = np.int(SM.no_vertices_all_bonds / SM.no_bonds)
-        #         SM.unique_types_bond = np.unique(SM.universe_initial_structure.bonds.types)
+        #         SM.unique_types_bond = np.unique(SM.structure_info_initial_structure.bonds.types)
 
         avg = np.average(SM.pos, axis=0)
         colors = np.ones((SM.no_atoms, 4))
-        SM.unique_types = np.unique(SM.universe.atoms.types)
+        SM.unique_types = np.unique(SM.structure_info.atoms.types)
         SM.colors_unique_types = np.random.rand(len(SM.unique_types), 4)
         SM.colors_unique_types[:, 3] = 1
         for i, typ in enumerate(SM.unique_types):
@@ -523,14 +548,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            SM.pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
+            SM.pos_R = SM.structure_info.trajectory[SM.cnt].positions.copy().astype('f8')
             SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
             # open_initial_structure = True
             # if open_initial_structure is True:
-            #     SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
+            #     SM.bonds_initial_structure = SM.structure_info_initial_structure.bonds.to_indices()
             #     first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
             #     second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
             #     SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
