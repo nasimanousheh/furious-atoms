@@ -66,6 +66,7 @@ class SharedMemory(object):
         self.unique_types_bond = 0
         self.center_bond = None
         self.bond_type = None
+        self.bond_length_MWNT = 0
 
         self.play_factor = 0
         self.bonds_initial_structure = 0
