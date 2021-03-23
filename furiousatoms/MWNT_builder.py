@@ -82,10 +82,11 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
         for i in range(SM.number_of_walls):
             next_universe = MWNT_builder(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-            universe = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
-        file_name = 'fname.pdb'
-        universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
+            structure_info = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
+        # file_name = 'fname.pdb'
+        # universe.atoms.write(file_name)
+        # self.win.process_load_file(fname=file_name)
+        self.win.process_universe(structure_info)
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
@@ -132,10 +133,12 @@ def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=F
     n_atoms_swnt = len(xyz)
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (n_atoms_swnt, 3)
-    swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=2)
+    swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=1)
+    n_residues = 1
     swnt.atoms.positions = coord_array_swnt
     all_bonds_swnt = np.array(fragments['bonds'])
     swnt.add_TopologyAttr('name', atom_types_swnt)
+    swnt.add_TopologyAttr('type', atom_types_swnt)
+    swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
     swnt.add_bonds(all_bonds_swnt)
     return swnt
-
