@@ -81,10 +81,8 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        universe = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
-        file_name = 'fname.pdb'
-        universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
+        structure_info = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
+        self.win.process_universe(structure_info)
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
@@ -130,16 +128,19 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
 
     # Number of atoms in SWNT:
     num_atoms_swnt = len(xyz)
+    n_residues = 1
 
     # Atom coordinates:
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (num_atoms_swnt, 3)
-    swnt = MDAnalysis.Universe.empty(num_atoms_swnt, trajectory=True, n_residues=10)
+    swnt = MDAnalysis.Universe.empty(num_atoms_swnt, trajectory=True, n_residues=1)
     swnt.atoms.positions = coord_array_swnt
 
     # Bonds information connected the atoms:
     all_bonds_swnt = np.array(fragments['bonds'])
     swnt.add_TopologyAttr('name', atom_types_swnt)
+    swnt.add_TopologyAttr('type', atom_types_swnt)
+    swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
     swnt.add_bonds(all_bonds_swnt)
 
     # If the user chooses "None", only SWNT structure without hydrogens will be returned:
@@ -216,11 +217,14 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
 
 # Here we define the bond information between the atoms of SWNT and hydrogen, if the number of hydrogen is not zero:
     if num_hydrogen > 0:
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=10)
+        n_residues = 1
+        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
         coord_array_H_indice = np.array(H_coordinaes)
         assert coord_array_H_indice.shape == (num_hydrogen, 3)
         h.atoms.positions = coord_array_H_indice
         h.add_TopologyAttr('name', ['H']*num_hydrogen)
+        h.add_TopologyAttr('type', ['H']*num_hydrogen)
+        h.add_TopologyAttr('resname', ['H']*n_residues)
     combined_one_end = MDAnalysis.Merge(swnt.atoms, h.atoms)
     combined_one_end.add_bonds(all_bonds_swnt)
     num_hydrogen = 0
@@ -296,11 +300,14 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                 num_hydrogen = num_hydrogen + 1
 
     if num_hydrogen > 0:
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=10)
+        n_residues = 1
+        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
         coord_array_H_indice = np.array(H_coordinaes)
         assert coord_array_H_indice.shape == (num_hydrogen, 3)
         h.atoms.positions = coord_array_H_indice
         h.add_TopologyAttr('name', ['H']*num_hydrogen)
+        h.add_TopologyAttr('type', ['H']*num_hydrogen)
+        h.add_TopologyAttr('resname', ['H']*n_residues)
     combined = MDAnalysis.Merge(swnt.atoms, h.atoms)
     combined.add_bonds(all_bonds_swnt)
     num_hydrogen = 0
