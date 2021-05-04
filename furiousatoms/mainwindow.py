@@ -19,7 +19,6 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 import MDAnalysis
-from furiousatoms.sharedmem import SharedMemory
 from numpy.linalg import norm
 from fractions import gcd
 import sys
@@ -62,7 +61,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionLoad_file.triggered.connect(self.open)
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
+
         # View menu actions
+        self.ui.actioncascade.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
+        self.ui.actiontiled.triggered.connect(self.ui.mdiArea.tileSubWindows)
 
         # Help menu actions
 
@@ -94,6 +96,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
+
+        # General connections
+        self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
 
     def change_particle_shape(self):
         active_window = self.active_mdi_child()
@@ -189,28 +194,67 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('distance of particles', (distance_particle_particle))
 
     def slider_changing(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.cnt = self.ui.horizontalSlider_animation.value()
 
     def play_movie(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.play_factor = 1
 
     def pause_movie(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.play_factor = 0
 
     def pause_movie(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.play_factor = 0
 
     def forward_movie(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.play_factor = -5
 
     def backward_movie(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         SM.play_factor = 5
 
     def update_particle_size(self, selected_value_radius):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        active_window.update_particle_size(selected_value_radius)
+        SM = active_window.universe_manager
+        for i, atom_typ in enumerate(SM.unique_types):
+            if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+                print(i, atom_typ, 'checked')
+                SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                # self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
+                self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
+                all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+                all_vertices_radii = all_vertices_radii[:, None]
+                # all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
+                # all_vertices_radii = all_vertices_radii[:, None]
+                # SM.all_vertices_particles[:] = all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+                SM.all_vertices_particles[:] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+        utils.update_actor(SM.sphere_actor)
+        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        active_window.render()
 
     def metallicity_particle(self, metallicity_degree_particle):
         active_window = self.active_mdi_child()
@@ -244,11 +288,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         if (state == QtCore.Qt.Checked):
-            SM.line_actor.VisibilityOn()
+            SM.bbox_actor.VisibilityOn()
         else:
-            SM.line_actor.VisibilityOff()
-        utils.update_actor(SM.line_actor)
-        SM.line_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            SM.bbox_actor.VisibilityOff()
+        utils.update_actor(SM.bbox_actor)
+        SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
     def check_particles(self, state):
@@ -270,13 +314,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+        if SM.bond_actor is None:
+            active_window.render()
+            return
+
         if (state == QtCore.Qt.Checked):
             SM.bond_actor.VisibilityOn()
         else:
             SM.bond_actor.VisibilityOff()
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        self.qvtkwidget.GetRenderWindow().Render()
+        active_window.render()
         print('All bonds are deleted')
 
     def new_file(self):
@@ -301,23 +349,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             child.close()
 
-        # Todo: update/connect some UI
-        self.ui.Box_bonds.setChecked(True)
-        ##############Should be moved to up
-        self.toggles = []
-        self.lay = QtWidgets.QVBoxLayout()
-        self.h_box = QtWidgets.QGridLayout()
-
-        for i, typ in enumerate(SM.unique_types):
-            SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
-            SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
-            self.ui.btn = QtWidgets.QRadioButton(str(typ) , self)
-            self.ui.scrollArea_all_types_of_prticles.setLayout(self.lay)
-            self.h_box.addWidget(self.ui.btn,i,1,1,1)
-        self.lay.addLayout(self.h_box)
-
-        ########################
-
     def open_dataset_fullerene(self):
         dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
         fullerene_folder = os.path.join(dir_fullerene_folder,
@@ -337,7 +368,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             child.close()
 
-        SM.enable_timer = True
+        # SM.enable_timer = True
 
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
@@ -373,7 +404,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         for i, atom_typ in enumerate(SM.unique_types):
-            if self.h_box.itemAt(i).wid.isChecked():
+            if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
                 object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                 for object_index in object_indices_particles:
@@ -399,55 +430,77 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window.render()
 
     def update_bonds_ui(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+
+        scroll_layout = QtWidgets.QGridLayout()
+
+        # reset the layout
+        for i in reversed(range(scroll_layout.count())):
+            widget = scroll_layout.itemAt(i).widget()
+            if widget:
+                widget.deleteLater()
+
+        for i, typ in enumerate(SM.unique_types):
+            SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
+            SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            btn = QtWidgets.QRadioButton(str(typ), self)
+            scroll_layout.addWidget(btn, i, 1, 1, 1)
+
+        self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
+
+        # Disconnect signal
+        try:
+            if SM.no_atoms > 0:
+                self.ui.Box_particles.stateChanged.disconnect(self.check_particles)
+        except RuntimeError:
+            pass
+        try:
+            if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
+                self.ui.Box_simulationcell.stateChanged.disconnect(self.check_simulationcell)
+        except RuntimeError:
+            pass
+        try:
+            if SM.no_bonds > 0:
+                self.ui.Box_bonds.stateChanged.disconnect(self.check_bonds)
+        except RuntimeError:
+            pass
+
+
+        # Setup checkbox
+        self.ui.Box_particles.setChecked(SM.no_atoms > 0)
+        self.ui.Box_simulationcell.setChecked(SM.box_lx > 0 or
+                                              SM.box_ly > 0 or
+                                              SM.box_lz > 0)
+        self.ui.Box_bonds.setChecked(SM.no_bonds > 0)
+        self.ui.button_animation.setChecked(SM.n_frames > 1)
+
         if SM.no_atoms > 0:
-            self.ui.Box_particles.setChecked(True)
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
-            self.ui.Edit_num_of_particles.insert(str(SM.no_atoms))
-            self.ui.Edit_num_of_particle_types.insert(str(len(SM.unique_types)))
+            self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
+            self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
             self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
-        if ((SM.box_lx > 0) or (SM.box_ly > 0) or (SM.box_lz > 0)):
-            self.ui.Box_simulationcell.setChecked(True)
+        if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
         if SM.no_bonds > 0:
             self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
-        if SM.n_frames > 1:
-            self.ui.button_animation.setChecked(True)
-        self.ui.Edit_num_of_bonds.insert(str(SM.no_bonds))
-        self.ui.Edit_widthX.insert(str(SM.box_lx))
-        self.ui.Edit_lengthY.insert(str(SM.box_ly))
-        self.ui.Edit_hightZ.insert(str(SM.box_lz))
-        self.ui.Edit_number_of_frames.insert(str(SM.n_frames))
-        self.ui.Edit_directory.insert(str(SM.file_directory))
-        self.ui.Edit_fileformat.insert((str(SM.extension)).upper())
-        self.ui.Edit_currentfile.insert(str(SM.file_name))
+
+        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
+        self.ui.Edit_widthX.setText(str(SM.box_lx))
+        self.ui.Edit_lengthY.setText(str(SM.box_ly))
+        self.ui.Edit_hightZ.setText(str(SM.box_lz))
+        self.ui.Edit_number_of_frames.setText(str(SM.n_frames))
+        self.ui.Edit_directory.setText(str(active_window.current_filedir))
+        self.ui.Edit_fileformat.setText((str(active_window.current_extension)).upper())
+        self.ui.Edit_currentfile.setText(str(active_window.current_file))
         self.ui.horizontalSlider_animation.setMinimum(0)
         self.ui.horizontalSlider_animation.setMaximum(SM.n_frames)
         self.ui.horizontalSlider_animation.setSingleStep(1)
         self.ui.horizontalSlider_animation.setValue(SM.cnt)
         self.ui.Timer_animation.setMaximum(SM.n_frames)
-        for i, atom_typ in enumerate(SM.unique_types):
-
-            if self.h_box.itemAt(i).wid.isChecked():
-                print(i, atom_typ, 'checked')
-
-
-
-    def sky_box_effect(self, actor):
-        self.scene.UseImageBasedLightingOn()
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        cube_path = os.path.join(dir_path, 'skybox0')
-        if not os.path.isdir(cube_path):
-            print('This path does not exist:', cube_path)
-            return
-        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
-        self.scene.SetEnvironmentTexture(cubemap)
-        actor.GetProperty().SetInterpolationToPBR()
-        SM.metallicCoefficient_particle = 0.5
-        SM.roughnessCoefficient_particle = 0.1
-        colors_sky = vtk.vtkNamedColors()
-        actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
+        self.ui.tabWidget.update()
 
     def timer_callback(self):
         if SM.enable_timer is False:

@@ -29,6 +29,8 @@ class Viewer3D(QtWidgets.QWidget):
 
         self.current_file = ""
         self.current_filepath = ""
+        self.current_filedir = ""
+        self.current_extension = ""
 
         self.init_settings()
         self.init_variables()
@@ -77,6 +79,8 @@ class Viewer3D(QtWidgets.QWidget):
         success = False
         self.current_file = os.path.basename(fname)
         self.current_filepath = os.path.abspath(fname)
+        self.current_filedir = os.path.dirname(self.current_filepath)
+        self.current_extension = os.path.splitext(self.current_filepath)[1]
 
         universe, no_bonds = io.load_files(fname)
         if not universe:
@@ -89,6 +93,8 @@ class Viewer3D(QtWidgets.QWidget):
         success = False
         self.current_file = os.path.basename(fname)
         self.current_filepath = os.path.abspath(fname)
+        self.current_filedir = os.path.dirname(self.current_filepath)
+        self.current_extension = os.path.splitext(self.current_filepath)[1]
 
         universe = load_CC1_file(fname)
         if not universe:
@@ -116,6 +122,8 @@ class Viewer3D(QtWidgets.QWidget):
         self.scene.add(axes_actor)
         for act in self.universe_manager.actors():
             self.scene.add(act)
+
+        self.sky_box_effect(self.universe_manager.sphere_actor)
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
@@ -150,24 +158,6 @@ class Viewer3D(QtWidgets.QWidget):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
         print(len(SM.universe.bonds))
-
-    def update_particle_size(self, selected_value_radius):
-        SM = self.universe_manager
-        for i, atom_typ in enumerate(SM.unique_types):
-            if self.h_box.itemAt(i).wid.isChecked():
-                print(i, atom_typ, 'checked')
-                SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-                # self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
-                self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
-                all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-                all_vertices_radii = all_vertices_radii[:, None]
-                # all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
-                # all_vertices_radii = all_vertices_radii[:, None]
-                # SM.all_vertices_particles[:] = all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-                SM.all_vertices_particles[:] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-        self.render()
 
     def left_button_press_particle_callback(self, obj, event):
         SM = self.universe_manager
@@ -211,10 +201,27 @@ class Viewer3D(QtWidgets.QWidget):
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
-    def process_universe(self, universe):
-        self.sky_box_effect(SM.sphere_actor)
+    def sky_box_effect(self, actor):
+        SM = self.universe_manager
+        self.scene.UseImageBasedLightingOn()
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        cube_path = os.path.join(dir_path, 'skybox0')
+        if not os.path.isdir(cube_path):
+            print('This path does not exist:', cube_path)
+            return
+        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
+        self.scene.SetEnvironmentTexture(cubemap)
+        actor.GetProperty().SetInterpolationToPBR()
+        SM.metallicCoefficient_particle = 0.5
+        SM.roughnessCoefficient_particle = 0.1
+        colors_sky = window.vtk.vtkNamedColors()
+        actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
+        actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
+        actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
 
-        self.update_bonds_ui()
+    def process_universe(self, universe):
+
+
         self.timer = QtCore.QTimer()
         duration = 200
         self.timer.start(duration)
