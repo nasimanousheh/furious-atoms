@@ -19,6 +19,7 @@ from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
+
 def load_CC1_file(fname, debug=False):
     lammps_file = open(fname, 'r')
     lines = lammps_file.readlines()
@@ -28,7 +29,8 @@ def load_CC1_file(fname, debug=False):
     no_atoms = int(len(lines)-1)
     for i in range(no_lines-1):
         line = lines[i]
-        lammps_dix['index'][frames_cnt] = {'no_atoms': no_atoms, 'coords': [], 'bonds':[]}
+        lammps_dix['index'][frames_cnt] = {'no_atoms': no_atoms, 'coords': [],
+                                           'bonds': []}
         words = lines[i].split()
         no_columns = 9
         frame_as_list_text = lines[i+1: i+1 + no_atoms]
@@ -36,7 +38,7 @@ def load_CC1_file(fname, debug=False):
         lammps_dix['index'][frames_cnt]['coords'] = frame_positions
         frames_cnt += 1
 
-    frames_cnt= 0
+    frames_cnt = 0
     # no_atoms = lammps_dix['index'][frames_cnt]['no_atoms']
     pos_fullerene = lammps_dix['index'][frames_cnt]['coords'][:, 2:5]
     bonds_fullerene = lammps_dix['index'][frames_cnt]['coords'][:, 6:9]
@@ -49,7 +51,8 @@ def load_CC1_file(fname, debug=False):
 
     print(bf_n)
     n_residues = 1
-    fullerene = MDAnalysis.Universe.empty(no_atoms, trajectory=True, n_residues=1)
+    fullerene = MDAnalysis.Universe.empty(no_atoms, trajectory=True,
+                                          n_residues=1)
     fullerene.atoms.positions = pos_fullerene
     fullerene.add_TopologyAttr('name', ['C']*no_atoms)
     fullerene.add_TopologyAttr('type', ['C']*no_atoms)
