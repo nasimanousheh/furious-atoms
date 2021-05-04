@@ -82,7 +82,10 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
         structure_info = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
-        self.win.process_universe(structure_info)
+        window = self.win.create_mdi_child()
+        window.make_title()
+        window.load_universe(structure_info)
+        window.show()
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
