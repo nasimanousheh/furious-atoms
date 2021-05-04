@@ -45,8 +45,7 @@ class UniverseManager:
         self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         self.have_bonds = no_bonds > 0
 
-        if self.have_bonds:
-            self.bond_actor = self.generate_bond_actor()
+        self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
 
         colors = np.ones((self.no_atoms, 4))
         self.unique_types = np.unique(self.universe.atoms.types)
@@ -71,6 +70,9 @@ class UniverseManager:
         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
         self.colors_backup_particles = self.vcolors_particle.copy()
+        self.set_value_radius = 0
+        # Animation Player
+        self.cnt = 0
 
     @property
     def no_atoms(self):
