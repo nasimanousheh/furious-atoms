@@ -20,6 +20,8 @@ from furiousatoms import io
 class Viewer3D(QtWidgets.QWidget):
     """ Basic 3D viewer widget
     """
+    sequence_number = 1
+
     def __init__(self, app_path=None, parent=None):
         super(Viewer3D, self).__init__(parent)
         self.ui = io.load_ui_widget("viewer3d.ui")
@@ -48,6 +50,7 @@ class Viewer3D(QtWidgets.QWidget):
         self._showm.initialize()
 
     def init_variables(self):
+        self.is_untitled = True
         self._scene = window.Scene()
         self._showm = window.ShowManager(scene=self._scene,
                                          order_transparent=True)
@@ -61,6 +64,12 @@ class Viewer3D(QtWidgets.QWidget):
 
     def create_connections(self):
         pass
+
+    def make_title(self):
+        self.is_untitled = True
+        self.current_file = "viewer-%d" % Viewer3D.sequence_number
+        Viewer3D.sequence_number += 1
+        self.setWindowTitle(self.current_file)
 
     @property
     def scene(self):
@@ -81,6 +90,7 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_filepath = os.path.abspath(fname)
         self.current_filedir = os.path.dirname(self.current_filepath)
         self.current_extension = os.path.splitext(self.current_filepath)[1]
+        self.is_untitled = False
 
         universe, no_bonds = io.load_files(fname)
         if not universe:
@@ -95,6 +105,7 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_filepath = os.path.abspath(fname)
         self.current_filedir = os.path.dirname(self.current_filepath)
         self.current_extension = os.path.splitext(self.current_filepath)[1]
+        self.is_untitled = False
 
         universe = load_CC1_file(fname)
         if not universe:

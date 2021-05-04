@@ -59,7 +59,10 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         # file_name = 'fname.pdb'
         # SM.universe.atoms.write(file_name)
         # self.win.process_load_file(fname=file_name)
-        self.win.process_universe(structure_info)
+        window = self.win.create_mdi_child()
+        window.make_title()
+        window.load_universe(structure_info)
+        window.show()
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto

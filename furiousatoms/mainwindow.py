@@ -327,9 +327,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window.render()
         print('All bonds are deleted')
 
-    def new_file(self):
+    def new_window(self):
         child = self.create_mdi_child()
-        child.new_file()
+        child.make_title()
         child.show()
 
     def open(self):
