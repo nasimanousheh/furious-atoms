@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>3145</width>
-    <height>1331</height>
+    <width>1440</width>
+    <height>855</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -42,7 +42,7 @@
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../../../../.designer/image-icons/main.png</normaloff>../../../../.designer/image-icons/main.png</iconset>
+    <normaloff>../../../../../../.designer/image-icons/main.png</normaloff>../../../../../../.designer/image-icons/main.png</iconset>
   </property>
   <property name="accessibleDescription">
    <string/>
@@ -723,8 +723,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>124</width>
-                   <height>137</height>
+                   <width>105</width>
+                   <height>145</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -1250,8 +1250,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>110</width>
-                   <height>137</height>
+                   <width>93</width>
+                   <height>145</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout_4">
@@ -1348,7 +1348,7 @@ alternate-background-color: rgb(255, 255, 255);
                  </property>
                  <property name="icon">
                   <iconset>
-                   <normaloff>../../../../.designer/image-icons/Cylinder.png</normaloff>../../../../.designer/image-icons/Cylinder.png</iconset>
+                   <normaloff>../../../../../../.designer/image-icons/Cylinder.png</normaloff>../../../../../../.designer/image-icons/Cylinder.png</iconset>
                  </property>
                 </item>
                 <item>
@@ -1414,35 +1414,7 @@ alternate-background-color: rgb(255, 255, 255);
       </layout>
      </widget>
     </item>
-    <item row="1" column="2">
-     <widget class="QFrame" name="view_frame">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>900</width>
-        <height>700</height>
-       </size>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::StyledPanel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <property name="lineWidth">
-       <number>5</number>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="3">
+    <item row="2" column="0" colspan="4">
      <widget class="QWidget" name="widget_Animation" native="true">
       <property name="maximumSize">
        <size>
@@ -1545,6 +1517,19 @@ alternate-background-color: rgb(255, 255, 255);
       </property>
      </widget>
     </item>
+    <item row="1" column="1">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -1552,15 +1537,15 @@ alternate-background-color: rgb(255, 255, 255);
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>3145</width>
-     <height>21</height>
+     <width>1440</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionNew_File"/>
+    <addaction name="actionNew_file"/>
     <addaction name="actionLoad_file"/>
     <addaction name="actionSave_file"/>
     <addaction name="actionSave_as_File"/>
@@ -1570,9 +1555,17 @@ alternate-background-color: rgb(255, 255, 255);
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuwindows">
+     <property name="title">
+      <string>windows</string>
+     </property>
+     <addaction name="actioncascade"/>
+     <addaction name="actiontiled"/>
+    </widget>
     <addaction name="actionZoom_in"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionFit_to_Window"/>
+    <addaction name="menuwindows"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -1700,7 +1693,7 @@ alternate-background-color: rgb(255, 255, 255);
     <string>About</string>
    </property>
   </action>
-  <action name="actionNew_File">
+  <action name="actionNew_file">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/new.png</normaloff>:/icons/new.png</iconset>
@@ -1802,6 +1795,16 @@ alternate-background-color: rgb(255, 255, 255);
   <action name="actionFullerenes">
    <property name="text">
     <string>Fullerenes</string>
+   </property>
+  </action>
+  <action name="actioncascade">
+   <property name="text">
+    <string>cascade</string>
+   </property>
+  </action>
+  <action name="actiontiled">
+   <property name="text">
+    <string>tiled</string>
    </property>
   </action>
  </widget>

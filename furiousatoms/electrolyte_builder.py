@@ -763,7 +763,11 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
 
         # universe = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
         # universe.atoms.write(file_name)
-        self.win.process_load_file(fname=file_name)
+        window = self.win.create_mdi_child()
+        window.load_file(fname=file_name)
+        # window.make_title()
+        # window.load_universe(universe)
+        window.show()
 
 
 
