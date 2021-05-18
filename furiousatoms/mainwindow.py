@@ -240,23 +240,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        # for i, atom_typ in enumerate(SM.unique_types):
-        #     if self.h_box.itemAt(i).wid.isChecked():
-        #         print(i, atom_typ, 'checked')
-        #         SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-        #         self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
-        #         all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        #         all_vertices_radii = all_vertices_radii[:, None]
-
-
-        #         selected_atom_mask = SM.atom_type == atom_typ
-        #         all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
-        #         SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        #         SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
-        # utils.update_actor(SM.sphere_actor)
-        # self.qvtkwidget.GetRenderWindow().Render()
-
-
         for i, atom_typ in enumerate(SM.unique_types):
             if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
@@ -269,13 +252,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
                 SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
-
-
-                # all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
-                # all_vertices_radii = all_vertices_radii[:, None]
-                # SM.all_vertices_particles[:] = all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-                # SM.all_vertices_particles[:] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[:] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
