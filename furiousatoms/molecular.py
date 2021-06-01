@@ -1,5 +1,5 @@
 import numpy as np
-from fury import utils, actor
+from fury import utils, actor, primitive
 
 from furiousatoms.structure import bbox
 
@@ -43,6 +43,9 @@ class UniverseManager:
                                   colors=(0, 0, 0), linewidth=1, fake_tube=True)
 
         self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        self._bonds = self.universe.bonds.to_indices()
+        no_bonds = len(self.universe.bonds)
+
         self.have_bonds = no_bonds > 0
 
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
@@ -55,9 +58,7 @@ class UniverseManager:
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_unique_types = 0.55 + np.zeros(len(self.unique_types)) #np.random.rand(len(SM.unique_types))
-
-
+        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types)) #np.random.rand(len(SM.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
         self.sphere_actor = actor.sphere(centers=self.pos, colors=colors,
