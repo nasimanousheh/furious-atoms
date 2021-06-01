@@ -69,8 +69,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # Help menu actions
 
         # Modify menu actions
-        self.ui.actionParticle.triggered.connect(self.delete_particles)
-        self.ui.actionBond.triggered.connect(self.delete_bonds)
+        self.ui.actionParticles.triggered.connect(self.delete_particles)
+        self.ui.actionBonds.triggered.connect(self.delete_bonds)
 
         # Compute menu actions
 
@@ -442,7 +442,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             widget = scroll_layout.itemAt(i).widget()
             if widget:
                 widget.deleteLater()
-
+        print('unique_types', SM.unique_types)
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
@@ -450,6 +450,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             scroll_layout.addWidget(btn, i, 1, 1, 1)
 
         self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
+
 
         # Disconnect signal
         try:
