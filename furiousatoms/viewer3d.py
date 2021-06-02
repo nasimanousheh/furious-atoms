@@ -140,20 +140,34 @@ class Viewer3D(QtWidgets.QWidget):
 
     def delete_particles(self):
         SM = self.universe_manager
-        object_indices_particles = np.where(SM.selected_particle == True)[0]
+        object_indices_particles = np.where(SM.selected_particle)[0]
+        print('object_indices_particles: ', object_indices_particles)
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
-        s = SM.universe.universe.atoms[:]
-        t = SM.universe.universe.atoms[object_indices_particles]
-        b = s.difference(t)
-        SM.universe = MDAnalysis.core.groups.AtomGroup(b)
+        # s = SM.universe.universe.atoms[:]
+        # t = SM.universe.universe.atoms[object_indices_particles]
+        # b = s.difference(t)
+        # SM.universe = MDAnalysis.core.groups.AtomGroup(b)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-        print(object_indices_particles)
-        # print(SM.pos[object_indices_particles])
+
+        bonds_indices = SM.universe.bonds.to_indices()
+        object_indices_bonds = []
+        for object_index in object_indices_particles:
+            object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
+            object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
+        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+        for object_index_bond in object_indices_bonds:
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+
+        # SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        self.render()
 
     def delete_bonds(self):
         SM = self.universe_manager
@@ -165,6 +179,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
         # SM.universe.delete_bonds(SM.universe.bonds.to_indices()) #delete if it is lammps
+        # print('holaaaaaaaaaaaaaaaaaaaaaaaaa', object_indices_bonds)
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
@@ -175,10 +190,10 @@ class Viewer3D(QtWidgets.QWidget):
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
 
-        vertex_index_bond = picked_info['vertex']
+        vertex_index_particle = picked_info['vertex']
         vertices = utils.vertices_from_actor(obj)
         SM.no_vertices_all_particles = vertices.shape[0]
-        object_index = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_particles) * SM.no_atoms))
+        object_index = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_particles) * SM.no_atoms))
 
         if not SM.selected_particle[object_index]:
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
