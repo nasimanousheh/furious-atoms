@@ -12,7 +12,7 @@ disable_warnings()
 # 3rd Party package
 import vtk
 import numpy as np
-from fury import window, actor, utils, pick, ui
+from fury import window, actor, utils, pick, ui, primitive
 from fury.utils import numpy_to_vtk_points
 from PySide2 import QtCore
 from PySide2 import QtGui
@@ -96,9 +96,29 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
+        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resoluton)
 
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
+
+    def change_particle_resoluton(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        # SM = active_window.universe_manager
+        # comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
+        # if comboBox_particle_resolution == 'repulsion724':
+        #     sphere_res = 'repulsion724'
+        #     # sphere_res = 'repulsion100'# ‘symmetric362’ * ‘symmetric642’ * ‘symmetric724’ * ‘repulsion724’ * ‘repulsion100’ * ‘repulsion200’
+        #     vertices, faces = primitive.prim_sphere(name=sphere_res,
+        #                                             gen_faces=False)
+        #     # colors = np.ones((self.no_atoms, 4))
+        #     res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=np.array([255, 0, 0, 0], dtype='uint8'))
+        #     big_verts, big_faces, big_colors, _ = res
+        #     SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # utils.update_actor(SM.sphere_actor)
+        # SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        # active_window.render()
 
     def change_particle_shape(self):
         active_window = self.active_mdi_child()
@@ -108,14 +128,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
         if comboBox_particleshape == 'Point':
             SM.sphere_actor.VisibilityOff()
-        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
-        #     # all_vertices_radii = all_vertices_radii[:, None]
-        #     SM.all_vertices_particles[:] = 0.1 * SM.all_vertices_particles[:] #- np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
         if comboBox_particleshape == 'Sphere':
             SM.sphere_actor.VisibilityOn()
-        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres, SM.no_vertices_per_particle, axis=0)
-        #     # all_vertices_radii = all_vertices_radii[:, None]
-        #     SM.all_vertices_particles[:] = 0.55 * SM.all_vertices_particles[:] #- np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
@@ -135,7 +149,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                              linewidth=SM.line_thickness)
             active_window.scene.add(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        SM.colors_backup_bond = SM.vcolors_bond
+        # SM.colors_backup_bond = SM.vcolors_bond
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
