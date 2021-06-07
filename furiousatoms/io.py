@@ -98,6 +98,20 @@ def load_files(fname, debug=False):
     return load_file, no_bonds
 
 
+def create_universe(pos, bonds, atom_types):
+    num_atoms = pos.shape[0]
+    universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
+    universe.atoms.positions = pos
+    n_residues = 1
+    atom_types_list = list(atom_types)
+    universe.add_TopologyAttr('name', atom_types_list)
+    universe.add_TopologyAttr('type', atom_types_list)
+    universe.add_TopologyAttr('resname', ['MOL']*n_residues)
+    universe.add_bonds(bonds)
+
+    return universe
+
+
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.
 
