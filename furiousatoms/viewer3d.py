@@ -99,21 +99,6 @@ class Viewer3D(QtWidgets.QWidget):
         success = True
         return success
 
-    def load_fullerene_cc1_file(self, fname):
-        success = False
-        self.current_file = os.path.basename(fname)
-        self.current_filepath = os.path.abspath(fname)
-        self.current_filedir = os.path.dirname(self.current_filepath)
-        self.current_extension = os.path.splitext(self.current_filepath)[1]
-        self.is_untitled = False
-
-        universe = load_CC1_file(fname)
-        if not universe:
-            return success
-        self.load_universe(universe)
-        success = True
-        return success
-
     def load_universe(self, universe, no_bonds=0):
         self.universe_manager = UniverseManager(universe, no_bonds)
         self.create_universe_connections()
@@ -126,6 +111,21 @@ class Viewer3D(QtWidgets.QWidget):
                 "LeftButtonPressEvent", self.left_button_press_bond_callback)
         self.universe_manager.sphere_actor.AddObserver(
             "LeftButtonPressEvent", self.left_button_press_particle_callback)
+
+
+    def load_fullerene_cc1_file(self, fname):
+        success = False
+        self.current_file = os.path.basename(fname)
+        self.current_filepath = os.path.abspath(fname)
+        self.current_filedir = os.path.dirname(self.current_filepath)
+        self.current_extension = os.path.splitext(self.current_filepath)[1]
+        self.is_untitled = False
+        universe = load_CC1_file(fname)
+        if not universe:
+            return success
+        self.load_universe(universe)
+        success = True
+        return success
 
     def display_universe(self):
         axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
@@ -146,14 +146,9 @@ class Viewer3D(QtWidgets.QWidget):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
-        # s = SM.universe.universe.atoms[:]
-        # t = SM.universe.universe.atoms[object_indices_particles]
-        # b = s.difference(t)
-        # SM.universe = MDAnalysis.core.groups.AtomGroup(b)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-
         bonds_indices = SM.universe.bonds.to_indices()
         object_indices_bonds = []
         for object_index in object_indices_particles:
@@ -163,11 +158,56 @@ class Viewer3D(QtWidgets.QWidget):
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
             SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
-
-        # SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
+        # d = SM.universe.bonds[object_indices_bonds]
+        # SM.universe = MDAnalysis.core.universe.delete_bonds(d)
+        # b = SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
+        # bonds_indices = SM.universe.bonds.to_indices()
+
+        from furiousatoms.io import create_universe
+
+        final_pos = SM.pos.copy()
+        final_pos_index = np.arange(final_pos.shape[0])
+        final_pos = np.delete(final_pos, object_indices_particles, axis=0)
+        final_bonds = bonds_indices.copy()
+        final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
+        final_atom_types = SM.atom_type
+        final_atom_types = np.delete(final_atom_types, object_indices_particles)
+        final_pos_index = np.delete(final_pos_index, object_indices_particles)
+
+        fb_shape = final_bonds.shape
+        map_old_to_new = {}
+        for i in range(final_pos.shape[0]):
+            map_old_to_new[final_pos_index[i]] = i
+
+        fb = final_bonds.ravel()
+        for i in range(fb.shape[0]):
+            fb[i] = map_old_to_new[fb[i]]
+
+        final_bonds = fb.reshape(fb_shape)
+
+        univ = create_universe(final_pos, final_bonds, final_atom_types)
+        univ.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/pitsa.pdb')
+        test = 1
+        # s = SM.universe.atoms[:]
+        # t = SM.universe.atoms[object_indices_particles]
+        # b = s.difference(t)
+        # # SM.universe.atoms = MDAnalysis.core.groups.AtomGroup(b)
+        # SM.universe = MDAnalysis.Merge(MDAnalysis.core.groups.AtomGroup(b))
+        # SM.universe.add_bonds([tuple(b) for b in bonds_indices])
+        # graphene.add_bonds(all_bonds_graphene)
+
+
+        # s = SM.universe.atoms[:]
+        # t = SM.universe.atoms[object_indices_particles]
+        # b = s.difference(t)
+        # SM.universe = MDAnalysis.core.groups.AtomGroup(b)
+        # SM.universe.delete_bonds(SM.bonds[object_indices_bonds])
+        # print('In delete_particles Function, number of atoms is: ',SM.no_atoms)
+        SM.selected_particle[object_indices_particles] = False
+
 
     def delete_bonds(self):
         SM = self.universe_manager
@@ -176,16 +216,19 @@ class Viewer3D(QtWidgets.QWidget):
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
             SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
-
-        SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
-        # SM.universe.delete_bonds(SM.universe.bonds.to_indices()) #delete if it is lammps
-        # print('holaaaaaaaaaaaaaaaaaaaaaaaaa', object_indices_bonds)
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
         print(len(SM.universe.bonds))
 
+        # SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
+        # SM.universe.delete_bonds(SM.universe.bonds.to_indices()) #delete if it is lammps
+
+        SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
+
+
     def left_button_press_particle_callback(self, obj, event):
+
         SM = self.universe_manager
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
@@ -194,7 +237,7 @@ class Viewer3D(QtWidgets.QWidget):
         vertices = utils.vertices_from_actor(obj)
         SM.no_vertices_all_particles = vertices.shape[0]
         object_index = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_particles) * SM.no_atoms))
-
+        print('left_button_press_particle_callback number of atoms is: ',SM.no_atoms)
         if not SM.selected_particle[object_index]:
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
@@ -206,6 +249,7 @@ class Viewer3D(QtWidgets.QWidget):
         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
 
     def left_button_press_bond_callback(self, obj, event):
         SM = self.universe_manager
