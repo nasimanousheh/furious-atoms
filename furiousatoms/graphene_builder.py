@@ -1,5 +1,3 @@
-from MDAnalysis import *
-import MDAnalysis.analysis.align
 import numpy as np
 from numpy.linalg import norm
 from fractions import gcd
@@ -101,18 +99,11 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
     # Atom coordinates:
     coord_array_graphene = np.array(xyz)
     assert coord_array_graphene.shape == (num_atoms_graphene, 3)
-    graphene = MDAnalysis.Universe.empty(num_atoms_graphene, trajectory=True, n_residues=1)
-    graphene.atoms.positions = coord_array_graphene
-    n_residues = 1
-    # Bonds information connected the atoms:
     all_bonds_graphene = np.array(fragments['bonds'])
-    graphene.add_TopologyAttr('name', atom_types_graphene)
-    graphene.add_TopologyAttr('type', atom_types_graphene)
-    graphene.add_TopologyAttr('resname', ['MOL']*n_residues)
-    graphene.add_bonds(all_bonds_graphene)
-    # If the user chooses "None", only graphene structure without hydrogens will be returned:
+    from furiousatoms.io import create_universe
+    univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene)
     if H_termination_graphene == 'None':
-        return graphene
+        return univ_graphene
    ##############################################Create Hydrogens at the end of graphene##############################################
 
     num_hydrogen = 0
@@ -174,28 +165,24 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                 H_coordinaes.extend([H_coord])
                 num_hydrogen = num_hydrogen + 1
 
-    if num_hydrogen > 0:
-        n_residues =1
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
-        coord_array_H_indice = np.array(H_coordinaes)
-        assert coord_array_H_indice.shape == (num_hydrogen, 3)
-        h.atoms.positions = coord_array_H_indice
-        h.add_TopologyAttr('name', ['H']*num_hydrogen)
-        h.add_TopologyAttr('type', ['H']*num_hydrogen)
-        h.add_TopologyAttr('resname', ['H']*n_residues)
-    graphene_with_hydrogen = MDAnalysis.Merge(graphene.atoms, h.atoms)
-    graphene_with_hydrogen.add_bonds(all_bonds_graphene)
+    from furiousatoms.io import create_universe, merged_universe
+
+    coord_array_H_indice = np.array(H_coordinaes)
     num_hydrogen = 0
+    bonds_hydrogen = []
     for x in range(num_atoms_graphene):
         indices_of_a = np.where(all_bonds_graphene == x)
         if len(indices_of_a[0]) == 1:
-            graphene_with_hydrogen.add_bonds([(x, num_atoms_graphene + num_hydrogen)])
-            graphene_with_hydrogen.add_bonds([(x, num_atoms_graphene + num_hydrogen + 1)])
+            bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
+            bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen + 1)])
             num_hydrogen = num_hydrogen + 2
         if len(indices_of_a[0]) == 2:
-            graphene_with_hydrogen.add_bonds([(x, num_atoms_graphene + num_hydrogen)])
+            bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
+    atom_types_Hydrogen = list(['H']*num_hydrogen)
+    merged_graphene_hydrogen = merged_universe(coord_array_graphene,  all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)
+
 
     # If the user chooses "All", hydrogenated graphene structure will be returned:
     if H_termination_graphene == 'All':
-        return graphene_with_hydrogen
+        return merged_graphene_hydrogen
