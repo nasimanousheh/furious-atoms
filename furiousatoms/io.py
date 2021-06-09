@@ -111,6 +111,33 @@ def create_universe(pos, bonds, atom_types):
 
     return universe
 
+def merged_universe(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2):
+
+    num_atoms_1 = pos_uni_1.shape[0]
+    universe_1 = MDAnalysis.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
+    universe_1.atoms.positions = pos_uni_1
+    n_residues = 1
+    atom_types_list_1 = list(atom_types_uni_1)
+    universe_1.add_TopologyAttr('name', atom_types_list_1)
+    universe_1.add_TopologyAttr('type', atom_types_list_1)
+    universe_1.add_TopologyAttr('resname', ['MOL']*n_residues)
+    universe_1.add_bonds(bonds_uni_1)
+
+    num_atoms_2 = pos_uni_2.shape[0]
+    universe_2 = MDAnalysis.Universe.empty(num_atoms_2, trajectory=True, n_residues=1)
+    universe_2.atoms.positions = pos_uni_2
+    n_residues = 1
+    # atom_types_list_2 = list(atom_types_uni_2)
+    # two_end_atom_types_H = list(['H']*num_hydrogen)
+    universe_2.add_TopologyAttr('name', atom_types_uni_2)
+    universe_2.add_TopologyAttr('type', atom_types_uni_2)
+    universe_2.add_TopologyAttr('resname', ['MOL']*n_residues)
+    # universe_2.add_bonds(bonds_uni_2)
+    merged_universes = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
+    merged_universes.add_bonds(bonds_uni_1)
+    merged_universes.add_bonds(bonds_uni_2)
+    return merged_universes
+
 
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.
