@@ -1,5 +1,3 @@
-from MDAnalysis import *
-import MDAnalysis.analysis.align
 import numpy as np
 from numpy.linalg import norm
 from fractions import gcd
@@ -128,44 +126,119 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
     atom_types_swnt = [v for v, _ in pts]
     m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
     fragments = m.to_json(scale=1)
-
     # Number of atoms in SWNT:
     num_atoms_swnt = len(xyz)
     n_residues = 1
-
     # Atom coordinates:
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (num_atoms_swnt, 3)
-    swnt = MDAnalysis.Universe.empty(num_atoms_swnt, trajectory=True, n_residues=1)
-    swnt.atoms.positions = coord_array_swnt
-
     # Bonds information connected the atoms:
     all_bonds_swnt = np.array(fragments['bonds'])
-    swnt.add_TopologyAttr('name', atom_types_swnt)
-    swnt.add_TopologyAttr('type', atom_types_swnt)
-    swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
-    swnt.add_bonds(all_bonds_swnt)
+    from furiousatoms.io import create_universe
+    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt)
 
     # If the user chooses "None", only SWNT structure without hydrogens will be returned:
     if H_termination_SWNT == 'None':
-        return swnt
-
+        return univ_swnt
    ##############################################Create Hydrogens at only one end of tube##############################################
 
    #To hydrogenate one end of tube, we devide the number of atoms in nanotube into two:
-
-    half_num_atoms_swnt = int(num_atoms_swnt/2)
     num_hydrogen = 0
     H_coordinaes = []
+    length_SWNT = np.linalg.norm(T) * 4
 
-    for a in range(half_num_atoms_swnt):
+    for a in range(num_atoms_swnt):
 
-        # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
+        if ((np.linalg.norm(coord_array_swnt[a])) < (length_SWNT/2)):
+
+            # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
+            indices_of_a = np.where(all_bonds_swnt == a)[0]
+
+            # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
+            if len(indices_of_a) == 1:
+                # Here we identify the indices of all atoms at the end of tube that are need to be hydrogenized.
+                end_atom_indices = (all_bonds_swnt[indices_of_a])
+                if end_atom_indices[0][0] == a:
+                    end_atom_indices = (all_bonds_swnt[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][1]
+                    core_connections = all_bonds_swnt[np.where(all_bonds_swnt == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                if end_atom_indices[0][1] == a:
+                    end_atom_indices = (all_bonds_swnt[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][0]
+                    core_connections = all_bonds_swnt[np.where(all_bonds_swnt == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
+                H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
+                H_coordinaes.extend([H_coord_1])
+                H_coordinaes.extend([H_coord_2])
+                num_hydrogen = num_hydrogen + 2
+
+            # If a in bond indices is repeated two times, it means it has connected to two other atoms. So to hydrogenate the this atom, we need to connect it to one hydrogen atom.
+            if len(indices_of_a) == 2:
+                end_atom_indices = (all_bonds_swnt[indices_of_a])
+                if end_atom_indices[0][0] == a:
+                    end_atom_index = end_atom_indices[0][0]
+                    f_connec_to_end_atom_index = np.where(all_bonds_swnt == end_atom_index)[0]
+                    core_connections = all_bonds_swnt[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
+
+                if end_atom_indices[0][1] == a:
+                    end_atom_index = end_atom_indices[0][1]
+                    f_connec_to_end_atom_index = np.where(all_bonds_swnt == end_atom_index)[0]
+                    core_connections = all_bonds_swnt[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
+
+# Here we define the bond information between the atoms of SWNT and hydrogen, if the number of hydrogen is not zero:
+    pos_one_end_H = np.array(H_coordinaes)
+    assert pos_one_end_H.shape == (num_hydrogen, 3)
+    num_hydrogen = 0
+    n_residues = 1
+    one_end_bonds_H = []
+    for x in range(num_atoms_swnt):
+        if ((np.linalg.norm(coord_array_swnt[x])) < (length_SWNT/2)):
+            indices_of_a = np.where(all_bonds_swnt == x)
+            if len(indices_of_a[0]) == 1:
+                one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
+                one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen + 1)])
+                num_hydrogen = num_hydrogen + 2
+            if len(indices_of_a[0]) == 2:
+                one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
+                num_hydrogen = num_hydrogen + 1
+    from furiousatoms.io import create_universe, merged_universe
+    one_end_atom_types_H = list(['H']*num_hydrogen)
+    merged_swnt_one_end_H = merged_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H)
+
+    # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
+    if H_termination_SWNT == 'One end':
+        return merged_swnt_one_end_H
+
+#########################################################
+    num_hydrogen = 0
+    H_coordinaes = []
+    for a in range(num_atoms_swnt):
         indices_of_a = np.where(all_bonds_swnt == a)[0]
-
-        # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
         if len(indices_of_a) == 1:
-            # Here we identify the indices of all atoms at the end of tube that are need to be hydrogenized.
             end_atom_indices = (all_bonds_swnt[indices_of_a])
             if end_atom_indices[0][0] == a:
                 end_atom_indices = (all_bonds_swnt[indices_of_a])
@@ -189,7 +262,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
             H_coordinaes.extend([H_coord_2])
             num_hydrogen = num_hydrogen + 2
 
-        # If a in bond indices is repeated two times, it means it has connected to two other atoms. So to hydrogenate the this atom, we need to connect it to one hydrogen atom.
         if len(indices_of_a) == 2:
             end_atom_indices = (all_bonds_swnt[indices_of_a])
             if end_atom_indices[0][0] == a:
@@ -218,111 +290,24 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                 H_coordinaes.extend([H_coord])
                 num_hydrogen = num_hydrogen + 1
 
-# Here we define the bond information between the atoms of SWNT and hydrogen, if the number of hydrogen is not zero:
-    if num_hydrogen > 0:
-        n_residues = 1
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
-        coord_array_H_indice = np.array(H_coordinaes)
-        assert coord_array_H_indice.shape == (num_hydrogen, 3)
-        h.atoms.positions = coord_array_H_indice
-        h.add_TopologyAttr('name', ['H']*num_hydrogen)
-        h.add_TopologyAttr('type', ['H']*num_hydrogen)
-        h.add_TopologyAttr('resname', ['H']*n_residues)
-    combined_one_end = MDAnalysis.Merge(swnt.atoms, h.atoms)
-    combined_one_end.add_bonds(all_bonds_swnt)
     num_hydrogen = 0
-    for x in range(half_num_atoms_swnt):
-        indices_of_a = np.where(all_bonds_swnt == x)
-        if len(indices_of_a[0]) == 1:
-            combined_one_end.add_bonds([(x, num_atoms_swnt + num_hydrogen)])
-            combined_one_end.add_bonds([(x, num_atoms_swnt + num_hydrogen + 1)])
-            num_hydrogen = num_hydrogen + 2
-        if len(indices_of_a[0]) == 2:
-            combined_one_end.add_bonds([(x, num_atoms_swnt + num_hydrogen)])
-            num_hydrogen = num_hydrogen + 1
-
-    # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
-    if H_termination_SWNT == 'One end':
-        return combined_one_end
-
-#########################################################
-    num_hydrogen = 0
-    H_coordinaes = []
-    for a in range(num_atoms_swnt):
-        indices_of_a = np.where(all_bonds_swnt == a)[0]
-        if len(indices_of_a) == 1:
-            end_atom_indices = (all_bonds_swnt[indices_of_a])
-            if end_atom_indices[0][0] == a:
-                end_atom_indices = (all_bonds_swnt[indices_of_a]) #[2735 2447] main= 2735
-                f_connec_to_end_atom_index = end_atom_indices[0][1] # 2447
-                core_connections = all_bonds_swnt[np.where(all_bonds_swnt == f_connec_to_end_atom_index)[0]]
-                Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
-                Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-            if end_atom_indices[0][1] == a:
-                end_atom_indices = (all_bonds_swnt[indices_of_a])
-                f_connec_to_end_atom_index = end_atom_indices[0][0]
-                core_connections = all_bonds_swnt[np.where(all_bonds_swnt == f_connec_to_end_atom_index)[0]]
-                Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
-                Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-            H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
-            H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
-            H_coordinaes.extend([H_coord_1])
-            H_coordinaes.extend([H_coord_2])
-            num_hydrogen = num_hydrogen + 2
-
-        if len(indices_of_a) == 2:
-            end_atom_indices = (all_bonds_swnt[indices_of_a])
-            if end_atom_indices[0][0] == a:
-                end_atom_index = end_atom_indices[0][0]
-                f_connec_to_end_atom_index = np.where(all_bonds_swnt == end_atom_index)[0]
-                core_connections = all_bonds_swnt[f_connec_to_end_atom_index]
-                Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-                first_vector = xyz[end_atom_index] - xyz[right_connection]
-                second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
-                H_coordinaes.extend([H_coord])
-                num_hydrogen = num_hydrogen + 1
-
-            if end_atom_indices[0][1] == a:
-                end_atom_index = end_atom_indices[0][1]
-                f_connec_to_end_atom_index = np.where(all_bonds_swnt == end_atom_index)[0]
-                core_connections = all_bonds_swnt[f_connec_to_end_atom_index]
-                Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-                first_vector = xyz[end_atom_index] - xyz[right_connection]
-                second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
-                H_coordinaes.extend([H_coord])
-                num_hydrogen = num_hydrogen + 1
-
-    if num_hydrogen > 0:
-        n_residues = 1
-        h = MDAnalysis.Universe.empty(num_hydrogen, trajectory=True, n_residues=1)
-        coord_array_H_indice = np.array(H_coordinaes)
-        assert coord_array_H_indice.shape == (num_hydrogen, 3)
-        h.atoms.positions = coord_array_H_indice
-        h.add_TopologyAttr('name', ['H']*num_hydrogen)
-        h.add_TopologyAttr('type', ['H']*num_hydrogen)
-        h.add_TopologyAttr('resname', ['H']*n_residues)
-    combined = MDAnalysis.Merge(swnt.atoms, h.atoms)
-    combined.add_bonds(all_bonds_swnt)
-    num_hydrogen = 0
+    two_end_bonds_H = []
+    n_residues = 1
+    pos_two_end_H = np.array(H_coordinaes)
+    assert pos_two_end_H.shape == (num_hydrogen, 3)
     for x in range(num_atoms_swnt):
         indices_of_a = np.where(all_bonds_swnt == x)
         if len(indices_of_a[0]) == 1:
-            combined.add_bonds([(x, num_atoms_swnt + num_hydrogen)])
-            combined.add_bonds([(x, num_atoms_swnt + num_hydrogen + 1)])
+            two_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
+            two_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen + 1)])
             num_hydrogen = num_hydrogen + 2
         if len(indices_of_a[0]) == 2:
-            combined.add_bonds([(x, num_atoms_swnt + num_hydrogen)])
+            two_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
     # If the user chooses "Both ends", SWNT structure with both ends hydrogenated will be returned:
+    from furiousatoms.io import create_universe, merged_universe
+    two_end_atom_types_H = list(['H']*num_hydrogen)
+    merged_swnt_two_end_H = merged_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H)
+
     if H_termination_SWNT == 'Both ends':
-        return combined
+        return merged_swnt_two_end_H
