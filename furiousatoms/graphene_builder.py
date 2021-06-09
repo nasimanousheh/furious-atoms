@@ -54,9 +54,6 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
-        # file_name = 'fname.pdb'
-        # SM.universe.atoms.write(file_name)
-        # self.win.process_load_file(fname=file_name)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
