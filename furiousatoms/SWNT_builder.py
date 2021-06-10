@@ -50,6 +50,7 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         self.SWNT.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder_callback)
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
+        self.SWNT.pushButton_build_SWNT.clicked.connect(lambda:self.close())
 
     def SWNT_diameter_changed(self):
         SM.H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
