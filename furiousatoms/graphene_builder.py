@@ -43,6 +43,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         bond_length_graphene = 1.421 # default value of C-C bond length
         self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
         self.graphene.pushButton_build_graphene.clicked.connect(self.graphene_builder_callback)
+        self.graphene.pushButton_build_graphene.clicked.connect(lambda:self.close())
 
     def graphene_builder_callback(self):
         H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
