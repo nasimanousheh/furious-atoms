@@ -13,6 +13,7 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
+from furiousatoms.io import create_universe, merged_universe_with_H
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 thre = 1e-10
@@ -163,8 +164,6 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                 H_coordinaes.extend([H_coord])
                 num_hydrogen = num_hydrogen + 1
 
-    from furiousatoms.io import create_universe, merged_universe
-
     coord_array_H_indice = np.array(H_coordinaes)
     num_hydrogen = 0
     bonds_hydrogen = []
@@ -178,7 +177,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
             bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
     atom_types_Hydrogen = list(['H']*num_hydrogen)
-    merged_graphene_hydrogen = merged_universe(coord_array_graphene,  all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)
+    merged_graphene_hydrogen = merged_universe_with_H(coord_array_graphene,  all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)
 
 
     # If the user chooses "All", hydrogenated graphene structure will be returned:
