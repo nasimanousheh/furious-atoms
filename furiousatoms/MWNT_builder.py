@@ -1,5 +1,7 @@
-from MDAnalysis import *
-import MDAnalysis.analysis.align
+from furiousatoms.io import create_universe, merged_two_universes
+
+# from MDAnalysis import *
+# import MDAnalysis.analysis.align
 import numpy as np
 from numpy.linalg import norm
 from fractions import gcd
@@ -49,6 +51,7 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
+        self.MWNT.pushButton_build_MWNT.clicked.connect(lambda:self.close())
 
     def MWNT_diameter_changed(self):
         SM.bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
@@ -78,17 +81,24 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        i = 1
+        xyz = []
         universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        type_atoms = []
+
         for i in range(SM.number_of_walls):
-            next_universe = MWNT_builder(value_n_MWNT + (6*i), value_m_MWNT + (6*i), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-            structure_info = MDAnalysis.Merge(universe.atoms, next_universe.atoms)
-        # file_name = 'fname.pdb'
-        # universe.atoms.write(file_name)
-        # self.win.process_load_file(fname=file_name)
+            next_universe = MWNT_builder(value_n_MWNT + (6*(i+1)), value_m_MWNT + (6*(i+1)), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+            xyz.extend(next_universe.universe.atoms.positions)
+            pos = np.array(xyz)
+            type_atoms.extend(next_universe.atoms.types)
+            # next_universe.add_bonds(next_universe.bonds.indices)
+            # univ_mwnt = merged_two_universes(universe.universe.atoms.positions, swnt_inner_bonds, universe.atoms.types, next_universe.universe.atoms.positions, next_universe.universe.bonds.indices, next_universe.atoms.types)
+            universe = merged_two_universes(universe.atoms.positions, universe.bonds.indices, universe.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
+            i=i+1
+        # next_universe = MWNT_builder(value_n_MWNT + (6), value_m_MWNT + (6), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        # univ_mwnt = merged_two_universes(universe.universe.atoms.positions, swnt_inner_bonds, universe.atoms.types, next_universe.universe.atoms.positions, next_universe.universe.bonds.indices, next_universe.atoms.types)
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(structure_info)
+        window.load_universe(universe)
         window.show()
 
 """
@@ -96,8 +106,6 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
   that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
-
-
 
 def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=False):
     d = gcd(n, m)
@@ -136,12 +144,14 @@ def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=F
     n_atoms_swnt = len(xyz)
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (n_atoms_swnt, 3)
-    swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=1)
-    n_residues = 1
-    swnt.atoms.positions = coord_array_swnt
+    # swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=1)
+    # n_residues = 1
+    # swnt.atoms.positions = coord_array_swnt
     all_bonds_swnt = np.array(fragments['bonds'])
-    swnt.add_TopologyAttr('name', atom_types_swnt)
-    swnt.add_TopologyAttr('type', atom_types_swnt)
-    swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
-    swnt.add_bonds(all_bonds_swnt)
-    return swnt
+    # swnt.add_TopologyAttr('name', atom_types_swnt)
+    # swnt.add_TopologyAttr('type', atom_types_swnt)
+    # swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
+    # swnt.add_bonds(all_bonds_swnt)
+    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt)
+
+    return univ_swnt
