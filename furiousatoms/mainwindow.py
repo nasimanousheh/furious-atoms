@@ -29,6 +29,7 @@ from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
+from furiousatoms.fullerenes_database import load_CC1_file
 
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
@@ -62,6 +63,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
 
+        self.ui.actionZoom_in.triggered.connect(self.slotZoomIn)
+        self.ui.actionZoom_out.triggered.connect(self.slotZoomOut)
+        self.ui.actionFit_to_Window.triggered.connect(self.slotZoomFit)
+        # self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
+
         # View menu actions
         self.ui.actioncascade.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
         self.ui.actiontiled.triggered.connect(self.ui.mdiArea.tileSubWindows)
@@ -80,8 +86,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
-
-        #
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
@@ -96,29 +100,66 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
-        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resoluton)
+        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
 
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
 
-    def change_particle_resoluton(self):
+    def slotZoomIn(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        # SM = active_window.universe_manager
-        # comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
-        # if comboBox_particle_resolution == 'repulsion724':
-        #     sphere_res = 'repulsion724'
-        #     # sphere_res = 'repulsion100'# ‘symmetric362’ * ‘symmetric642’ * ‘symmetric724’ * ‘repulsion724’ * ‘repulsion100’ * ‘repulsion200’
-        #     vertices, faces = primitive.prim_sphere(name=sphere_res,
-        #                                             gen_faces=False)
-        #     # colors = np.ones((self.no_atoms, 4))
-        #     res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=np.array([255, 0, 0, 0], dtype='uint8'))
-        #     big_verts, big_faces, big_colors, _ = res
-        #     SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        # utils.update_actor(SM.sphere_actor)
-        # SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-        # active_window.render()
+        SM = active_window.universe_manager
+        active_window.scene.zoom(1.25)
+        active_window.render()
+
+    def slotZoomOut(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        active_window.scene.zoom(0.75)
+        active_window.render()
+    def slotZoomFit(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        active_window.scene.ResetCamera()
+        active_window.render()
+
+
+    def change_particle_resolution(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
+        active_window.scene.rm(SM.sphere_actor)
+        vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
+        # SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
+        #         np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        colors = np.ones((SM.no_atoms, 4))
+
+        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors)#, dtype='uint8')
+        big_verts, big_faces, big_colors, _ = res
+        SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        active_window.scene.add(SM.sphere_actor)
+        utils.update_actor(SM.sphere_actor)
+
+        SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+        SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_all_particles = vertices_particle.shape[0]
+        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+        SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        SM.colors_backup_partciles = SM.vcolors_particle.copy()
+
+        SM = active_window.universe_manager
+        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        active_window.render()
 
     def change_particle_shape(self):
         active_window = self.active_mdi_child()
@@ -261,7 +302,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 all_vertices_radii = all_vertices_radii[:, None]
-
                 selected_atom_mask = SM.atom_type == atom_typ
                 all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
                 SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
@@ -397,6 +437,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.universe.atoms.write(fname)
+        # SM.atoms.write(fname)
+
         print('saving {}'.format(fname))
 
     def delete_particles(self):
@@ -452,20 +494,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         scroll_layout = QtWidgets.QGridLayout()
 
         # reset the layout
-        for i in reversed(range(scroll_layout.count())):
-            widget = scroll_layout.itemAt(i).widget()
-            if widget:
-                widget.deleteLater()
-        print('unique_types', SM.unique_types)
         for i, typ in enumerate(SM.unique_types):
+
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
             btn = QtWidgets.QRadioButton(str(typ), self)
             scroll_layout.addWidget(btn, i, 1, 1, 1)
 
         self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
-
-
         # Disconnect signal
         try:
             if SM.no_atoms > 0:
@@ -482,7 +518,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 self.ui.Box_bonds.stateChanged.disconnect(self.check_bonds)
         except RuntimeError:
             pass
-
 
         # Setup checkbox
         self.ui.Box_particles.setChecked(SM.no_atoms > 0)
