@@ -212,7 +212,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                              linewidth=SM.line_thickness)
             active_window.scene.add(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        # SM.colors_backup_bond = SM.vcolors_bond
+        SM.colors_backup_bond = SM.vcolors_bond
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
@@ -482,7 +482,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
-        # if color = QtWidgets.QColorDialog.getColor(self.selectedColor, self)
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
                 if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
@@ -492,8 +491,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         # SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
                         # SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
                         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
-                        test = 1
-                        # [ 56,  45, 232, 255]
             SM.colors_backup_particles = SM.vcolors_particle.copy()
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -505,11 +502,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         selected_color_bond = QtWidgets.QColorDialog.getColor()
-        select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
-        object_indices_bonds = np.where(select_all_bonds == False)[0]
-        for object_index in object_indices_bonds:
-            SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
-            SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+        if selected_color_bond.isValid():
+            select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+            object_indices_bonds = np.where(select_all_bonds == False)[0]
+            for object_index in object_indices_bonds:
+                SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
+                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
