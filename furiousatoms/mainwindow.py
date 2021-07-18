@@ -30,6 +30,7 @@ from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_database import load_CC1_file
+from furiousatoms.viewer3d import Viewer3D
 
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
@@ -128,37 +129,58 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window.scene.ResetCamera()
         active_window.render()
 
-
     def change_particle_resolution(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
+        num = int(SM.no_vertices_per_particle)
+        print('SM.no_vertices_per_particle', num)
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
+
+        colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
         vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
-        # SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
-        #         np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-        colors = np.ones((SM.no_atoms, 4))
-
         res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        SM.no_vertices_per_particle = len(vertices)
+        SM.all_vertices_particles = SM.no_vertices_per_particle * SM.no_atoms
+
+        print('colors.shape:' , colors.shape)
+
+        # for i, atom_typ in enumerate(SM.unique_types):
+        #     if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+        #         SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+        #         selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ]
+        #         all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+        #         all_vertices_radii = all_vertices_radii[:, None]
+        #         selected_atom_mask = SM.atom_type == atom_typ
+        #         all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
+        #         SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+        # # SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
+        #         np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+
+
+
+
+        # self.update_particle_size(selected_value_radius=0.2)
         active_window.scene.add(SM.sphere_actor)
-        utils.update_actor(SM.sphere_actor)
-
-        SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
-        SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-        SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-        vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
-        SM.no_vertices_all_particles = vertices_particle.shape[0]
-        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+        # SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+        # SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+        # SM.initial_vertices_particles = SM.all_vertices_particles - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        # vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+        # SM.no_vertices_all_particles = vertices_particle.shape[0]
+        # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
-        SM.colors_backup_partciles = SM.vcolors_particle.copy()
+        SM.colors_backup_particles = SM.vcolors_particle.copy()
 
-        SM = active_window.universe_manager
+
+
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        utils.update_actor(SM.sphere_actor)
+        # Viewer3D.display_universe(SM.sphere_actor)
         active_window.render()
 
     def change_particle_shape(self):
@@ -227,6 +249,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         object_indices_particles = np.where(SM.selected_particle == True)[0]
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        SM.colors_backup_particles = SM.vcolors_particle.copy()
         if len(object_indices_particles)==2:
             distance_particle_particle = np.linalg.norm(SM.pos[object_indices_particles[0]] - SM.pos[object_indices_particles[1]])
         utils.update_actor(SM.sphere_actor)
@@ -416,14 +439,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         child = self.create_mdi_child()
+
+        # if child.load_CC1_file(fname):
+
         if child.load_fullerene_cc1_file(fname):
-            # self.statusBar().showMessage("File loaded", 2000)
             child.show()
         else:
             child.close()
 
         # SM.enable_timer = True
-
     def save(self):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
         # fname = open(fname, 'w')
@@ -438,7 +462,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.universe.atoms.write(fname)
         # SM.atoms.write(fname)
-
         print('saving {}'.format(fname))
 
     def delete_particles(self):
@@ -459,13 +482,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
-        for i, atom_typ in enumerate(SM.unique_types):
-            if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
-                print(i, atom_typ, 'checked')
-                object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
-                for object_index in object_indices_particles:
-                    SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
-                    SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+        # if color = QtWidgets.QColorDialog.getColor(self.selectedColor, self)
+        if selected_color_particle.isValid():
+            for i, atom_typ in enumerate(SM.unique_types):
+                if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+                    print(i, atom_typ, 'checked')
+                    object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
+                    for object_index in object_indices_particles:
+                        # SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
+                        # SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
+                        SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
+                        test = 1
+                        # [ 56,  45, 232, 255]
+            SM.colors_backup_particles = SM.vcolors_particle.copy()
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
