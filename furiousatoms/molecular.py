@@ -16,11 +16,8 @@ class UniverseManager:
         self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         self._bonds = self.universe.bonds.to_indices()
         no_bonds = len(self.universe.bonds)
-
         self.have_bonds = no_bonds > 0
-
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
-
         colors = np.ones((self.no_atoms, 4))
         self.unique_types = np.unique(self.universe.atoms.types)
         self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
@@ -29,7 +26,7 @@ class UniverseManager:
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types)) #np.random.rand(len(SM.unique_types))
+        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
@@ -39,7 +36,6 @@ class UniverseManager:
         res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
@@ -112,6 +108,8 @@ class UniverseManager:
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
         self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
         self.unique_types_bond = np.unique(self.universe.bonds.types)
+        self.vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+        self.colors_backup_bond = self.vcolors_bond.copy()
         return bond_actor
 
     def actors(self):
@@ -149,16 +147,10 @@ class ViewerMemoryManager:
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types)) #np.random.rand(len(SM.unique_types))
+        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
-        # big_verts, big_faces, big_colors, _ = res
-        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-
-
-        # self.sphere_actor = actor.sphere(centers=self.pos, colors=colors,
-        #                                  radii=self.radii_spheres, theta=32, phi=32)
         vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
         res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
