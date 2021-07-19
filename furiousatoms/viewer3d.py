@@ -112,7 +112,6 @@ class Viewer3D(QtWidgets.QWidget):
         self.universe_manager.sphere_actor.AddObserver(
             "LeftButtonPressEvent", self.left_button_press_particle_callback)
 
-
     def load_fullerene_cc1_file(self, fname):
         success = False
         self.current_file = os.path.basename(fname)
@@ -120,10 +119,18 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_filedir = os.path.dirname(self.current_filepath)
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
-        universe = load_CC1_file(fname)
+        un = load_CC1_file(fname)
+
+                # print(universe.pos)
+        # n_residues = 1
+        # atom_types_list = list(atom_types)
+        # universe.add_TopologyAttr('name', atom_types_list)
+        # universe.add_TopologyAttr('type', atom_types_list)
+        # universe.add_TopologyAttr('resname', ['MOL']*n_residues)
+        universe, no_bonds = io.load_files(un)
         if not universe:
             return success
-        self.load_universe(universe)
+        self.load_universe(universe, no_bonds)
         success = True
         return success
 
