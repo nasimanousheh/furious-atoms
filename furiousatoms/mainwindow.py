@@ -147,8 +147,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.no_vertices_per_particle = len(vertices)
         SM.all_vertices_particles = SM.no_vertices_per_particle * SM.no_atoms
 
-        print('colors.shape:' , colors.shape)
-
         # for i, atom_typ in enumerate(SM.unique_types):
         #     if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
         #         SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
@@ -174,9 +172,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
-
-
-
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         utils.update_actor(SM.sphere_actor)
@@ -202,19 +197,23 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+        # colors = SM.colors_backup_bond[0::num].astype('f8').copy()/255
         comboBox_bondshape = self.ui.comboBox_bondshape.currentText()
         if comboBox_bondshape == 'Line':
             SM.bond_actor.VisibilityOff()
-            SM.bond_actor = actor.line(SM.bonds, SM.bond_colors, linewidth=2)
+            SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
+            SM.bond_actor = actor.line(SM.bonds, SM.bond_colors, linewidth=1)
             active_window.scene.add(SM.bond_actor)
         if comboBox_bondshape == 'Cylinder':
+            SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
             SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors,
-                                             linewidth=SM.line_thickness)
+                                             linewidth=0.5)#SM.line_thickness)
             active_window.scene.add(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        SM.colors_backup_bond = SM.vcolors_bond
+        SM.colors_backup_bond = SM.vcolors_bond.copy()
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
     def electrolyte(self):
