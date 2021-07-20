@@ -219,7 +219,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         final_bonds = fb.reshape(fb_shape)
         univ = create_universe(final_pos, final_bonds, final_atom_types)
-        univ.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/pitsa_1.pdb')
+        # univ.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/pitsa_1.pdb')
         # SM.selected_particle[object_indices_particles] = False
 
 
