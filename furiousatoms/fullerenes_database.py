@@ -46,8 +46,8 @@ def load_CC1_file(fname, debug=False):
     # out_put_pdb = 'C:/Users/nasim/OneDrive/Desktop/cnvert/fullerene.pdb'
     # out_put_pdb = os.path.join(dir_name, fname + suffix)#os.path.join(dir_name, fname + suffix)
 
-    out_put_pdb = 'C:/Users/nasim/OneDrive/Desktop/cnvert/fullerene.pdb'
-    outdump = open(out_put_pdb, "w")
+    file_name = 'fullerene.pdb'
+    outdump = open(file_name, "w")
     outdump.write("CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P1\n")
     for i in range(no_atoms):
         tmp="{:6s}{:5d}  {:5s}{:2s}{:3s} {:2s}   {:8.3f}{:8.3f}{:8.3f}{:6.2f}{:6.2f}\n".format('ATOM',1 + i, 'C','C','A','1', float("{:.3f}".format(pos[i][0])), float("{:.3f}".format(pos[i][1])),float("{:.3f}".format(pos[i][2])),1,0)
@@ -58,7 +58,12 @@ def load_CC1_file(fname, debug=False):
         outdump.write(tmp_bond)
     outdump.write("{:4s} {:5d} {:5d} {:5d} {:5d}\n".format('MASTER        0    0    0    0    0    0    0    0', no_atoms, 0, no_atoms, 0))
     outdump.write("END\n")
-    return out_put_pdb
+
+
+    # window = self.win.create_mdi_child()
+    # window.load_file(fname=file_name)
+    # window.show()
+    return file_name
 
 
 # def load_CC1_file(fname, debug=False):
