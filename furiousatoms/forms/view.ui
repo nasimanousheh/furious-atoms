@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>3066</width>
-    <height>1870</height>
+    <width>2677</width>
+    <height>1403</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -807,8 +807,8 @@ alternate-background-color: rgb(255, 255, 255);
                   <rect>
                    <x>0</x>
                    <y>0</y>
-                   <width>469</width>
-                   <height>209</height>
+                   <width>504</width>
+                   <height>332</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -927,13 +927,13 @@ alternate-background-color: rgb(255, 255, 255);
                  <double>0.010000000000000</double>
                 </property>
                 <property name="maximum">
-                 <double>1.000000000000000</double>
+                 <double>2.000000000000000</double>
                 </property>
                 <property name="singleStep">
                  <double>0.010000000000000</double>
                 </property>
                 <property name="value">
-                 <double>0.200000000000000</double>
+                 <double>0.500000000000000</double>
                 </property>
                </widget>
               </item>
@@ -980,6 +980,11 @@ alternate-background-color: rgb(255, 255, 255);
               </item>
               <item row="0" column="1">
                <widget class="QComboBox" name="comboBox_particle_resolution">
+                <item>
+                 <property name="text">
+                  <string>sphere</string>
+                 </property>
+                </item>
                 <item>
                  <property name="text">
                   <string>repulsion100</string>
@@ -1324,8 +1329,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>3066</width>
-     <height>38</height>
+     <width>2677</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
