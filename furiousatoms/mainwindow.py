@@ -141,40 +141,38 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
         vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors)#, dtype='uint8')
+        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        SM.no_vertices_per_particle = len(vertices)
-        SM.all_vertices_particles = SM.no_vertices_per_particle * SM.no_atoms
 
-        # for i, atom_typ in enumerate(SM.unique_types):
-        #     if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
-        #         SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-        #         selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ]
-        #         all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        #         all_vertices_radii = all_vertices_radii[:, None]
-        #         selected_atom_mask = SM.atom_type == atom_typ
-        #         all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
-        #         SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        # # SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
-        #         np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-
-
-
-
-        # self.update_particle_size(selected_value_radius=0.2)
-        active_window.scene.add(SM.sphere_actor)
-        # SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+        SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         # SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-        # SM.initial_vertices_particles = SM.all_vertices_particles - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-        # vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
-        # SM.no_vertices_all_particles = vertices_particle.shape[0]
-        # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+        # SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        # SM.all_vertices_particles[:] = SM.initial_vertices_particles + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+        active_window.scene.add(SM.sphere_actor)
+        vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_all_particles = vertices_particle.shape[0]
+        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
+
+        for atom_typ in SM.unique_types:
+            selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+        #     # self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
+        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+        #     all_vertices_radii = all_vertices_radii[:, None]
+        #     selected_atom_mask = SM.atom_type == atom_typ
+        #     all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
+        #     # SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+
+        #     SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+            SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
+
+        utils.update_actor(SM.sphere_actor)
+        print('current value of radius: ',selected_value_radius)#SM.set_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        utils.update_actor(SM.sphere_actor)
+
         # Viewer3D.display_universe(SM.sphere_actor)
         active_window.render()
 
@@ -320,13 +318,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
-                SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-                self.ui.SpinBox_atom_radius.setValue(float((selected_value_radius)))
+                # SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
+                # radii for each vertex of each atom with selected atom_type
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 all_vertices_radii = all_vertices_radii[:, None]
                 selected_atom_mask = SM.atom_type == atom_typ
                 all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
-                SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+                SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * \
+                    (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + \
+                        np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
@@ -511,6 +512,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
+    # TODO: name potentially confusing is this really only about bonds?
     def update_bonds_ui(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -557,6 +559,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
             self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
             self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
+            # TODO: set_value_radius is not different for each atom type and
+            # we may get issues with molecules that have multiple atom types.
             self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
         if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
