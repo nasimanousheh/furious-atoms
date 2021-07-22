@@ -4,6 +4,8 @@ from fury import utils, actor, primitive
 from furiousatoms.structure import bbox
 
 
+# TODO: I have to replace this class with the ViewerMemoryManager class
+# that does not depend on universe (md analysis).
 class UniverseManager:
 
     def __init__(self, universe, no_bonds=0):
@@ -25,7 +27,10 @@ class UniverseManager:
         for i, typ in enumerate(self.unique_types):
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
-        self.radii_spheres = np.ones((self.no_atoms))
+        # TODO: the two variables below take a fixed value. Maybe this should be provided by atom_type
+        # self.radii_spheres = np.ones((self.no_atoms))
+        self.radii_spheres = 0.2 * np.ones((self.no_atoms))
+        # self.radii_unique_types = np.zeros(len(self.unique_types))
         self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
@@ -44,6 +49,7 @@ class UniverseManager:
         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
         self.colors_backup_particles = self.vcolors_particle.copy()
+        # TODO: check if this is truly used
         self.set_value_radius = 0
         # Anispmation Player
         self.cnt = 0
@@ -146,15 +152,20 @@ class ViewerMemoryManager:
         for i, typ in enumerate(self.unique_types):
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
+        # set all radii to 1
         self.radii_spheres = np.ones((self.no_atoms))
+        # but then switch to 0.2 for each type
         self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
+        # create the sphere particles actor using primitives
         vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
         res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+
+
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - \
@@ -164,6 +175,7 @@ class ViewerMemoryManager:
         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
         self.colors_backup_particles = self.vcolors_particle.copy()
+        # TODO: check if this is truly used
         self.set_value_radius = 0
         # Animation Player
         self.cnt = 0
