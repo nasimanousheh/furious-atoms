@@ -140,13 +140,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
+
         vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
         res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
 
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
-        # SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+        SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         # SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
         # SM.all_vertices_particles[:] = SM.initial_vertices_particles + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
         active_window.scene.add(SM.sphere_actor)
@@ -156,14 +157,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
 
+
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
         #     # self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
-        #     all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-        #     all_vertices_radii = all_vertices_radii[:, None]
-        #     selected_atom_mask = SM.atom_type == atom_typ
-        #     all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
-        #     # SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+            all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
+            all_vertices_radii = all_vertices_radii[:, None]
+            selected_atom_mask = SM.atom_type == atom_typ
+            all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
+            SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
 
         #     SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
