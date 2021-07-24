@@ -451,20 +451,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         # SM.enable_timer = True
     def save(self):
-        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))
-        # fname = open(fname, 'w')
-        # MS.load_file = MDAnalysis.Universe(MS.load_file)
-        # SM.universe = u.select_atoms("MS.load_file")
-        if not fname:
-            return
-
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
+        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter="*.pdb*")
+        if not fname:
+            return
+        suffix = '.pdb'
+        fname = fname + suffix
         SM.universe.atoms.write(fname)
-        # SM.atoms.write(fname)
-        print('saving {}'.format(fname))
 
     def delete_particles(self):
         active_window = self.active_mdi_child()
