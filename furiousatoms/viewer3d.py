@@ -120,13 +120,6 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
         un = load_CC1_file(fname)
-
-                # print(universe.pos)
-        # n_residues = 1
-        # atom_types_list = list(atom_types)
-        # universe.add_TopologyAttr('name', atom_types_list)
-        # universe.add_TopologyAttr('type', atom_types_list)
-        # universe.add_TopologyAttr('resname', ['MOL']*n_residues)
         universe, no_bonds = io.load_files(un)
         if not universe:
             return success
@@ -186,8 +179,6 @@ class Viewer3D(QtWidgets.QWidget):
             fb[i] = map_old_to_new[fb[i]]
 
         final_bonds = fb.reshape(fb_shape)
-        univ = create_universe(final_pos, final_bonds, final_atom_types)
-        univ.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/pitsa.pdb')
         SM.selected_particle[object_indices_particles] = False
 
     def delete_bonds(self):
@@ -218,10 +209,6 @@ class Viewer3D(QtWidgets.QWidget):
             fb[i] = map_old_to_new[fb[i]]
 
         final_bonds = fb.reshape(fb_shape)
-        univ = create_universe(final_pos, final_bonds, final_atom_types)
-        # univ.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/pitsa_1.pdb')
-        # SM.selected_particle[object_indices_particles] = False
-
 
     def left_button_press_particle_callback(self, obj, event):
 
