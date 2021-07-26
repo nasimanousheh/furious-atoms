@@ -27,6 +27,7 @@ from furiousatoms.viewer3d import Viewer3D
 from furiousatoms.periodic_table import Ui_periodic
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
+from furiousatoms.box_solution_builder import  Ui_box_water
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_database import load_CC1_file
@@ -87,6 +88,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
+        self.ui.actionAdd_Box.triggered.connect(self.box_solution)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
@@ -135,21 +137,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         num = int(SM.no_vertices_per_particle)
-        print('SM.no_vertices_per_particle', num)
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
-
         colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
-
         vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
         res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-        # SM.initial_vertices_particles = SM.all_vertices_particles.copy() - np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
-        # SM.all_vertices_particles[:] = SM.initial_vertices_particles + np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
         active_window.scene.add(SM.sphere_actor)
         vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_all_particles = vertices_particle.shape[0]
@@ -157,25 +153,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
 
-
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-        #     # self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             all_vertices_radii = all_vertices_radii[:, None]
             selected_atom_mask = SM.atom_type == atom_typ
             all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
             SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-
-        #     SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
 
         utils.update_actor(SM.sphere_actor)
         print('current value of radius: ',selected_value_radius)#SM.set_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-
-        # Viewer3D.display_universe(SM.sphere_actor)
         active_window.render()
 
     def change_particle_shape(self):
@@ -197,7 +187,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        # colors = SM.colors_backup_bond[0::num].astype('f8').copy()/255
         comboBox_bondshape = self.ui.comboBox_bondshape.currentText()
         if comboBox_bondshape == 'Line':
             SM.bond_actor.VisibilityOff()
@@ -233,6 +222,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_graphene.gr.win = self
         Ui_graphene.gr.show()
         Ui_graphene.gr.showNormal()
+
+    def box_solution(self):
+        Ui_box_water.gr = Ui_box_water()
+        Ui_box_water.gr.win = self
+        Ui_box_water.gr.show()
+        Ui_box_water.gr.showNormal()
 
     def multiple_walls(self):
         Ui_MWNT.smnt = Ui_MWNT()
