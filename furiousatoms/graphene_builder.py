@@ -16,8 +16,6 @@ from PySide2 import QtWidgets
 from furiousatoms.io import create_universe, merged_universe_with_H
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
-thre = 1e-10
-vacuum = 4
 SM = SharedMemory()
 """
     Ui_Graphene class creates a widget for building graphenes
@@ -69,26 +67,47 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
 
 
 def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
+    thre = 1e-10
 
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    a1 = np.array((np.sqrt(3)*a, 0,0))
-    a2 = np.array((np.sqrt(3)/2*a, -3*a/2,0))
+    a1 = np.array((3/2*a, 1*np.sqrt(3)/2 * a, 0))
+    a2 = np.array((3/2*a, -1*np.sqrt(3)/2 * a, 0))
     Ch = n*a1+m*a2
     T = t1*a1+t2*a2
+    length = None
     if length:
-        N = int(np.ceil(length/np.linalg.norm(T)))
-    Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
-    basis = [np.array((0,0,0)), (a1+a2)/3]
+        N = int(np.ceil(length/norm(T)))
+    Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
+    basis = [np.array((0, 0, 0)), (a1+a2)/3]
     pts = []
     for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
             pt = b+shift
-            pts.append((sp, pt))
+            if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
+                for k in range(N):
+                    pts.append((sp, pt+k*T))
     xyz = [v for _, v in pts]
+
+
+    # a1 = np.array((np.sqrt(3)*a, 0,0))
+    # a2 = np.array((np.sqrt(3)/2*a, -3*a/2,0))
+    # Ch = n*a1+m*a2
+    # T = t1*a1+t2*a2
+    # if length:
+    #     N = int(np.ceil(length/np.linalg.norm(T)))
+    # Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
+    # basis = [np.array((0,0,0)), (a1+a2)/3]
+    # pts = []
+    # for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+    #     shift = i1*a1+i2*a2
+    #     for sp, b in zip(species, basis):
+    #         pt = b+shift
+    #         pts.append((sp, pt))
+    # xyz = [v for _, v in pts]
     atom_types_graphene = [v for v, _ in pts]
     m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
     fragments = m.to_json(scale =1)
@@ -178,7 +197,6 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
             num_hydrogen = num_hydrogen + 1
     atom_types_Hydrogen = list(['H']*num_hydrogen)
     merged_graphene_hydrogen = merged_universe_with_H(coord_array_graphene,  all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)
-
 
     # If the user chooses "All", hydrogenated graphene structure will be returned:
     if H_termination_graphene == 'All':
