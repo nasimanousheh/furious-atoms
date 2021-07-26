@@ -1378,6 +1378,8 @@ alternate-background-color: rgb(255, 255, 255);</string>
      <addaction name="actionBonds"/>
     </widget>
     <addaction name="menuDelete"/>
+    <addaction name="actionAdd_Box"/>
+    <addaction name="actionAdd_Water"/>
    </widget>
    <widget class="QMenu" name="menuCompute">
     <property name="title">
@@ -1614,6 +1616,16 @@ alternate-background-color: rgb(255, 255, 255);</string>
   <action name="actionBonds">
    <property name="text">
     <string>Delete bond</string>
+   </property>
+  </action>
+  <action name="actionAdd_Box">
+   <property name="text">
+    <string>Add Box</string>
+   </property>
+  </action>
+  <action name="actionAdd_Water">
+   <property name="text">
+    <string>Add Water</string>
    </property>
   </action>
  </widget>
