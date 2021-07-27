@@ -27,10 +27,11 @@ from furiousatoms.viewer3d import Viewer3D
 from furiousatoms.periodic_table import Ui_periodic
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
-from furiousatoms.box_solution_builder import  Ui_box_water
+from furiousatoms.box_builder import  Ui_box
+from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
-from furiousatoms.fullerenes_database import load_CC1_file
+from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms.viewer3d import Viewer3D
 
 
@@ -88,7 +89,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
-        self.ui.actionAdd_Box.triggered.connect(self.box_solution)
+        self.ui.actionAdd_Box.triggered.connect(self.box_builder)
+        self.ui.actionAdd_solution.triggered.connect(self.solution_builder)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
@@ -223,11 +225,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_graphene.gr.show()
         Ui_graphene.gr.showNormal()
 
-    def box_solution(self):
-        Ui_box_water.gr = Ui_box_water()
-        Ui_box_water.gr.win = self
-        Ui_box_water.gr.show()
-        Ui_box_water.gr.showNormal()
+    def box_builder(self):
+        Ui_box.box = Ui_box()
+        Ui_box.box.win = self
+        Ui_box.box.show()
+        Ui_box.box.showNormal()
+
+    def solution_builder(self):
+        Ui_solution.sol = Ui_solution()
+        Ui_solution.sol.win = self
+        Ui_solution.sol.show()
+        Ui_solution.sol.showNormal()
 
     def multiple_walls(self):
         Ui_MWNT.smnt = Ui_MWNT()
