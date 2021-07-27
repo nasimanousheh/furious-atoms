@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2677</width>
-    <height>1403</height>
+    <width>2435</width>
+    <height>1236</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -209,7 +209,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>10</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">
@@ -222,7 +222,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>10</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">
@@ -235,7 +235,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>10</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="text">
@@ -266,8 +266,13 @@ alternate-background-color: rgb(255, 255, 255);</string>
        </item>
        <item>
         <widget class="QTabWidget" name="tabWidget">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -446,7 +451,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
             <widget class="QLabel" name="label_externalfileproperties">
              <property name="font">
               <font>
-               <pointsize>11</pointsize>
+               <pointsize>12</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -488,25 +493,6 @@ alternate-background-color: rgb(255, 255, 255);</string>
             <string notr="true">background-color: rgb(255, 255, 255);
 alternate-background-color: rgb(255, 255, 255);</string>
            </property>
-           <widget class="QLabel" name="label_periodboundcond">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>50</y>
-              <width>361</width>
-              <height>31</height>
-             </rect>
-            </property>
-            <property name="font">
-             <font>
-              <family>.SF NS Text</family>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>Periodic boundary conditions:</string>
-            </property>
-           </widget>
            <widget class="QLabel" name="label_simulationcellproperties">
             <property name="geometry">
              <rect>
@@ -518,7 +504,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
             </property>
             <property name="font">
              <font>
-              <pointsize>11</pointsize>
+              <pointsize>12</pointsize>
               <weight>75</weight>
               <bold>true</bold>
              </font>
@@ -530,38 +516,13 @@ alternate-background-color: rgb(255, 255, 255);</string>
            <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
-              <x>6</x>
-              <y>90</y>
+              <x>0</x>
+              <y>40</y>
               <width>381</width>
               <height>170</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_16">
-             <item row="0" column="0">
-              <layout class="QGridLayout" name="gridLayout_3">
-               <item row="0" column="0">
-                <widget class="QCheckBox" name="Box_Y">
-                 <property name="text">
-                  <string>Y</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QCheckBox" name="Box_Z">
-                 <property name="text">
-                  <string>Z</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QCheckBox" name="Box_X">
-                 <property name="text">
-                  <string>X</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
              <item row="1" column="0">
               <layout class="QGridLayout" name="gridLayout_15">
                <item row="0" column="0">
@@ -653,10 +614,49 @@ alternate-background-color: rgb(255, 255, 255);</string>
                </item>
               </layout>
              </item>
+             <item row="0" column="0">
+              <layout class="QGridLayout" name="gridLayout_3">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="Box_Y">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QCheckBox" name="Box_Z">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Z</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="2">
+                <widget class="QCheckBox" name="Box_X">
+                 <property name="font">
+                  <font>
+                   <pointsize>10</pointsize>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
             </layout>
            </widget>
            <zorder>layoutWidget</zorder>
-           <zorder>label_periodboundcond</zorder>
            <zorder>label_simulationcellproperties</zorder>
           </widget>
          </widget>
@@ -675,7 +675,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>12</pointsize>
              <weight>75</weight>
              <bold>true</bold>
             </font>
@@ -688,7 +688,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>80</y>
+             <y>50</y>
              <width>545</width>
              <height>631</height>
             </rect>
@@ -698,6 +698,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
              <width>0</width>
              <height>290</height>
             </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
            </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
@@ -785,6 +790,14 @@ alternate-background-color: rgb(255, 255, 255);</string>
               </item>
               <item row="1" column="0">
                <widget class="QScrollArea" name="scrollArea_all_types_of_prticles">
+                <property name="font">
+                 <font>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="focusPolicy">
+                 <enum>Qt::NoFocus</enum>
+                </property>
                 <property name="styleSheet">
                  <string notr="true">background-color: rgb(255, 255, 255);
 alternate-background-color: rgb(255, 255, 255);
@@ -808,7 +821,7 @@ alternate-background-color: rgb(255, 255, 255);
                    <x>0</x>
                    <y>0</y>
                    <width>504</width>
-                   <height>332</height>
+                   <height>359</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -914,6 +927,11 @@ alternate-background-color: rgb(255, 255, 255);
               </item>
               <item row="1" column="1">
                <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
                 <property name="acceptDrops">
                  <bool>true</bool>
                 </property>
@@ -980,9 +998,14 @@ alternate-background-color: rgb(255, 255, 255);
               </item>
               <item row="0" column="1">
                <widget class="QComboBox" name="comboBox_particle_resolution">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
                 <item>
                  <property name="text">
-                  <string>sphere</string>
+                  <string>repulsion724</string>
                  </property>
                 </item>
                 <item>
@@ -993,11 +1016,6 @@ alternate-background-color: rgb(255, 255, 255);
                 <item>
                  <property name="text">
                   <string>repulsion200</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>repulsion724</string>
                  </property>
                 </item>
                 <item>
@@ -1031,6 +1049,11 @@ alternate-background-color: rgb(255, 255, 255);
               </item>
               <item row="1" column="1">
                <widget class="QComboBox" name="comboBox_particleshape">
+                <property name="font">
+                 <font>
+                  <pointsize>10</pointsize>
+                 </font>
+                </property>
                 <property name="duplicatesEnabled">
                  <bool>true</bool>
                 </property>
@@ -1100,6 +1123,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </item>
                 <item row="4" column="1">
                  <widget class="QDoubleSpinBox" name="SpinBox_bond_thickness">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="acceptDrops">
                    <bool>true</bool>
                   </property>
@@ -1223,6 +1251,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </item>
                 <item row="11" column="1">
                  <widget class="QComboBox" name="comboBox_bondshape">
+                  <property name="font">
+                   <font>
+                    <pointsize>10</pointsize>
+                   </font>
+                  </property>
                   <property name="duplicatesEnabled">
                    <bool>true</bool>
                   </property>
@@ -1289,6 +1322,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
     </item>
     <item row="1" column="1">
      <widget class="QMdiArea" name="mdiArea">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
       </property>
@@ -1301,35 +1339,13 @@ alternate-background-color: rgb(255, 255, 255);</string>
      </widget>
     </item>
    </layout>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_7"/>
-   </widget>
-   <widget class="QWidget" name="layoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>0</x>
-      <y>0</y>
-      <width>100</width>
-      <height>30</height>
-     </rect>
-    </property>
-    <layout class="QGridLayout" name="gridLayout_8"/>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2677</width>
+     <width>2435</width>
      <height>21</height>
     </rect>
    </property>
@@ -1379,7 +1395,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
     </widget>
     <addaction name="menuDelete"/>
     <addaction name="actionAdd_Box"/>
-    <addaction name="actionAdd_Water"/>
+    <addaction name="actionAdd_solution"/>
    </widget>
    <widget class="QMenu" name="menuCompute">
     <property name="title">
@@ -1623,7 +1639,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
     <string>Add Box</string>
    </property>
   </action>
-  <action name="actionAdd_Water">
+  <action name="actionAdd_solution">
    <property name="text">
     <string>Add Water</string>
    </property>
