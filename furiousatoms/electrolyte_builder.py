@@ -57,6 +57,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.SpinBox_con_cation_salt_3.valueChanged.connect(self.add_salt)
         self.elect.SpinBox_con_cation_salt_4.valueChanged.connect(self.add_salt)
         self.elect.pushButton_build_electrolyte.clicked.connect(self.build_electrolyte)
+        self.elect.pushButton_build_electrolyte.clicked.connect(lambda:self.close())
         self.elect.lineEdit_type_counterion.textChanged[str].connect(self.dummy_wall)
         self.elect.lineEdit_valency_counterion.textChanged[str].connect(self.dummy_wall)
         self.elect.lineEdit_mass_counterion.textChanged[str].connect(self.dummy_wall)
@@ -760,15 +761,10 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
                 num_molecules = num_molecules + 1
 
 
-
-        # universe = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
-        # universe.atoms.write(file_name)
         window = self.win.create_mdi_child()
         window.load_file(fname=file_name)
-        # window.make_title()
-        # window.load_universe(universe)
         window.show()
-
+        return file_name
 
 
 
