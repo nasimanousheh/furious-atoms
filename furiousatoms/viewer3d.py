@@ -11,7 +11,7 @@ from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from furiousatoms.molecular import UniverseManager
-from furiousatoms.fullerenes_database import load_CC1_file
+from furiousatoms.fullerenes_builder import load_CC1_file
 
 
 from furiousatoms import io
