@@ -96,6 +96,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
             bonds.extend([(o, o+1), (o, o+2)])
         sol.add_TopologyAttr('bonds', bonds)
         merge = MDAnalysis.Merge(SM.universe.atoms, sol.atoms)
+        merge.select_atoms("same resid as (not around 5 name C )")
         merge.universe.trajectory.ts.dimensions[0] = SM.box_lx
         merge.universe.trajectory.ts.dimensions[1] = SM.box_ly
         merge.universe.trajectory.ts.dimensions[2] = SM.box_lz
