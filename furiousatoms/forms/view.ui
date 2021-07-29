@@ -272,7 +272,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="currentIndex">
-          <number>3</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
