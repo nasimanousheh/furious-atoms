@@ -236,6 +236,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_solution.sol.win = self
         Ui_solution.sol.show()
         Ui_solution.sol.showNormal()
+        self.update_bonds_ui()
 
     def multiple_walls(self):
         Ui_MWNT.smnt = Ui_MWNT()
@@ -519,7 +520,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-
         scroll_layout = QtWidgets.QGridLayout()
 
         # reset the layout
