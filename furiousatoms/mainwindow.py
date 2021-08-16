@@ -296,13 +296,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.play_factor = 0
 
-    # def pause_movie(self):
-    #     active_window = self.active_mdi_child()
-    #     if not active_window:
-    #         return
-    #     SM = active_window.universe_manager
-    #     SM.play_factor = 0
-
     def forward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -325,7 +318,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
-                # SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
                 self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
                 # radii for each vertex of each atom with selected atom_type
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
@@ -345,10 +337,28 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+
+
+        # num = int(SM.no_vertices_per_particle)
+        # # comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
+        # colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
+        # active_window.scene.rm(SM.sphere_actor)
+        # vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
+        # res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
+        # big_verts, big_faces, big_colors, _ = res
+        # SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
+        # SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
+        # vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
+        # SM.no_vertices_all_particles = vertices_particle.shape[0]
+        # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+        # SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
+        # SM.colors_backup_particles = SM.vcolors_particle.copy()
+
         SM.metallicCoefficient_particle = metallicity_degree_particle/100
-        roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
+        SM.roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
         SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        SM.sphere_actor.GetProperty().SetRoughness(roughnessCoefficient_particle)
+        SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
@@ -428,7 +438,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         child = self.create_mdi_child()
         if child.load_file(fname):
-            # self.statusBar().showMessage("File loaded", 2000)
             child.show()
         else:
             child.close()
@@ -492,8 +501,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     print(i, atom_typ, 'checked')
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
-                        # SM.colors_backup_particles[object_index] = selected_color_particle.getRgb()
-                        # SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.colors_backup_particles[object_index]
                         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
             SM.colors_backup_particles = SM.vcolors_particle.copy()
         utils.update_actor(SM.sphere_actor)
@@ -532,6 +539,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             scroll_layout.addWidget(btn, i, 1, 1, 1)
 
         self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
+        self.ui.scrollArea_all_types_of_prticles.layout().itemAt(0).wid.setChecked(True)
         # Disconnect signal
         try:
             if SM.no_atoms > 0:
