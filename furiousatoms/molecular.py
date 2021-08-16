@@ -2,6 +2,7 @@ import numpy as np
 from fury import utils, actor, primitive
 
 from furiousatoms.structure import bbox
+import MDAnalysis
 
 
 # TODO: I have to replace this class with the ViewerMemoryManager class
@@ -14,10 +15,20 @@ class UniverseManager:
         self.universe = universe
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
                                   colors=(0, 0, 0), linewidth=1, fake_tube=True)
+        # Anispmation Player
+        self.cnt = 0
+        if self.n_frames > 1:
+            pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
+            self._pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, self.box, backend='serial')
+        else:
+            self._pos = self.universe.trajectory[0].positions.copy().astype(float)
 
-        self._pos = self.universe.trajectory[0].positions.copy().astype(float)
-        self._bonds = self.universe.bonds.to_indices()
-        no_bonds = len(self.universe.bonds)
+        try:
+            self._bonds = self.universe.bonds.to_indices()
+            no_bonds = len(self.universe.bonds)
+            self.selected_bond = np.zeros(no_bonds, dtype=np.bool)
+        except:
+            pass
         self.have_bonds = no_bonds > 0
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
         colors = np.ones((self.no_atoms, 4))
@@ -33,7 +44,6 @@ class UniverseManager:
         # self.radii_unique_types = np.zeros(len(self.unique_types))
         self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
-        self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
         # self.sphere_actor = actor.sphere(centers=self.pos, colors=colors,
         #                                  radii=self.radii_spheres, theta=32, phi=32)
@@ -51,8 +61,8 @@ class UniverseManager:
         self.colors_backup_particles = self.vcolors_particle.copy()
         # TODO: check if this is truly used
         self.set_value_radius = 0
-        # Anispmation Player
-        self.cnt = 0
+        self.play_factor = 0
+        self.enable_timer = True
 
     @property
     def no_atoms(self):
@@ -92,7 +102,11 @@ class UniverseManager:
 
     @property
     def no_bonds(self):
-        return len(self.universe.bonds) if self.have_bonds else 0
+        try:
+            number_bonds = len(self.universe.bonds)
+        except:
+            number_bonds = 0
+        return number_bonds
 
     def get_bonds(self):
         if not self.have_bonds:
