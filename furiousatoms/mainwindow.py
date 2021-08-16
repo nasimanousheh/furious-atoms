@@ -18,6 +18,7 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
+from PySide2.QtCore import QTimer
 import MDAnalysis
 from numpy.linalg import norm
 from fractions import gcd
@@ -295,26 +296,26 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.play_factor = 0
 
-    def pause_movie(self):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        SM.play_factor = 0
+    # def pause_movie(self):
+    #     active_window = self.active_mdi_child()
+    #     if not active_window:
+    #         return
+    #     SM = active_window.universe_manager
+    #     SM.play_factor = 0
 
     def forward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.play_factor = -5
+        SM.play_factor = 5
 
     def backward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.play_factor = 5
+        SM.play_factor = -5
 
     def update_particle_size(self, selected_value_radius):
         active_window = self.active_mdi_child()
@@ -431,6 +432,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             child.show()
         else:
             child.close()
+        # SM.enable_timer = True
 
     def open_dataset_fullerene(self):
         dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
@@ -524,7 +526,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         # reset the layout
         for i, typ in enumerate(SM.unique_types):
-
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
             btn = QtWidgets.QRadioButton(str(typ), self)
@@ -582,17 +583,26 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_animation.setValue(SM.cnt)
         self.ui.Timer_animation.setMaximum(SM.n_frames)
         self.ui.tabWidget.update()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timer_callback)
+        duration = 200
+        self.timer.start(duration)
+        # MainWindow.iren.Initialize()
 
     def timer_callback(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
         if SM.enable_timer is False:
             return
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            SM.pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
-            SM.pos = MDAnalysis.lib.distances.transform_RtoS(SM.pos_R, SM.box, backend='serial')
+            pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
+            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
-                np.repeat(SM.pos, SM.no_vertices_per_particle, axis=0)
+                np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
             # open_initial_structure = True
             # if open_initial_structure is True:
@@ -611,7 +621,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.Edit_framenumber.setText(str(SM.cnt))
             self.ui.horizontalSlider_animation.setValue(SM.cnt)
 
-        self.qvtkwidget.GetRenderWindow().Render()
+        active_window.render()
         SM.cnt = SM.cnt + 1 * SM.play_factor
 
     def active_mdi_child(self):
