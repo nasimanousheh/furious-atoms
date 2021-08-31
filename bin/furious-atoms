@@ -53,10 +53,11 @@ def start_gui(app_folder=None, files=None):
         on this folder
     """
     QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_ShareOpenGLContexts)
+    QtWidgets.QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationDisplayName(APP_NAME)
     app.setApplicationVersion(furiousatoms.__version__)
-    app.setAttribute(Qt.AA_EnableHighDpiScaling)
+    #app.setAttribute(Qt.AA_EnableHighDpiScaling)
     app.setStyle('Fusion')
     # Start the Splashscreen
     pix = QtGui.QPixmap(io.get_resources_file("splash.png"))
