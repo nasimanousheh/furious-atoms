@@ -64,50 +64,51 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
   that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
-
+# core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]] ##array([[1, 0],[2, 1],[8, 1]]).....array([[2, 0],[4, 2]])
 
 def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
     thre = 1e-10
-
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    a1 = np.array((3/2*a, 1*np.sqrt(3)/2 * a, 0))
-    a2 = np.array((3/2*a, -1*np.sqrt(3)/2 * a, 0))
-    Ch = n*a1+m*a2
-    T = t1*a1+t2*a2
-    length = None
-    if length:
-        N = int(np.ceil(length/norm(T)))
-    Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
-    basis = [np.array((0, 0, 0)), (a1+a2)/3]
-    pts = []
-    for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
-        shift = i1*a1+i2*a2
-        for sp, b in zip(species, basis):
-            pt = b+shift
-            if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
-                for k in range(N):
-                    pts.append((sp, pt+k*T))
-    xyz = [v for _, v in pts]
+    dimond_sheet = False
+    if dimond_sheet is True:
+        a1 = np.array((np.sqrt(3)*a, 0,0))
+        a2 = np.array((np.sqrt(3)/2*a, -3*a/2,0))
+        Ch = n*a1+m*a2
+        T = t1*a1+t2*a2
+        if length:
+            N = int(np.ceil(length/np.linalg.norm(T)))
+        Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
+        basis = [np.array((0,0,0)), (a1+a2)/3]
+        pts = []
+        for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+            shift = i1*a1+i2*a2
+            for sp, b in zip(species, basis):
+                pt = b+shift
+                pts.append((sp, pt))
+        xyz = [v for _, v in pts]
+    else:
+        a1 = np.array((3/2*a, 1*np.sqrt(3)/2 * a, 0))
+        a2 = np.array((3/2*a, -1*np.sqrt(3)/2 * a, 0))
+        Ch = n*a1+m*a2
+        T = t1*a1+t2*a2
+        length = None
+        if length:
+            N = int(np.ceil(length/norm(T)))
+        Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
+        basis = [np.array((0, 0, 0)), (a1+a2)/3]
+        pts = []
+        for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+            shift = i1*a1+i2*a2
+            for sp, b in zip(species, basis):
+                pt = b+shift
+                if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
+                    for k in range(N):
+                        pts.append((sp, pt+k*T))
+        xyz = [v for _, v in pts]
 
-
-    # a1 = np.array((np.sqrt(3)*a, 0,0))
-    # a2 = np.array((np.sqrt(3)/2*a, -3*a/2,0))
-    # Ch = n*a1+m*a2
-    # T = t1*a1+t2*a2
-    # if length:
-    #     N = int(np.ceil(length/np.linalg.norm(T)))
-    # Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
-    # basis = [np.array((0,0,0)), (a1+a2)/3]
-    # pts = []
-    # for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
-    #     shift = i1*a1+i2*a2
-    #     for sp, b in zip(species, basis):
-    #         pt = b+shift
-    #         pts.append((sp, pt))
-    # xyz = [v for _, v in pts]
     atom_types_graphene = [v for v, _ in pts]
     m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
     fragments = m.to_json(scale =1)
@@ -126,62 +127,127 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
 
     num_hydrogen = 0
     H_coordinaes = []
-    for a in range(num_atoms_graphene):
-        # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
-        indices_of_a = np.where(all_bonds_graphene == a)[0]
-        # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
-        if len(indices_of_a) == 1:
-            end_atom_indices = (all_bonds_graphene[indices_of_a])
-            if end_atom_indices[0][0] == a:
+    if dimond_sheet is True:
+        for a in range(num_atoms_graphene):
+            # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
+            indices_of_a = np.where(all_bonds_graphene == a)[0]
+            # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
+            if len(indices_of_a) == 1:
                 end_atom_indices = (all_bonds_graphene[indices_of_a])
-                f_connec_to_end_atom_index = end_atom_indices[0][1]
-                core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
-                Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
-                Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-            if end_atom_indices[0][1] == a:
+                if end_atom_indices[0][0] == a:
+                    end_atom_indices = (all_bonds_graphene[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][1]
+                    core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                if end_atom_indices[0][1] == a:
+                    end_atom_indices = (all_bonds_graphene[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][0]
+                    core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
+                H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
+                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * (1.1/1.42)
+                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * (1.1/1.42)
+                H_coordinaes.extend([H_coord_1_new])
+                H_coordinaes.extend([H_coord_2_new])
+                num_hydrogen = num_hydrogen + 2
+
+            if len(indices_of_a) == 2:
                 end_atom_indices = (all_bonds_graphene[indices_of_a])
-                f_connec_to_end_atom_index = end_atom_indices[0][0]
-                core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
-                Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
-                Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-            H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
-            H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
-            H_coordinaes.extend([H_coord_1])
-            H_coordinaes.extend([H_coord_2])
-            num_hydrogen = num_hydrogen + 2
+                if end_atom_indices[0][0] == a:
+                    end_atom_index = end_atom_indices[0][0]
+                    f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
+                    core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
 
-        if len(indices_of_a) == 2:
-            end_atom_indices = (all_bonds_graphene[indices_of_a])
-            if end_atom_indices[0][0] == a:
-                end_atom_index = end_atom_indices[0][0]
-                f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
-                core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
-                Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
-                first_vector = xyz[end_atom_index] - xyz[right_connection]
-                second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
-                H_coordinaes.extend([H_coord])
-                num_hydrogen = num_hydrogen + 1
+                if end_atom_indices[0][1] == a:
+                    end_atom_index = end_atom_indices[0][1]
+                    f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
+                    core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
 
-            if end_atom_indices[0][1] == a:
-                end_atom_index = end_atom_indices[0][1]
-                f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
-                core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
-                Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
-                right_connection = Both_connected_atoms[0]
-                left_connection = Both_connected_atoms[1]
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
+    else:
+        for a in range(num_atoms_graphene):
+            # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
+            indices_of_a = np.where(all_bonds_graphene == a)[0]
+            # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
+            if len(indices_of_a) == 1:
+                end_atom_indices = (all_bonds_graphene[indices_of_a])
+                if end_atom_indices[0][0] == a:
+                    end_atom_indices = (all_bonds_graphene[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][1]
+                    core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                    # left_connection = Both_connected_atoms[1]
+                if end_atom_indices[0][1] == a:
+                    end_atom_indices = (all_bonds_graphene[indices_of_a])
+                    f_connec_to_end_atom_index = end_atom_indices[0][0]
+                    core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]]
+                    Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
+                    Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
+                    right_connection = Both_connected_atoms[0]
+                H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
+                H_coord_3 = H_coord_1 + xyz[f_connec_to_end_atom_index] - xyz[a]
+                H_coord_2 = -H_coord_3 + (2*xyz[a])
 
-                first_vector = xyz[end_atom_index] - xyz[right_connection]
-                second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
-                H_coordinaes.extend([H_coord])
-                num_hydrogen = num_hydrogen + 1
+                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * (1.1/1.42)
+                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * (1.1/1.42)
+                H_coordinaes.extend([H_coord_1_new])
+                H_coordinaes.extend([H_coord_2_new])
+                # H_coordinaes.extend([H_coord_1])
+                # H_coordinaes.extend([H_coord_2])
+                num_hydrogen = num_hydrogen + 2
+
+            if len(indices_of_a) == 2:
+                end_atom_indices = (all_bonds_graphene[indices_of_a])
+                if end_atom_indices[0][0] == a:
+                    end_atom_index = end_atom_indices[0][0]
+                    f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
+                    core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
+
+                if end_atom_indices[0][1] == a:
+                    end_atom_index = end_atom_indices[0][1]
+                    f_connec_to_end_atom_index = np.where(all_bonds_graphene == end_atom_index)[0]
+                    core_connections = all_bonds_graphene[f_connec_to_end_atom_index]
+                    Both_connected_atoms = np.setdiff1d(core_connections, [end_atom_index])
+                    right_connection = Both_connected_atoms[0]
+                    left_connection = Both_connected_atoms[1]
+
+                    first_vector = xyz[end_atom_index] - xyz[right_connection]
+                    second_vector = xyz[end_atom_index] - xyz[left_connection]
+                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coordinaes.extend([H_coord])
+                    num_hydrogen = num_hydrogen + 1
 
     coord_array_H_indice = np.array(H_coordinaes)
     num_hydrogen = 0
