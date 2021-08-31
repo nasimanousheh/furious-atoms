@@ -193,7 +193,6 @@ class Viewer3D(QtWidgets.QWidget):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
         SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
-
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_bonds = bonds_indices.copy()
@@ -211,7 +210,6 @@ class Viewer3D(QtWidgets.QWidget):
         final_bonds = fb.reshape(fb_shape)
 
     def left_button_press_particle_callback(self, obj, event):
-
         SM = self.universe_manager
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
@@ -272,14 +270,11 @@ class Viewer3D(QtWidgets.QWidget):
         actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
 
     def process_universe(self, universe):
-
-
         self.timer = QtCore.QTimer()
         duration = 200
         self.timer.start(duration)
         self.timer.timeout.connect(self.timer_callback)
-
-        SM.enable_timer = False
+        self.enable_timer = False
 
 
 if __name__ == "__main__":
