@@ -14,7 +14,8 @@ from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.sharedmem import SharedMemory
-from furiousatoms.periodic_table import Ui_periodic
+from furiousatoms.periodic_table import Ui_periodic_cation
+from furiousatoms.periodic_table import Ui_periodic_anion
 from furiousatoms.warning_message import Ui_warning_charge_salt_1, Ui_warning_oppos_charge
 import sys
 import math
@@ -50,12 +51,9 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.pushButton_anion_salt_2.clicked.connect(self.info_anion_salt_2)
         self.elect.pushButton_cation_salt_3.clicked.connect(self.info_cation_salt_3)
         self.elect.pushButton_anion_salt_3.clicked.connect(self.info_anion_salt_3)
-        self.elect.pushButton_cation_salt_4.clicked.connect(self.info_cation_salt_4)
-        self.elect.pushButton_anion_salt_4.clicked.connect(self.info_anion_salt_4)
         self.elect.SpinBox_con_cation_salt_1.valueChanged.connect(self.add_salt)
         self.elect.SpinBox_con_cation_salt_2.valueChanged.connect(self.add_salt)
         self.elect.SpinBox_con_cation_salt_3.valueChanged.connect(self.add_salt)
-        self.elect.SpinBox_con_cation_salt_4.valueChanged.connect(self.add_salt)
         self.elect.pushButton_build_electrolyte.clicked.connect(self.build_electrolyte)
         self.elect.pushButton_build_electrolyte.clicked.connect(lambda:self.close())
         self.elect.lineEdit_type_counterion.textChanged[str].connect(self.dummy_wall)
@@ -77,9 +75,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.lineEdit_type_cation_salt_3.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_valency_cation_salt_3.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_mass_cation_salt_3.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_type_cation_salt_4.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_valency_cation_salt_4.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_mass_cation_salt_4.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_type_anion_salt_1.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_valency_anion_salt_1.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_mass_anion_salt_1.textChanged[str].connect(self.add_salt)
@@ -89,9 +84,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.lineEdit_type_anion_salt_3.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_valency_anion_salt_3.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_mass_anion_salt_3.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_type_anion_salt_4.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_valency_anion_salt_4.textChanged[str].connect(self.add_salt)
-        self.elect.lineEdit_mass_anion_salt_4.textChanged[str].connect(self.add_salt)
         self.elect.lineEdit_water_diameter.textChanged[str].connect(self.add_water)
         self.elect.lineEdit_space_diameter.textChanged[str].connect(self.add_water)
         self.elect.lineEdit_valency_anion_salt_1.textChanged[str].connect(self.add_salt)
@@ -109,64 +101,61 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         spacing_dia = self.elect.lineEdit_space_diameter.setText(str(1.0))
         SM.spacing = self.elect.lineEdit_space_bet_water.setText(str(3.16555789))
         SM.charge_density = self.elect.lineEdit_surface_charge.setText(str(0.0))
-    def show_periodic_table(self):
-        Ui_periodic.pt = Ui_periodic()
-        Ui_periodic.pt.win = self
-        Ui_periodic.pt.show()
-    def info_counterion(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_counterion
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_counterion
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_counterion
-    def info_cation_salt_1(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_1
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_1
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_1
-    def info_anion_salt_1(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_1
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_1
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_1
-    def info_cation_salt_2(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_2
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_2
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_2
-    def info_anion_salt_2(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_2
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_2
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_2
-    def info_cation_salt_3(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_3
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_3
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_3
-    def info_anion_salt_3(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_3
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_3
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_3
-    def info_cation_salt_4(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_4
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_4
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_4
-    def info_anion_salt_4(self):
-        self.show_periodic_table()
-        Ui_periodic.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_4
-        Ui_periodic.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_4
-        Ui_periodic.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_4
+    def show_periodic_cation_table(self):
+        Ui_periodic_cation.pt = Ui_periodic_cation()
+        Ui_periodic_cation.pt.win = self
+        Ui_periodic_cation.pt.show()
 
-    def show_warning_salt_1(self):
-        Ui_warning_charge_salt_1.msg = Ui_warning_charge_salt_1()
-        Ui_warning_charge_salt_1.msg.win = self
-        Ui_warning_charge_salt_1.msg.show()
-    def show_warning_opposite_charge(self):
-        Ui_warning_oppos_charge.msg_coun = Ui_warning_oppos_charge()
-        Ui_warning_oppos_charge.msg_coun.win = self
-        Ui_warning_oppos_charge.msg_coun.show()
+    def show_periodic_anion_table(self):
+        Ui_periodic_anion.pt = Ui_periodic_anion()
+        Ui_periodic_anion.pt.win = self
+        Ui_periodic_anion.pt.show()
+
+    def info_counterion(self):
+        SM.charge_density = float(self.elect.lineEdit_surface_charge.text())
+        if SM.charge_density > 0:
+            self.show_periodic_anion_table()
+            Ui_periodic_anion.pt.current_edit_symbol = self.elect.lineEdit_type_counterion
+            Ui_periodic_anion.pt.current_edit_valency = self.elect.lineEdit_valency_counterion
+            Ui_periodic_anion.pt.current_edit_mass = self.elect.lineEdit_mass_counterion
+        elif SM.charge_density < 0:
+            self.show_periodic_cation_table()
+            Ui_periodic_cation.pt.current_edit_symbol = self.elect.lineEdit_type_counterion
+            Ui_periodic_cation.pt.current_edit_valency = self.elect.lineEdit_valency_counterion
+            Ui_periodic_cation.pt.current_edit_mass = self.elect.lineEdit_mass_counterion
+
+
+
+    def info_cation_salt_1(self):
+        self.show_periodic_cation_table()
+        Ui_periodic_cation.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_1
+        Ui_periodic_cation.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_1
+        Ui_periodic_cation.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_1
+    def info_anion_salt_1(self):
+        self.show_periodic_anion_table()
+        Ui_periodic_anion.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_1
+        Ui_periodic_anion.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_1
+        Ui_periodic_anion.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_1
+    def info_cation_salt_2(self):
+        self.show_periodic_cation_table()
+        Ui_periodic_cation.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_2
+        Ui_periodic_cation.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_2
+        Ui_periodic_cation.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_2
+    def info_anion_salt_2(self):
+        self.show_periodic_anion_table()
+        Ui_periodic_anion.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_2
+        Ui_periodic_anion.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_2
+        Ui_periodic_anion.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_2
+    def info_cation_salt_3(self):
+        self.show_periodic_cation_table()
+        Ui_periodic_cation.pt.current_edit_symbol = self.elect.lineEdit_type_cation_salt_3
+        Ui_periodic_cation.pt.current_edit_valency = self.elect.lineEdit_valency_cation_salt_3
+        Ui_periodic_cation.pt.current_edit_mass = self.elect.lineEdit_mass_cation_salt_3
+    def info_anion_salt_3(self):
+        self.show_periodic_anion_table()
+        Ui_periodic_anion.pt.current_edit_symbol = self.elect.lineEdit_type_anion_salt_3
+        Ui_periodic_anion.pt.current_edit_valency = self.elect.lineEdit_valency_anion_salt_3
+        Ui_periodic_anion.pt.current_edit_mass = self.elect.lineEdit_mass_anion_salt_3
 
     def add_water(self):
         SM.water_diameter = self.elect.lineEdit_water_diameter.text()
@@ -229,7 +218,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             print("system is charge neutral")
         else:
             print("system is not electroneutral; aborting..." )
-            self.show_warning_opposite_charge()
+            # self.show_warning_opposite_charge()
     def check_box_add_water(self, state):
         if (state == QtCore.Qt.Checked):
             self.elect.frame_water_properties.setEnabled(True)
@@ -346,12 +335,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         SM.type_anion_salt_3 = str(self.elect.lineEdit_type_anion_salt_3.text())
         SM.charge_anion_salt_3 = self.elect.lineEdit_valency_anion_salt_3.text()
         SM.mass_anion_salt_3 = self.elect.lineEdit_mass_anion_salt_3.text()
-        SM.type_cation_salt_4 = str(self.elect.lineEdit_type_cation_salt_4.text())
-        SM.charge_cation_salt_4 = self.elect.lineEdit_valency_cation_salt_4.text()
-        SM.mass_cation_salt_4 = self.elect.lineEdit_mass_cation_salt_4.text()
-        SM.type_anion_salt_4 = str(self.elect.lineEdit_type_anion_salt_4.text())
-        SM.charge_anion_salt_4 = self.elect.lineEdit_valency_anion_salt_4.text()
-        SM.mass_anion_salt_4 = self.elect.lineEdit_mass_anion_salt_4.text()
 
         # Here we add the final types of ions in page 3:
         self.elect.lineEdit_type_cation_salt_1_final.setText(str(SM.type_cation_salt_1))
@@ -360,10 +343,8 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.lineEdit_type_anion_salt_2_final.setText(str(SM.type_anion_salt_2))
         self.elect.lineEdit_type_cation_salt_3_final.setText(str(SM.type_cation_salt_3))
         self.elect.lineEdit_type_anion_salt_3_final.setText(str(SM.type_anion_salt_3))
-        self.elect.lineEdit_type_cation_salt_4_final.setText(str(SM.type_cation_salt_4))
-        self.elect.lineEdit_type_anion_salt_4_final.setText(str(SM.type_anion_salt_4))
 
-        num_type_cation_salt_1 = num_type_anion_salt_1 = num_type_cation_salt_2 = num_type_anion_salt_2 = num_type_cation_salt_3 = num_type_cation_salt_3 = num_type_anion_salt_3 = num_type_cation_salt_4 = num_type_anion_salt_4 = 0
+        num_type_cation_salt_1 = num_type_anion_salt_1 = num_type_cation_salt_2 = num_type_anion_salt_2 = num_type_cation_salt_3 = num_type_cation_salt_3 = num_type_anion_salt_3 = 0
 
         # We get the values of cation concentration from spin box. If the spin box does not have value, to prevent getting error,
         # we use Errors and Exceptions
@@ -379,10 +360,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             SM.con_cation_salt_3 = float(self.elect.SpinBox_con_cation_salt_3.value())
         except TypeError:
             SM.con_cation_salt_3 = 0
-        try:
-            SM.con_cation_salt_4 = float(self.elect.SpinBox_con_cation_salt_4.value())
-        except TypeError:
-            SM.con_cation_salt_4 = 0
 
     # We get the values of cation and anion charges from widget. If the there is no value, to prevent getting error,
     # we use Errors and Exceptions
@@ -410,14 +387,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             SM.charge_anion_salt_3 = float(SM.charge_anion_salt_3)
         except ValueError:
             SM.charge_anion_salt_3 = 0
-        try:
-            SM.charge_cation_salt_4 = float(SM.charge_cation_salt_4)
-        except ValueError:
-            SM.charge_cation_salt_4 = 0
-        try:
-            SM.charge_anion_salt_4 = float(SM.charge_anion_salt_4)
-        except ValueError:
-            SM.charge_anion_salt_4 = 0
+
     # We define the concentration of anions based on concentration of cations.
         volume_box =  SM.box_lx* SM.box_ly* SM.box_lz*0.001
         SM.total_cation_salt_1 =int((SM.con_cation_salt_1 * 0.6022) * (volume_box))
@@ -435,20 +405,20 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         SM.total_cation_salt_2 =int((SM.con_cation_salt_2 * 0.6022) * (volume_box))
         try:
             if ((SM.total_cation_salt_2 % SM.charge_anion_salt_2) !=0):
-                SM.total_cation_salt_2 = SM.total_cation_salt_2 - (SM.total_cation_salt_2 % SM.charge_anion_salt_2) + SM.charge_anion_salt_2
-            SM.total_anion_salt_2 = int(abs(SM.charge_cation_salt_2) * SM.total_cation_salt_2 / SM.charge_anion_salt_2)
+                SM.total_cation_salt_2 = int(abs(SM.total_cation_salt_2 - (SM.total_cation_salt_2 % SM.charge_anion_salt_2) + SM.charge_anion_salt_2))
+            SM.total_anion_salt_2 = int(abs(SM.charge_cation_salt_2 * SM.total_cation_salt_2 / SM.charge_anion_salt_2))
             SM.con_anion_salt_2  = SM.total_anion_salt_2 / (0.6022 * (volume_box))
         except ZeroDivisionError:
             SM.charge_cation_salt_2 = SM.total_cation_salt_2 = 0
         SM.con_anion_salt_2 = round(SM.con_anion_salt_2, 1)
         self.elect.lineEdit_con_anion_salt_2.setText(str("{:.1f}".format(SM.con_anion_salt_2)))
-        self.elect.lineEdit_num_cation_salt_2.setText(str(SM.total_cation_salt_2))
-        self.elect.lineEdit_num_anion_salt_2.setText(str(SM.total_anion_salt_2))
+        # self.elect.lineEdit_num_cation_salt_2.setText(str(SM.total_cation_salt_2))
+        # self.elect.lineEdit_num_anion_salt_2.setText(str(SM.total_anion_salt_2))
         SM.total_cation_salt_3 =int((SM.con_cation_salt_3 * 0.6022) * (volume_box))
         try:
             if ((SM.total_cation_salt_3 % SM.charge_anion_salt_3) !=0):
                 SM.total_cation_salt_3 = SM.total_cation_salt_3 - (SM.total_cation_salt_3 % SM.charge_anion_salt_3) + SM.charge_anion_salt_3
-            SM.total_anion_salt_3 = int(abs(SM.charge_cation_salt_3) * SM.total_cation_salt_3 / SM.charge_anion_salt_3)
+            SM.total_anion_salt_3 = int(abs(SM.charge_cation_salt_3 * SM.total_cation_salt_3 / SM.charge_anion_salt_3))
             SM.con_anion_salt_3  = SM.total_anion_salt_3 / (0.6022 * (volume_box))
         except ZeroDivisionError:
             SM.charge_cation_salt_3 = SM.total_cation_salt_3 = 0
@@ -456,31 +426,14 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         self.elect.lineEdit_con_anion_salt_3.setText(str("{:.1f}".format(SM.con_anion_salt_3)))
         self.elect.lineEdit_num_cation_salt_3.setText(str(SM.total_cation_salt_3))
         self.elect.lineEdit_num_anion_salt_3.setText(str(SM.total_anion_salt_3))
-        SM.total_cation_salt_4 =int((SM.con_cation_salt_4 * 0.6022) * (volume_box))
-        try:
-            if ((SM.total_cation_salt_4 % SM.charge_anion_salt_4) !=0):
-                SM.total_cation_salt_4 = SM.total_cation_salt_4 - (SM.total_cation_salt_4 % SM.charge_anion_salt_4) + SM.charge_anion_salt_4
-            SM.total_anion_salt_4 = int(abs(SM.charge_cation_salt_4) * SM.total_cation_salt_4 / SM.charge_anion_salt_4)
-            SM.con_anion_salt_4  = SM.total_anion_salt_4 / (0.6022 * (volume_box))
-        except ZeroDivisionError:
-            SM.charge_cation_salt_4 = SM.total_cation_salt_4 = 0
-        SM.con_anion_salt_4 = round(SM.con_anion_salt_4, 1)
-        self.elect.lineEdit_con_anion_salt_4.setText(str("{:.1f}".format(SM.con_anion_salt_4)))
-        self.elect.lineEdit_num_cation_salt_4.setText(str(SM.total_cation_salt_4))
-        self.elect.lineEdit_num_anion_salt_4.setText(str(SM.total_anion_salt_4))
-        # total_saltions_inside = int(total_nions_inside + total_pions_inside + counterions)
-        SM.total_cation_salt_2 =int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
+        # SM.total_cation_salt_2 =int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
         SM.total_anion_salt_2 =int((SM.con_anion_salt_2 * 0.6022) * (volume_box))
-        SM.total_cation_salt_3 =int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
+        # SM.total_cation_salt_3 =int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
         SM.total_anion_salt_3 =int((SM.con_anion_salt_3 * 0.6022) * (volume_box))
-        SM.total_cation_salt_4 =int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
-        SM.total_anion_salt_4 =int((SM.con_anion_salt_4 * 0.6022) * (volume_box))
         self.elect.lineEdit_num_cation_salt_2.setText(str(SM.total_cation_salt_2))
         self.elect.lineEdit_num_anion_salt_2.setText(str(SM.total_anion_salt_2))
         self.elect.lineEdit_num_cation_salt_3.setText(str(SM.total_cation_salt_3))
         self.elect.lineEdit_num_anion_salt_3.setText(str(SM.total_anion_salt_3))
-        self.elect.lineEdit_num_cation_salt_4.setText(str(SM.total_cation_salt_4))
-        self.elect.lineEdit_num_anion_salt_4.setText(str(SM.total_anion_salt_4))
         if SM.con_anion_salt_1 > 0:
             num_type_cation_salt_1 = 1
         if SM.con_anion_salt_1 > 0:
@@ -489,18 +442,13 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             num_type_cation_salt_2 = 1
         if SM.con_anion_salt_2 > 0:
             num_type_anion_salt_2 = 1
-
         if SM.con_anion_salt_3 > 0:
             num_type_cation_salt_3 = 1
         if SM.con_anion_salt_3 > 0:
             num_type_anion_salt_3 = 1
-        if SM.con_anion_salt_4 > 0:
-            num_type_cation_salt_4 = 1
-        if SM.con_anion_salt_4 > 0:
-            num_type_anion_salt_4 = 1
 
-        SM.total_num_salt_types = num_type_cation_salt_1 + num_type_anion_salt_1 + num_type_cation_salt_2 + num_type_anion_salt_2 + num_type_cation_salt_3 + num_type_cation_salt_3 + num_type_anion_salt_3 + num_type_cation_salt_4 + num_type_anion_salt_4
-        SM.total_saltions_inside = int(SM.total_cation_salt_1 + SM.total_anion_salt_1 + SM.total_cation_salt_2 + SM.total_anion_salt_2 + SM.total_cation_salt_3 + SM.total_anion_salt_3 + SM.total_cation_salt_4 + SM.total_anion_salt_4)
+        SM.total_num_salt_types = num_type_cation_salt_1 + num_type_anion_salt_1 + num_type_cation_salt_2 + num_type_anion_salt_2 + num_type_cation_salt_3 + num_type_cation_salt_3 + num_type_anion_salt_3
+        SM.total_saltions_inside = int(SM.total_cation_salt_1 + SM.total_anion_salt_1 + SM.total_cation_salt_2 + SM.total_anion_salt_2 + SM.total_cation_salt_3 + SM.total_anion_salt_3)
         self.elect.lineEdit_total_ion_number_final.setText(str(SM.total_saltions_inside))
         try:
             SM.total_ions_concentration = ((SM.total_saltions_inside + SM.counterions) / (0.6022 * volume_box))
@@ -534,22 +482,12 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             SM.charge_anion_salt_3 = float(SM.charge_anion_salt_3)
         except ValueError:
             SM.charge_anion_salt_3 = 0
-        try:
-            SM.charge_cation_salt_4 = float(SM.charge_cation_salt_4)
-        except ValueError:
-            SM.charge_cation_salt_4 = 0
-        try:
-            SM.charge_anion_salt_4 = float(SM.charge_anion_salt_4)
-        except ValueError:
-            SM.charge_anion_salt_4 = 0
+
         #test if the system is electroneutral:
-        total_charge_ions = int((SM.charge_cation_salt_1 * SM.total_cation_salt_1) + (SM.charge_anion_salt_1 * SM.total_anion_salt_1) + (SM.charge_cation_salt_2 * SM.total_cation_salt_2) + (SM.charge_anion_salt_2 * SM.total_anion_salt_2) + (SM.charge_cation_salt_3 * SM.total_cation_salt_3) + (SM.charge_anion_salt_3 * SM.total_anion_salt_3) + (SM.charge_cation_salt_4 * SM.total_cation_salt_4) + (SM.charge_anion_salt_4 * SM.total_anion_salt_4))
-        # total_charge_nions = int((SM.charge_cation_salt_3 * SM.total_cation_salt_3) + (SM.charge_anion_salt_3 * SM.total_anion_salt_3) + (SM.charge_cation_salt_4 * SM.total_cation_salt_4) + (SM.charge_anion_salt_4 * SM.total_anion_salt_4))
+        total_charge_ions = int((SM.charge_cation_salt_1 * SM.total_cation_salt_1) + (SM.charge_anion_salt_1 * SM.total_anion_salt_1) + (SM.charge_cation_salt_2 * SM.total_cation_salt_2) + (SM.charge_anion_salt_2 * SM.total_anion_salt_2) + (SM.charge_cation_salt_3 * SM.total_cation_salt_3) + (SM.charge_anion_salt_3 * SM.total_anion_salt_3))
         if (total_charge_ions != 0):
-            print('SM.charge_cation_salt_1', SM.charge_cation_salt_1, 'SM.total_cation_salt_1',SM.total_cation_salt_1)
-            print('SM.charge_anion_salt_4', SM.charge_anion_salt_4, 'SM.total_anion_salt_4',SM.total_anion_salt_4)
             print('The electrolyte is not electroneutral; Abortion', total_charge_ions)
-            self.show_warning_message_salt()
+            # self.show_warning_message_salt()
             return
             # return
         SM.charge_density = self.elect.lineEdit_surface_charge.text()
@@ -684,16 +622,10 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
             outdump.write("{}\t{} \n".format(SM.type_cation_salt_2, SM.mass_cation_salt_2))
         if SM.total_anion_salt_2 > 0:
             outdump.write("{}\t{} \n".format(SM.type_anion_salt_2, SM.mass_anion_salt_2))
-
-
         if SM.total_cation_salt_3 > 0:
             outdump.write("{}\t{} \n".format(SM.type_cation_salt_3, SM.mass_cation_salt_3))
         if SM.total_anion_salt_3 > 0:
             outdump.write("{}\t{} \n".format(SM.type_anion_salt_3, SM.mass_anion_salt_3))
-        if SM.total_cation_salt_4 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_cation_salt_4, SM.mass_cation_salt_4))
-        if SM.total_anion_salt_4 > 0:
-            outdump.write("{}\t{} \n".format(SM.type_anion_salt_4, SM.mass_anion_salt_4))
         if len(SM.wallR) > 0:
             outdump.write("{}\t{} \n".format(type_Rwall, mass_Rwall))
             outdump.write("{}\t{} \n".format(type_Lwall, mass_Lwall))
@@ -732,12 +664,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow): #QWidget
         if SM.total_anion_salt_3 > 0:
             for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3)):
                 outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_3, SM.charge_anion_salt_3, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_cation_salt_4 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_cation_salt_4, SM.charge_cation_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
-        if SM.total_anion_salt_4 > 0:
-            for j in range((SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1+SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4), (SM.counterions+SM.total_water_inside+SM.total_cation_salt_1+SM.total_anion_salt_1 +SM.total_cation_salt_2+SM.total_anion_salt_2+SM.total_cation_salt_3+SM.total_anion_salt_3+SM.total_cation_salt_4+SM.total_anion_salt_4)):
-                outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((j + 1 + SM.total_water_inside*2), num_molecules, SM.type_anion_salt_4, SM.charge_anion_salt_4, ions[j][0], ions[j][1], ions[j][2], '0   0   0 '))
 
         if (len(SM.wallR) > 0):
             for r  in range(len(SM.wallR)):
