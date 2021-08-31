@@ -40,9 +40,9 @@ class UniverseManager:
 
         # TODO: the two variables below take a fixed value. Maybe this should be provided by atom_type
         # self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_spheres = 0.2 * np.ones((self.no_atoms))
+        self.radii_spheres = 0.4 * np.ones((self.no_atoms))
         # self.radii_unique_types = np.zeros(len(self.unique_types))
-        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
+        self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
 
         # self.sphere_actor = actor.sphere(centers=self.pos, colors=colors,
@@ -63,6 +63,9 @@ class UniverseManager:
         self.set_value_radius = 0
         self.play_factor = 0
         self.enable_timer = True
+        self.cnt = 0
+        self.metallicCoefficient_particle = 0
+        self.roughnessCoefficient_particle = 0
 
     @property
     def no_atoms(self):
@@ -169,7 +172,7 @@ class ViewerMemoryManager:
         # set all radii to 1
         self.radii_spheres = np.ones((self.no_atoms))
         # but then switch to 0.2 for each type
-        self.radii_unique_types = 0.2 + np.zeros(len(self.unique_types))
+        self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
@@ -193,6 +196,8 @@ class ViewerMemoryManager:
         self.set_value_radius = 0
         # Animation Player
         self.cnt = 0
+        self.metallicCoefficient_particle = 0
+        self.roughnessCoefficient_particle = 0
 
 
     @property
