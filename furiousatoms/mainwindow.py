@@ -21,7 +21,6 @@ from PySide2 import QtWidgets
 from PySide2.QtCore import QTimer
 import MDAnalysis
 from numpy.linalg import norm
-from fractions import gcd
 import sys
 import furiousatoms.forms.icons
 from furiousatoms.viewer3d import Viewer3D
