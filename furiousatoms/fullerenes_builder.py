@@ -5,7 +5,6 @@ from MDAnalysis import *
 import MDAnalysis.analysis.align
 import numpy as np
 from numpy.linalg import norm
-from fractions import gcd
 from itertools import product
 from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
 from furiousatoms.sharedmem import SharedMemory
