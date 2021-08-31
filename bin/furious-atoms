@@ -56,8 +56,7 @@ def start_gui(app_folder=None, files=None):
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationDisplayName(APP_NAME)
     app.setApplicationVersion(furiousatoms.__version__)
-    app.setAttribute(Qt.AA_DisableHighDpiScaling)
-    # QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    app.setAttribute(Qt.AA_EnableHighDpiScaling)
     app.setStyle('Fusion')
     # Start the Splashscreen
     pix = QtGui.QPixmap(io.get_resources_file("splash.png"))
