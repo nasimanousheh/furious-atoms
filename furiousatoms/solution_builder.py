@@ -95,14 +95,23 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         for o in range(0, n_atoms, 3):
             bonds.extend([(o, o+1), (o, o+2)])
         sol.add_TopologyAttr('bonds', bonds)
-        merge = MDAnalysis.Merge(SM.universe.atoms, sol.atoms)
-        merge.select_atoms("same resid as (not around 5 name C )")
-        merge.universe.trajectory.ts.dimensions[0] = SM.box_lx
-        merge.universe.trajectory.ts.dimensions[1] = SM.box_ly
-        merge.universe.trajectory.ts.dimensions[2] = SM.box_lz
+        combined = MDAnalysis.Merge(SM.universe.atoms, sol.atoms)
+        atom_type = ' '.join(SM.unique_types.tolist())
+        combined.select_atoms("same resid as (not around 5 name C)")
+        print('atom type is: ', atom_type)
+        # no_overlap.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/hola.pdb')
+        combined.universe.trajectory.ts.dimensions[0] = SM.box_lx
+        combined.universe.trajectory.ts.dimensions[1] = SM.box_ly
+        combined.universe.trajectory.ts.dimensions[2] = SM.box_lz
         SM = active_window.universe_manager
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
-        active_window.load_universe(merge)
+        active_window.load_universe(combined)
         active_window.render()
         return
+        # import time
+# start = time.time()
+# load_data
+# end = time.time() -start
+# print(end)
+# #
