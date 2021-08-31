@@ -25,7 +25,6 @@ from fractions import gcd
 import sys
 import furiousatoms.forms.icons
 from furiousatoms.viewer3d import Viewer3D
-from furiousatoms.periodic_table import Ui_periodic
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
