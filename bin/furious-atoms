@@ -9,6 +9,7 @@ import PySide2
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2 import QtWidgets
+from PySide2.QtCore import Qt
 
 # Local package
 import furiousatoms
@@ -55,7 +56,9 @@ def start_gui(app_folder=None, files=None):
     app = QtWidgets.QApplication(sys.argv)
     app.setApplicationDisplayName(APP_NAME)
     app.setApplicationVersion(furiousatoms.__version__)
-
+    app.setAttribute(Qt.AA_DisableHighDpiScaling)
+    # QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+    app.setStyle('Fusion')
     # Start the Splashscreen
     pix = QtGui.QPixmap(io.get_resources_file("splash.png"))
     splash = QtWidgets.QSplashScreen(pix)
