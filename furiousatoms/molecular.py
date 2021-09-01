@@ -66,6 +66,7 @@ class UniverseManager:
         self.cnt = 0
         self.metallicCoefficient_particle = 0
         self.roughnessCoefficient_particle = 0
+        self.degree_of_metallicity = 0
 
     @property
     def no_atoms(self):
