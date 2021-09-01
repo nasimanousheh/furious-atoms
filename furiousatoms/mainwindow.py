@@ -479,7 +479,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
+        SM = active_window.universe_manager
         active_window.delete_particles()
+        self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
+        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
