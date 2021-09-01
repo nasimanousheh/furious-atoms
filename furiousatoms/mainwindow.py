@@ -489,6 +489,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         active_window.delete_bonds()
+        SM = active_window.universe_manager
+        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
