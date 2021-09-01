@@ -335,8 +335,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-
-
         # num = int(SM.no_vertices_per_particle)
         # # comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
         # colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
@@ -352,13 +350,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         # SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         # SM.colors_backup_particles = SM.vcolors_particle.copy()
-
+        SM.degree_of_metallicity = metallicity_degree_particle
         SM.metallicCoefficient_particle = metallicity_degree_particle/100
         SM.roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
         SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
         SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
+        print("all_vertices_particles", SM.no_vertices_per_particle)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
+        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
     def metallicity_bond(self, metallicity_degree_bond):
@@ -562,6 +562,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                               SM.box_lz > 0)
         self.ui.Box_bonds.setChecked(SM.no_bonds > 0)
         self.ui.button_animation.setChecked(SM.n_frames > 1)
+        self.ui.horizontalSlider_metallicity_particle.setValue(SM.degree_of_metallicity)
 
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
