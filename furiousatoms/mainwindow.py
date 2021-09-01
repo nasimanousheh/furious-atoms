@@ -679,6 +679,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         if reply == QtWidgets.QMessageBox.Yes:
             self.ui.mdiArea.closeAllSubWindows()
+            app = QtGui.QGuiApplication.instance()
+            app.closeAllWindows()
             event.accept()
         else:
             event.ignore()
