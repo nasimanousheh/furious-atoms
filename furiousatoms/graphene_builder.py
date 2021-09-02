@@ -53,7 +53,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
-        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, a=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
+        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
@@ -66,7 +66,8 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
 """
 # core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]] ##array([[1, 0],[2, 1],[8, 1]]).....array([[2, 0],[4, 2]])
 
-def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
+def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length = 1.421, species=('C', 'C'), centered=False):
+    bond_length_hydrogen = 1.1
     thre = 1e-10
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
@@ -74,8 +75,8 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
     t2 = -(2*n+m)//dR
     dimond_sheet = False
     if dimond_sheet is True:
-        a1 = np.array((np.sqrt(3)*a, 0,0))
-        a2 = np.array((np.sqrt(3)/2*a, -3*a/2,0))
+        a1 = np.array((np.sqrt(3)*bond_length, 0,0))
+        a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
         if length:
@@ -90,8 +91,8 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                 pts.append((sp, pt))
         xyz = [v for _, v in pts]
     else:
-        a1 = np.array((3/2*a, 1*np.sqrt(3)/2 * a, 0))
-        a2 = np.array((3/2*a, -1*np.sqrt(3)/2 * a, 0))
+        a1 = np.array((3/2*bond_length, 1*np.sqrt(3)/2 * bond_length, 0))
+        a2 = np.array((3/2*bond_length, -1*np.sqrt(3)/2 * bond_length, 0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
         length = None
@@ -124,7 +125,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
     if H_termination_graphene == 'None':
         return univ_graphene
    ##############################################Create Hydrogens at the end of graphene##############################################
-
+    scale_factor_H = bond_length_hydrogen/bond_length
     num_hydrogen = 0
     H_coordinaes = []
     if dimond_sheet is True:
@@ -152,8 +153,8 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                     left_connection = Both_connected_atoms[1]
                 H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
                 H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
-                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * (1.1/1.42)
-                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * (1.1/1.42)
+                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * scale_factor_H
+                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * scale_factor_H
                 H_coordinaes.extend([H_coord_1_new])
                 H_coordinaes.extend([H_coord_2_new])
                 num_hydrogen = num_hydrogen + 2
@@ -169,7 +170,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                     left_connection = Both_connected_atoms[1]
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
 
@@ -183,7 +184,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
 
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
     else:
@@ -212,12 +213,10 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                 H_coord_3 = H_coord_1 + xyz[f_connec_to_end_atom_index] - xyz[a]
                 H_coord_2 = -H_coord_3 + (2*xyz[a])
 
-                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * (1.1/1.42)
-                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * (1.1/1.42)
+                H_coord_1_new = xyz[a] + (H_coord_1 - xyz[a]) * scale_factor_H
+                H_coord_2_new = xyz[a] + (H_coord_2 - xyz[a]) * scale_factor_H
                 H_coordinaes.extend([H_coord_1_new])
                 H_coordinaes.extend([H_coord_2_new])
-                # H_coordinaes.extend([H_coord_1])
-                # H_coordinaes.extend([H_coord_2])
                 num_hydrogen = num_hydrogen + 2
 
             if len(indices_of_a) == 2:
@@ -231,7 +230,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
                     left_connection = Both_connected_atoms[1]
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
 
@@ -245,7 +244,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, a=1.421, sp
 
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
 
