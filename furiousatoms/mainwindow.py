@@ -153,6 +153,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
+        self.metallicity_particle(SM.degree_of_metallicity)
 
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
@@ -335,27 +336,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        # num = int(SM.no_vertices_per_particle)
-        # # comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
-        # colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
-        # active_window.scene.rm(SM.sphere_actor)
-        # vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
-        # res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
-        # big_verts, big_faces, big_colors, _ = res
-        # SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        # SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
-        # SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-        # vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
-        # SM.no_vertices_all_particles = vertices_particle.shape[0]
-        # SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
-        # SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
-        # SM.colors_backup_particles = SM.vcolors_particle.copy()
         SM.degree_of_metallicity = metallicity_degree_particle
         SM.metallicCoefficient_particle = metallicity_degree_particle/100
         SM.roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
+        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
         SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
-        print("all_vertices_particles", SM.no_vertices_per_particle)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -481,8 +467,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         active_window.delete_particles()
-        self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
-        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
+        # self.ui.Edit_num_of_particles.changeText(str(SM.no_atoms))
+        # self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
@@ -490,7 +476,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         active_window.delete_bonds()
         SM = active_window.universe_manager
-        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
+        # self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
