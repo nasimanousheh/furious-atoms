@@ -209,11 +209,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="text">
-          <string>Simulation Cell</string>
+          <string>Box</string>
          </property>
         </widget>
        </item>
@@ -222,7 +222,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="text">
@@ -235,7 +235,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
          <property name="font">
           <font>
            <family>.SF NS Text</family>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="text">
@@ -268,11 +268,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
         <widget class="QTabWidget" name="tabWidget">
          <property name="font">
           <font>
-           <pointsize>12</pointsize>
+           <pointsize>11</pointsize>
           </font>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -291,7 +291,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -320,7 +320,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -365,7 +365,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -394,7 +394,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -423,7 +423,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -451,7 +451,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
             <widget class="QLabel" name="label_externalfileproperties">
              <property name="font">
               <font>
-               <pointsize>12</pointsize>
+               <pointsize>11</pointsize>
                <weight>75</weight>
                <bold>true</bold>
               </font>
@@ -466,7 +466,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
              <property name="font">
               <font>
                <family>Arial</family>
-               <pointsize>10</pointsize>
+               <pointsize>11</pointsize>
               </font>
              </property>
              <property name="text">
@@ -530,7 +530,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  <property name="font">
                   <font>
                    <family>.SF NS Text</family>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -559,7 +559,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  <property name="font">
                   <font>
                    <family>.SF NS Text</family>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -588,11 +588,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  <property name="font">
                   <font>
                    <family>.SF NS Text</family>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
-                  <string>Hight (Z):</string>
+                  <string>Height (Z):</string>
                  </property>
                 </widget>
                </item>
@@ -620,7 +620,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <widget class="QCheckBox" name="Box_Y">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -632,7 +632,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <widget class="QCheckBox" name="Box_Z">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -644,7 +644,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <widget class="QCheckBox" name="Box_X">
                  <property name="font">
                   <font>
-                   <pointsize>10</pointsize>
+                   <pointsize>11</pointsize>
                   </font>
                  </property>
                  <property name="text">
@@ -719,7 +719,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -748,7 +748,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -780,7 +780,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
                <widget class="QLabel" name="label_choose_type_of_particle">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -821,7 +821,7 @@ alternate-background-color: rgb(255, 255, 255);
                    <x>0</x>
                    <y>0</y>
                    <width>504</width>
-                   <height>359</height>
+                   <height>371</height>
                   </rect>
                  </property>
                  <layout class="QFormLayout" name="formLayout">
@@ -889,7 +889,7 @@ alternate-background-color: rgb(255, 255, 255);
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -901,7 +901,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QPushButton" name="Button_particlecolor">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -917,7 +917,7 @@ alternate-background-color: rgb(255, 255, 255);
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -929,7 +929,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="acceptDrops">
@@ -959,7 +959,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QLabel" name="label_metallicity_particle">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -985,7 +985,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QLabel" name="label_particle_resolution">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -1000,7 +1000,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QComboBox" name="comboBox_particle_resolution">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <item>
@@ -1039,7 +1039,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QLabel" name="Label_particleshape">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
@@ -1051,7 +1051,7 @@ alternate-background-color: rgb(255, 255, 255);
                <widget class="QComboBox" name="comboBox_particleshape">
                 <property name="font">
                  <font>
-                  <pointsize>10</pointsize>
+                  <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="duplicatesEnabled">
@@ -1097,6 +1097,11 @@ alternate-background-color: rgb(255, 255, 255);
              </item>
              <item row="1" column="0">
               <widget class="QWidget" name="widget_bondproperties_2" native="true">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
                <property name="layoutDirection">
                 <enum>Qt::LeftToRight</enum>
                </property>
@@ -1105,8 +1110,74 @@ alternate-background-color: rgb(255, 255, 255);
 alternate-background-color: rgb(255, 255, 255);</string>
                </property>
                <layout class="QGridLayout" name="gridLayout_6">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_num_of_bonds">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Number of bonds:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_num_of_bondtypes">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Number of bond types:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_thickness">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Thickness:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="11" column="0">
+                 <widget class="QLabel" name="Label_bondshape">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Bond Shape:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QSlider" name="horizontalSlider_metallicity_bond">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="tickPosition">
+                   <enum>QSlider::TicksBothSides</enum>
+                  </property>
+                 </widget>
+                </item>
                 <item row="0" column="1">
                  <widget class="QLineEdit" name="Edit_num_of_bonds">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                   <property name="autoFillBackground">
                    <bool>false</bool>
                   </property>
@@ -1121,139 +1192,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   </property>
                  </widget>
                 </item>
-                <item row="4" column="1">
-                 <widget class="QDoubleSpinBox" name="SpinBox_bond_thickness">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="acceptDrops">
-                   <bool>true</bool>
-                  </property>
-                  <property name="correctionMode">
-                   <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-                  </property>
-                  <property name="decimals">
-                   <number>5</number>
-                  </property>
-                  <property name="minimum">
-                   <double>0.010000000000000</double>
-                  </property>
-                  <property name="singleStep">
-                   <double>0.100000000000000</double>
-                  </property>
-                  <property name="value">
-                   <double>1.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_metallicity_bond">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Metallicity</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="1">
-                 <widget class="QSlider" name="horizontalSlider_metallicity_bond">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="tickPosition">
-                   <enum>QSlider::TicksBothSides</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1">
-                 <widget class="QPushButton" name="Button_bondcolor">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Change Color</string>
-                  </property>
-                  <property name="autoRepeat">
-                   <bool>false</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item row="11" column="0">
-                 <widget class="QLabel" name="Label_bondshape">
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Bond Shape:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_num_of_bonds">
-                  <property name="font">
-                   <font>
-                    <family>.SF NS Text</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Number of bonds:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="4" column="0">
-                 <widget class="QLabel" name="label_thickness">
-                  <property name="font">
-                   <font>
-                    <family>.SF NS Text</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Thickness:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_bondcolor">
-                  <property name="font">
-                   <font>
-                    <family>.SF NS Text</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Color:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="1" column="0">
-                 <widget class="QLabel" name="label_num_of_bondtypes">
-                  <property name="font">
-                   <font>
-                    <family>.SF NS Text</family>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Number of bond types:</string>
-                  </property>
-                 </widget>
-                </item>
                 <item row="11" column="1">
                  <widget class="QComboBox" name="comboBox_bondshape">
                   <property name="font">
                    <font>
-                    <pointsize>10</pointsize>
+                    <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="duplicatesEnabled">
@@ -1279,8 +1222,65 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   </item>
                  </widget>
                 </item>
+                <item row="4" column="1">
+                 <widget class="QDoubleSpinBox" name="SpinBox_bond_thickness">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="acceptDrops">
+                   <bool>true</bool>
+                  </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                  </property>
+                  <property name="decimals">
+                   <number>5</number>
+                  </property>
+                  <property name="minimum">
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.100000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_bondcolor">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Color:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_metallicity_bond">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Metallicity</string>
+                  </property>
+                 </widget>
+                </item>
                 <item row="1" column="1">
                  <widget class="QLineEdit" name="Edit_num_of_bonds_types">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
                   <property name="autoFillBackground">
                    <bool>false</bool>
                   </property>
@@ -1292,6 +1292,21 @@ alternate-background-color: rgb(255, 255, 255);</string>
                   </property>
                   <property name="readOnly">
                    <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QPushButton" name="Button_bondcolor">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Change Color</string>
+                  </property>
+                  <property name="autoRepeat">
+                   <bool>false</bool>
                   </property>
                  </widget>
                 </item>
