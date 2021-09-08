@@ -180,6 +180,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         final_bonds = fb.reshape(fb_shape)
         SM.selected_particle[object_indices_particles] = False
+        SM.universe = create_universe(final_pos, final_bonds, final_atom_types)
 
     def delete_bonds(self):
         SM = self.universe_manager
