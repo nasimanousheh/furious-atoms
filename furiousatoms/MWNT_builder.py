@@ -4,7 +4,6 @@ from numpy.linalg import norm
 from math import gcd
 from itertools import product
 from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
-from furiousatoms.sharedmem import SharedMemory
 import sys
 import io
 from furiousatoms import io
@@ -19,8 +18,6 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 thre = 1e-10
 vacuum = 4
-SM = SharedMemory()
-
 class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
     """ Ui_MWNT class creates a widget for building multple-walls nanotube (MWNT)
     """
@@ -51,13 +48,14 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         self.MWNT.pushButton_build_MWNT.clicked.connect(lambda:self.close())
 
     def MWNT_diameter_changed(self):
-        SM.bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
-        SM.bond_length_MWNT = float(SM.bond_length_MWNT)
+        global bond_length_MWNT
+        bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
+        bond_length_MWNT = float(bond_length_MWNT)
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
-        a1 = np.array((np.sqrt(3)*SM.bond_length_MWNT, 0))
-        a2 = np.array((np.sqrt(3)/2*SM.bond_length_MWNT, -3*SM.bond_length_MWNT/2))
+        a1 = np.array((np.sqrt(3)*bond_length_MWNT, 0))
+        a2 = np.array((np.sqrt(3)/2*bond_length_MWNT, -3*bond_length_MWNT/2))
         Ch = value_n_MWNT*a1+value_m_MWNT*a2
         d = gcd(value_n_MWNT, value_m_MWNT)
         dR = 3*d if (value_n_MWNT-value_m_MWNT) % (3*d) == 0 else d
@@ -72,27 +70,24 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         self.MWNT.lineEdit_length_MWNT.setText(str(length_MWNT))
 
     def MWNT_builder_callback(self):
-        SM.number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
+        global bond_length_MWNT
+        number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
         xyz = []
-        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
         type_atoms = []
 
-        for i in range(SM.number_of_walls):
-            next_universe = MWNT_builder(value_n_MWNT + (6*(i)), value_m_MWNT + (6*(i)), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        for i in range(number_of_walls):
+            next_universe = MWNT_builder(value_n_MWNT + (6*(i)), value_m_MWNT + (6*(i)), repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
             xyz.extend(next_universe.universe.atoms.positions)
             pos = np.array(xyz)
             type_atoms.extend(next_universe.atoms.types)
-            # next_universe.add_bonds(next_universe.bonds.indices)
-            # univ_mwnt = merged_two_universes(universe.universe.atoms.positions, swnt_inner_bonds, universe.atoms.types, next_universe.universe.atoms.positions, next_universe.universe.bonds.indices, next_universe.atoms.types)
             universe = merged_two_universes(universe.atoms.positions, universe.bonds.indices, universe.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
             i=i+1
-        # next_universe = MWNT_builder(value_n_MWNT + (6), value_m_MWNT + (6), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-        # univ_mwnt = merged_two_universes(universe.universe.atoms.positions, swnt_inner_bonds, universe.atoms.types, next_universe.universe.atoms.positions, next_universe.universe.bonds.indices, next_universe.atoms.types)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(universe)
