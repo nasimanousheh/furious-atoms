@@ -60,7 +60,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def create_connections(self):
         # File menu actions
-        # self.ui.actionNew_file.triggered.connect(self.new_structure)
+        self.ui.actionNew_file.triggered.connect(self.new_window)
         self.ui.actionLoad_file.triggered.connect(self.open)
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionExit.triggered.connect(self.quit_fired)
@@ -425,7 +425,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             child.show()
         else:
             child.close()
-        # SM.enable_timer = True
 
     def open_dataset_fullerene(self):
         dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
@@ -448,7 +447,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             child.close()
 
-        # SM.enable_timer = True
     def save(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -569,8 +567,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
         self.ui.Edit_widthX.setText(str(SM.box_lx))
-        self.ui.Edit_lengthY.setText(str(SM.box_ly))
-        self.ui.Edit_hightZ.setText(str(SM.box_lz))
+        self.ui.Edit_widthY.setText(str(SM.box_ly))
+        self.ui.Edit_widthZ.setText(str(SM.box_lz))
         self.ui.Edit_number_of_frames.setText(str(SM.n_frames))
         self.ui.Edit_directory.setText(str(active_window.current_filedir))
         self.ui.Edit_fileformat.setText((str(active_window.current_extension)).upper())
@@ -592,8 +590,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        if SM.enable_timer is False:
-            return
+        # if SM.enable_timer is False:
+        #     return
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
