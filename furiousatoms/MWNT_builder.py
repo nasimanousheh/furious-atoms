@@ -83,7 +83,7 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         type_atoms = []
 
         for i in range(SM.number_of_walls):
-            next_universe = MWNT_builder(value_n_MWNT + (6*(i+1)), value_m_MWNT + (6*(i+1)), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+            next_universe = MWNT_builder(value_n_MWNT + (6*(i)), value_m_MWNT + (6*(i)), repeat_units_MWNT, length=None, a=SM.bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
             xyz.extend(next_universe.universe.atoms.positions)
             pos = np.array(xyz)
             type_atoms.extend(next_universe.atoms.types)
