@@ -25,7 +25,7 @@ SM = SharedMemory()
 
 """
 
-class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
+class Ui_SWNT(QtWidgets.QMainWindow):
     def __init__(self, app_path=None, parent=None):
         super(Ui_SWNT, self).__init__(parent)
         self.SWNT = io.load_ui_widget("SWNT.ui")
@@ -81,7 +81,7 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
         repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        structure_info = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, a=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
+        structure_info = SWNT_builder(SM.H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=SM.bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
@@ -93,14 +93,14 @@ class Ui_SWNT(QtWidgets.QMainWindow): #QWidget
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('C', 'C'), centered=False):
-
+def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, bond_length=1.421, species=('C', 'C'), centered=False):
+    bond_length_hydrogen = 1.1
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    a1 = np.array((np.sqrt(3)*a, 0))
-    a2 = np.array((np.sqrt(3)/2*a, -3*a/2))
+    a1 = np.array((np.sqrt(3)*bond_length, 0))
+    a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2))
     Ch = n*a1+m*a2
     T = t1*a1+t2*a2
     if length:
@@ -144,6 +144,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
    ##############################################Create Hydrogens at only one end of tube##############################################
 
    #To hydrogenate one end of tube, we devide the number of atoms in nanotube into two:
+    scale_factor_H = bond_length_hydrogen/bond_length
     num_hydrogen = 0
     H_coordinaes = []
     length_SWNT = np.linalg.norm(T) * 4
@@ -175,8 +176,8 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                     Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
                     right_connection = Both_connected_atoms[0]
                     left_connection = Both_connected_atoms[1]
-                H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
-                H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
+                H_coord_1 = xyz[a] + (- xyz[right_connection] + xyz[f_connec_to_end_atom_index]) * scale_factor_H
+                H_coord_2 = xyz[a] + (- xyz[left_connection] + xyz[f_connec_to_end_atom_index])  * scale_factor_H
                 H_coordinaes.extend([H_coord_1])
                 H_coordinaes.extend([H_coord_2])
                 num_hydrogen = num_hydrogen + 2
@@ -193,7 +194,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                     left_connection = Both_connected_atoms[1]
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector)  * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
 
@@ -206,7 +207,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                     left_connection = Both_connected_atoms[1]
                     first_vector = xyz[end_atom_index] - xyz[right_connection]
                     second_vector = xyz[end_atom_index] - xyz[left_connection]
-                    H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                    H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                     H_coordinaes.extend([H_coord])
                     num_hydrogen = num_hydrogen + 1
 
@@ -256,8 +257,8 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                 Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
                 right_connection = Both_connected_atoms[0]
                 left_connection = Both_connected_atoms[1]
-            H_coord_1 = xyz[a] - xyz[right_connection] + xyz[f_connec_to_end_atom_index]
-            H_coord_2 = xyz[a] - xyz[left_connection] + xyz[f_connec_to_end_atom_index]
+            H_coord_1 = xyz[a] + (- xyz[right_connection] + xyz[f_connec_to_end_atom_index]) * scale_factor_H
+            H_coord_2 = xyz[a] + (- xyz[left_connection] + xyz[f_connec_to_end_atom_index]) * scale_factor_H
             H_coordinaes.extend([H_coord_1])
             H_coordinaes.extend([H_coord_2])
             num_hydrogen = num_hydrogen + 2
@@ -273,7 +274,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                 left_connection = Both_connected_atoms[1]
                 first_vector = xyz[end_atom_index] - xyz[right_connection]
                 second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                 H_coordinaes.extend([H_coord])
                 num_hydrogen = num_hydrogen + 1
 
@@ -286,7 +287,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
                 left_connection = Both_connected_atoms[1]
                 first_vector = xyz[end_atom_index] - xyz[right_connection]
                 second_vector = xyz[end_atom_index] - xyz[left_connection]
-                H_coord = (first_vector + second_vector) + xyz[end_atom_index]
+                H_coord = xyz[end_atom_index] + (first_vector + second_vector) * scale_factor_H
                 H_coordinaes.extend([H_coord])
                 num_hydrogen = num_hydrogen + 1
 
@@ -294,7 +295,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, a=1.421, species=('
     two_end_bonds_H = []
     n_residues = 1
     pos_two_end_H = np.array(H_coordinaes)
-    assert pos_two_end_H.shape == (num_hydrogen, 3)
+    # assert pos_two_end_H.shape == (num_hydrogen, 3)#######################
     for x in range(num_atoms_swnt):
         indices_of_a = np.where(all_bonds_swnt == x)
         if len(indices_of_a[0]) == 1:
