@@ -77,20 +77,19 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        xyz = []
-        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
-        type_atoms = []
+        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1)
+        universe_all = universe.copy()
 
-        for i in range(number_of_walls):
-            next_universe = MWNT_builder(value_n_MWNT + (6*(i)), value_m_MWNT + (6*(i)), repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True)
+        for i in range(1, number_of_walls):
+            xyz = []
+            type_atoms = []
+            next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1)
             xyz.extend(next_universe.universe.atoms.positions)
-            pos = np.array(xyz)
             type_atoms.extend(next_universe.atoms.types)
-            universe = merged_two_universes(universe.atoms.positions, universe.bonds.indices, universe.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
-            i=i+1
+            universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(universe)
+        window.load_universe(universe_all)
         window.show()
 
 """
@@ -99,30 +98,30 @@ class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=False):
+def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=False, wan = 1):
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
     a1 = np.array((np.sqrt(3)*a, 0))
     a2 = np.array((np.sqrt(3)/2*a, -3*a/2))
-    Ch = n*a1+m*a2
+    Ch = (n*a1+m*a2)
     T = t1*a1+t2*a2
     # if length:
     #     N = int(np.ceil(length/norm(T)))
-    Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
-    basis = [np.array((0, 0)), (a1+a2)/3]
+    Ch_proj, T_proj = [(v/norm(v)**2) for v in [Ch*wan, T]]
+    basis = [np.array((0, 0)), ((a1+a2)/3)]
     pts = []
     xyz = []
     atom_types_swnt = []
-    for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+    for i1, i2 in product(range(0, wan*n+t1+1), range(t2, wan*m+1)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
             pt = b+shift
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
                 for k in range(N):
                     pts.append((sp, pt+k*T))
-    diameter = norm(Ch)/np.pi
+    diameter = (norm(Ch)/np.pi)*wan
     print(diameter)
     def gr2tube(v):
         phi = 2*np.pi*v.dot(Ch_proj)
