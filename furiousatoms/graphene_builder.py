@@ -82,9 +82,6 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length
                 pt = b+shift
                 pts.append((sp, pt))
 
-
-
-
         xyz = [v for _, v in pts]
     else:
         a1 = np.array((3/2*bond_length, 1*np.sqrt(3)/2 * bond_length, 0))
