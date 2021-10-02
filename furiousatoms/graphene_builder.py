@@ -2,21 +2,14 @@ import numpy as np
 from numpy.linalg import norm
 from math import gcd
 from itertools import product
-from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
-from furiousatoms.sharedmem import SharedMemory
-import sys
+from furiousatoms.geomlib import Atom, Molecule
 from furiousatoms import io
-import vtk
 import numpy as np
-from fury import window, actor, utils, pick, ui
-from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
+from fury import window
 from PySide2 import QtWidgets
-from furiousatoms.io import create_universe, merged_universe_with_H
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from furiousatoms.io import merged_universe_with_H
 
-SM = SharedMemory()
+
 """
     Ui_Graphene class creates a widget for building graphenes
 """
@@ -64,7 +57,6 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
   that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
-# core_connections = all_bonds_graphene[np.where(all_bonds_graphene == f_connec_to_end_atom_index)[0]] ##array([[1, 0],[2, 1],[8, 1]]).....array([[2, 0],[4, 2]])
 
 def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length = 1.421, species=('C', 'C'), centered=False):
     bond_length_hydrogen = 1.1
@@ -75,7 +67,7 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length
     t2 = -(2*n+m)//dR
     dimond_sheet = False
     if dimond_sheet is True:
-        a1 = np.array((np.sqrt(3)*bond_length, 0,0))
+        a1 = np.array((np.sqrt(3)*bond_length,0,0))
         a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
@@ -89,6 +81,10 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length
             for sp, b in zip(species, basis):
                 pt = b+shift
                 pts.append((sp, pt))
+
+
+
+
         xyz = [v for _, v in pts]
     else:
         a1 = np.array((3/2*bond_length, 1*np.sqrt(3)/2 * bond_length, 0))
@@ -201,7 +197,6 @@ def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length
                     Both_connected_atoms_with_a = np.setdiff1d(core_connections, [f_connec_to_end_atom_index])
                     Both_connected_atoms = np.setdiff1d(Both_connected_atoms_with_a, a)
                     right_connection = Both_connected_atoms[0]
-                    # left_connection = Both_connected_atoms[1]
                 if end_atom_indices[0][1] == a:
                     end_atom_indices = (all_bonds_graphene[indices_of_a])
                     f_connec_to_end_atom_index = end_atom_indices[0][0]
