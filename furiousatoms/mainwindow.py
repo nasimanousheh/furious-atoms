@@ -198,8 +198,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             active_window.scene.add(SM.bond_actor)
         if comboBox_bondshape == 'Cylinder':
             SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors,
-                                             linewidth=0.5)#SM.line_thickness)
+            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=0.5)#SM.line_thickness)
             active_window.scene.add(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.colors_backup_bond = SM.vcolors_bond.copy()
@@ -315,9 +314,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+        selected_item = self.ui.treeWidget.selectionModel()
         for i, atom_typ in enumerate(SM.unique_types):
-            if self.ui.treeWidget.selectionModel():
-            # if self.ui.treeWidget.layout().itemAt(i).wid.isChecked():
+            if selected_item.rowIntersectsSelection(i):
                 print(i, atom_typ, 'checked')
                 self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
                 # radii for each vertex of each atom with selected atom_type
@@ -482,12 +481,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
-        selected = self.ui.treeWidget.selectionModel()
+        selected_item = self.ui.treeWidget.selectionModel()
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
-                if selected.rowIntersectsSelection(i):
-                # if self.ui.treeWidget.layout().itemAt(i).wid.isChecked():
-                # if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+                if selected_item.rowIntersectsSelection(i):
                     print(i, atom_typ, 'checked')
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
@@ -507,8 +504,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
             object_indices_bonds = np.where(select_all_bonds == False)[0]
             for object_index in object_indices_bonds:
-                SM.colors_backup_bond[object_index] = selected_color_bond.get
-                Rgb()
+                SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -524,19 +520,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
-            cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [str(typ), '1'])
-            # btn = QtWidgets.QRadioButton(str(typ), self)
-            # scroll_layout.addWidget(btn, i, 1, 1, 1)
-        # scroll_layout = QtWidgets.QGridLayout()
-        # for i, typ in enumerate(SM.unique_types):
-        #     SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
-        #     SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
-        #     btn = QtWidgets.QRadioButton(str(typ), self)
-        #     scroll_layout.addWidget(btn, i, 1, 1, 1)
-
-        # self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
-        # self.ui.scrollArea_all_types_of_prticles.layout().itemAt(0).wid.setChecked(True)
-
+            cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [str(typ),'1'])
+            # brush_blue=QtGui.QBrush(QtCore.Qt.blue)
+            # selected_color_bond.getRgb()
+            # SM.colors_backup_particles
+            cg.setForeground(0,QtGui.QBrush(QtGui.QColor("red")))
+            # root.setBackground(1,brush_blue)
         # Disconnect signal
         try:
             if SM.no_atoms > 0:
