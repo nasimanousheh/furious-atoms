@@ -16,7 +16,7 @@ from fury import window, actor, utils, pick, ui, primitive
 from fury.utils import numpy_to_vtk_points
 from PySide2 import QtCore
 from PySide2 import QtGui
-from PySide2.QtGui import QIcon
+from PySide2.QtGui import QActionEvent, QIcon
 from PySide2 import QtWidgets
 from PySide2.QtCore import QTimer
 import MDAnalysis
@@ -105,6 +105,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
+        self.ui.treeWidget.setHeaderLabels(['Particle', 'ID'])
 
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
@@ -315,7 +316,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         for i, atom_typ in enumerate(SM.unique_types):
-            if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+            if self.ui.treeWidget.selectionModel():
+            # if self.ui.treeWidget.layout().itemAt(i).wid.isChecked():
                 print(i, atom_typ, 'checked')
                 self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
                 # radii for each vertex of each atom with selected atom_type
@@ -464,9 +466,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        active_window.delete_particles()
-        # self.ui.Edit_num_of_particles.changeText(str(SM.no_atoms))
-        # self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
+        SM.universe = active_window.delete_particles()
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
@@ -482,9 +482,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
+        selected = self.ui.treeWidget.selectionModel()
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
-                if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
+                if selected.rowIntersectsSelection(i):
+                # if self.ui.treeWidget.layout().itemAt(i).wid.isChecked():
+                # if self.ui.scrollArea_all_types_of_prticles.layout().itemAt(i).wid.isChecked():
                     print(i, atom_typ, 'checked')
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
@@ -504,7 +507,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
             object_indices_bonds = np.where(select_all_bonds == False)[0]
             for object_index in object_indices_bonds:
-                SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
+                SM.colors_backup_bond[object_index] = selected_color_bond.get
+                Rgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -516,17 +520,23 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        scroll_layout = QtWidgets.QGridLayout()
-
-        # reset the layout
+        self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
-            btn = QtWidgets.QRadioButton(str(typ), self)
-            scroll_layout.addWidget(btn, i, 1, 1, 1)
+            cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [str(typ), '1'])
+            # btn = QtWidgets.QRadioButton(str(typ), self)
+            # scroll_layout.addWidget(btn, i, 1, 1, 1)
+        # scroll_layout = QtWidgets.QGridLayout()
+        # for i, typ in enumerate(SM.unique_types):
+        #     SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
+        #     SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+        #     btn = QtWidgets.QRadioButton(str(typ), self)
+        #     scroll_layout.addWidget(btn, i, 1, 1, 1)
 
-        self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
-        self.ui.scrollArea_all_types_of_prticles.layout().itemAt(0).wid.setChecked(True)
+        # self.ui.scrollArea_all_types_of_prticles.setLayout(scroll_layout)
+        # self.ui.scrollArea_all_types_of_prticles.layout().itemAt(0).wid.setChecked(True)
+
         # Disconnect signal
         try:
             if SM.no_atoms > 0:
