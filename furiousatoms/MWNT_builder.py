@@ -3,22 +3,17 @@ import numpy as np
 from numpy.linalg import norm
 from math import gcd
 from itertools import product
-from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
-import sys
+from furiousatoms.geomlib import Atom, Molecule
 import io
 from furiousatoms import io
 import vtk
 import numpy as np
-from fury import window, actor, utils, pick, ui
-from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
+from fury import window
 from PySide2 import QtWidgets
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 thre = 1e-10
 vacuum = 4
-class Ui_MWNT(QtWidgets.QMainWindow): #QWidget
+class Ui_MWNT(QtWidgets.QMainWindow):
     """ Ui_MWNT class creates a widget for building multple-walls nanotube (MWNT)
     """
     def __init__(self, app_path=None, parent=None):
@@ -107,8 +102,6 @@ def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=F
     a2 = np.array((np.sqrt(3)/2*a, -3*a/2))
     Ch = (n*a1+m*a2)
     T = t1*a1+t2*a2
-    # if length:
-    #     N = int(np.ceil(length/norm(T)))
     Ch_proj, T_proj = [(v/norm(v)**2) for v in [Ch*wan, T]]
     basis = [np.array((0, 0)), ((a1+a2)/3)]
     pts = []
@@ -135,14 +128,6 @@ def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=F
     n_atoms_swnt = len(xyz)
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (n_atoms_swnt, 3)
-    # swnt = MDAnalysis.Universe.empty(n_atoms_swnt, trajectory=True, n_residues=1)
-    # n_residues = 1
-    # swnt.atoms.positions = coord_array_swnt
     all_bonds_swnt = np.array(fragments['bonds'])
-    # swnt.add_TopologyAttr('name', atom_types_swnt)
-    # swnt.add_TopologyAttr('type', atom_types_swnt)
-    # swnt.add_TopologyAttr('resname', ['MOL']*n_residues)
-    # swnt.add_bonds(all_bonds_swnt)
     univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt)
-
     return univ_swnt
