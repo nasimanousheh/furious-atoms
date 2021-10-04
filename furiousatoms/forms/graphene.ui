@@ -6,9 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>227</width>
-    <height>266</height>
+    <width>248</width>
+    <height>237</height>
    </rect>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>248</width>
+    <height>237</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>248</width>
+    <height>327</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -16,7 +33,7 @@
   <property name="styleSheet">
    <string notr="true">background-color: rgb(223, 223, 223);</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_7" rowminimumheight="0">
    <item row="0" column="0">
     <widget class="QWidget" name="Build_graphen" native="true">
      <property name="autoFillBackground">
@@ -42,6 +59,11 @@
         </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinBox_chirality_N_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -64,6 +86,11 @@
         </item>
         <item row="0" column="3">
          <widget class="QSpinBox" name="spinBox_chirality_M_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -90,6 +117,11 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="comboBox_type1_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -112,6 +144,11 @@
         </item>
         <item row="0" column="2">
          <widget class="QComboBox" name="comboBox_type2_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -150,6 +187,11 @@
         </item>
         <item row="0" column="1">
          <widget class="QLineEdit" name="lineEdit_bond_length_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -176,6 +218,11 @@
         </item>
         <item row="0" column="1">
          <widget class="QSpinBox" name="spinBox_repeat_units_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -202,6 +249,11 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="comboBox_H_termination_graphene">
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
@@ -221,6 +273,11 @@
       </item>
       <item row="5" column="0">
        <widget class="QPushButton" name="pushButton_build_graphene">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Build</string>
         </property>
@@ -228,27 +285,17 @@
       </item>
       <item row="5" column="1">
        <widget class="QPushButton" name="pushButton_help_build_graphene">
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Help</string>
         </property>
        </widget>
       </item>
      </layout>
-     <zorder>label_chirality_N_graphene</zorder>
-     <zorder>label_repeat_units_graphene</zorder>
-     <zorder>label_bond_length_graphene</zorder>
-     <zorder>label_type_graphene</zorder>
-     <zorder>pushButton_build_graphene</zorder>
-     <zorder>label_chirality_M_graphene</zorder>
-     <zorder>spinBox_chirality_N_graphene</zorder>
-     <zorder>spinBox_chirality_M_graphene</zorder>
-     <zorder>spinBox_repeat_units_graphene</zorder>
-     <zorder>pushButton_help_build_graphene</zorder>
-     <zorder>lable_H_termination_graphene</zorder>
-     <zorder>comboBox_H_termination_graphene</zorder>
-     <zorder>comboBox_type2_graphene</zorder>
-     <zorder>lineEdit_bond_length_graphene</zorder>
-     <zorder>comboBox_type1_graphene</zorder>
     </widget>
    </item>
   </layout>
