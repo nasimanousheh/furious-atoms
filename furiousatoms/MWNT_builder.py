@@ -41,6 +41,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
         self.MWNT.pushButton_build_MWNT.clicked.connect(lambda:self.close())
+        self.MWNT.spinBox_num_walls_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
 
     def MWNT_diameter_changed(self):
         global bond_length_MWNT
@@ -63,6 +64,15 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         length_MWNT = "{:.2f}".format(float(length_MWNT))
         self.MWNT.lineEdit_diameter_MWNT.setText(str(diameter_MWNT))
         self.MWNT.lineEdit_length_MWNT.setText(str(length_MWNT))
+        number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
+        if number_of_walls > 1:
+            wall_separation = 3.43
+        else:
+            wall_separation = 0.0
+
+        self.MWNT.lineEdit_wall_separation_MWNT.setText(str(wall_separation))
+
+
 
     def MWNT_builder_callback(self):
         global bond_length_MWNT
@@ -74,7 +84,6 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
         universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1)
         universe_all = universe.copy()
-
         for i in range(1, number_of_walls):
             xyz = []
             type_atoms = []
@@ -102,6 +111,9 @@ def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=F
     a2 = np.array((np.sqrt(3)/2*a, -3*a/2))
     Ch = (n*a1+m*a2)
     T = t1*a1+t2*a2
+
+    # diameter = (norm(Ch)/np.pi)*wan
+    # Ch = (diameter*np.pi)/wan
     Ch_proj, T_proj = [(v/norm(v)**2) for v in [Ch*wan, T]]
     basis = [np.array((0, 0)), ((a1+a2)/3)]
     pts = []
