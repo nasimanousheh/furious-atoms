@@ -17,11 +17,12 @@ class UniverseManager:
                                   colors=(0, 0, 0), linewidth=1, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
-        if self.n_frames > 1:
-            pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
-            self._pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, self.box, backend='serial')
-        else:
-            self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        # if self.n_frames > 1:
+        #     pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
+        #     self._pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, self.box, backend='serial')
+        # else:
+        #     self._pos = self.universe.trajectory[0].positions.copy().astype(float)
 
         try:
             self._bonds = self.universe.bonds.to_indices()
@@ -31,12 +32,12 @@ class UniverseManager:
             pass
         self.have_bonds = no_bonds > 0
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
-        colors = np.ones((self.no_atoms, 4))
+        self.colors = np.ones((self.no_atoms, 4))
         self.unique_types = np.unique(self.universe.atoms.types)
         self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
         self.colors_unique_types[:, 3] = 1
         for i, typ in enumerate(self.unique_types):
-            colors[self.atom_type == typ] = self.colors_unique_types[i]
+            self.colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         # TODO: the two variables below take a fixed value. Maybe this should be provided by atom_type
         # self.radii_spheres = np.ones((self.no_atoms))
@@ -48,7 +49,7 @@ class UniverseManager:
         # self.sphere_actor = actor.sphere(centers=self.pos, colors=colors,
         #                                  radii=self.radii_spheres, theta=32, phi=32)
         vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
+        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
         big_verts, big_faces, big_colors, _ = res
         self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
