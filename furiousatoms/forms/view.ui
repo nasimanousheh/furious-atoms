@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>2608</width>
+    <width>2623</width>
     <height>1335</height>
    </rect>
   </property>
@@ -79,6 +79,9 @@
       </property>
       <property name="horizontalScrollBarPolicy">
        <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -585,6 +588,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
               </item>
               <item row="0" column="3">
                <widget class="QLineEdit" name="Edit_num_of_particles">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
@@ -640,6 +648,11 @@ alternate-background-color: rgb(255, 255, 255);</string>
               </item>
               <item row="1" column="3">
                <widget class="QLineEdit" name="Edit_num_of_particle_types">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
@@ -789,8 +802,26 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                </widget>
               </item>
-              <item row="8" column="0">
+              <item row="8" column="0" colspan="3">
                <widget class="QTreeWidget" name="treeWidget">
+                <property name="minimumSize">
+                 <size>
+                  <width>150</width>
+                  <height>350</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>150</width>
+                  <height>350</height>
+                 </size>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="itemsExpandable">
+                 <bool>true</bool>
+                </property>
                 <column>
                  <property name="text">
                   <string/>
@@ -1164,7 +1195,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>2608</width>
+     <width>2623</width>
      <height>21</height>
     </rect>
    </property>
