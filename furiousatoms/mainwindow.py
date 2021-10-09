@@ -456,8 +456,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter="*.pdb*")
         if not fname:
             return
-        suffix = '.pdb'
-        fname = fname + suffix
+        # suffix = '.pdb'
+        # fname = fname + suffix
         SM.universe.atoms.write(fname)
 
     def delete_particles(self):
