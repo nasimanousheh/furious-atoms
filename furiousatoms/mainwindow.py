@@ -105,7 +105,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
-        self.ui.treeWidget.setHeaderLabels(['Particle', 'ID'])
+        self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
 
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
@@ -489,6 +489,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
                         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
+                    r = int(selected_color_particle.getRgb()[0])
+                    g = int(selected_color_particle.getRgb()[1])
+                    b = int(selected_color_particle.getRgb()[2])
+                    a = int(selected_color_particle.getRgb()[3])
+                    items = self.ui.treeWidget.selectedItems()
+                    for item in items:
+                        item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
             SM.colors_backup_particles = SM.vcolors_particle.copy()
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -516,17 +523,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+        # colors = np.ones((SM.no_atoms, 4))
         self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
-            cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [str(typ),'1'])
-            # brush_blue=QtGui.QBrush(QtCore.Qt.blue)
-            # selected_color_bond.getRgb()
-            # SM.colors_backup_particles
-            cg.setForeground(0,QtGui.QBrush(QtGui.QColor("red")))
-            # root.setBackground(1,brush_blue)
-        # Disconnect signal
+            SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
+            # r, g, b, a = np.int(np.round(255 * SM.colors_unique_types[i], 0))
+            r = (SM.colors[SM.atom_type == typ][0][0])*255
+            g = (SM.colors[SM.atom_type == typ][0][1])*255
+            b = (SM.colors[SM.atom_type == typ][0][2])*255
+            a = (SM.colors[SM.atom_type == typ][0][3])*255
+            cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
+            cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r,g, b, a))))
+
         try:
             if SM.no_atoms > 0:
                 self.ui.Box_particles.stateChanged.disconnect(self.check_particles)
