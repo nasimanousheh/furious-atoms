@@ -93,7 +93,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
-        self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
         self.ui.Button_forward.clicked.connect(self.forward_movie)
@@ -380,19 +379,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-        active_window.render()
-
-    def metallicity_bond(self, metallicity_degree_bond):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        metallicCoefficient_bond = metallicity_degree_bond/100
-        roughnessCoefficient_bond = 1.0 - metallicity_degree_bond/100
-        SM.bond_actor.GetProperty().SetMetallic(metallicCoefficient_bond)
-        SM.bond_actor.GetProperty().SetRoughness(roughnessCoefficient_bond)
-        utils.update_actor(SM.bond_actor)
-        SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
 
     def check_simulationcell(self, state):
