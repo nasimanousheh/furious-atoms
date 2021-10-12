@@ -67,25 +67,107 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="1">
-     <widget class="QMdiArea" name="mdiArea">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-       </font>
+    <item row="0" column="0">
+     <widget class="QPushButton" name="Button_cal_distance">
+      <property name="text">
+       <string>Calculate distance</string>
       </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="5">
+     <widget class="QWidget" name="widget_Animation" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
       </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-      </property>
-      <property name="documentMode">
-       <bool>false</bool>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QSpinBox" name="Timer_animation"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_backward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/backward.png</normaloff>:/icons/backward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_pause">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_play">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_forward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_animation">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBothSides</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item row="1" column="0">
@@ -101,87 +183,6 @@
 alternate-background-color: rgb(255, 255, 255);</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_11">
-       <item row="3" column="0">
-        <widget class="QCheckBox" name="Box_bonds">
-         <property name="font">
-          <font>
-           <family>.SF NS Text</family>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Bonds</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QCheckBox" name="Box_simulationcell">
-         <property name="font">
-          <font>
-           <family>.SF NS Text</family>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Box</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="label_Input">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);</string>
-         </property>
-         <property name="text">
-          <string>Input</string>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_Dispaly_Input">
-         <property name="font">
-          <font>
-           <family>Arial</family>
-           <pointsize>12</pointsize>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);</string>
-         </property>
-         <property name="text">
-          <string>Display</string>
-         </property>
-         <property name="scaledContents">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="Box_particles">
-         <property name="font">
-          <font>
-           <family>.SF NS Text</family>
-           <pointsize>11</pointsize>
-          </font>
-         </property>
-         <property name="text">
-          <string>Particles</string>
-         </property>
-        </widget>
-       </item>
        <item row="5" column="0">
         <widget class="QTabWidget" name="tabWidget">
          <property name="font">
@@ -523,19 +524,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
 alternate-background-color: rgb(255, 255, 255);</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
-              <item row="7" column="0" colspan="2">
-               <widget class="QLabel" name="label_choose_type_of_particle">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Choose type:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="2" colspan="2">
+              <item row="4" column="2" colspan="2">
                <widget class="QComboBox" name="comboBox_particle_resolution">
                 <property name="font">
                  <font>
@@ -574,75 +563,64 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </item>
                </widget>
               </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_metallicity_particle">
+              <item row="5" column="0" colspan="2">
+               <widget class="QLabel" name="Label_particleshape">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Metallicity</string>
+                 <string>Particle Shape:</string>
                 </property>
                </widget>
               </item>
-              <item row="0" column="3">
-               <widget class="QLineEdit" name="Edit_num_of_particles">
+              <item row="4" column="0" colspan="2">
+               <widget class="QLabel" name="label_particle_resolution">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
                  </font>
                 </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
                 <property name="text">
-                 <string/>
+                 <string>Particle Resolution:</string>
                 </property>
-                <property name="dragEnabled">
+                <property name="textFormat">
+                 <enum>Qt::RichText</enum>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="2" colspan="2">
+               <widget class="QComboBox" name="comboBox_particleshape">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
+                <property name="duplicatesEnabled">
                  <bool>true</bool>
                 </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
+                <item>
+                 <property name="text">
+                  <string>Sphere</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Point</string>
+                 </property>
+                </item>
                </widget>
               </item>
-              <item row="0" column="0" colspan="2">
-               <widget class="QLabel" name="label_num_of_particles">
+              <item row="6" column="0" colspan="2">
+               <widget class="QLabel" name="label_choose_type_of_particle">
                 <property name="font">
                  <font>
-                  <family>.SF NS Text</family>
                   <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Number of atoms:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="9" column="0">
-               <spacer name="verticalSpacer_6">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item row="1" column="0" colspan="3">
-               <widget class="QLabel" name="label_num_of_particletypes">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Number of atom types:</string>
+                 <string>Choose type:</string>
                 </property>
                </widget>
               </item>
@@ -667,8 +645,190 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                </widget>
               </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_radius">
+              <item row="8" column="0" colspan="4">
+               <widget class="QTabWidget" name="tabWidget">
+                <property name="enabled">
+                 <bool>true</bool>
+                </property>
+                <property name="minimumSize">
+                 <size>
+                  <width>290</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                  <underline>false</underline>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="whatsThis">
+                 <string/>
+                </property>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
+                </property>
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <widget class="QWidget" name="tabWidgetPage1">
+                 <attribute name="title">
+                  <string>Effect</string>
+                 </attribute>
+                 <layout class="QGridLayout" name="gridLayout_6">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_opacity">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Opacity</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QSlider" name="horizontalSlider_Opacity">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="sliderPosition">
+                     <number>99</number>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_Metallic">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Metallic</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QSlider" name="horizontalSlider_Metallic">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="0">
+                   <widget class="QLabel" name="label_Roughness">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Roughness</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="2" column="1">
+                   <widget class="QSlider" name="horizontalSlider_Roughness">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="0">
+                   <widget class="QLabel" name="label_Anisotropic">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Anisotropic</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="3" column="1">
+                   <widget class="QSlider" name="horizontalSlider_Anisotropic">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="0">
+                   <widget class="QLabel" name="label_Clearcoat">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Clearcoat</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="4" column="1">
+                   <widget class="QSlider" name="horizontalSlider_Clearcoat">
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                     </font>
+                    </property>
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QPushButton" name="Button_particlecolor">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                  <weight>50</weight>
+                  <italic>false</italic>
+                  <bold>false</bold>
+                  <underline>false</underline>
+                  <kerning>true</kerning>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Change color</string>
+                </property>
+                <property name="autoRepeat">
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0" colspan="2">
+               <widget class="QLabel" name="label_num_of_particles">
                 <property name="font">
                  <font>
                   <family>.SF NS Text</family>
@@ -676,22 +836,28 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Radius:</string>
+                 <string>Number of atoms:</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="0" colspan="2">
-               <widget class="QLabel" name="label_particle_resolution">
+              <item row="0" column="3">
+               <widget class="QLineEdit" name="Edit_num_of_particles">
                 <property name="font">
                  <font>
                   <pointsize>11</pointsize>
                  </font>
                 </property>
-                <property name="text">
-                 <string>Particle Resolution:</string>
+                <property name="autoFillBackground">
+                 <bool>false</bool>
                 </property>
-                <property name="textFormat">
-                 <enum>Qt::RichText</enum>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="dragEnabled">
+                 <bool>true</bool>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -705,6 +871,19 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                 <property name="text">
                  <string>Color:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_radius">
+                <property name="font">
+                 <font>
+                  <family>.SF NS Text</family>
+                  <pointsize>11</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Radius:</string>
                 </property>
                </widget>
               </item>
@@ -738,82 +917,31 @@ alternate-background-color: rgb(255, 255, 255);</string>
                 </property>
                </widget>
               </item>
-              <item row="4" column="3">
-               <widget class="QSlider" name="horizontalSlider_metallicity_particle">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="tickPosition">
-                 <enum>QSlider::TicksBothSides</enum>
-                </property>
-               </widget>
-              </item>
-              <item row="6" column="0" colspan="2">
-               <widget class="QLabel" name="Label_particleshape">
+              <item row="1" column="0" colspan="3">
+               <widget class="QLabel" name="label_num_of_particletypes">
                 <property name="font">
                  <font>
+                  <family>.SF NS Text</family>
                   <pointsize>11</pointsize>
                  </font>
                 </property>
                 <property name="text">
-                 <string>Particle Shape:</string>
+                 <string>Number of atom types:</string>
                 </property>
                </widget>
               </item>
-              <item row="6" column="2" colspan="2">
-               <widget class="QComboBox" name="comboBox_particleshape">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="duplicatesEnabled">
-                 <bool>true</bool>
-                </property>
-                <item>
-                 <property name="text">
-                  <string>Sphere</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Point</string>
-                 </property>
-                </item>
-               </widget>
-              </item>
-              <item row="2" column="3">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                  <weight>50</weight>
-                  <italic>false</italic>
-                  <bold>false</bold>
-                  <underline>false</underline>
-                  <kerning>true</kerning>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Change color</string>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="8" column="0" colspan="3">
+              <item row="7" column="0" colspan="3">
                <widget class="QTreeWidget" name="treeWidget">
                 <property name="minimumSize">
                  <size>
-                  <width>150</width>
-                  <height>350</height>
+                  <width>120</width>
+                  <height>200</height>
                  </size>
                 </property>
                 <property name="maximumSize">
                  <size>
-                  <width>150</width>
-                  <height>350</height>
+                  <width>250</width>
+                  <height>200</height>
                  </size>
                 </property>
                 <property name="autoFillBackground">
@@ -828,6 +956,19 @@ alternate-background-color: rgb(255, 255, 255);</string>
                  </property>
                 </column>
                </widget>
+              </item>
+              <item row="9" column="0">
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
+                </property>
+               </spacer>
               </item>
              </layout>
             </widget>
@@ -1082,109 +1223,108 @@ alternate-background-color: rgb(255, 255, 255);</string>
          </widget>
         </widget>
        </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="2" column="0" colspan="5">
-     <widget class="QWidget" name="widget_Animation" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>50</height>
-       </size>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSpinBox" name="Timer_animation"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_backward">
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="Box_simulationcell">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/backward.png</normaloff>:/icons/backward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
+          <string>Box</string>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QPushButton" name="Button_pause">
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_Input">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(204, 204, 204);</string>
+         </property>
          <property name="text">
-          <string/>
+          <string>Input</string>
          </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_play">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_forward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_animation">
-         <property name="mouseTracking">
+         <property name="scaledContents">
           <bool>true</bool>
          </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="Box_particles">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
          </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
+         <property name="text">
+          <string>Particles</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="Box_bonds">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Bonds</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_Dispaly_Input">
+         <property name="font">
+          <font>
+           <family>Arial</family>
+           <pointsize>12</pointsize>
+           <weight>75</weight>
+           <bold>true</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(204, 204, 204);</string>
+         </property>
+         <property name="text">
+          <string>Display</string>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="0" column="0">
-     <widget class="QPushButton" name="Button_cal_distance">
-      <property name="text">
-       <string>Calculate distance</string>
+    <item row="1" column="2">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
