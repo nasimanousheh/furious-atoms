@@ -65,9 +65,17 @@ class UniverseManager:
         self.play_factor = 0
         self.enable_timer = True
         self.cnt = 0
-        self.metallicCoefficient_particle = 0
-        self.roughnessCoefficient_particle = 0
-        self.degree_of_metallicity = 0
+
+        self.roughness = 0.0
+        self.metallic = 0.99
+        self.specular = 0.0
+        self.specular_tint = 0.0
+        self.anisotropic = 1.0
+        self.sheen = 0.0
+        self.sheen_tint = 0.0
+        self.clearcoat = 0.0
+        self.opacity = 1.0
+        self.subsurface = 0.0
 
     @property
     def no_atoms(self):
@@ -198,8 +206,8 @@ class ViewerMemoryManager:
         self.set_value_radius = 0
         # Animation Player
         self.cnt = 0
-        self.metallicCoefficient_particle = 0
-        self.roughnessCoefficient_particle = 0
+        # self.metallicCoefficient_particle = 0
+        # self.roughnessCoefficient_particle = 0
 
 
     @property
