@@ -1,9 +1,6 @@
-
 import os
 import numpy as np
 from furiousatoms.io import create_universe
-
-from fury import window, actor, utils, pick, ui
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
@@ -12,10 +9,48 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
-
-
 from furiousatoms import io
 
+from fury.shaders import add_shader_callback, load, shader_to_actor
+from fury.utils import (get_actor_from_polydata, get_polydata_triangles,
+                        get_polydata_vertices, normals_from_v_f,
+                        set_polydata_normals)
+from fury import window, actor, utils, pick, ui, primitive
+
+
+def sky_box_effect(scene, actor, universem):
+    scene.UseImageBasedLightingOn()
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cube_path = os.path.join(dir_path, 'skybox0')
+    if not os.path.isdir(cube_path):
+        print('This path does not exist:', cube_path)
+        return
+    cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
+    scene.SetEnvironmentTexture(cubemap)
+    actor.GetProperty().SetInterpolationToPBR()
+    fs_dec_code = load('bxdf_dec.frag')
+    fs_impl_code = load('bxdf_impl.frag')
+    polydata = actor.GetMapper().GetInput()
+    verts = get_polydata_vertices(polydata)
+    faces = get_polydata_triangles(polydata)
+    normals = normals_from_v_f(verts, faces)
+    set_polydata_normals(polydata, normals)
+    shader_to_actor(actor, 'fragment', decl_code=fs_dec_code)
+    shader_to_actor(actor, 'fragment', impl_code=fs_impl_code,
+                    block='light', debug=False)
+
+    colors_sky = window.vtk.vtkNamedColors()
+    actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
+    actor.GetProperty().SetMetallic(universem.metallic)
+    actor.GetProperty().SetRoughness(universem.roughness)
+    actor.GetProperty().SetOpacity(universem.opacity)
+
+    def uniforms_callback(_caller, _event, calldata=None):
+        if calldata is not None:
+            calldata.SetUniformf('anisotropic', universem.anisotropic)
+            calldata.SetUniformf('clearcoat', universem.clearcoat)
+
+    add_shader_callback(actor, uniforms_callback)
 
 class Viewer3D(QtWidgets.QWidget):
     """ Basic 3D viewer widget
@@ -134,7 +169,7 @@ class Viewer3D(QtWidgets.QWidget):
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
-        self.sky_box_effect(self.universe_manager.sphere_actor)
+        sky_box_effect(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
@@ -181,6 +216,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_bonds = fb.reshape(fb_shape)
         SM.selected_particle[object_indices_particles] = False
         SM.universe = create_universe(final_pos, final_bonds, final_atom_types)
+        return SM.universe
 
     def delete_bonds(self):
         SM = self.universe_manager
@@ -251,24 +287,6 @@ class Viewer3D(QtWidgets.QWidget):
         SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-
-    def sky_box_effect(self, actor):
-        SM = self.universe_manager
-        self.scene.UseImageBasedLightingOn()
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        cube_path = os.path.join(dir_path, 'skybox0')
-        if not os.path.isdir(cube_path):
-            print('This path does not exist:', cube_path)
-            return
-        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
-        self.scene.SetEnvironmentTexture(cubemap)
-        actor.GetProperty().SetInterpolationToPBR()
-        SM.metallicCoefficient_particle = 0.5
-        SM.roughnessCoefficient_particle = 0.1
-        colors_sky = window.vtk.vtkNamedColors()
-        actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
 
     def process_universe(self, universe):
         self.timer = QtCore.QTimer()
