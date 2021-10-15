@@ -497,7 +497,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
                 if selected_item.rowIntersectsSelection(i):
-                    print(i, atom_typ, 'checked')
+                    print(i, 'checked')
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
                         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
@@ -508,6 +508,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     items = self.ui.treeWidget.selectedItems()
                     for item in items:
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
+                    SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
+                    SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
+                    print(np.array([r, g, b, a]))
             SM.colors_backup_particles = SM.vcolors_particle.copy()
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
@@ -553,6 +556,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             a = (SM.colors[SM.atom_type == typ][0][3])*255
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
             cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
+            print(np.array([r, g, b, a]))
 
         try:
             if SM.no_atoms > 0:
