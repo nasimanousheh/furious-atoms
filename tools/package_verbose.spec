@@ -1,10 +1,12 @@
 # -*- mode: python -*-
 
+import os
+from os.path import join as pjoin, dirname
 import vtk
 import numpy
 import scipy
 import MDAnalysis
-from os.path import join as pjoin, dirname
+import furiousatoms
 import sys
 sys.setrecursionlimit(5000)
 
@@ -14,14 +16,15 @@ NUMPY_PATH = pjoin(dirname(numpy.__file__), ".libs")
 SCIPY_PATH = pjoin(dirname(scipy.__file__), ".libs")
 MDA_PATH = MDAnalysis.__path__ + [pjoin(dirname(MDAnalysis.__file__), 'lib'),
            pjoin(dirname(MDAnalysis.__file__), 'lib', 'format')]
+FA_PATH = pjoin(dirname(furiousatoms.__file__), os.pardir)
 
-added_files = [('furiousatoms/forms', 'forms'),
-               ('furiousatoms/languages', 'languages'),
-               ('furiousatoms/resources', 'resources'),
-               ('furiousatoms/skybox0', 'skybox0')
+added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
+               (pjoin(FA_PATH, 'furiousatoms/languages'), 'languages'),
+               (pjoin(FA_PATH, 'furiousatoms/resources'), 'resources'),
+               (pjoin(FA_PATH, 'furiousatoms/skybox0'), 'skybox0')
               ]
 
-a = Analysis(['bin/furious-atoms'],
+a = Analysis([pjoin(FA_PATH, 'bin/furious-atoms')],
              pathex=[VTK_PATH, NUMPY_PATH, SCIPY_PATH] + MDA_PATH,
              binaries=[],
              datas=added_files,
