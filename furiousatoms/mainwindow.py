@@ -378,7 +378,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 print(i, atom_typ, 'checked')
-                # self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
                 # radii for each vertex of each atom with selected atom_type
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 all_vertices_radii = all_vertices_radii[:, None]
@@ -387,12 +386,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * \
                     (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + \
                         np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-                # SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
                 SM.radii_unique_types[i] = float(selected_value_radius)
-
-            # SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
-            # SM.set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
-            # print('inside', SM.set_value_radius)
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
@@ -575,6 +569,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
             cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
 
+        self.ui.treeWidget.setCurrentItem(self.ui.treeWidget.topLevelItem(0))
         try:
             if SM.no_atoms > 0:
                 self.ui.Box_particles.stateChanged.disconnect(self.check_particles)
@@ -666,6 +661,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_sub_window = self.ui.mdiArea.activeSubWindow()
         if active_sub_window:
             return active_sub_window.widget()
+        else:
+            self.ui.treeWidget.clear()
+            self.ui.Edit_num_of_particles.setText(str())
+            self.ui.Edit_num_of_particle_types.setText(str())
+            self.ui.Edit_num_of_bonds.setText(str())
+            self.ui.Edit_widthX.setText(str())
+            self.ui.Edit_widthY.setText(str())
+            self.ui.Edit_widthZ.setText(str())
+            self.ui.Edit_number_of_frames.setText(str())
+            self.ui.Edit_directory.setText(str())
+            self.ui.Edit_fileformat.setText(str())
+            self.ui.Edit_currentfile.setText(str())
+            self.ui.SpinBox_atom_radius.setValue((0))
+
         return None
 
     def create_mdi_child(self, mdi_type="viewer"):
