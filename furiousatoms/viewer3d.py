@@ -47,8 +47,13 @@ def sky_box_effect(scene, actor, universem):
 
     def uniforms_callback(_caller, _event, calldata=None):
         if calldata is not None:
+            calldata.SetUniformf('subsurface', universem.subsurface)
+            calldata.SetUniformf('specularTint', universem.specular_tint)
             calldata.SetUniformf('anisotropic', universem.anisotropic)
+            calldata.SetUniformf('sheen', universem.sheen)
+            calldata.SetUniformf('sheenTint', universem.sheen_tint)
             calldata.SetUniformf('clearcoat', universem.clearcoat)
+            calldata.SetUniformf('clearcoatGloss', universem.clearcoat_gloss)
 
     add_shader_callback(actor, uniforms_callback)
 
@@ -189,10 +194,10 @@ class Viewer3D(QtWidgets.QWidget):
         for object_index in object_indices_particles:
             object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
             object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
-        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
@@ -222,21 +227,18 @@ class Viewer3D(QtWidgets.QWidget):
         SM = self.universe_manager
         bonds_indices = SM.universe.bonds.to_indices()
         object_indices_bonds = np.where(SM.selected_bond == True)[0]
-        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
-        # final_pos = np.delete(final_pos, object_indices_particles, axis=0)
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
         final_atom_types = SM.atom_type
-        # final_atom_types = np.delete(final_atom_types, object_indices_particles)
-        # final_pos_index = np.delete(final_pos_index, object_indices_particles)
         fb_shape = final_bonds.shape
         map_old_to_new = {}
         for i in range(final_pos.shape[0]-1):
@@ -283,14 +285,14 @@ class Viewer3D(QtWidgets.QWidget):
         SM.no_vertices_all_bonds = vertices_bonds.shape[0]
         object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * SM.no_bonds))
         if not SM.selected_bond[object_index_bond]:
-            SM.bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
+            bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_bond[object_index_bond] = True
         else:
-            SM.bond_color_add = SM.colors_backup_bond[object_index_bond]
+            bond_color_add = SM.colors_backup_bond[object_index_bond]
             SM.selected_bond[object_index_bond] = False
 
         SM.vcolors_bond = utils.colors_from_actor(obj, 'colors')
-        SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+        SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
