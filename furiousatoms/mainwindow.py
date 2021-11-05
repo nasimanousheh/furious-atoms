@@ -107,6 +107,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
         self.ui.horizontalSlider_Anisotropic.valueChanged[int].connect(self.change_slice_anisotropic)
         self.ui.horizontalSlider_Clearcoat.valueChanged[int].connect(self.change_slice_clearcoat)
+        self.ui.horizontalSlider_Clearcoat_gloss.valueChanged[int].connect(self.change_slice_clearcoat_gloss)
+        self.ui.horizontalSlider_Sheen.valueChanged[int].connect(self.change_slice_sheen)
+        self.ui.horizontalSlider_Sheen_tint.valueChanged[int].connect(self.change_slice_sheen_tint)
+        self.ui.horizontalSlider_Specular_tint.valueChanged[int].connect(self.change_slice_specular_tint)
+        self.ui.horizontalSlider_Sub_surface.valueChanged[int].connect(self.change_slice_subsurface)
+
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
@@ -151,6 +157,47 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.clearcoat = clearcoat_degree/100
+        utils.update_actor(SM.sphere_actor)
+        active_window.render()
+
+    def change_slice_clearcoat_gloss(self, clearcoat_gloss_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.clearcoat_gloss = clearcoat_gloss_degree/100
+        utils.update_actor(SM.sphere_actor)
+        active_window.render()
+    def change_slice_sheen(self, sheen_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen = sheen_degree/100
+        utils.update_actor(SM.sphere_actor)
+        active_window.render()
+    def change_slice_sheen_tint(self, sheen_tint_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen_tint = sheen_tint_degree/100
+        utils.update_actor(SM.sphere_actor)
+        active_window.render()
+    def change_slice_specular_tint(self, sheen_specular_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.specular_tint = sheen_specular_degree/100
+        utils.update_actor(SM.sphere_actor)
+        active_window.render()
+    def change_slice_subsurface(self, subsurface_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen_tint = subsurface_degree/100
         utils.update_actor(SM.sphere_actor)
         active_window.render()
 
@@ -523,7 +570,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
                     SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
-            SM.colors_backup_particles = SM.vcolors_particle.copy()
+            SM.colors_backup_particles = SM.vcolors_particle
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -556,6 +603,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
         self.ui.horizontalSlider_Anisotropic.setValue(SM.anisotropic*100)
         self.ui.horizontalSlider_Clearcoat.setValue(SM.clearcoat*100)
+
+        self.ui.horizontalSlider_Clearcoat_gloss.setValue(SM.clearcoat_gloss*100)
+        self.ui.horizontalSlider_Sheen.setValue(SM.sheen*100)
+        self.ui.horizontalSlider_Sheen_tint.setValue(SM.sheen_tint*100)
+        self.ui.horizontalSlider_Specular_tint.setValue(SM.specular_tint*100)
+        self.ui.horizontalSlider_Sub_surface.setValue(SM.subsurface*100)
+
         self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
