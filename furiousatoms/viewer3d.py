@@ -267,7 +267,8 @@ class Viewer3D(QtWidgets.QWidget):
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
         else:
-            SM.particle_color_add = SM.colors_backup_particles[object_index]
+            # SM.particle_color_add = SM.colors_backup_particles[object_index]
+            SM.particle_color_add = (SM.colors[object_index] * 255).astype('uint8')
             SM.selected_particle[object_index] = False
 
         SM.vcolors_particle = utils.colors_from_actor(obj, 'colors')
@@ -282,17 +283,28 @@ class Viewer3D(QtWidgets.QWidget):
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
         vertex_index_bond = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
-        SM.no_vertices_all_bonds = vertices_bonds.shape[0]
-        object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * SM.no_bonds))
-        if not SM.selected_bond[object_index_bond]:
-            bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
-            SM.selected_bond[object_index_bond] = True
+        # SM.no_vertices_all_bonds = vertices_bonds.shape[0]
+        object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
+        print(object_index_bond, SM.no_vertices_all_bonds)
+
+        if object_index_bond % 2 == 0:
+            object_index_bond2 = object_index_bond + 1
         else:
-            bond_color_add = SM.colors_backup_bond[object_index_bond]
-            SM.selected_bond[object_index_bond] = False
+            object_index_bond2 = object_index_bond - 1
+
+        if not SM.selected_bond[object_index_bond // 2 ]:
+            bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
+            bond_color_add2 = np.array([255, 0, 0, 255], dtype='uint8')
+            SM.selected_bond[object_index_bond//2] = True
+        else:
+            bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond ]
+            bond_color_add2 = SM.colors_backup_bond[object_index_bond2 * SM.sec_bond]
+            SM.selected_bond[object_index_bond//2] = False
 
         SM.vcolors_bond = utils.colors_from_actor(obj, 'colors')
+
         SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+        SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add2
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
