@@ -151,9 +151,9 @@ class UniverseManager:
         bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
         # self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
-        self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
+        self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
-        self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
+        self.sec_bond = np.int(self.no_vertices_all_bonds / (2 * self.no_bonds))
         self.unique_types_bond = np.unique(self.universe.bonds.types)
         self.vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
         self.colors_backup_bond = self.vcolors_bond.copy()
