@@ -229,8 +229,13 @@ class Viewer3D(QtWidgets.QWidget):
         object_indices_bonds = np.where(SM.selected_bond == True)[0]
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        for object_index_bond in object_indices_bonds:
+        for object_index_bond in object_indices_bonds * 2:
+            if object_index_bond % 2 == 0:
+                object_index_bond2 = object_index_bond + 1
+            else:
+                object_index_bond2 = object_index_bond - 1
             SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+            SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
@@ -283,10 +288,7 @@ class Viewer3D(QtWidgets.QWidget):
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
         vertex_index_bond = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
-        # SM.no_vertices_all_bonds = vertices_bonds.shape[0]
         object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
-        print(object_index_bond, SM.no_vertices_all_bonds)
-
         if object_index_bond % 2 == 0:
             object_index_bond2 = object_index_bond + 1
         else:
