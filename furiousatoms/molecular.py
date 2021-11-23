@@ -158,6 +158,7 @@ class UniverseManager:
         self.vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
         self.colors_backup_bond = self.vcolors_bond.copy()
         return bond_actor
+
     def actors(self):
         l_actors = [self.sphere_actor, self.bbox_actor]
         if self.have_bonds:
