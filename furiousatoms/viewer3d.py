@@ -197,7 +197,10 @@ class Viewer3D(QtWidgets.QWidget):
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+            object_index_bond_n = object_index_bond * 2
+            object_index_bond_n2 = object_index_bond * 2 + 1
+            SM.vcolors_bond[object_index_bond_n * SM.sec_bond: object_index_bond_n * SM.sec_bond + SM.sec_bond] = bond_color_add
+            SM.vcolors_bond[object_index_bond_n2 * SM.sec_bond: object_index_bond_n2 * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
@@ -207,8 +210,10 @@ class Viewer3D(QtWidgets.QWidget):
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
         final_atom_types = SM.atom_type
-        final_atom_types = np.delete(final_atom_types, object_indices_particles)
-        final_pos_index = np.delete(final_pos_index, object_indices_particles)
+        final_atom_types = np.delete(final_atom_types,
+                                     object_indices_particles)
+        final_pos_index = np.delete(final_pos_index,
+                                    object_indices_particles)
         fb_shape = final_bonds.shape
         map_old_to_new = {}
         for i in range(final_pos.shape[0]-1):
@@ -239,23 +244,17 @@ class Viewer3D(QtWidgets.QWidget):
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-        final_pos = SM.pos.copy()
-        final_pos_index = np.arange(final_pos.shape[0])
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-        final_atom_types = SM.atom_type
         fb_shape = final_bonds.shape
         map_old_to_new = {}
-        for i in range(final_pos.shape[0]-1):
-            map_old_to_new[final_pos_index[i]] = i
-
         fb = final_bonds.ravel()
         for i in range(fb.shape[0]):
             fb[i] = map_old_to_new[fb[i]]
 
         final_bonds = fb.reshape(fb_shape)
         SM.selected_particle[object_indices_bonds] = False
-        SM.universe = create_universe(final_pos, final_bonds, final_atom_types)
+        SM.universe = create_universe(SM.pos, final_bonds, SM.atom_type)
         return SM.universe
 
 
@@ -299,7 +298,7 @@ class Viewer3D(QtWidgets.QWidget):
             bond_color_add2 = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_bond[object_index_bond//2] = True
         else:
-            bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond ]
+            bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond]
             bond_color_add2 = SM.colors_backup_bond[object_index_bond2 * SM.sec_bond]
             SM.selected_bond[object_index_bond//2] = False
 
