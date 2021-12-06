@@ -232,18 +232,15 @@ class Viewer3D(QtWidgets.QWidget):
         SM.deleted_particles[object_indices_particles] = True
         SM.deleted_bonds[object_indices_bonds] = True
         SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types)
-        # SM.no_vertices_all_bonds = SM.no_vertices_per_bond * SM.no_bonds * 2
-        # SM.no_vertices_all_particles = SM.no_vertices_per_particle * SM.no_atoms
         return SM.universe_save
 
     def delete_bonds(self):
         SM = self.universe_manager
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
-        object_indices_bonds += np.where(SM.deleted_bonds is True)[0].tolist()
+        object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)
 
-        bonds_indices = SM._bonds
-        # object_indices_bonds = np.where(SM.selected_bond == True)[0]
+        bonds_indices = SM.universe.bonds.to_indices()
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds * 2:
@@ -258,20 +255,9 @@ class Viewer3D(QtWidgets.QWidget):
         self.render()
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-        # fb_shape = final_bonds.shape
-        # map_old_to_new = {}
-        # fb = final_bonds.ravel()
-        # for i in range(fb.shape[0]):
-        #     fb[i] = map_old_to_new[fb[i]]
-
-        # final_bonds = fb.reshape(fb_shape)
         SM.selected_bond[object_indices_bonds] = False
         SM.deleted_bonds[object_indices_bonds] = True
         SM.universe_save = create_universe(SM.pos, final_bonds, SM.atom_type)
-        # SM.all_vertices_bonds = utils.vertices_from_actor(SM.bond_actor)
-        # SM.no_vertices_per_bond = len(SM.all_vertices_bonds) / (2 * SM.no_bonds)
-        # SM.no_vertices_all_bonds = SM.all_vertices_bonds.shape[0]
-        # SM.no_vertices_all_bonds = SM.no_vertices_per_bond * SM.no_bonds * 2
         return SM.universe_save
 
 
