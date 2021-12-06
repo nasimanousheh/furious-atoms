@@ -13,11 +13,13 @@ class UniverseManager:
         """
         """
         self.universe = universe
+        self.universe_save = None
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
                                   colors=(0, 0, 0), linewidth=1, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
         self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        # self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         # if self.n_frames > 1:
         #     pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
         #     self._pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, self.box, backend='serial')
@@ -56,6 +58,8 @@ class UniverseManager:
         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
         self.colors_backup_particles = self.vcolors_particle.copy()
+        self.deleted_particles = np.zeros(self.no_atoms, dtype=np.bool)
+        self.deleted_bonds = np.zeros(self.no_bonds, dtype=np.bool)
         # TODO: check if this is truly used
         # self.set_value_radius = 0
         self.play_factor = 0
@@ -73,7 +77,6 @@ class UniverseManager:
         self.opacity = 1.0
         self.subsurface = 0.0
         self.clearcoat_gloss = 1.0
-
         self.selected_value_radius = 0.0
 
     @property
