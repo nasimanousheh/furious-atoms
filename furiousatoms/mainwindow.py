@@ -531,14 +531,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         # suffix = '.pdb'
         # fname = fname + suffix
-        SM.universe.atoms.write(fname)
+        if SM.universe_save is None:
+            SM.universe.atoms.write(fname)
+        else:
+            SM.universe_save.atoms.write(fname)
+
+
 
     def delete_particles(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.universe = active_window.delete_particles()
+        SM.universe_save = active_window.delete_particles()
+        self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
@@ -570,12 +576,27 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
                     SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
-            SM.colors_backup_particles = SM.vcolors_particle
+        # if SM.no_bonds > 0:
+        #     SM.bond_actor = SM.generate_bond_actor()
+        #     SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+        #     utils.update_actor(SM.bond_actor)
+        #     object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
+        #     if object_index_bond % 2 == 0:
+        #         object_index_bond2 = object_index_bond + 1
+        #     else:
+        #         object_index_bond2 = object_index_bond - 1
+        #     bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond]
+        #     bond_color_add2 = SM.colors_backup_bond[object_index_bond2 * SM.sec_bond]
+        #     SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+        #     SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add2
+        #     SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
         utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
+
+    # TODO: decide what you want to do for bonds that have two colors
     def openColorDialog_bond(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -583,7 +604,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_bond = QtWidgets.QColorDialog.getColor()
         if selected_color_bond.isValid():
-            select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+            select_all_bonds = np.zeros(SM.no_bonds*2, dtype=np.bool)
             object_indices_bonds = np.where(select_all_bonds == False)[0]
             for object_index in object_indices_bonds:
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
@@ -609,7 +630,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Sheen_tint.setValue(SM.sheen_tint*100)
         self.ui.horizontalSlider_Specular_tint.setValue(SM.specular_tint*100)
         self.ui.horizontalSlider_Sub_surface.setValue(SM.subsurface*100)
-
         self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
