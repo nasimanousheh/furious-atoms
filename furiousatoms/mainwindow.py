@@ -139,7 +139,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetOpacity(SM.opacity)
+        SM.bond_actor.GetProperty().SetInterpolationToPBR()
+        SM.bond_actor.GetProperty().SetOpacity(SM.opacity)
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_anisotropic(self, anisotropic_degree):
@@ -149,6 +152,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.anisotropic = anisotropic_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_clearcoat(self, clearcoat_degree):
@@ -158,6 +162,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.clearcoat = clearcoat_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_clearcoat_gloss(self, clearcoat_gloss_degree):
@@ -167,6 +172,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.clearcoat_gloss = clearcoat_gloss_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
     def change_slice_sheen(self, sheen_degree):
         active_window = self.active_mdi_child()
@@ -175,6 +181,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.sheen = sheen_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
     def change_slice_sheen_tint(self, sheen_tint_degree):
         active_window = self.active_mdi_child()
@@ -183,6 +190,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.sheen_tint = sheen_tint_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
     def change_slice_specular_tint(self, sheen_specular_degree):
         active_window = self.active_mdi_child()
@@ -191,6 +199,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.specular_tint = sheen_specular_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
     def change_slice_subsurface(self, subsurface_degree):
         active_window = self.active_mdi_child()
@@ -199,6 +208,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.sheen_tint = subsurface_degree/100
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_metallic(self, metallic_degree):
@@ -208,7 +218,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.metallic = metallic_degree/100
         SM.sphere_actor.GetProperty().SetMetallic(SM.metallic)
+        SM.bond_actor.GetProperty().SetMetallic(SM.metallic)
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_roughness(self, roughness_degree):
@@ -218,7 +230,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.roughness = roughness_degree/100
         SM.sphere_actor.GetProperty().SetRoughness(SM.roughness)
+        SM.bond_actor.GetProperty().SetRoughness(SM.roughness)
         utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def slotZoomIn(self):
@@ -560,6 +574,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
+        bonds_indices = SM.universe.bonds.to_indices()
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
                 if selected_item.rowIntersectsSelection(i):
@@ -576,20 +591,26 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
                     SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
-        # if SM.no_bonds > 0:
-        #     SM.bond_actor = SM.generate_bond_actor()
-        #     SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        #     utils.update_actor(SM.bond_actor)
-        #     object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
-        #     if object_index_bond % 2 == 0:
-        #         object_index_bond2 = object_index_bond + 1
-        #     else:
-        #         object_index_bond2 = object_index_bond - 1
-        #     bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond]
-        #     bond_color_add2 = SM.colors_backup_bond[object_index_bond2 * SM.sec_bond]
-        #     SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
-        #     SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add2
-        #     SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+                    # if SM.no_bonds > 0:
+                    #     select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+                    #     object_indices_bonds = np.where(select_all_bonds == False)[0]
+
+                    #     for object_index_bond in object_indices_bonds:#*2:
+                    #         # if object_index_bond
+                    #         SM.colors_backup_bond[object_index_bond] = selected_color_particle.getRgb()
+                    #         if object_index_bond % 2 == 0:
+                    #             object_index_bond2 = object_index_bond + 1
+                    #         # else:
+                    #         #     object_index_bond2 = object_index_bond - 1
+                    #         # SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+                    #         SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+
+                # for object_index in object_indices_bonds:
+                #     SM.colors_backup_bond[object_index] = selected_color_particle.getRgb()
+                #     SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        active_window.render()
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
