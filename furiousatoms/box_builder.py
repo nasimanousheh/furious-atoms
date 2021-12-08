@@ -41,7 +41,7 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         SM.universe.trajectory.ts.dimensions[0] = box_lx
         SM.universe.trajectory.ts.dimensions[1] = box_ly
         SM.universe.trajectory.ts.dimensions[2] = box_lz
-        SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=1, fake_tube=True)
+        SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
