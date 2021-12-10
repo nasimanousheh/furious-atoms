@@ -575,6 +575,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
         bonds_indices = SM.universe.bonds.to_indices()
+        bond_indices_1d = bonds_indices.ravel()
+        half_bond = SM.sec_bond
+
+
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
                 if selected_item.rowIntersectsSelection(i):
@@ -591,26 +595,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
                     SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
-                    # if SM.no_bonds > 0:
-                    #     select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
-                    #     object_indices_bonds = np.where(select_all_bonds == False)[0]
+            for k in object_indices_particles.tolist():
 
-                    #     for object_index_bond in object_indices_bonds:#*2:
-                    #         # if object_index_bond
-                    #         SM.colors_backup_bond[object_index_bond] = selected_color_particle.getRgb()
-                    #         if object_index_bond % 2 == 0:
-                    #             object_index_bond2 = object_index_bond + 1
-                    #         # else:
-                    #         #     object_index_bond2 = object_index_bond - 1
-                    #         # SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
-                    #         SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+                mem_block = np.where(bond_indices_1d==k)[0]
+                # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
+                for j in mem_block:
+                    SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
 
-                # for object_index in object_indices_bonds:
-                #     SM.colors_backup_bond[object_index] = selected_color_particle.getRgb()
-                #     SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        active_window.render()
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -631,6 +624,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
+        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
