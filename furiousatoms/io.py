@@ -110,7 +110,10 @@ def create_universe(pos, bonds, atom_types):
     universe.add_TopologyAttr('name', atom_types_list)
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-    universe.add_bonds(bonds)
+    try:
+        universe.add_bonds(bonds)
+    except:
+        pass
     cog = universe.atoms.center_of_geometry()
     universe.atoms.positions -= cog
     return universe
