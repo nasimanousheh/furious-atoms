@@ -1,9 +1,6 @@
-
 import os
 import numpy as np
 from furiousatoms.io import create_universe
-
-from fury import window, actor, utils, pick, ui
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
@@ -12,10 +9,53 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
-
-
 from furiousatoms import io
 
+from fury.shaders import add_shader_callback, load, shader_to_actor
+from fury.utils import (get_actor_from_polydata, get_polydata_triangles,
+                        get_polydata_vertices, normals_from_v_f,
+                        set_polydata_normals)
+from fury import window, actor, utils, pick, ui, primitive
+
+
+def sky_box_effect(scene, actor, universem):
+    scene.UseImageBasedLightingOn()
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    cube_path = os.path.join(dir_path, 'skybox0')
+    if not os.path.isdir(cube_path):
+        print('This path does not exist:', cube_path)
+        return
+    cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
+    scene.SetEnvironmentTexture(cubemap)
+    actor.GetProperty().SetInterpolationToPBR()
+    fs_dec_code = load('bxdf_dec.frag')
+    fs_impl_code = load('bxdf_impl.frag')
+    polydata = actor.GetMapper().GetInput()
+    verts = get_polydata_vertices(polydata)
+    faces = get_polydata_triangles(polydata)
+    normals = normals_from_v_f(verts, faces)
+    set_polydata_normals(polydata, normals)
+    shader_to_actor(actor, 'fragment', decl_code=fs_dec_code)
+    shader_to_actor(actor, 'fragment', impl_code=fs_impl_code,
+                    block='light', debug=False)
+
+    colors_sky = window.vtk.vtkNamedColors()
+    actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
+    actor.GetProperty().SetMetallic(universem.metallic)
+    actor.GetProperty().SetRoughness(universem.roughness)
+    actor.GetProperty().SetOpacity(universem.opacity)
+
+    def uniforms_callback(_caller, _event, calldata=None):
+        if calldata is not None:
+            calldata.SetUniformf('subsurface', universem.subsurface)
+            calldata.SetUniformf('specularTint', universem.specular_tint)
+            calldata.SetUniformf('anisotropic', universem.anisotropic)
+            calldata.SetUniformf('sheen', universem.sheen)
+            calldata.SetUniformf('sheenTint', universem.sheen_tint)
+            calldata.SetUniformf('clearcoat', universem.clearcoat)
+            calldata.SetUniformf('clearcoatGloss', universem.clearcoat_gloss)
+
+    add_shader_callback(actor, uniforms_callback)
 
 class Viewer3D(QtWidgets.QWidget):
     """ Basic 3D viewer widget
@@ -134,13 +174,15 @@ class Viewer3D(QtWidgets.QWidget):
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
-        self.sky_box_effect(self.universe_manager.sphere_actor)
+        sky_box_effect(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
     def delete_particles(self):
         SM = self.universe_manager
-        object_indices_particles = np.where(SM.selected_particle)[0]
+        object_indices_particles = np.where(SM.selected_particle)[0].tolist()
+        object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
+        object_indices_particles = np.asarray(object_indices_particles)
         print('object_indices_particles: ', object_indices_particles)
         print(SM.pos[object_indices_particles])
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
@@ -150,25 +192,32 @@ class Viewer3D(QtWidgets.QWidget):
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         bonds_indices = SM.universe.bonds.to_indices()
-        object_indices_bonds = []
+        object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
         for object_index in object_indices_particles:
             object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
             object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
-        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+            object_index_bond_n = object_index_bond * 2
+            object_index_bond_n2 = object_index_bond * 2 + 1
+            SM.vcolors_bond[object_index_bond_n * SM.sec_bond: object_index_bond_n * SM.sec_bond + SM.sec_bond] = bond_color_add
+            SM.vcolors_bond[object_index_bond_n2 * SM.sec_bond: object_index_bond_n2 * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_pos = np.delete(final_pos, object_indices_particles, axis=0)
+        final_pos_index = np.delete(final_pos_index,
+                                    object_indices_particles)
+
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-        final_atom_types = SM.atom_type
-        final_atom_types = np.delete(final_atom_types, object_indices_particles)
-        final_pos_index = np.delete(final_pos_index, object_indices_particles)
+
+        final_atom_types = SM.atom_type.copy()
+        final_atom_types = np.delete(final_atom_types,
+                                     object_indices_particles)
         fb_shape = final_bonds.shape
         map_old_to_new = {}
         for i in range(final_pos.shape[0]):
@@ -180,35 +229,37 @@ class Viewer3D(QtWidgets.QWidget):
 
         final_bonds = fb.reshape(fb_shape)
         SM.selected_particle[object_indices_particles] = False
-        SM.universe = create_universe(final_pos, final_bonds, final_atom_types)
+        SM.deleted_particles[object_indices_particles] = True
+        SM.deleted_bonds[object_indices_bonds] = True
+        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types)
+        return SM.universe_save
 
     def delete_bonds(self):
         SM = self.universe_manager
+        object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
+        object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
+        object_indices_bonds = np.asarray(object_indices_bonds)
+
         bonds_indices = SM.universe.bonds.to_indices()
-        object_indices_bonds = np.where(SM.selected_bond == True)[0]
-        SM.bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+        bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        for object_index_bond in object_indices_bonds:
-            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+        for object_index_bond in object_indices_bonds * 2:
+            if object_index_bond % 2 == 0:
+                object_index_bond2 = object_index_bond + 1
+            else:
+                object_index_bond2 = object_index_bond - 1
+            SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+            SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-        SM.universe.delete_bonds(SM.universe.bonds[object_indices_bonds])
-        final_pos = SM.pos.copy()
-        final_pos_index = np.arange(final_pos.shape[0])
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-        final_atom_types = SM.atom_type
-        fb_shape = final_bonds.shape
-        map_old_to_new = {}
-        for i in range(final_pos.shape[0]):
-            map_old_to_new[final_pos_index[i]] = i
+        SM.selected_bond[object_indices_bonds] = False
+        SM.deleted_bonds[object_indices_bonds] = True
+        SM.universe_save = create_universe(SM.pos, final_bonds, SM.atom_type)
+        return SM.universe_save
 
-        fb = final_bonds.ravel()
-        for i in range(fb.shape[0]):
-            fb[i] = map_old_to_new[fb[i]]
-
-        final_bonds = fb.reshape(fb_shape)
 
     def left_button_press_particle_callback(self, obj, event):
         SM = self.universe_manager
@@ -223,7 +274,8 @@ class Viewer3D(QtWidgets.QWidget):
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
         else:
-            SM.particle_color_add = SM.colors_backup_particles[object_index]
+            # SM.particle_color_add = SM.colors_backup_particles[object_index]
+            SM.particle_color_add = (SM.colors[object_index] * 255).astype('uint8')
             SM.selected_particle[object_index] = False
 
         SM.vcolors_particle = utils.colors_from_actor(obj, 'colors')
@@ -238,37 +290,27 @@ class Viewer3D(QtWidgets.QWidget):
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
         vertex_index_bond = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
-        SM.no_vertices_all_bonds = vertices_bonds.shape[0]
-        object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * SM.no_bonds))
-        if not SM.selected_bond[object_index_bond]:
-            SM.bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
-            SM.selected_bond[object_index_bond] = True
+        object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
+        if object_index_bond % 2 == 0:
+            object_index_bond2 = object_index_bond + 1
         else:
-            SM.bond_color_add = SM.colors_backup_bond[object_index_bond]
-            SM.selected_bond[object_index_bond] = False
+            object_index_bond2 = object_index_bond - 1
+
+        if not SM.selected_bond[object_index_bond // 2 ]:
+            bond_color_add = np.array([255, 0, 0, 255], dtype='uint8')
+            bond_color_add2 = np.array([255, 0, 0, 255], dtype='uint8')
+            SM.selected_bond[object_index_bond//2] = True
+        else:
+            bond_color_add = SM.colors_backup_bond[object_index_bond * SM.sec_bond]
+            bond_color_add2 = SM.colors_backup_bond[object_index_bond2 * SM.sec_bond]
+            SM.selected_bond[object_index_bond//2] = False
 
         SM.vcolors_bond = utils.colors_from_actor(obj, 'colors')
-        SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = SM.bond_color_add
+
+        SM.vcolors_bond[object_index_bond * SM.sec_bond: object_index_bond * SM.sec_bond + SM.sec_bond] = bond_color_add
+        SM.vcolors_bond[object_index_bond2 * SM.sec_bond: object_index_bond2 * SM.sec_bond + SM.sec_bond] = bond_color_add2
         utils.update_actor(obj)
         obj.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-
-    def sky_box_effect(self, actor):
-        SM = self.universe_manager
-        self.scene.UseImageBasedLightingOn()
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        cube_path = os.path.join(dir_path, 'skybox0')
-        if not os.path.isdir(cube_path):
-            print('This path does not exist:', cube_path)
-            return
-        cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
-        self.scene.SetEnvironmentTexture(cubemap)
-        actor.GetProperty().SetInterpolationToPBR()
-        SM.metallicCoefficient_particle = 0.5
-        SM.roughnessCoefficient_particle = 0.1
-        colors_sky = window.vtk.vtkNamedColors()
-        actor.GetProperty().SetColor(colors_sky.GetColor3d('White'))
-        actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
 
     def process_universe(self, universe):
         self.timer = QtCore.QTimer()

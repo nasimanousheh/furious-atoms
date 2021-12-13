@@ -2,19 +2,13 @@ import numpy as np
 from numpy.linalg import norm
 from math import gcd
 from itertools import product
-from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
-from furiousatoms.sharedmem import SharedMemory
+from furiousatoms.geomlib import Atom, Molecule
 from furiousatoms import io
-import vtk
 import numpy as np
-from fury import window, actor, utils, pick, ui
-from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
+from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import create_universe, merged_universe_with_H
 from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-import sys
 
 
 thre = 1e-10
