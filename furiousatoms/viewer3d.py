@@ -191,46 +191,47 @@ class Viewer3D(QtWidgets.QWidget):
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        bonds_indices = SM.universe.bonds.to_indices()
-        object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
-        for object_index in object_indices_particles:
-            object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
-            object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
-        bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
-        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
-        for object_index_bond in object_indices_bonds:
-            object_index_bond_n = object_index_bond * 2
-            object_index_bond_n2 = object_index_bond * 2 + 1
-            SM.vcolors_bond[object_index_bond_n * SM.sec_bond: object_index_bond_n * SM.sec_bond + SM.sec_bond] = bond_color_add
-            SM.vcolors_bond[object_index_bond_n2 * SM.sec_bond: object_index_bond_n2 * SM.sec_bond + SM.sec_bond] = bond_color_add
-        utils.update_actor(SM.bond_actor)
-        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        self.render()
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_pos = np.delete(final_pos, object_indices_particles, axis=0)
         final_pos_index = np.delete(final_pos_index,
                                     object_indices_particles)
-
-        final_bonds = bonds_indices.copy()
-        final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-
         final_atom_types = SM.atom_type.copy()
         final_atom_types = np.delete(final_atom_types,
-                                     object_indices_particles)
-        fb_shape = final_bonds.shape
-        map_old_to_new = {}
-        for i in range(final_pos.shape[0]):
-            map_old_to_new[final_pos_index[i]] = i
+                                    object_indices_particles)
+        try:
+            bonds_indices = SM.universe.bonds.to_indices()
+            object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
+            for object_index in object_indices_particles:
+                object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
+                object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
+            bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+            SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
+            for object_index_bond in object_indices_bonds:
+                object_index_bond_n = object_index_bond * 2
+                object_index_bond_n2 = object_index_bond * 2 + 1
+                SM.vcolors_bond[object_index_bond_n * SM.sec_bond: object_index_bond_n * SM.sec_bond + SM.sec_bond] = bond_color_add
+                SM.vcolors_bond[object_index_bond_n2 * SM.sec_bond: object_index_bond_n2 * SM.sec_bond + SM.sec_bond] = bond_color_add
+            utils.update_actor(SM.bond_actor)
+            SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            self.render()
+            final_bonds = bonds_indices.copy()
+            final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
+            fb_shape = final_bonds.shape
+            map_old_to_new = {}
+            for i in range(final_pos.shape[0]):
+                map_old_to_new[final_pos_index[i]] = i
+            fb = final_bonds.ravel()
+            for i in range(fb.shape[0]):
+                fb[i] = map_old_to_new[fb[i]]
 
-        fb = final_bonds.ravel()
-        for i in range(fb.shape[0]):
-            fb[i] = map_old_to_new[fb[i]]
+            final_bonds = fb.reshape(fb_shape)
+            SM.deleted_bonds[object_indices_bonds] = True
+        except:
+            final_bonds = None
 
-        final_bonds = fb.reshape(fb_shape)
         SM.selected_particle[object_indices_particles] = False
         SM.deleted_particles[object_indices_particles] = True
-        SM.deleted_bonds[object_indices_bonds] = True
         SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types)
         return SM.universe_save
 
