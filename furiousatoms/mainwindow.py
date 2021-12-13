@@ -23,7 +23,7 @@ import MDAnalysis
 from numpy.linalg import norm
 import sys
 import furiousatoms.forms.icons
-from furiousatoms.viewer3d import Viewer3D
+from furiousatoms.viewer3d import Viewer3D, sky_box_effect
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
@@ -31,7 +31,6 @@ from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
-from furiousatoms.viewer3d import Viewer3D
 
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
@@ -94,8 +93,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
-        self.ui.horizontalSlider_metallicity_particle.valueChanged[int].connect(self.metallicity_particle)
-        self.ui.horizontalSlider_metallicity_bond.valueChanged[int].connect(self.metallicity_bond)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
         self.ui.Button_forward.clicked.connect(self.forward_movie)
@@ -105,16 +102,143 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
-        self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
+        self.ui.horizontalSlider_Opacity.valueChanged[int].connect(self.change_slice_opacity)
+        self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
+        self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
+        self.ui.horizontalSlider_Anisotropic.valueChanged[int].connect(self.change_slice_anisotropic)
+        self.ui.horizontalSlider_Clearcoat.valueChanged[int].connect(self.change_slice_clearcoat)
+        self.ui.horizontalSlider_Clearcoat_gloss.valueChanged[int].connect(self.change_slice_clearcoat_gloss)
+        self.ui.horizontalSlider_Sheen.valueChanged[int].connect(self.change_slice_sheen)
+        self.ui.horizontalSlider_Sheen_tint.valueChanged[int].connect(self.change_slice_sheen_tint)
+        self.ui.horizontalSlider_Specular_tint.valueChanged[int].connect(self.change_slice_specular_tint)
+        self.ui.horizontalSlider_Sub_surface.valueChanged[int].connect(self.change_slice_subsurface)
 
+        self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
+        self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
+
+    def show_radius_value(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        selected_item = self.ui.treeWidget.selectionModel()
+        for i, atom_typ in enumerate(SM.unique_types):
+            if selected_item.rowIntersectsSelection(i):
+                SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
+                set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                self.ui.SpinBox_atom_radius.setValue((set_value_radius))
+
+
+    def change_slice_opacity(self, opacity_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.opacity = opacity_degree/100
+        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
+        SM.sphere_actor.GetProperty().SetOpacity(SM.opacity)
+        SM.bond_actor.GetProperty().SetInterpolationToPBR()
+        SM.bond_actor.GetProperty().SetOpacity(SM.opacity)
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_anisotropic(self, anisotropic_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.anisotropic = anisotropic_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_clearcoat(self, clearcoat_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.clearcoat = clearcoat_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_clearcoat_gloss(self, clearcoat_gloss_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.clearcoat_gloss = clearcoat_gloss_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+    def change_slice_sheen(self, sheen_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen = sheen_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+    def change_slice_sheen_tint(self, sheen_tint_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen_tint = sheen_tint_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+    def change_slice_specular_tint(self, sheen_specular_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.specular_tint = sheen_specular_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+    def change_slice_subsurface(self, subsurface_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.sheen_tint = subsurface_degree/100
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_metallic(self, metallic_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.metallic = metallic_degree/100
+        SM.sphere_actor.GetProperty().SetMetallic(SM.metallic)
+        SM.bond_actor.GetProperty().SetMetallic(SM.metallic)
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_roughness(self, roughness_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.roughness = roughness_degree/100
+        SM.sphere_actor.GetProperty().SetRoughness(SM.roughness)
+        SM.bond_actor.GetProperty().SetRoughness(SM.roughness)
+        utils.update_actor(SM.sphere_actor)
+        utils.update_actor(SM.bond_actor)
+        active_window.render()
 
     def slotZoomIn(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
         active_window.scene.zoom(1.25)
         active_window.render()
 
@@ -122,14 +246,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
         active_window.scene.zoom(0.75)
         active_window.render()
     def slotZoomFit(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
         active_window.scene.ResetCamera()
         active_window.render()
 
@@ -140,10 +262,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         num = int(SM.no_vertices_per_particle)
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
-        colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
+        SM.colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
         vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=colors, scales= SM.radii_spheres)#, dtype='uint8')
+        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=SM.colors, scales= SM.radii_spheres)
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
@@ -154,7 +276,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
-        self.metallicity_particle(SM.degree_of_metallicity)
 
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
@@ -166,9 +287,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
 
         utils.update_actor(SM.sphere_actor)
-        print('current value of radius: ',selected_value_radius)#SM.set_value_radius)
+        print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        sky_box_effect(active_window.scene, SM.sphere_actor, SM)
         active_window.render()
 
     def change_particle_shape(self):
@@ -198,7 +320,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             active_window.scene.add(SM.bond_actor)
         if comboBox_bondshape == 'Cylinder':
             SM.bond_colors = (0.8275, 0.8275, 0.8275, 1)
-            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=0.5)#SM.line_thickness)
+            SM.bond_actor = actor.streamtube(SM.bonds, SM.bond_colors, linewidth=0.5)
             active_window.scene.add(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.colors_backup_bond = SM.vcolors_bond.copy()
@@ -256,7 +378,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if len(object_indices_particles)==2:
             distance_particle_particle = np.linalg.norm(SM.pos[object_indices_particles[0]] - SM.pos[object_indices_particles[1]])
         utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         distance = "{:.2f}".format(distance_particle_particle)
         avg = np.average(SM.pos[object_indices_particles], axis=0)
         label_actor = actor.label(text=(str(distance)), pos=avg,
@@ -318,7 +439,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 print(i, atom_typ, 'checked')
-                self.ui.SpinBox_atom_radius.setValue(float(selected_value_radius))
                 # radii for each vertex of each atom with selected atom_type
                 all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
                 all_vertices_radii = all_vertices_radii[:, None]
@@ -327,38 +447,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * \
                     (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + \
                         np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
-                SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
+                SM.radii_unique_types[i] = float(selected_value_radius)
+
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-        active_window.render()
-
-    def metallicity_particle(self, metallicity_degree_particle):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        SM.degree_of_metallicity = metallicity_degree_particle
-        SM.metallicCoefficient_particle = metallicity_degree_particle/100
-        SM.roughnessCoefficient_particle = 1.0 - metallicity_degree_particle/100
-        SM.sphere_actor.GetProperty().SetInterpolationToPBR()
-        SM.sphere_actor.GetProperty().SetMetallic(SM.metallicCoefficient_particle)
-        SM.sphere_actor.GetProperty().SetRoughness(SM.roughnessCoefficient_particle)
-        utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
-        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        active_window.render()
-
-    def metallicity_bond(self, metallicity_degree_bond):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        metallicCoefficient_bond = metallicity_degree_bond/100
-        roughnessCoefficient_bond = 1.0 - metallicity_degree_bond/100
-        SM.bond_actor.GetProperty().SetMetallic(metallicCoefficient_bond)
-        SM.bond_actor.GetProperty().SetRoughness(roughnessCoefficient_bond)
-        utils.update_actor(SM.bond_actor)
-        SM.bond_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         active_window.render()
 
     def check_simulationcell(self, state):
@@ -371,7 +463,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             SM.bbox_actor.VisibilityOff()
         utils.update_actor(SM.bbox_actor)
-        SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
     def check_particles(self, state):
@@ -384,7 +475,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             SM.sphere_actor.VisibilityOff()
         utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
         print('All particles are deleted')
 
@@ -402,7 +492,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             SM.bond_actor.VisibilityOff()
         utils.update_actor(SM.bond_actor)
-        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
         print('All bonds are deleted')
 
@@ -441,8 +530,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         child = self.create_mdi_child()
 
-        # if child.load_CC1_file(fname):
-
         if child.load_fullerene_cc1_file(fname):
             child.show()
         else:
@@ -458,14 +545,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         # suffix = '.pdb'
         # fname = fname + suffix
-        SM.universe.atoms.write(fname)
+        if SM.universe_save is None:
+            SM.universe.atoms.write(fname)
+        else:
+            SM.universe_save.atoms.write(fname)
+
+
 
     def delete_particles(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.universe = active_window.delete_particles()
+        SM.universe_save = active_window.delete_particles()
+        self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
@@ -473,7 +566,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         active_window.delete_bonds()
         SM = active_window.universe_manager
-        # self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
@@ -482,10 +574,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
+        bonds_indices = SM.universe.bonds.to_indices()
+        bond_indices_1d = bonds_indices.ravel()
+        half_bond = SM.sec_bond
+
+
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
                 if selected_item.rowIntersectsSelection(i):
-                    print(i, atom_typ, 'checked')
+                    print(i, 'checked')
                     object_indices_particles = np.where(SM.atom_type == atom_typ)[0]
                     for object_index in object_indices_particles:
                         SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = selected_color_particle.getRgb()
@@ -496,11 +593,24 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     items = self.ui.treeWidget.selectedItems()
                     for item in items:
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
-            SM.colors_backup_particles = SM.vcolors_particle.copy()
+                    SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
+                    SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
+            for k in object_indices_particles.tolist():
+
+                mem_block = np.where(bond_indices_1d==k)[0]
+                # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
+                for j in mem_block:
+                    SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
+
+        utils.update_actor(SM.bond_actor)
+        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
+
+    # TODO: decide what you want to do for bonds that have two colors
     def openColorDialog_bond(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -508,12 +618,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_bond = QtWidgets.QColorDialog.getColor()
         if selected_color_bond.isValid():
-            select_all_bonds = np.zeros(SM.no_bonds, dtype=np.bool)
+            select_all_bonds = np.zeros(SM.no_bonds*2, dtype=np.bool)
             object_indices_bonds = np.where(select_all_bonds == False)[0]
             for object_index in object_indices_bonds:
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         utils.update_actor(SM.bond_actor)
+        SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
@@ -523,20 +634,31 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        # colors = np.ones((SM.no_atoms, 4))
+        self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
+        self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
+        self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
+        self.ui.horizontalSlider_Anisotropic.setValue(SM.anisotropic*100)
+        self.ui.horizontalSlider_Clearcoat.setValue(SM.clearcoat*100)
+
+        self.ui.horizontalSlider_Clearcoat_gloss.setValue(SM.clearcoat_gloss*100)
+        self.ui.horizontalSlider_Sheen.setValue(SM.sheen*100)
+        self.ui.horizontalSlider_Sheen_tint.setValue(SM.sheen_tint*100)
+        self.ui.horizontalSlider_Specular_tint.setValue(SM.specular_tint*100)
+        self.ui.horizontalSlider_Sub_surface.setValue(SM.subsurface*100)
         self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
-            SM.set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
-            # r, g, b, a = np.int(np.round(255 * SM.colors_unique_types[i], 0))
+            set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            self.ui.SpinBox_atom_radius.setValue((set_value_radius))
             r = (SM.colors[SM.atom_type == typ][0][0])*255
             g = (SM.colors[SM.atom_type == typ][0][1])*255
             b = (SM.colors[SM.atom_type == typ][0][2])*255
             a = (SM.colors[SM.atom_type == typ][0][3])*255
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
-            cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r,g, b, a))))
+            cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
 
+        self.ui.treeWidget.setCurrentItem(self.ui.treeWidget.topLevelItem(0))
         try:
             if SM.no_atoms > 0:
                 self.ui.Box_particles.stateChanged.disconnect(self.check_particles)
@@ -560,15 +682,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                               SM.box_lz > 0)
         self.ui.Box_bonds.setChecked(SM.no_bonds > 0)
         self.ui.button_animation.setChecked(SM.n_frames > 1)
-        self.ui.horizontalSlider_metallicity_particle.setValue(SM.degree_of_metallicity)
-
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
             self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
             self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
-            # TODO: set_value_radius is not different for each atom type and
-            # we may get issues with molecules that have multiple atom types.
-            self.ui.SpinBox_atom_radius.setValue((SM.set_value_radius))
         if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
         if SM.no_bonds > 0:
@@ -633,6 +750,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_sub_window = self.ui.mdiArea.activeSubWindow()
         if active_sub_window:
             return active_sub_window.widget()
+        else:
+            self.ui.treeWidget.clear()
+            self.ui.Edit_num_of_particles.setText(str())
+            self.ui.Edit_num_of_particle_types.setText(str())
+            self.ui.Edit_num_of_bonds.setText(str())
+            self.ui.Edit_widthX.setText(str())
+            self.ui.Edit_widthY.setText(str())
+            self.ui.Edit_widthZ.setText(str())
+            self.ui.Edit_number_of_frames.setText(str())
+            self.ui.Edit_directory.setText(str())
+            self.ui.Edit_fileformat.setText(str())
+            self.ui.Edit_currentfile.setText(str())
+            self.ui.SpinBox_atom_radius.setValue((0))
+
         return None
 
     def create_mdi_child(self, mdi_type="viewer"):

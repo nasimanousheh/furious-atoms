@@ -86,7 +86,7 @@ def start_gui(app_folder=None, files=None):
     splash = QtWidgets.QSplashScreen(pix)
     splash.show()
     app.processEvents()
-    splash.showMessage("Equation 6 Ltd Software...",
+    splash.showMessage("Furious Atoms loading...",
                        QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
     time.sleep(2)
     # Init interface
