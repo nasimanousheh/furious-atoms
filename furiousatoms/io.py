@@ -90,11 +90,14 @@ def load_files(fname, debug=False):
             break
         i += 1
 
-    frames_cnt = 0
     load_file = MDAnalysis.Universe(fname, format=format_data)
     if format_data is None:
-        bonds = load_file.bonds.to_indices()
-        no_bonds = len(load_file.bonds)
+        load_file = MDAnalysis.Universe(fname)
+        try:
+            bonds = load_file.bonds.to_indices()
+            no_bonds = len(load_file.bonds)
+        except MDAnalysis.exceptions.NoDataError:
+            no_bonds = 0
     return load_file, no_bonds
 
 
