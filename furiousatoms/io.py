@@ -110,6 +110,7 @@ def create_universe(pos, bonds, atom_types):
     universe.add_TopologyAttr('name', atom_types_list)
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
+    universe.add_TopologyAttr('masses')
     try:
         universe.add_bonds(bonds)
     except:
