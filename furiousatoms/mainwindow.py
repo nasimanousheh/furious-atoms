@@ -540,7 +540,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter="*.pdb*")
+        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))#, filter="*.pdb*")
         if not fname:
             return
         # suffix = '.pdb'
