@@ -67,7 +67,7 @@ source_suffix = '.rst'
 master_doc = 'content'
 
 # General information about the project.
-project = 'Furious-Atoms'
+project = 'FuriousAtoms'
 copyright = '2020, Nasim Anousheh'
 author = 'Nasim Anousheh'
 
