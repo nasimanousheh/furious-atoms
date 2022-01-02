@@ -60,17 +60,17 @@ def start_gui(app_folder=None, files=None):
     app.setApplicationVersion(furiousatoms.__version__)
     app.setStyle('Fusion')
 
-    palette_enabled = False
+    palette_enabled = True
     if palette_enabled:
         palette = QtGui.QPalette()
-        palette.setColor(QtGui.QPalette.Window, QtGui.QColor(53,53,53))
+        palette.setColor(QtGui.QPalette.Window, QtGui.QColor(153,53,53))
         palette.setColor(QtGui.QPalette.WindowText, Qt.black)
-        palette.setColor(QtGui.QPalette.Base, QtGui.QColor(15,15,15))
-        palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53,53,53))
+        palette.setColor(QtGui.QPalette.Base, QtGui.QColor(100,100,100))
+        palette.setColor(QtGui.QPalette.AlternateBase, QtGui.QColor(53,53,153))
         palette.setColor(QtGui.QPalette.ToolTipBase, Qt.white)
         palette.setColor(QtGui.QPalette.ToolTipText, Qt.white)
         palette.setColor(QtGui.QPalette.Text, Qt.black)
-        palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53,53,53))
+        palette.setColor(QtGui.QPalette.Button, QtGui.QColor(53,153,53))
         # palette.setColor(QtGui.QPalette.ButtonText, Qt.white)
         palette.setColor(QtGui.QPalette.BrightText, Qt.red)
         # palette.setColor(QtGui.QPalette.Highlight, QtGui.QColor(142,45,197).lighter())
