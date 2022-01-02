@@ -556,7 +556,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.universe.add_impropers(improper_dihedrals)
         mass_unique_types = np.unique(SM.universe.atoms.masses)
         bond_unique_types = np.unique(SM.universe.atoms.bonds.types())
-        angle_unique_types = = np.unique(SM.universe.atoms.angles.types())
+        angle_unique_types = np.unique(SM.universe.atoms.angles.types())
         dihedral_unique_types = np.unique(SM.universe.atoms.dihedrals.types())
         improper_unique_types = np.unique(SM.universe.atoms.impropers.types())
 
