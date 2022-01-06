@@ -79,7 +79,7 @@
           <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(223, 223, 223);</string>
+          <string notr="true"/>
          </property>
          <layout class="QGridLayout" name="gridLayout_12">
           <item row="0" column="0">
@@ -303,7 +303,7 @@
           <bool>false</bool>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(223, 223, 223);</string>
+          <string notr="true"/>
          </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="0" column="0">
