@@ -58,7 +58,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def graphene_builder(H_termination_graphene, n, m, N=1, length=None, bond_length = 1.421, species=('C', 'C'), centered=False):
+def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
     bond_length_hydrogen = 1.1
     thre = 1e-10
     d = gcd(n, m)
