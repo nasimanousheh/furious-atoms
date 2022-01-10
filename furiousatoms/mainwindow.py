@@ -540,16 +540,126 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter="*.pdb*")
+        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'))#, filter="*.pdb*")
         if not fname:
             return
         # suffix = '.pdb'
         # fname = fname + suffix
+        # import MDAnalysis
+        # masses = MDAnalysis.topology.guessers.guess_masses(SM.atom_type)
+        # SM.universe.add_TopologyAttr('masses', masses)
+        # angles = MDAnalysis.topology.guessers.guess_angles(SM.universe.bonds)
+        # SM.universe.add_angles(angles)
+        # dihedrals = MDAnalysis.topology.guessers.guess_dihedrals(SM.universe.angles)
+        # SM.universe.add_dihedrals(dihedrals)
+        # improper_dihedrals = MDAnalysis.topology.guessers.guess_improper_dihedrals(SM.universe.angles)
+        # SM.universe.add_impropers(improper_dihedrals)
+        # mass_unique_types = np.unique(SM.universe.atoms.masses)
+        # bond_unique_types = np.unique(SM.universe.atoms.bonds.types())
+        # angle_unique_types = np.unique(SM.universe.atoms.angles.types())
+        # dihedral_unique_types = np.unique(SM.universe.atoms.dihedrals.types())
+        # improper_unique_types = np.unique(SM.universe.atoms.impropers.types())
+
+
+        # file_name = 'many_particle.DATA'
+        # outdump = open(file_name, "w")
+        # outdump.write("LAMMPS data file\n\n")
+        # outdump.write("{}\t{} \n".format(SM.no_atoms, ' atoms'))
+        # outdump.write("{}\t{} \n".format(SM.no_bonds, ' bonds'))
+        # outdump.write("{}\t{} \n".format(len(angles), ' angles'))
+        # outdump.write("{}\t{} \n".format(len(dihedrals), ' dihedrals'))
+        # outdump.write("{}\t{} \n".format(len(improper_dihedrals), ' impropers'))
+        # outdump.write("{}\t{} \n".format(len(SM.unique_types), 'atom types'))
+        # if SM.no_bonds > 0 :
+        #     outdump.write("{}\t{} \n".format(len(np.unique(SM.universe.bonds.types)), 'bond types'))
+        # if len(angles) > 0:
+        #     outdump.write("{}\t{} \n".format(len(np.unique(SM.universe.angles.types)), 'angle types'))
+        # if len(dihedrals) > 0:
+        #     outdump.write("{}\t{} \n\n".format(len(np.unique(SM.universe.dihedrals.types)), 'dihedral types'))
+        # if len(improper_dihedrals) > 0:
+        #     outdump.write("{}\t{} \n\n".format(len(np.unique(SM.universe.impropers.types)), 'improper types'))
+        # outdump.write("{}\t{}\t{} \n".format(-0.5* SM.box_lx, 0.5* SM.box_lx, ' xlo xhi'))
+        # outdump.write("{}\t{}\t{} \n".format(-0.5* SM.box_ly, 0.5* SM.box_ly, ' ylo yhi'))
+        # outdump.write("{}\t{}\t{} \n\n".format((-0.5* SM.box_lz), (0.5* SM.box_lz), ' zlo zhi'))
+        # outdump.write("Masses\n\n")
+
+        # for i in range (len(SM.unique_types)):
+        #     outdump.write("{}\t{} \n".format(SM.unique_types[i], mass_unique_types[i]))
+
+        # outdump.write("\n")
+        # outdump.write("Atoms          # full\n\n")
+        # num_molecules = 0
+        # for i in range(SM.no_atoms):
+        #     outdump.write("{}\t{}\t{}\t{}\t{}\t{}\t{}\t{}\n".format((i + 1), num_molecules, SM.universe.atoms.types[i], '0', SM.pos[i][0], SM.pos[i][1], SM.pos[i][2], '0   0   0 '))
+        # outdump.write("\n")
+        # if SM.no_bonds > 0:
+        #     outdump.write("Bonds\n\n")
+        # #    num_molecules = 0
+        #     for g in range(SM.no_bonds):
+        #         outdump.write("{}\t{}\t{}\t{}\n".format((g + 1), '1', SM.universe.bonds.indices[g][0]+1, SM.universe.bonds.indices[g][1]+1))
+        #      #   num_molecules = num_molecules + 1
+        #     if len(angles) > 0:
+        #         outdump.write("\n")
+        #         outdump.write("Angles\n\n")
+        #         num_molecules = 0
+        #         for n in range(len(angles)):
+        #             outdump.write("{}\t{}\t{}\t{}\t{}\n".format( n + 1, '1', SM.universe.angles.indices[n][0]+1, SM.universe.angles.indices[n][1]+1, SM.universe.angles.indices[n][2]+1))
+        #         # num_molecules = num_molecules + 1
+
+        #         if len(dihedrals) > 0:
+        #             outdump.write("\n")
+        #             outdump.write("Dihedrals\n\n")
+        #             num_molecules = 0
+        #             for s in range(len(dihedrals)):
+        #                 outdump.write("{}\t{}\t{}\t{}\t{}\t{}\n".format( s + 1, '1', SM.universe.dihedrals.indices[s][0]+1, SM.universe.dihedrals.indices[s][1]+1, SM.universe.dihedrals.indices[s][2]+1,SM.universe.dihedrals.indices[s][3]+1))
+        #             #    num_molecules = num_molecules + 1
+
+        #             if len(improper_dihedrals) > 0:
+        #                 outdump.write("\n")
+        #                 outdump.write("Impropers\n\n")
+        #                 num_molecules = 0
+        #                 for t in range(len(improper_dihedrals)):
+        #                     outdump.write("{}\t{}\t{}\t{}\t{}\t{}\n".format( t + 1, '1', SM.universe.impropers.indices[t][0], SM.universe.impropers.indices[t][1], SM.universe.impropers.indices[t][2],SM.universe.impropers.indices[t][3]))
+        #                 #   num_molecules = num_molecules + 1
+
+
+
+
+        # import MDAnalysis
+        # savelmp = SM.universe.copy()
+        # masses = MDAnalysis.topology.guessers.guess_masses(SM.atom_type)
+        # savelmp.add_TopologyAttr('masses',masses)
+        # angles = MDAnalysis.topology.guessers.guess_angles(savelmp.bonds)
+        # savelmp.add_angles(angles)
+        # dihedrals = MDAnalysis.topology.guessers.guess_dihedrals(savelmp.angles)
+        # savelmp.add_dihedrals(dihedrals)
+        # improper_dihedrals = MDAnalysis.topology.guessers.guess_improper_dihedrals(savelmp.angles)
+        # savelmp.add_impropers(improper_dihedrals)
+
+        # try:
+        #     SM.atom_type.astype(np.int32)
+        #     tmp_atom_type = SM.atom_type.copy()
+        # except ValueError:
+        #     int_atom_type = []
+        #     for i in range(SM.atom_type.shape[0]):
+        #         for n, j in enumerate(SM.unique_types):
+        #             if SM.atom_type[i] == j:
+        #                 int_atom_type.append(n+1)
+        #     tmp_atom_type = np.array(int_atom_type, dtype=np.int32)
+        # savelmp.add_TopologyAttr('name', SM.atom_type)
+        # savelmp.add_TopologyAttr('type', tmp_atom_type)
+        # savelmp.add_TopologyAttr('resname', ['MOL'])
+        # # MDAnalysis.topology.guessers.guess_bonds(savelmp.atoms, savelmp.atoms.positions, box=None)
+        # fname2 = 'data.data'
+        # with MDAnalysis.Writer(fname2) as W:
+        #     W.write(savelmp.atoms)
+
+
         if SM.universe_save is None:
             SM.universe.atoms.write(fname)
         else:
             SM.universe_save.atoms.write(fname)
-
+        # SM.atom_type
 
 
     def delete_particles(self):
@@ -574,10 +684,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
-        bonds_indices = SM.universe.bonds.to_indices()
-        bond_indices_1d = bonds_indices.ravel()
-        half_bond = SM.sec_bond
-
 
         if selected_color_particle.isValid():
             for i, atom_typ in enumerate(SM.unique_types):
@@ -595,15 +701,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
                     SM.colors[SM.atom_type == atom_typ] = SM.colors_unique_types[i]
-            for k in object_indices_particles.tolist():
+            if SM.no_bonds > 0:
+                bonds_indices = SM.universe.bonds.to_indices()
+                bond_indices_1d = bonds_indices.ravel()
+                half_bond = SM.sec_bond
 
-                mem_block = np.where(bond_indices_1d==k)[0]
-                # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
-                for j in mem_block:
-                    SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
+                for k in object_indices_particles.tolist():
 
-        utils.update_actor(SM.bond_actor)
-        SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+                    mem_block = np.where(bond_indices_1d==k)[0]
+                    # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
+                    for j in mem_block:
+                        SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
+
+                utils.update_actor(SM.bond_actor)
+                SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()

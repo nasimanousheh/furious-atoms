@@ -18,7 +18,6 @@ class SharedMemory(object):
         self.MainWindow = 0
         self.no_atoms = 0
         self.vcolors_particle = 0
-        self.colors_backup_particles = 0
         self.selected_particle = 0
         self.sec_particle = 0
         self.no_vertices_all_particles = 0
@@ -39,11 +38,9 @@ class SharedMemory(object):
 
         self.bonds = 0
         self.bond_actor = None
-        self.no_bonds = 0
         self.selected_bond = 0
-        self.colors_backup_bond = 0
         self.vcolors_bond = 0
-        self.no_vertices_per_bond = 0
+
         self.initial_vertices_bonds = 0
         self.all_vertices_bonds = 0
         self.sec_bond = 0
