@@ -69,7 +69,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.lineEdit_length_SWNT.setText(str(length_SWNT))
 
     def SWNT_builder_callback(self):
-        bond_length_SWNT = 1.421 # default value of C-C bond length
+        bond_length_SWNT = float(self.SWNT.lineEdit_bond_length_SWNT.text())
         H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
         value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
@@ -88,7 +88,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def SWNT_builder(H_termination_SWNT, n, m, N=1, length=None, bond_length=1.421, species=('C', 'C'), centered=False):
+def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
     bond_length_hydrogen = 1.1
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d

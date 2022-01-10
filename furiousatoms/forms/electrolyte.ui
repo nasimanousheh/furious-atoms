@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
-    <height>650</height>
+    <width>699</width>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -257,6 +257,9 @@
            <widget class="QLineEdit" name="lineEdit_grid_size">
             <property name="styleSheet">
              <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
+            <property name="dragEnabled">
+             <bool>false</bool>
             </property>
             <property name="clearButtonEnabled">
              <bool>false</bool>
@@ -780,7 +783,11 @@
           </widget>
          </item>
          <item row="2" column="5">
-          <widget class="QLineEdit" name="lineEdit_num_cation_salt_3"/>
+          <widget class="QLineEdit" name="lineEdit_num_cation_salt_3">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="3" column="0">
           <widget class="QPushButton" name="pushButton_anion_salt_3">
@@ -867,7 +874,11 @@
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QLineEdit" name="lineEdit_con_anion_salt_3"/>
+          <widget class="QLineEdit" name="lineEdit_con_anion_salt_3">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="4" column="3">
           <widget class="QLabel" name="label_num_anion_salt_3">
@@ -1042,7 +1053,11 @@
           </widget>
          </item>
          <item row="2" column="5">
-          <widget class="QLineEdit" name="lineEdit_num_cation_salt_1"/>
+          <widget class="QLineEdit" name="lineEdit_num_cation_salt_1">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="3" column="0">
           <widget class="QPushButton" name="pushButton_anion_salt_1">
@@ -1129,7 +1144,11 @@
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QLineEdit" name="lineEdit_con_anion_salt_1"/>
+          <widget class="QLineEdit" name="lineEdit_con_anion_salt_1">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="4" column="3">
           <widget class="QLabel" name="label_num_anion_salt_1">
@@ -1205,7 +1224,11 @@
           </widget>
          </item>
          <item row="4" column="2">
-          <widget class="QLineEdit" name="lineEdit_con_anion_salt_2"/>
+          <widget class="QLineEdit" name="lineEdit_con_anion_salt_2">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="1" column="3">
           <widget class="QLineEdit" name="lineEdit_valency_cation_salt_2">
@@ -1259,7 +1282,11 @@
           </widget>
          </item>
          <item row="2" column="5">
-          <widget class="QLineEdit" name="lineEdit_num_cation_salt_2"/>
+          <widget class="QLineEdit" name="lineEdit_num_cation_salt_2">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="label_valency_cation_salt_2">
@@ -1587,6 +1614,9 @@
               <property name="styleSheet">
                <string notr="true">background-color: rgb(255, 255, 255);</string>
               </property>
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
               <property name="clearButtonEnabled">
                <bool>false</bool>
               </property>
@@ -1867,6 +1897,9 @@
               </property>
               <property name="styleSheet">
                <string notr="true">background-color: rgb(255, 255, 255);</string>
+              </property>
+              <property name="readOnly">
+               <bool>true</bool>
               </property>
               <property name="clearButtonEnabled">
                <bool>false</bool>

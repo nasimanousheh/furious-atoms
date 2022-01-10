@@ -82,12 +82,12 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1)
+        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1)
         universe_all = universe.copy()
         for i in range(1, number_of_walls):
             xyz = []
             type_atoms = []
-            next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, length=None, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1)
+            next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1)
             xyz.extend(next_universe.universe.atoms.positions)
             type_atoms.extend(next_universe.atoms.types)
             universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
@@ -102,7 +102,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def MWNT_builder(n, m, N=1, length=True, a=1.421, species=('B', 'C'), centered=False, wan = 1):
+def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR

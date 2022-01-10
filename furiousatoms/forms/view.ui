@@ -179,8 +179,7 @@
        </size>
       </property>
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+       <string notr="true"/>
       </property>
       <layout class="QGridLayout" name="gridLayout_11">
        <item row="1" column="0">
@@ -220,7 +219,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Input</string>
@@ -238,7 +237,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -261,8 +260,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
            <item row="0" column="0">
             <widget class="QWidget" name="widget_external_file_properties" native="true">
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+              <string notr="true"/>
              </property>
              <layout class="QGridLayout" name="gridLayout_3">
               <item row="0" column="0">
@@ -436,8 +434,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
            <item row="0" column="0">
             <widget class="QWidget" name="widget_box_properties" native="true">
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+              <string notr="true"/>
              </property>
              <layout class="QGridLayout" name="gridLayout_2">
               <item row="2" column="0">
@@ -567,8 +564,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
               <enum>Qt::LeftToRight</enum>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+              <string notr="true"/>
              </property>
              <layout class="QGridLayout" name="gridLayout_4">
               <item row="1" column="3">
@@ -888,8 +884,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
             <enum>Qt::LeftToRight</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);
-alternate-background-color: rgb(255, 255, 255);</string>
+            <string notr="true"/>
            </property>
            <layout class="QGridLayout" name="gridLayout_5">
             <item row="0" column="0" colspan="2">
@@ -1392,7 +1387,7 @@ alternate-background-color: rgb(255, 255, 255);</string>
           </font>
          </property>
          <property name="styleSheet">
-          <string notr="true">background-color: rgb(204, 204, 204);</string>
+          <string notr="true"/>
          </property>
          <property name="text">
           <string>Display</string>

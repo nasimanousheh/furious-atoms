@@ -110,7 +110,13 @@ def create_universe(pos, bonds, atom_types):
     universe.add_TopologyAttr('name', atom_types_list)
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-    universe.add_bonds(bonds)
+    universe.add_TopologyAttr('masses')
+    try:
+        universe.add_bonds(bonds)
+    except:
+        pass
+    cog = universe.atoms.center_of_geometry()
+    universe.atoms.positions -= cog
     return universe
 
 def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2):
@@ -156,6 +162,8 @@ def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, 
     merged_universe_Hyd = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
     merged_universe_Hyd.add_bonds(bonds_uni_1)
     merged_universe_Hyd.add_bonds(bonds_uni_2)
+    cog = merged_universe_Hyd.atoms.center_of_geometry()
+    merged_universe_Hyd.atoms.positions -= cog
     return merged_universe_Hyd
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.
