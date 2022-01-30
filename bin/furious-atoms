@@ -60,7 +60,7 @@ def start_gui(app_folder=None, files=None):
     app.setApplicationVersion(furiousatoms.__version__)
     app.setStyle('Fusion')
 
-    palette_enabled = True
+    palette_enabled = False #True
     if palette_enabled:
         palette = QtGui.QPalette()
         palette.setColor(QtGui.QPalette.Window, QtGui.QColor(153,53,53))
