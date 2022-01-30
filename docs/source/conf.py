@@ -138,6 +138,11 @@ html_theme_options = {
 html_static_path = ['_static']
 html_additional_pages = {
     'index': 'index.html',
+    'gr':'gr.html',
+    'swnt':'swnt.html',
+    'swnt':'swnt.html',
+    'mwnt':'mwnt.html',
+    'fullerene':'fullerene.html'
 }
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
