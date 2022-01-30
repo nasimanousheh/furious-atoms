@@ -71,10 +71,14 @@
                             <!-- <a class="navbar-brand" href="index.html">
                                 <img src="_static/images/logo/white-logo.svg" alt="Logo">
                             </a> -->
-                            <a class="navbar-brand" href="{{ pathto(master_doc) }}">
-                                <h1 class="title">{{ project }}</h1>
+                            <a class="navbar-brand" href="content.html">
+                                <h1 class="title">FuriousAtoms</h1>
                             </a>
-                            <!-- {%- include "navbar-logo.html" %} -->
+                            <!--
+<a class="navbar-brand" href="content.html">
+<p class="title">FuriousAtoms</p>
+</a>
+ -->
                             <button class="navbar-toggler mobile-menu-btn" type="button" data-bs-toggle="collapse"
                                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                                 aria-expanded="false" aria-label="Toggle navigation">
@@ -200,7 +204,7 @@
                     <!-- Start Single Feature -->
                     <div class="single-feature wow fadeInUp" data-wow-delay=".2s">
                         <i class="lni lni-shield"></i>
-                        <h3>Handle Multiple reader</h3>
+                        <h3>Handle Multiple readers</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
                     </div>
                     <!-- End Single Feature -->
@@ -227,7 +231,57 @@
         </div>
     </section>
     <!-- End Features Area -->
+    <script>
+        MathJax = {
+          tex: {
+            inlineMath: [['$', '$'], ['\\(', '\\)']]
+          },
+          svg: {
+            fontCache: 'global'
+          }
+        };
+        </script>
+        <script type="text/javascript" id="MathJax-script" async
+          src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+        </script>
     <section id="overview" class="app-info section">
+        <div class="container">
+        <div class="info-one">
+        <div class="row align-items-center">
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+        <div class="main-icon">
+        </div>
+        <h2>Modeling Graphene!</h2>
+        <p> Graphene Sheet  feature  allows  construction  of  graphene  and  graphene-like  sheets  such as hexagonal boron nitride (h-BN), boron phosphide
+        (h-BP), hexagonal aluminum phosphonate (h-AlP) and hexagonal aluminum nitride (h-AlN). The Graphene Sheet is located in the Build menu under
+        Build Nanostructures. Graphene is made of a single atomic layer. On the graphene net, the chiral indices (n, m) specify the lattice structure.
+        n and m are numerically positive integers and define the chiral vector ($\overrightarrow{C_{h}}$) as:
+        \begin{equation}
+        \overrightarrow{C_{h}}=(n, m)=n \overrightarrow{a_{1}}+m \overrightarrow{a_{2}}
+        \end{equation}
+        Where $\overrightarrow{a_{1}}$ and $\overrightarrow{a_{2}}$ are primitive lattice vectors in the hexagonal lattice of graphene separated with
+        an inner angle of 60. a  is the bond length of c-c (the distance between nearest neighbors), the primitive lattice vectors
+        can be chosen to be:
+        \begin{equation}
+        \vec{a}_{1}=\frac{a}{2}(3, \sqrt{3}), \vec{a}_{2}=\frac{a}{2}(3,-\sqrt{3})
+        \end{equation}
+        Based on chiral indices (n and m), graphene can be further categorized into “armchair” when n=m, “zig-zag” when n > 0, m = 0, and all other integer
+        combinations are called “chiral”. The default type of sheet structure is carbon-carbon (C-C) with bond length of 1.421 $\text { Å }$.
+        Figure 1. The graphene lattice geometry. a1 and a2 are the lattice unit vectors. a is the bond length of carbon carbon (c-c).
+        The user can change the bond length of graphene and graphene-like sheets. In the “Hydrogen termination” option,  the edges of the structure are terminated
+        by hydrogen, if "All" is selected.
+        </p>
+        <div class="button">
+        <a href="gr.html" class="btn">Get Started</a>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/gr_3.png" alt="#">
+        </div>
+        </div>
         <div class="container">
         <div class="info-one">
         <div class="row align-items-center">
@@ -236,44 +290,151 @@
         <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
         <div class="main-icon">
         </div>
-        <h2>Modeling and Simulating Polymer (Amorphous)!</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        <h2>Modeling Carbon Nanotubes!</h2>
+        <p> The Single-Walled Nanotube (SWNT) builder is located under the Build menu. It generates SWNT by first creating a flat  graphene or
+        graphene-like  lattice  with chiral  indices n and m  provided  by  the  user. This hexagonal  lattice  is  then  rolled  onto  a
+        cylinder  to  create  the  SWNT  unit  cell  aligned  in the  z-direction. The diameter (d) of SWNT is defined as:
+        \begin{equation}
+        \begin{aligned}
+        &d=\frac{A}{\pi}=\frac{a_{0}}{\pi} \sqrt{n^{2}+m^{2}+n m} \\
+        &d=|\mathbf{C}| / p i=\operatorname{asqrt}\left(\mathrm{n}^{2}+\mathrm{n} \mathrm{m}+\mathrm{m}^{2}\right)
+        \end{aligned}
+        \end{equation}
+        Where a is the lattice constant. For  graphene, a = 2.49 A. The length of the SWCN unit cell can be written as:
+        \begin{equation}
+        |\mathrm{T}|=\operatorname{sqrt}(3) d / \operatorname{gcd}(2 m+n, m+2 n)
+        \end{equation}
+        The user can build hexagonal boron nitride nanotube (BNNT), hexagonal boron phosphide nanotube (BPNT), hexagonal aluminum phosphonate nanotube (AlPNT)
+        and hexagonal aluminum nitride nanotube (AlNNT) in form of single wall structures.  You can set the n, m indexes, atom types, bond length, repeat units
+        to determine the type of nanotube. All unit distances are in angstrom. In the “Hydrogen termination” option,  you  can  select “One  end”  or  “Both
+        ends” to terminate  one  edge  or  both  edges of the nanotube  with  hydrogen respectively.  The information about the diameter and the length of the
+        nanotube is updated in the widget while the user selects the n, m and repeat unit parameters.
+        You can save the generated file into XYZ ( for example: SWNT.xyz), PDB ( for example: SWNT.pdb), LAMMPS, (for example: SWNT.data) and GROMACS format
+        (for example: SWNT.gro).
+        </p>
         <div class="button">
-        <a href="javascript:void(0)" class="btn">Get Started</a>
+        <a href="swnt.html" class="btn">Get Started</a>
         </div>
         </div>
-
         </div>
         <div class="col-lg-6 col-md-12 col-12">
-        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInRight;">
-        <img class="ss1" src="https://static.wixstatic.com/media/48e277_f887cc7785114dd185c61332a359a588~mv2.png/v1/crop/x_0,y_50,w_1071,h_953/fill/w_423,h_350,al_c,q_85,usm_0.66_1.00_0.01/Picture4.webp" alt="#">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/swnt_1.png" alt="#">
         </div>
         </div>
         </div>
-        </div>
-        <div class="info-one style2">
+        <div class="container">
+        <div class="info-one">
         <div class="row align-items-center">
-        <div class="col-lg-6 col-md-12 col-12">
-        <div class="info-image wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
-        <img class="ss1" src="https://static.wixstatic.com/media/48e277_109a45825d3742a492922f22014ddf3b~mv2.png/v1/crop/x_91,y_70,w_514,h_372/fill/w_373,h_269,al_c,q_85,usm_0.66_1.00_0.01/nano%20(2).webp" alt="#">
-        </div>
-        </div>
-        <div class="col-lg-6 col-md-12 col-12">
 
-        <div class="info-text wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInRight;">
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
         <div class="main-icon">
         </div>
-        <h2>Modeling and Simulating Carbon Nanotubes!</h2>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        </div>
+        <div class="container">
+        <div class="info-one">
+        <div class="row align-items-center">
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+        <div class="main-icon">
+        </div>
+        <h2>Modeling Multi-Walls Nanotubes!</h2>
+        <p>The Multi-Walled Nanotube (MWNT) builder is located under the Build menu. It generates multiple nanotubes with wall separation of 3.43 A aligned along the z-axis.
+        You can choose the  indices n and m (to define the type of chirality), type of the atoms, bond length,  repeat units (to define the length of MWNT) and the number
+        of walls in MWNT. All unit distances are in angstrom.  The user can see the updated values of diameter inner nanotube and the length of MWNT as the n, m and repeat
+        unit parameters are changing in the widget. Like SWNT, in MWNT the user can build hexagonal boron nitride nanotube (BNNT), hexagonal boron phosphide nanotube (BPNT),
+        hexagonal aluminum phosphonate nanotube (AlPNT) and hexagonal aluminum nitride nanotube (AlNNT) in the form of multiple walls structures. You can save the generated
+        file into XYZ ( for example: MWNT.xyz), PDB ( for example: MWNT.pdb), LAMMPS, (for example: MWNT.data) and GROMACS format
+        (for example: MWNT.gro).
+        </p>
         <div class="button">
-        <a href="javascript:void(0)" class="btn">Get Started</a>
+        <a href="mwnt.html" class="btn">Get Started</a>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/mwnt_1.png" alt="#">
+        </div>
+        </div>
+        </div>
+        <!-- <div class="container">
+        <div class="info-one">
+        <div class="row align-items-center">
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+        <div class="main-icon"> -->
+        </div>
+        <h2>Modeling Fullerenes!</h2>
+        <p>The Fullerene builder is located under the Build menu.  With Fullerene Builder, the user can create more than 2450 derivatives of fullerene.
+        The user can save the generated file into XYZ ( for example: fullerene.xyz), PDB ( for example: graphene.pdb), LAMMPS, (for example: fullerene.data)
+        and GROMACS format (for example: fullerene.gro).
+        </p>
+        <div class="button">
+        <a href="fullerene.html" class="btn">Get Started</a>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-12">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/fullerene_1.png" alt="#">
+        </div>
+        </div>
+        <!-- <div class="container">
+        <div class="info-one">
+        <div class="row align-items-center">
+        <div class="col-lg-6 col-md-12 col-12"> -->
+
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+        <div class="main-icon">
+        </div>
+        <h2>Modeling Electrolytes!</h2>
+        <p>The Electrolyte builder is located under the Build menu. This feature enables the users to create different types of electrolytes for All-Atom (with water molecules)
+        and Coarse-grained (without water molecules) Molecular Dynamics Simulations. These models can be confined inside the nanoscale channels by enabling the  “create dummy
+        wall in z direction” icon. There are three steps to build the electrolyte.
+        </p>
+        <div class="button">
+        <a href="elec_1.html" class="btn">Get Started</a>
+        </div>
+        </div>
+        </div>
+        </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-12">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/elec_1.png" alt="#">
         </div>
         </div>
 
+
+        <!-- <div class="container">
+        <div class="info-one">
+        <div class="row align-items-center">
+        <div class="col-lg-6 col-md-12 col-12">
+        <div class="info-text wow fadeInLeft" data-wow-delay=".3s" style="visibility: visible; animation-delay: 0.3s; animation-name: fadeInLeft;">
+        <div class="main-icon"> -->
+        </div>
+        <h2>Modify your model!</h2>
+        <p>FA allows the users to modify the chemical structures by selecting the atoms or bonds and deleting them. The user can also add a simulation box
+        to the model or change the size of the existing simulation box. As an example, we presented a fullerene C720 that is built with FA. The user can
+        easily edit C720 and create a pristine single vacancy (SV) on the cage by removing one carbon atom and simultaneously breaking three C-C bonds
+        in the network. The carbons that are involved with the defected region are shown in red. Moreover, the users can convert the Coarse-Grained model
+        to an All-Atom model by adding the water model into the selected system. After modification, the structure can be saved and exported to LAMMPS and
+        PDB file formats.
+        </p>
+        <div class="button">
+        <a href="fullerene.html" class="btn">Get Started</a>
         </div>
         </div>
         </div>
+        <div class="col-lg-10 col-md-12 col-12">
+        <div class="info-image wow fadeInRight" data-wow-delay=".5s" style="visibility: visible; animation-delay: 0.5s; animation-name: fadeInLeft;">
+        <img class="ss1" src="_static/images/modify_1.png" alt="#">
         </div>
+        </div>
+
         </section>
     <!-- Start Achievement Area -->
     <section class="our-achievement section">
