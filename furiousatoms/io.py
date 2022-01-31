@@ -3,7 +3,6 @@ import os
 import sys
 
 import furiousatoms
-
 from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
@@ -182,7 +181,7 @@ def read_cubemap(folderRoot, fileRoot, ext, key):
 
     Returns
     -------
-    texture : vtkTexture
+    texture : Texture
         The cubemap texture.
 
     """
