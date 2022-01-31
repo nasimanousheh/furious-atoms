@@ -11,49 +11,67 @@ from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 
 from fury.shaders import add_shader_callback, load, shader_to_actor
-from fury.utils import (get_actor_from_polydata, get_polydata_triangles,
+from fury.utils import (get_polydata_triangles,
                         get_polydata_vertices, normals_from_v_f,
                         set_polydata_normals)
-from fury import window, actor, utils, pick, ui, primitive
+from fury import window, actor, utils, pick, ui, primitive, material
+from fury.data import fetch_viz_cubemaps, read_viz_cubemap
+from fury.io import load_cubemap_texture
+from fury.utils import (normals_from_actor, tangents_to_actor,
+                        tangents_from_direction_of_anisotropy)
 
 
 def sky_box_effect(scene, actor, universem):
-    scene.UseImageBasedLightingOn()
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    cube_path = os.path.join(dir_path, 'skybox0')
-    if not os.path.isdir(cube_path):
-        print('This path does not exist:', cube_path)
-        return
-    cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
-    scene.SetEnvironmentTexture(cubemap)
-    actor.GetProperty().SetInterpolationToPBR()
-    fs_dec_code = load('bxdf_dec.frag')
-    fs_impl_code = load('bxdf_impl.frag')
-    polydata = actor.GetMapper().GetInput()
-    verts = get_polydata_vertices(polydata)
-    faces = get_polydata_triangles(polydata)
-    normals = normals_from_v_f(verts, faces)
-    set_polydata_normals(polydata, normals)
-    shader_to_actor(actor, 'fragment', decl_code=fs_dec_code)
-    shader_to_actor(actor, 'fragment', impl_code=fs_impl_code,
-                    block='light', debug=False)
+    # fetch_viz_cubemaps()
+    textures = read_viz_cubemap('skybox')
+    # textures = read_viz_cubemap('brudslojan')
+    cubemap = load_cubemap_texture(textures)
+    # scene.SetEnvironmentTexture(cubemap)
+    doa = [0, 1, .5]
+    normals = normals_from_actor(actor)
+    tangents = tangents_from_direction_of_anisotropy(normals, doa)
+    tangents_to_actor(actor, tangents)
+    scene = window.Scene(skybox=cubemap)
+    material.manifest_pbr(actor)
+    scene.add(actor)
+    # pbr_params = material.manifest_pbr(actor)
+    # scene.UseImageBasedLightingOn()
+    # dir_path = os.path.dirname(os.path.realpath(__file__))
+    # cube_path = os.path.join(dir_path, 'skybox0')
+    # if not os.path.isdir(cube_path):
+    #     print('This path does not exist:', cube_path)
+    #     return
+    # cubemap = io.read_cubemap(cube_path, '/', '.jpg', 0)
+    # scene.SetEnvironmentTexture(cubemap)
 
-    actor.GetProperty().SetColor(255, 255, 255)
-    actor.GetProperty().SetMetallic(universem.metallic)
-    actor.GetProperty().SetRoughness(universem.roughness)
-    actor.GetProperty().SetOpacity(universem.opacity)
+    # actor.GetProperty().SetInterpolationToPBR()
+    # fs_dec_code = load('bxdf_dec.frag')
+    # fs_impl_code = load('bxdf_impl.frag')
+    # polydata = actor.GetMapper().GetInput()
+    # verts = get_polydata_vertices(polydata)
+    # faces = get_polydata_triangles(polydata)
+    # normals = normals_from_v_f(verts, faces)
+    # set_polydata_normals(polydata, normals)
+    # shader_to_actor(actor, 'fragment', decl_code=fs_dec_code)
+    # shader_to_actor(actor, 'fragment', impl_code=fs_impl_code,
+    #                 block='light', debug=False)
 
-    def uniforms_callback(_caller, _event, calldata=None):
-        if calldata is not None:
-            calldata.SetUniformf('subsurface', universem.subsurface)
-            calldata.SetUniformf('specularTint', universem.specular_tint)
-            calldata.SetUniformf('anisotropic', universem.anisotropic)
-            calldata.SetUniformf('sheen', universem.sheen)
-            calldata.SetUniformf('sheenTint', universem.sheen_tint)
-            calldata.SetUniformf('clearcoat', universem.clearcoat)
-            calldata.SetUniformf('clearcoatGloss', universem.clearcoat_gloss)
+    # actor.GetProperty().SetColor(255, 255, 255)
+    # actor.GetProperty().SetMetallic(universem.metallic)
+    # actor.GetProperty().SetRoughness(universem.roughness)
+    # actor.GetProperty().SetOpacity(universem.opacity)
 
-    add_shader_callback(actor, uniforms_callback)
+    # def uniforms_callback(_caller, _event, calldata=None):
+    #     if calldata is not None:
+    #         calldata.SetUniformf('subsurface', universem.subsurface)
+    #         calldata.SetUniformf('specularTint', universem.specular_tint)
+    #         calldata.SetUniformf('anisotropic', universem.anisotropic)
+    #         calldata.SetUniformf('sheen', universem.sheen)
+    #         calldata.SetUniformf('sheenTint', universem.sheen_tint)
+    #         calldata.SetUniformf('clearcoat', universem.clearcoat)
+    #         calldata.SetUniformf('clearcoatGloss', universem.clearcoat_gloss)
+
+    # add_shader_callback(actor, uniforms_callback)
 
 class Viewer3D(QtWidgets.QWidget):
     """ Basic 3D viewer widget
