@@ -5,7 +5,6 @@ from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
-# from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
@@ -39,7 +38,6 @@ def sky_box_effect(scene, actor, universem):
     shader_to_actor(actor, 'fragment', impl_code=fs_impl_code,
                     block='light', debug=False)
 
-    # colors_sky = window.vtk.vtkNamedColors()
     actor.GetProperty().SetColor(255, 255, 255)
     actor.GetProperty().SetMetallic(universem.metallic)
     actor.GetProperty().SetRoughness(universem.roughness)
