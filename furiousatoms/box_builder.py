@@ -1,7 +1,7 @@
 from furiousatoms import io
 from fury import window, utils
 from PySide2 import QtWidgets
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+# from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.structure import bbox
 
 """
