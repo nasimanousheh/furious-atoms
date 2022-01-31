@@ -10,10 +10,8 @@ from fury import disable_warnings
 disable_warnings()
 
 # 3rd Party package
-import vtk
 import numpy as np
 from fury import window, actor, utils, pick, ui, primitive
-from fury.utils import numpy_to_vtk_points
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QActionEvent, QIcon
@@ -837,18 +835,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
-            # open_initial_structure = True
-            # if open_initial_structure is True:
-            #     SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
-            #     first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
-            #     second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
-            #     SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
-            #     SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
-            #     points_array_bonds = np.vstack(SM.bonds)
-
-            #     # Set Points to vtk array format
-            #     vtk_points2 = numpy_to_vtk_points(points_array_bonds)
-            #     SM.bond_actor.poly_data.SetPoints(vtk_points2)
 
             self.ui.Timer_animation.setValue(SM.cnt)
             self.ui.Edit_framenumber.setText(str(SM.cnt))
