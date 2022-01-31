@@ -1,22 +1,6 @@
-import vtk
 import numpy as np
 from fury import actor
 
-
-def mobius():
-    uResolution = 51
-    vResolution = 51
-    surface = vtk.vtkParametricMobius()
-    surface.SetMinimumV(-0.25)
-    surface.SetMaximumV(0.25)
-
-    source = vtk.vtkParametricFunctionSource()
-    source.SetUResolution(uResolution)
-    source.SetVResolution(vResolution)
-    source.SetParametricFunction(surface)
-    source.Update()
-
-    return source
 
 
 def bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0),
