@@ -6,7 +6,8 @@ import furiousatoms
 
 from PySide2 import QtCore, QtUiTools
 import MDAnalysis
-import vtk
+
+from fury.lib import Texture, ImageReader2Factory, ImageFlip
 
 
 def is_frozen():
@@ -197,7 +198,7 @@ def read_cubemap(folderRoot, fileRoot, ext, key):
     else:
         print('ReadCubeMap(): invalid key, unable to continue.')
         sys.exit()
-    texture = vtk.vtkTexture()
+    texture = Texture()
     texture.CubeMapOn()
     # Build the file names.
     for i in range(0, len(fns)):
@@ -208,11 +209,11 @@ def read_cubemap(folderRoot, fileRoot, ext, key):
     i = 0
     for fn in fns:
         # Read the images
-        readerFactory = vtk.vtkImageReader2Factory()
+        readerFactory = ImageReader2Factory()
         imgReader = readerFactory.CreateImageReader2(fn)
         imgReader.SetFileName(fn)
 
-        flip = vtk.vtkImageFlip()
+        flip = ImageFlip
         flip.SetInputConnection(imgReader.GetOutputPort())
         flip.SetFilteredAxis(1)  # flip y axis
         texture.SetInputConnection(i, flip.GetOutputPort(0))
