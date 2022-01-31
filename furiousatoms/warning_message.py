@@ -1,12 +1,10 @@
 from furiousatoms import io
-import vtk
 import numpy as np
 from fury import window, actor, utils, pick, ui
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 import sys
 from io import StringIO
 from functools import cmp_to_key
