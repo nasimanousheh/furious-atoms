@@ -70,7 +70,7 @@ class UniverseManager:
         self.metallic = 0.0
         self.specular = 0.0
         self.specular_tint = 0.0
-        self.anisotropic = 1.0
+        self.anisotropic = 0.0
         self.sheen = 0.0
         self.sheen_tint = 0.0
         self.clearcoat = 1.0
@@ -78,6 +78,8 @@ class UniverseManager:
         self.subsurface = 0.0
         self.clearcoat_gloss = 1.0
         self.selected_value_radius = 0.0
+        self.pbr_params_sphere = None
+        self.pbr_params_bond = None
 
     @property
     def no_atoms(self):
