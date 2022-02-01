@@ -10,10 +10,8 @@ from fury import disable_warnings
 disable_warnings()
 
 # 3rd Party package
-import vtk
 import numpy as np
-from fury import window, actor, utils, pick, ui, primitive
-from fury.utils import numpy_to_vtk_points
+from fury import window, actor, utils, pick, ui, primitive, material
 from PySide2 import QtCore
 from PySide2 import QtGui
 from PySide2.QtGui import QActionEvent, QIcon
@@ -151,8 +149,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.anisotropic = anisotropic_degree/100
-        utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
+        SM.pbr_params_sphere.anisotropy = SM.anisotropic
+        SM.pbr_params_bond.anisotropy = SM.anisotropic
+        # utils.update_actor(SM.sphere_actor)
+        # utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_clearcoat(self, clearcoat_degree):
@@ -217,10 +217,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.metallic = metallic_degree/100
-        SM.sphere_actor.GetProperty().SetMetallic(SM.metallic)
-        SM.bond_actor.GetProperty().SetMetallic(SM.metallic)
-        utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
+        # SM.sphere_actor.GetProperty().SetMetallic(SM.metallic)
+        # SM.bond_actor.GetProperty().SetMetallic(SM.metallic)
+        # utils.update_actor(SM.sphere_actor)
+        # utils.update_actor(SM.bond_actor)
+
+        SM.pbr_params_sphere.metallic = SM.metallic
+        # SM.pbr_params_bond.metallic = SM.metallic
+        # utils.update_actor(SM.sphere_actor)
+        # utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def change_slice_roughness(self, roughness_degree):
@@ -229,10 +234,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.roughness = roughness_degree/100
-        SM.sphere_actor.GetProperty().SetRoughness(SM.roughness)
-        SM.bond_actor.GetProperty().SetRoughness(SM.roughness)
-        utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
+        # SM.sphere_actor.GetProperty().SetRoughness(SM.roughness)
+        # SM.bond_actor.GetProperty().SetRoughness(SM.roughness)
+
+        # pbr_params_sphere = material.manifest_pbr(SM.sphere_actor)
+        SM.pbr_params_sphere.roughness = SM.roughness
+        # SM.pbr_params_bond.roughness = SM.roughness
+        # utils.update_actor(SM.sphere_actor)
+        # utils.update_actor(SM.bond_actor)
         active_window.render()
 
     def slotZoomIn(self):
@@ -290,7 +299,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        sky_box_effect(active_window.scene, SM.sphere_actor, SM)
+        # SM.pbr_params_sphere = sky_box_effect(active_window.scene, SM.sphere_actor, SM)
         active_window.render()
 
     def change_particle_shape(self):
@@ -745,6 +754,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
+        SM.pbr_params_sphere = sky_box_effect(active_window.scene, SM.sphere_actor, SM)
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
@@ -782,6 +792,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             pass
         try:
             if SM.no_bonds > 0:
+                SM.pbr_params_bond = sky_box_effect(active_window.scene, SM.bond_actor, SM)
                 self.ui.Box_bonds.stateChanged.disconnect(self.check_bonds)
         except RuntimeError:
             pass
@@ -837,18 +848,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
-            # open_initial_structure = True
-            # if open_initial_structure is True:
-            #     SM.bonds_initial_structure = SM.universe_initial_structure.bonds.to_indices()
-            #     first_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 0])]
-            #     second_pos_bond = SM.pos[(SM.bonds_initial_structure[:, 1])]
-            #     SM.bonds_initial_structure = np.hstack((first_pos_bond, second_pos_bond))
-            #     SM.bonds = SM.bonds_initial_structure.reshape((SM.no_bonds), 2, 3)
-            #     points_array_bonds = np.vstack(SM.bonds)
-
-            #     # Set Points to vtk array format
-            #     vtk_points2 = numpy_to_vtk_points(points_array_bonds)
-            #     SM.bond_actor.poly_data.SetPoints(vtk_points2)
 
             self.ui.Timer_animation.setValue(SM.cnt)
             self.ui.Edit_framenumber.setText(str(SM.cnt))

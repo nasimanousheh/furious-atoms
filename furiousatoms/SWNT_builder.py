@@ -8,8 +8,6 @@ import numpy as np
 from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import create_universe, merged_universe_with_H
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-
 
 thre = 1e-10
 vacuum = 4

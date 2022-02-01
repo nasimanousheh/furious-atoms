@@ -6,7 +6,6 @@ from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
 from furiousatoms.sharedmem import SharedMemory
 import sys
 from furiousatoms import io
-import vtk
 import numpy as np
 from fury import window, actor, utils, pick, ui, primitive
 from PySide2 import QtCore
@@ -14,7 +13,6 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from furiousatoms.io import create_universe, merged_universe_with_H
-from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.structure import bbox
 import MDAnalysis
 import os

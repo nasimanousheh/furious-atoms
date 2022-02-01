@@ -6,7 +6,6 @@ from itertools import product
 from furiousatoms.geomlib import Atom, Molecule
 import io
 from furiousatoms import io
-import vtk
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
