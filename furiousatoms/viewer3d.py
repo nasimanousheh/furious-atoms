@@ -162,7 +162,7 @@ class Viewer3D(QtWidgets.QWidget):
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
-        self.pbr_params_sphere = sky_box_effect_atom(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
+        self.pbr_params_atom = sky_box_effect_atom(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
         self.pbr_params_bond = sky_box_effect_bond(self.scene, self.universe_manager.bond_actor, self.universe_manager)
 
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
