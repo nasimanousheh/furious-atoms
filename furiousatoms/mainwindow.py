@@ -21,7 +21,7 @@ import MDAnalysis
 from numpy.linalg import norm
 import sys
 import furiousatoms.forms.icons
-from furiousatoms.viewer3d import Viewer3D, sky_box_effect
+from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
@@ -29,6 +29,9 @@ from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
+from fury.utils import (get_actor_from_primitive, normals_from_actor,
+                        tangents_to_actor, update_polydata_normals,
+                        tangents_from_direction_of_anisotropy)
 
 
 class FuriousAtomsApp(QtWidgets.QMainWindow):
@@ -104,12 +107,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
         self.ui.horizontalSlider_Anisotropic.valueChanged[int].connect(self.change_slice_anisotropic)
-        self.ui.horizontalSlider_Clearcoat.valueChanged[int].connect(self.change_slice_clearcoat)
-        self.ui.horizontalSlider_Clearcoat_gloss.valueChanged[int].connect(self.change_slice_clearcoat_gloss)
-        self.ui.horizontalSlider_Sheen.valueChanged[int].connect(self.change_slice_sheen)
-        self.ui.horizontalSlider_Sheen_tint.valueChanged[int].connect(self.change_slice_sheen_tint)
-        self.ui.horizontalSlider_Specular_tint.valueChanged[int].connect(self.change_slice_specular_tint)
-        self.ui.horizontalSlider_Sub_surface.valueChanged[int].connect(self.change_slice_subsurface)
+        self.ui.horizontalSlider_Anisotropic_rot.valueChanged[int].connect(self.change_slice_anisotropic_rot)
+        self.ui.horizontalSlider_Anisotropic_X.valueChanged[int].connect(self.change_slice_anisotropic_X)
+        self.ui.horizontalSlider_Anisotropic_Y.valueChanged[int].connect(self.change_slice_anisotropic_Y)
+        self.ui.horizontalSlider_Anisotropic_Z.valueChanged[int].connect(self.change_slice_anisotropic_Z)
+        self.ui.horizontalSlider_Coat_strength.valueChanged[int].connect(self.change_slice_Coat_strength)
+        self.ui.horizontalSlider_Coat_roughness.valueChanged[int].connect(self.change_slice_Coat_rough)
 
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
@@ -137,10 +140,34 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetOpacity(SM.opacity)
-        SM.bond_actor.GetProperty().SetInterpolationToPBR()
-        SM.bond_actor.GetProperty().SetOpacity(SM.opacity)
+
         utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
+        if SM.no_bonds > 0:
+            SM.bond_actor.GetProperty().SetInterpolationToPBR()
+            SM.bond_actor.GetProperty().SetOpacity(SM.opacity)
+            utils.update_actor(SM.bond_actor)
+        active_window.render()
+
+    def change_slice_metallic(self, metallic_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.metallic = metallic_degree/100
+        SM.pbr_params_atom.metallic = SM.metallic
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.metallic = SM.metallic
+        active_window.render()
+
+    def change_slice_roughness(self, roughness_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.roughness = roughness_degree/100
+        SM.pbr_params_atom.roughness = SM.roughness
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.roughness = SM.roughness
         active_window.render()
 
     def change_slice_anisotropic(self, anisotropic_degree):
@@ -149,10 +176,66 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.anisotropic = anisotropic_degree/100
-        SM.pbr_params_sphere.anisotropy = SM.anisotropic
-        SM.pbr_params_bond.anisotropy = SM.anisotropic
-        # utils.update_actor(SM.sphere_actor)
-        # utils.update_actor(SM.bond_actor)
+        SM.pbr_params_atom.anisotropy = SM.anisotropic
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.anisotropy = SM.anisotropic
+        active_window.render()
+
+    def change_slice_anisotropic_rot(self, anisotropic_rot_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.anisotropic_rot = anisotropic_rot_degree/100
+        SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.anisotropy_rotation = SM.anisotropic_rot
+        active_window.render()
+
+    def change_slice_anisotropic_X(self, anisotropic_X_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.anisotropic_X = anisotropic_X_degree/100
+        doa = [0, 1, .5]
+        doa[0] = SM.anisotropic_X
+        polydata = SM.sphere_actor.GetMapper().GetInput()
+        update_polydata_normals(polydata)
+        normals = normals_from_actor(SM.sphere_actor)
+        tangents = tangents_from_direction_of_anisotropy(normals, doa)
+        tangents_to_actor(SM.sphere_actor, tangents)
+        active_window.render()
+
+    def change_slice_anisotropic_Y(self, anisotropic_Y_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM.anisotropic_Y = anisotropic_Y_degree/100
+        doa = [0, 1, .5]
+        doa[1] = SM.anisotropic_Y
+        polydata = SM.sphere_actor.GetMapper().GetInput()
+        update_polydata_normals(polydata)
+        normals = normals_from_actor(SM.sphere_actor)
+        tangents = tangents_from_direction_of_anisotropy(normals, doa)
+        tangents_to_actor(SM.sphere_actor, tangents)
+        active_window.render()
+
+    def change_slice_anisotropic_Z(self, anisotropic_Z_degree):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        SM = active_window.universe_manager
+        SM.anisotropic_Z = anisotropic_Z_degree/100
+        doa = [0, 1, .5]
+        doa[2] = SM.anisotropic_Z
+        polydata = SM.sphere_actor.GetMapper().GetInput()
+        update_polydata_normals(polydata)
+        normals = normals_from_actor(SM.sphere_actor)
+        tangents = tangents_from_direction_of_anisotropy(normals, doa)
+        tangents_to_actor(SM.sphere_actor, tangents)
         active_window.render()
 
     def change_slice_clearcoat(self, clearcoat_degree):
@@ -192,56 +275,26 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
         active_window.render()
-    def change_slice_specular_tint(self, sheen_specular_degree):
+
+    def change_slice_Coat_rough(self, coat_rough_degree):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.specular_tint = sheen_specular_degree/100
-        utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
+        SM.coat_rough = coat_rough_degree/100
+        SM.pbr_params_atom.coat_roughness = SM.coat_rough
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.coat_roughness = SM.coat_rough
         active_window.render()
-    def change_slice_subsurface(self, subsurface_degree):
+    def change_slice_Coat_strength(self, coat_strength_degree):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.sheen_tint = subsurface_degree/100
-        utils.update_actor(SM.sphere_actor)
-        utils.update_actor(SM.bond_actor)
-        active_window.render()
-
-    def change_slice_metallic(self, metallic_degree):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        SM.metallic = metallic_degree/100
-        # SM.sphere_actor.GetProperty().SetMetallic(SM.metallic)
-        # SM.bond_actor.GetProperty().SetMetallic(SM.metallic)
-        # utils.update_actor(SM.sphere_actor)
-        # utils.update_actor(SM.bond_actor)
-
-        SM.pbr_params_sphere.metallic = SM.metallic
-        # SM.pbr_params_bond.metallic = SM.metallic
-        # utils.update_actor(SM.sphere_actor)
-        # utils.update_actor(SM.bond_actor)
-        active_window.render()
-
-    def change_slice_roughness(self, roughness_degree):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        SM = active_window.universe_manager
-        SM.roughness = roughness_degree/100
-        # SM.sphere_actor.GetProperty().SetRoughness(SM.roughness)
-        # SM.bond_actor.GetProperty().SetRoughness(SM.roughness)
-
-        # pbr_params_sphere = material.manifest_pbr(SM.sphere_actor)
-        SM.pbr_params_sphere.roughness = SM.roughness
-        # SM.pbr_params_bond.roughness = SM.roughness
-        # utils.update_actor(SM.sphere_actor)
-        # utils.update_actor(SM.bond_actor)
+        SM.coat_strength = coat_strength_degree/100
+        SM.pbr_params_atom.coat_strength = SM.coat_strength
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond.coat_strength = SM.coat_strength
         active_window.render()
 
     def slotZoomIn(self):
@@ -299,7 +352,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        # SM.pbr_params_sphere = sky_box_effect(active_window.scene, SM.sphere_actor, SM)
+        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, SM)
         active_window.render()
 
     def change_particle_shape(self):
@@ -754,18 +807,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.pbr_params_sphere = sky_box_effect(active_window.scene, SM.sphere_actor, SM)
+        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, SM)
+        if SM.no_bonds > 0:
+            SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, SM)
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
         self.ui.horizontalSlider_Anisotropic.setValue(SM.anisotropic*100)
-        self.ui.horizontalSlider_Clearcoat.setValue(SM.clearcoat*100)
-
-        self.ui.horizontalSlider_Clearcoat_gloss.setValue(SM.clearcoat_gloss*100)
-        self.ui.horizontalSlider_Sheen.setValue(SM.sheen*100)
-        self.ui.horizontalSlider_Sheen_tint.setValue(SM.sheen_tint*100)
-        self.ui.horizontalSlider_Specular_tint.setValue(SM.specular_tint*100)
-        self.ui.horizontalSlider_Sub_surface.setValue(SM.subsurface*100)
+        self.ui.horizontalSlider_Anisotropic_rot.setValue(SM.anisotropic_rot*100)
+        self.ui.horizontalSlider_Anisotropic_X.setValue(SM.anisotropic_X*100)
+        self.ui.horizontalSlider_Anisotropic_Y.setValue(SM.anisotropic_Y*100)
+        self.ui.horizontalSlider_Anisotropic_Z.setValue(SM.anisotropic_Z*100)
+        self.ui.horizontalSlider_Coat_strength.setValue(SM.coat_strength*100)
+        self.ui.horizontalSlider_Coat_roughness.setValue(SM.coat_rough*100)
         self.ui.treeWidget.clear()
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
@@ -792,7 +846,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             pass
         try:
             if SM.no_bonds > 0:
-                SM.pbr_params_bond = sky_box_effect(active_window.scene, SM.bond_actor, SM)
                 self.ui.Box_bonds.stateChanged.disconnect(self.check_bonds)
         except RuntimeError:
             pass
