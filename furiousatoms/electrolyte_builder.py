@@ -121,8 +121,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
         self.elect.lineEdit_hydrogen_charge.text()
         try:
             ShM.total_water_inside = (int( ShM.box_lx/ spacing) * int( ShM.box_ly/ spacing) * int( ShM.box_lz/ spacing))
-            water_amount = float((ShM.box_lx/ spacing) *  (ShM.box_ly/ spacing) *  (ShM.box_lz/ spacing))
-            water_concentration = water_amount / (0.602214076 * ( ShM.box_lx) * ( ShM.box_ly) * ( ShM.box_lz- water_diameter) * 0.001)
+            water_concentration = ShM.total_water_inside  / (0.602214076 * ( ShM.box_lx) * ( ShM.box_ly) * ( ShM.box_lz - water_diameter) * 0.001)
         except ZeroDivisionError:
             ShM.total_water_inside = water_amount = water_concentration = 0
         self.elect.lineEdit_total_num_water.setText(str(ShM.total_water_inside))
@@ -501,7 +500,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
         print("total mesh points on each surface: ", len(ShM.wallR))
         print("charge on each meshpoint ", ShM.charge_meshpoint, " e")
         charge_system = ShM.charge_meshpoint * 2 * len(ShM.wallR) + counterions * valency_counterion
-        # charge_system = ShM.valency_counterion * ShM.counterions + total_surface_charge * 2.0
         print("recheck: total charge in the system ", counterions)
         if charge_system == 0:
             print("system is charge neutral again")
