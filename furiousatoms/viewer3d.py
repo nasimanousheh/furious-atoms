@@ -23,16 +23,20 @@ from fury.utils import (normals_from_actor, tangents_to_actor,
 
 def sky_box_effect(scene, actor, universem):
     # fetch_viz_cubemaps()
-    textures = read_viz_cubemap('skybox')
+    # textures = read_viz_cubemap('skybox')
     # textures = read_viz_cubemap('brudslojan')
-    cubemap = load_cubemap_texture(textures)
+    # cubemap = load_cubemap_texture(textures)
     # scene.SetEnvironmentTexture(cubemap)
+
     doa = [0, 1, .5]
-    normals = normals_from_actor(actor)
+    # normals = normals_from_actor(actor)
+    polydata = actor.GetMapper().GetInput()
+    verts = get_polydata_vertices(polydata)
+    faces = get_polydata_triangles(polydata)
+    normals = normals_from_v_f(verts, faces)
     tangents = tangents_from_direction_of_anisotropy(normals, doa)
     tangents_to_actor(actor, tangents)
-    scene = window.Scene(skybox=cubemap)
-    material.manifest_pbr(actor)
+    pbr_params = material.manifest_pbr(actor)
     scene.add(actor)
     # pbr_params = material.manifest_pbr(actor)
     # scene.UseImageBasedLightingOn()
@@ -72,6 +76,7 @@ def sky_box_effect(scene, actor, universem):
     #         calldata.SetUniformf('clearcoatGloss', universem.clearcoat_gloss)
 
     # add_shader_callback(actor, uniforms_callback)
+    return pbr_params
 
 class Viewer3D(QtWidgets.QWidget):
     """ Basic 3D viewer widget
@@ -107,7 +112,12 @@ class Viewer3D(QtWidgets.QWidget):
 
     def init_variables(self):
         self.is_untitled = True
-        self._scene = window.Scene()
+        fetch_viz_cubemaps()
+        textures = read_viz_cubemap('skybox')
+        cubemap = load_cubemap_texture(textures)
+        self._scene = window.Scene(skybox=cubemap)
+
+        # self._scene = window.Scene()
         self._showm = window.ShowManager(scene=self._scene,
                                          order_transparent=True)
         self._qvtkwidget = QVTKRenderWindowInteractor(
@@ -190,7 +200,8 @@ class Viewer3D(QtWidgets.QWidget):
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
-        sky_box_effect(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
+        self.pbr_params_sphere = sky_box_effect(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
+
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 

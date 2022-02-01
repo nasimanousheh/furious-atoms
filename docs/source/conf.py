@@ -142,7 +142,8 @@ html_additional_pages = {
     'swnt':'swnt.html',
     'swnt':'swnt.html',
     'mwnt':'mwnt.html',
-    'fullerene':'fullerene.html'
+    'fullerene':'fullerene.html',
+    'elect':'elect.html'
 }
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
