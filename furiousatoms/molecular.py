@@ -66,19 +66,18 @@ class UniverseManager:
         self.enable_timer = True
         self.cnt = 0
 
-        self.roughness = 0.0
-        self.metallic = 0.0
-        self.specular = 0.0
-        self.specular_tint = 0.0
+        self.roughness = 0.2
+        self.metallic = 0.2
         self.anisotropic = 0.0
-        self.sheen = 0.0
-        self.sheen_tint = 0.0
-        self.clearcoat = 1.0
         self.opacity = 1.0
-        self.subsurface = 0.0
-        self.clearcoat_gloss = 1.0
         self.selected_value_radius = 0.0
-        self.pbr_params_sphere = None
+        self.anisotropic_rot = 0.0
+        self.anisotropic_X = 0.0
+        self.anisotropic_Y = 0.0
+        self.anisotropic_Z = 0.0
+        self.coat_rough = 0
+        self.coat_strength = 0
+        self.pbr_params_atom = None
         self.pbr_params_bond = None
 
     @property
