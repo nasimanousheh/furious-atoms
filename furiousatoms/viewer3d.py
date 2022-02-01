@@ -116,6 +116,7 @@ class Viewer3D(QtWidgets.QWidget):
         textures = read_viz_cubemap('skybox')
         cubemap = load_cubemap_texture(textures)
         self._scene = window.Scene(skybox=cubemap)
+        self._scene.skybox(visible=False)
 
         # self._scene = window.Scene()
         self._showm = window.ShowManager(scene=self._scene,
