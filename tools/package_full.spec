@@ -6,6 +6,7 @@ import vtk
 import numpy
 import scipy
 import MDAnalysis
+from fury.data import DATA_DIR
 import furiousatoms
 import sys
 sys.setrecursionlimit(5000)
@@ -21,7 +22,8 @@ FA_PATH = pjoin(dirname(furiousatoms.__file__), os.pardir)
 added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (pjoin(FA_PATH, 'furiousatoms/languages'), 'languages'),
                (pjoin(FA_PATH, 'furiousatoms/resources'), 'resources'),
-               (pjoin(FA_PATH, 'furiousatoms/skybox0'), 'skybox0')
+               (pjoin(FA_PATH, 'furiousatoms/skybox0'), 'skybox0'),
+               (DATA_DIR, 'fury/data/files'),
               ]
 
 a = Analysis([pjoin(FA_PATH, 'bin/furious-atoms')],
