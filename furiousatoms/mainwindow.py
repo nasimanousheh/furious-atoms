@@ -140,7 +140,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetOpacity(SM.opacity)
-
         utils.update_actor(SM.sphere_actor)
         if SM.no_bonds > 0:
             SM.bond_actor.GetProperty().SetInterpolationToPBR()
@@ -205,6 +204,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         normals = normals_from_actor(SM.sphere_actor)
         tangents = tangents_from_direction_of_anisotropy(normals, doa)
         tangents_to_actor(SM.sphere_actor, tangents)
+        if SM.no_bonds > 0:
+            normals = normals_from_actor(SM.bond_actor)
+            tangents = tangents_from_direction_of_anisotropy(normals, doa)
+            tangents_to_actor(SM.bond_actor, tangents)
         active_window.render()
 
     def change_slice_anisotropic_Y(self, anisotropic_Y_degree):
@@ -220,13 +223,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         normals = normals_from_actor(SM.sphere_actor)
         tangents = tangents_from_direction_of_anisotropy(normals, doa)
         tangents_to_actor(SM.sphere_actor, tangents)
+        if SM.no_bonds > 0:
+            normals = normals_from_actor(SM.bond_actor)
+            tangents = tangents_from_direction_of_anisotropy(normals, doa)
+            tangents_to_actor(SM.bond_actor, tangents)
         active_window.render()
 
     def change_slice_anisotropic_Z(self, anisotropic_Z_degree):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
         SM = active_window.universe_manager
         SM.anisotropic_Z = anisotropic_Z_degree/100
         doa = [0, 1, .5]
@@ -236,6 +242,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         normals = normals_from_actor(SM.sphere_actor)
         tangents = tangents_from_direction_of_anisotropy(normals, doa)
         tangents_to_actor(SM.sphere_actor, tangents)
+        if SM.no_bonds > 0:
+            normals = normals_from_actor(SM.bond_actor)
+            tangents = tangents_from_direction_of_anisotropy(normals, doa)
+            tangents_to_actor(SM.bond_actor, tangents)
         active_window.render()
 
     def change_slice_clearcoat(self, clearcoat_degree):
