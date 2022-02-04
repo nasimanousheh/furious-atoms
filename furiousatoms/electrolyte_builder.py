@@ -507,7 +507,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
             print("system is not electroneutral; aborting...")
             self.show_warning_message_salt()
             return
-        file_name = 'many_particle.DATA'
+        file_name, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data)') #;;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
 
         # import tempfile
         # dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
@@ -592,8 +592,6 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
                 outdump.write("{}\t{}\t{}\t{}\t{}\n".format( n + 1, '1', (n + 2 + num_molecules + num_molecules), (n + 1 + num_molecules + num_molecules), (n + 3 + num_molecules + num_molecules)))
                 num_molecules = num_molecules + 1
 
-
         window = self.win.create_mdi_child()
         window.load_file(fname=file_name)
         window.show()
-        return file_name
