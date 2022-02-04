@@ -627,9 +627,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 universe.atoms.positions = SM.pos
                 n_residues = 1
                 atom_types_list = list(SM.atom_type)
-                universe.dimensions[0] = SM.box_lx
-                universe.dimensions[1] = SM.box_ly
-                universe.dimensions[2] = SM.box_lz
+                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+                    universe.dimensions[0] = 90
+                    universe.dimensions[1] = 90
+                    universe.dimensions[2] = 90
+                else:
+                    universe.dimensions[0] = SM.box_lx
+                    universe.dimensions[1] = SM.box_ly
+                    universe.dimensions[2] = SM.box_lz
                 universe.add_TopologyAttr('name', atom_types_list)
                 universe.add_TopologyAttr('type', atom_types_list)
                 universe.add_TopologyAttr('resname', ['MOL']*n_residues)
@@ -639,9 +644,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 except:
                     pass
                 universe.atoms.write(fname)
-
             else:
                 SM.universe_save.atoms.write(fname)
+
+            # with open(fname, 'r+') as fp:
+            #     lines = fp.readlines()
+            #     fp.seek(0)
+            #     fp.truncate()
+            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+            #         lines[0] = "Created by FURIOUS ATOMS. Box dimensions are 90x90x90 Å^3 by default\n"
+            #     else:
+            #         lines[0] = "Created by FURIOUS ATOMS.\n"
+            #     fp.writelines(lines[:])
+                # fp.writelines(lines[1:])
 
         # suffix = '.pdb'
         # fname = fname + suffix
