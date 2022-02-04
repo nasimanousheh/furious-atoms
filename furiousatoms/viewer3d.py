@@ -9,11 +9,6 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
-
-from fury.shaders import add_shader_callback, load, shader_to_actor
-from fury.utils import (get_polydata_triangles,
-                        get_polydata_vertices, normals_from_v_f,
-                        set_polydata_normals)
 from fury import window, actor, utils, pick, ui, primitive, material
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
@@ -163,7 +158,8 @@ class Viewer3D(QtWidgets.QWidget):
             self.scene.add(act)
 
         self.pbr_params_atom = sky_box_effect_atom(self.scene, self.universe_manager.sphere_actor, self.universe_manager)
-        self.pbr_params_bond = sky_box_effect_bond(self.scene, self.universe_manager.bond_actor, self.universe_manager)
+        if (len(self.universe_manager.universe.bonds)>0):
+            self.pbr_params_bond = sky_box_effect_bond(self.scene, self.universe_manager.bond_actor, self.universe_manager)
 
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
