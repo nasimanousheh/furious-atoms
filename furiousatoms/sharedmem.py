@@ -7,13 +7,9 @@ class SharedMemory(object):
 
         self.cnt = 0
         self.enable_timer = None
-        self.load_file = None
-        self.no_vertices_per_particle = 0
-        self.initial_vertices_particles = np.array([0, 0, 0.])
         self.n_frames = 0
         self.pos = None
         self.sphere_actor = None
-        self.all_vertices_particles = np.array([0, 0, 0.])
         self.box = None
         self.MainWindow = 0
         self.no_atoms = 0
@@ -30,17 +26,11 @@ class SharedMemory(object):
         self.colors_particles = 0
         self.set_value_radius = 0
         self.unique_types = None
-        self.metallicCoefficient_particle = 0
-        self.roughnessCoefficient_particle =0
         self.bond_center = 0
-
-
-
         self.bonds = 0
         self.bond_actor = None
         self.selected_bond = 0
         self.vcolors_bond = 0
-
         self.initial_vertices_bonds = 0
         self.all_vertices_bonds = 0
         self.sec_bond = 0
@@ -64,11 +54,8 @@ class SharedMemory(object):
         self.center_bond = None
         self.bond_type = None
         self.bond_length_MWNT = 0
-
         self.play_factor = 0
         self.bonds_initial_structure = 0
-        self.load_file_initial_structure = None
-
         #############File################
         self.universe = None
         self.H_termination_SWNT = None
@@ -86,37 +73,17 @@ class SharedMemory(object):
         self.valency_counterion = 0.0
         self.mass_counter = 0.0
         self.type_counter = None
-
         self.mass_cation_salt_1 = 0.0
         self.mass_anion_salt_1 = 0.0
-        self.mass_cat_3 = 0.0
-        self.mass_cat_4 = 0.0
-        self.mass_cat_5 = 0.0
         self.mass_an_1 = 0.0
         self.mass_an_2 = 0.0
-        self.mass_an_3 = 0.0
-        self.mass_an_4 = 0.0
-        self.mass_an_5 = 0.0
         self.charge_p_cation_salt_1 = 0.0
         self.charge_n_cation_salt_1 = 0.0
-        self.charge_cat_3 = 0.0
-        self.charge_cat_4 = 0.0
-        self.charge_cat_5 = 0.0
         self.charge_an_1 = 0.0
-        self.charge_an_2 = 0.0
-        self.charge_an_3 = 0.0
-        self.charge_an_4 = 0.0
-        self.charge_an_5 = 0.0
         self.type_cat_1 =  None
         self.type_cat_2 =  None
-        self.type_cat_3 =  None
-        self.type_cat_4 =  None
-        self.type_cat_5 =  None
         self.type_an_1 =  None
         self.type_an_2 =  None
-        self.type_an_3 =  None
-        self.type_an_4 =  None
-        self.type_an_5 =  None
         self.type_cation_salt_1 = None
         self.type_anion_salt_1 = None
         self.total_ions_inside = 0
@@ -125,16 +92,9 @@ class SharedMemory(object):
         self.total_n_cation_salt_1 = 0
         self.total_cation_salt_2 = 0
         self.total_anion_salt_2 = 0
-        self.total_cation_salt_3 = 0
-        self.total_anion_salt_3 = 0
-        self.total_cation_salt_4 = 0
-        self.total_anion_salt_4 = 0
         self.total_ions_inside = 0
         self.total_ions_concentration = 0
         self.wallR = None
-
-        self.con_an_5 = 0
-
         self.total_surface_charge = 0
         self.counterions = 0
         self.info_element = None
@@ -145,11 +105,5 @@ class SharedMemory(object):
         self.total_cation_salt_1 =0
         self.con_cation_salt_1 = 0
         self.con_cation_salt_2 = 0
-        self.con_cation_salt_3 = 0
-        self.con_cation_salt_4 = 0
         self.con_anion_salt_1 = 0
         self.con_anion_salt_2 = 0
-        self.con_anion_salt_3 = 0
-        self.con_anion_salt_4 = 0
-
-
