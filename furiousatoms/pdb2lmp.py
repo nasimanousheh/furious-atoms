@@ -1,29 +1,8 @@
-# Standard package
-from json import load
-import os
-import fnmatch
-
-# Local package
-from furiousatoms import io
 from fury import disable_warnings
-
 disable_warnings()
-
-# 3rd Party package
 import numpy as np
-from fury import window, actor, utils, pick, ui, primitive, material
-from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QActionEvent, QIcon
-from PySide2 import QtWidgets
-from PySide2.QtCore import QTimer
 import MDAnalysis
 
-
-from furiousatoms.fullerenes_builder import load_CC1_file
-from fury.utils import (get_actor_from_primitive, normals_from_actor,
-                        tangents_to_actor, update_polydata_normals,
-                        tangents_from_direction_of_anisotropy)
 
 def save_PDB2LMP(SM, file_name):
 
@@ -60,10 +39,10 @@ def save_PDB2LMP(SM, file_name):
     outdump.write("{}\t{}\t{} \n".format(-0.5* SM.box_lx, 0.5* SM.box_lx, ' xlo xhi'))
     outdump.write("{}\t{}\t{} \n".format(-0.5* SM.box_ly, 0.5* SM.box_ly, ' ylo yhi'))
     outdump.write("{}\t{}\t{} \n\n".format((-0.5* SM.box_lz), (0.5* SM.box_lz), ' zlo zhi'))
+    # if len(SM.unique_types) == len(mass_unique_types):
     outdump.write("Masses\n\n")
-
-    for i in range (len(SM.unique_types)):
-        outdump.write("{}\t{} \n".format(SM.unique_types[i], mass_unique_types[i]))
+    for i in range(len(SM.unique_types)):
+        outdump.write("{}\t{} \n".format(SM.unique_types[i], MDAnalysis.topology.guessers.guess_masses(SM.unique_types[i])[0]))
 
     outdump.write("\n")
     outdump.write("Atoms          # full\n\n")
