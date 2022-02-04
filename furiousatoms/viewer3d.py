@@ -9,11 +9,6 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
-
-from fury.shaders import add_shader_callback, load, shader_to_actor
-from fury.utils import (get_polydata_triangles,
-                        get_polydata_vertices, normals_from_v_f,
-                        set_polydata_normals)
 from fury import window, actor, utils, pick, ui, primitive, material
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
