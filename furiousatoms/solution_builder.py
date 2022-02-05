@@ -97,7 +97,10 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         # atom_type = ' '.join(SM.unique_types.tolist())
         # combined = combined.select_atoms("same resid as (not around 5 name C)")
         # print('atom type is: ', atom_type)
-        combined.atoms.write('C:/Users/nasim/OneDrive/Desktop/cnvert/hola.pdb')
+        import tempfile
+        dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
+        file_name = tempfile.mkstemp(suffix='.pdb', prefix='Fullerene', dir=dir_name)[1]
+        combined.atoms.write(file_name) #'C:/Users/nasim/OneDrive/Desktop/cnvert/hola.pdb')
         combined.universe.trajectory.ts.dimensions[0] = SM.box_lx
         combined.universe.trajectory.ts.dimensions[1] = SM.box_ly
         combined.universe.trajectory.ts.dimensions[2] = SM.box_lz
@@ -106,4 +109,4 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         active_window.scene.rm(SM.bond_actor)
         active_window.load_universe(combined)
         active_window.render()
-        return
+        return file_name
