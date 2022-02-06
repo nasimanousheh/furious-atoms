@@ -16,10 +16,12 @@ def load_CC1_file(fname, debug=False):
         frames_cnt += 1
 
     frames_cnt = 0
+    import tempfile
+    dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
+    file_name = tempfile.mkstemp(suffix='.pdb', prefix='Fullerene', dir=dir_name)[1]
     no_atoms = lammps_dix['index'][frames_cnt]['no_atoms']
     pos = lammps_dix['index'][frames_cnt]['coords'][:, 2:5]
     bonds = np.asarray(lammps_dix['index'][frames_cnt]['coords'][:, 6:9], dtype="i8")
-    file_name = 'fullerene.pdb'
     outdump = open(file_name, "w")
     outdump.write("CRYST1    1.000    1.000    1.000  90.00  90.00  90.00 P1\n")
     for i in range(no_atoms):
