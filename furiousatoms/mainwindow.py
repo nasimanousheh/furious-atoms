@@ -662,7 +662,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 lines = fp.readlines()
                 fp.seek(0)
                 fp.truncate()
-                lines[0] = "Created by FURIOUS ATOMS.\n"
+                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+                    lines[0] = "Created by FURIOUS ATOMS. By default the box dimensions are 90x90x90 cubic angstrom \n"
+                else:
+                    lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
 
         # suffix = '.pdb'
