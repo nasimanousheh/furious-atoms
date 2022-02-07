@@ -658,16 +658,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             else:
                 SM.universe_save.atoms.write(fname)
 
-            # with open(fname, 'r+') as fp:
-            #     lines = fp.readlines()
-            #     fp.seek(0)
-            #     fp.truncate()
-            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-            #         lines[0] = "Created by FURIOUS ATOMS. Box dimensions are 90x90x90 Å^3 by default\n"
-            #     else:
-            #         lines[0] = "Created by FURIOUS ATOMS.\n"
-            #     fp.writelines(lines[:])
-                # fp.writelines(lines[1:])
+            with open(fname, 'r+') as fp:
+                lines = fp.readlines()
+                fp.seek(0)
+                fp.truncate()
+                lines[0] = "Created by FURIOUS ATOMS.\n"
+                fp.writelines(lines[:])
 
         # suffix = '.pdb'
         # fname = fname + suffix
