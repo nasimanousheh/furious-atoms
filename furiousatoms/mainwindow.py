@@ -424,6 +424,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_box.box.win = self
         Ui_box.box.show()
         Ui_box.box.showNormal()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        Ui_box.box.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
 
     def solution_builder(self):
         Ui_solution.sol = Ui_solution()
