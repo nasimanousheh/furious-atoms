@@ -430,7 +430,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_solution.sol.win = self
         Ui_solution.sol.show()
         Ui_solution.sol.showNormal()
-        self.update_bonds_ui()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        Ui_solution.sol.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
+        Ui_solution.sol.show()
+        Ui_solution.sol.showNormal()
 
     def multiple_walls(self):
         Ui_MWNT.smnt = Ui_MWNT()
