@@ -101,7 +101,7 @@ def load_files(fname, debug=False):
     return load_file, no_bonds
 
 
-def create_universe(pos, bonds, atom_types):
+def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):
     num_atoms = pos.shape[0]
     universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
     universe.atoms.positions = pos
@@ -111,6 +111,9 @@ def create_universe(pos, bonds, atom_types):
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
     universe.add_TopologyAttr('masses')
+    universe.trajectory.ts.dimensions[0] = box_lx
+    universe.trajectory.ts.dimensions[1] = box_ly
+    universe.trajectory.ts.dimensions[2] = box_lz
     try:
         universe.add_bonds(bonds)
     except:
@@ -119,7 +122,7 @@ def create_universe(pos, bonds, atom_types):
     universe.atoms.positions -= cog
     return universe
 
-def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2):
+def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2, box_lx, box_ly, box_lz):
     num_atoms_1 = pos_uni_1.shape[0]
     universe_1 = MDAnalysis.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
     universe_1.atoms.positions = pos_uni_1
@@ -138,10 +141,13 @@ def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bo
     universe_2.add_TopologyAttr('type', atom_types_uni_2)
     universe_2.add_TopologyAttr('resname', ['MOL']*n_residues)
     merged_universes = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
+    merged_universes.trajectory.ts.dimensions[0] = box_lx
+    merged_universes.trajectory.ts.dimensions[1] = box_ly
+    merged_universes.trajectory.ts.dimensions[2] = box_lz
     merged_universes.add_bonds(universe_1.bonds.indices)
     return merged_universes
 
-def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2):
+def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2, box_lx, box_ly, box_lz):
     num_atoms_1 = pos_uni_1.shape[0]
     universe_1 = MDAnalysis.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
     universe_1.atoms.positions = pos_uni_1
@@ -162,6 +168,9 @@ def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, 
     merged_universe_Hyd = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
     merged_universe_Hyd.add_bonds(bonds_uni_1)
     merged_universe_Hyd.add_bonds(bonds_uni_2)
+    merged_universe_Hyd.trajectory.ts.dimensions[0] = box_lx
+    merged_universe_Hyd.trajectory.ts.dimensions[1] = box_ly
+    merged_universe_Hyd.trajectory.ts.dimensions[2] = box_lz
     cog = merged_universe_Hyd.atoms.center_of_geometry()
     merged_universe_Hyd.atoms.positions -= cog
     return merged_universe_Hyd
