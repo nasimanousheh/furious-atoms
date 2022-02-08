@@ -171,7 +171,7 @@
         <widget class="QLabel" name="label_avoid_overlap">
          <property name="font">
           <font>
-           <pointsize>9</pointsize>
+           <pointsize>10</pointsize>
           </font>
          </property>
          <property name="text">
