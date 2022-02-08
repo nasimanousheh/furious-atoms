@@ -117,7 +117,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
-        self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
+        self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
     def show_radius_value(self):
         active_window = self.active_mdi_child()
@@ -760,8 +760,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
-    # TODO: name potentially confusing is this really only about bonds?
-    def update_bonds_ui(self):
+    def update_information_ui(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
