@@ -8,10 +8,11 @@ import PyInstaller.__main__
 def create_installer(working_dir, use_debug=False):
     dist_dir = os.path.join(working_dir, 'installer_dist')
     build_dir = os.path.join(working_dir, 'installer_build')
-    spec_dir = os.path.abspath(os.path.dirname(__file__))
-    spec_file_rel = os.path.abspath(os.path.join(spec_dir, 'package.spec'))
+    spec_dir = os.path.dirname(os.path.realpath(__file__))
+    spec_file_rel = os.path.abspath(os.path.join(spec_dir,
+                                                 'package_full.spec'))
     spec_file_debug = os.path.abspath(os.path.join(spec_dir,
-                                                   'verbose_package.spec'))
+                                                   'package_verbose.spec'))
     spec_file = spec_file_debug if use_debug else spec_file_rel
     PyInstaller.__main__.run(['--distpath', dist_dir,
                               '--workpath', build_dir,
@@ -66,11 +67,12 @@ d_command = {"installer": create_installer,
 @click.option('--verbose', '-v', is_flag=True, help="Print more output.")
 @click.argument('name', type=click.Choice(d_command.keys()))
 def main(name=None, verbose=False):
-    current_dir = os.getcwd()
-    working_dir = os.path.abspath(os.path.join(__file__, os.pardir, os.pardir))
+    # current_dir = os.getcwd()
+    working_dir = os.path.dirname(os.path.realpath(__file__))
+    working_dir = os.path.join(working_dir, os.pardir)
     name = name.lower()
 
-    os.chdir(working_dir)
+    # os.chdir(working_dir)
 
     if name == 'installer':
         d_command.get(name)(working_dir, use_debug=verbose)
@@ -79,7 +81,7 @@ def main(name=None, verbose=False):
     else:
         d_command.get(name)()
 
-    os.chdir(current_dir)
+    # os.chdir(current_dir)
 
 
 if __name__ == "__main__":

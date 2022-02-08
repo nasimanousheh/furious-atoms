@@ -32,6 +32,7 @@ venv/
 *.spec
 installer_dist/
 installer_build/
+.qt_for_python/
 
 # Installer logs
 pip-log.txt
