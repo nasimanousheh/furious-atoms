@@ -1,14 +1,10 @@
 import numpy as np
-from numpy.linalg import norm
-from math import gcd
-from itertools import product
-from furiousatoms.geomlib import Atom, Molecule, Crystal, getfragments
 from furiousatoms.sharedmem import SharedMemory
-import sys
 from furiousatoms import io
 import numpy as np
-from fury import window
+from fury import window, utils
 from PySide2 import QtWidgets
+from furiousatoms.structure import bbox
 import MDAnalysis
 
 SM = SharedMemory()
@@ -25,7 +21,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.v_layout.addWidget(self.solution)
         self.setCentralWidget(self.solution)
         self.setLayout(self.v_layout)
-        self.resize(222, 202)
+        self.resize(280, 202)
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
@@ -35,15 +31,64 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         pass
 
     def create_connections(self):
+        self.solution.SpinBox_lx.valueChanged.connect(self.box_builder_callback)
+        self.solution.SpinBox_lx.valueChanged.connect(self.box_builder_callback)
+        self.solution.SpinBox_lz.valueChanged.connect(self.box_builder_callback)
         self.solution.pushButton_build_solution.clicked.connect(self.solution_builder_callback)
         self.solution.pushButton_build_solution.clicked.connect(lambda:self.close())
+        water_diameter = 3.1655
+        self.solution.lineEdit_water_dia.setText(str(water_diameter))
+        self.solution.SpinBox_space_dia.valueChanged.connect(self.initial_values)
+
+    def initial_box_dim(self, box_lx, box_ly, box_lz):
+        self.solution.SpinBox_lx.setValue(box_lx)
+        self.solution.SpinBox_lz.setValue(box_lz)
+        self.solution.lineEdit_ly.setText(str(box_ly))
+
+    def initial_values(self):
+        water_diameter = 3.1655
+        avoid_overlap = 2
+        spacing_dia = float(self.solution.SpinBox_space_dia.text())
+        spacing = spacing_dia * water_diameter
+        space_format = "{:.4f}".format(spacing)
+        self.solution.lineEdit_spacing.setText(str(space_format))
+        self.solution.lineEdit_water_dia.setText(str(water_diameter))
+        self.solution.SpinBox_avoid_overlap.setValue((avoid_overlap))
+
+    def box_builder_callback(self):
+        active_window = self.win.active_mdi_child()
+        SM = active_window.universe_manager
+        active_window.scene.rm(SM.bbox_actor)
+        box_lx = float(self.solution.SpinBox_lx.text())
+        box_ly = float(self.solution.SpinBox_lx.text())
+        box_lz = float(self.solution.SpinBox_lz.text())
+
+        self.solution.lineEdit_ly.setText(str(box_ly))
+        SM.universe.trajectory.ts.dimensions[0] = box_lx
+        SM.universe.trajectory.ts.dimensions[1] = box_ly
+        SM.universe.trajectory.ts.dimensions[2] = box_lz
+        SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
+        active_window.scene.add(SM.bbox_actor)
+        utils.update_actor(SM.bbox_actor)
+        SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        active_window.render()
+        active_window.show()
 
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
-        water_diameter = 3.16555789
-        spacing_dia = 0.98
+        water_diameter = 3.1655
+        try:
+            spacing_dia = float(self.solution.SpinBox_space_dia.text())
+        except:
+            spacing_dia = 0.98
+        try:
+            avoid_overlap = float(self.solution.SpinBox_avoid_overlap.text())
+        except:
+            avoid_overlap = 2
+
         spacing = spacing_dia * water_diameter
+        self.solution.lineEdit_spacing.setText(str(spacing))
         total_water_inside = int((int(SM.box_lx/spacing) * int(SM.box_ly/spacing) * int(SM.box_lz/spacing)))
         water_amount = (SM.box_lx/spacing * SM.box_ly/spacing * SM.box_lz/spacing)
         water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz-water_diameter) * 0.001)
@@ -53,7 +98,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
                         [ 0.95908, -0.02691, 0.03231],  # hydrogen
                         [-0.28004, -0.58767, 0.70556]]) # hydrogen
         coordinates = []
-        coor=[]
         num_molecul_in_box_lx = int(SM.box_lx / spacing)
         num_molecul_in_box_ly = int(SM.box_ly / spacing)
         num_molecul_in_box_lz = int(SM.box_lz / spacing)
@@ -71,7 +115,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
                         close = False
                         for p_n in range(len(SM.pos)):
                             dist = np.linalg.norm(xyz - SM.pos[p_n])
-                            if dist < 2:
+                            if dist < avoid_overlap:
                                 close = True
                                 print("close")
                                 break

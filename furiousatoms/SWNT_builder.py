@@ -43,9 +43,10 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder_callback)
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.pushButton_build_SWNT.clicked.connect(lambda:self.close())
+        self.SWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.SWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
     def SWNT_diameter_changed(self):
-        # H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
         bond_length_SWNT = float(bond_length_SWNT)
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
@@ -79,6 +80,13 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         window.make_title()
         window.load_universe(structure_info)
         window.show()
+    def initial_box_dim(self):
+        global box_lx, box_ly, box_lz
+        box_lx = float(self.SWNT.SpinBox_lx.text())
+        box_ly = float(self.SWNT.SpinBox_lx.text())
+        box_lz = float(self.SWNT.SpinBox_lz.text())
+        self.SWNT.lineEdit_ly.setText(str(box_ly))
+        return
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
@@ -87,6 +95,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
 """
 
 def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
+    global box_lx, box_ly, box_lz
     bond_length_hydrogen = 1.1
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
@@ -129,7 +138,11 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     assert coord_array_swnt.shape == (num_atoms_swnt, 3)
     # Bonds information connected the atoms:
     all_bonds_swnt = np.array(fragments['bonds'])
-    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt)
+    try:
+        box_lx or box_ly or box_lz
+    except NameError:
+        box_lx = box_ly = box_lz = 0.0
+    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, box_lx, box_ly, box_lz)
 
     # If the user chooses "None", only SWNT structure without hydrogens will be returned:
     if H_termination_SWNT == 'None':
@@ -221,7 +234,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                 one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
                 num_hydrogen = num_hydrogen + 1
     one_end_atom_types_H = list(['H']*num_hydrogen)
-    merged_swnt_one_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H)
+    merged_swnt_one_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H, box_lx, box_ly, box_lz)
 
     # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
     if H_termination_SWNT == 'One end':
@@ -300,7 +313,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
             num_hydrogen = num_hydrogen + 1
     # If the user chooses "Both ends", SWNT structure with both ends hydrogenated will be returned:
     two_end_atom_types_H = list(['H']*num_hydrogen)
-    merged_swnt_two_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H)
+    merged_swnt_two_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H, box_lx, box_ly, box_lz)
 
     if H_termination_SWNT == 'Both ends':
         return merged_swnt_two_end_H
