@@ -732,7 +732,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
                     for j in mem_block:
                         SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
-
+                SM.colors_backup_bond = SM.vcolors_bond.copy()
                 utils.update_actor(SM.bond_actor)
                 SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
@@ -754,6 +754,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             for object_index in object_indices_bonds:
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+        SM.colors_backup_bond = SM.vcolors_bond.copy()
         utils.update_actor(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
