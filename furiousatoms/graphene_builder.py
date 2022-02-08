@@ -34,21 +34,76 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
     def create_connections(self):
         bond_length_graphene = 1.421 # default value of C-C bond length
         self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
-        self.graphene.pushButton_build_graphene.clicked.connect(self.graphene_builder_callback)
-        self.graphene.pushButton_build_graphene.clicked.connect(lambda:self.close())
+        self.graphene.pushButton_build_graphene_1.clicked.connect(self.graphene_shape_regtang)
+        self.graphene.pushButton_build_graphene_1.clicked.connect(lambda:self.close())
+        self.graphene.pushButton_build_graphene_2.clicked.connect(self.graphene_shape_dimond)
+        self.graphene.pushButton_build_graphene_2.clicked.connect(lambda:self.close())
         self.graphene.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.graphene.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
+        self.graphene.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
+        self.graphene.radioButton_bond_length.toggled.connect(self.get_atom_type)
+        self.graphene.comboBox_type1_graphene.activated.connect(self.get_atom_type)
+        self.graphene.comboBox_type2_graphene.activated.connect(self.get_atom_type)
 
-    def graphene_builder_callback(self):
+    def get_atom_type(self):
+        global bond_length_graphene
+        if self.graphene.radioButton_bond_length.isChecked() == True:
+            self.graphene.SpinBox_desired_bond_length.setEnabled(False)
+            graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
+            graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
+            if graphene_type_1=="C" and graphene_type_2=="C":
+                bond_length_graphene = 1.421 # default value of C-C bond length
+            if graphene_type_1=="N" and graphene_type_2=="B":
+                bond_length_graphene = 1.47 # default value of N-B bond length
+            if graphene_type_1=="N" and graphene_type_2=="Ga":
+                bond_length_graphene = 1.95 # default value of N-Ga bond length
+            if graphene_type_1=="N" and graphene_type_2=="Al":
+                bond_length_graphene = 1.83 # default value of N-Al bond length
+            if graphene_type_1=="P" and graphene_type_2=="Al":
+                bond_length_graphene = 2.3 # default value of P-Al bond length
+            if graphene_type_1=="P" and graphene_type_2=="Ga":
+                bond_length_graphene = 2.28 # default value of P-Ga bond length
+            if graphene_type_1=="P" and graphene_type_2=="C":
+                bond_length_graphene = 1.87 # default value of P-C bond length
+            if graphene_type_1=="N" and graphene_type_2=="C":
+                bond_length_graphene = 1.47 # default value of N-C bond length
+            if graphene_type_1=="C" and graphene_type_2=="B":
+                bond_length_graphene = 1.56 # default value of C-B bond length
+            if graphene_type_1=="C" and graphene_type_2=="Al":
+                bond_length_graphene = 2.0 # default value of C-Al bond length
+            if graphene_type_1=="C" and graphene_type_2=="Ga":
+                bond_length_graphene = 2.46 # default value of P-B bond length
+            if graphene_type_1=="P" and graphene_type_2=="B":
+                bond_length_graphene = 1.74 # default value of P-B bond length
+            self.graphene.lineEdit_bond_length_graphene.setText(str(bond_length_graphene))
+
+        elif self.graphene.radioButton_desired_bond_length.isChecked() == True:
+            self.graphene.lineEdit_bond_length_graphene.setText(str(' '))
+            self.graphene.SpinBox_desired_bond_length.setEnabled(True)
+            bond_length_graphene = float(self.graphene.SpinBox_desired_bond_length.text())
+        else:
+            bond_length_graphene = 1.421
+
+    def graphene_shape_dimond(self):
+        graphene_shape=True
+        self.graphene_builder_callback(graphene_shape)
+    def graphene_shape_regtang(self):
+        graphene_shape=False
+        self.graphene_builder_callback(graphene_shape)
+
+    def graphene_builder_callback(self, graphene_shape):
+        global bond_length_graphene
+        try:
+            bond_length_graphene
+        except NameError:
+            bond_length_graphene = 1.421
         H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
-        bond_length_graphene = self.graphene.lineEdit_bond_length_graphene.text()
-        bond_length_graphene = float(bond_length_graphene)
         value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
         value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
         repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
-        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), centered=True)
+        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
@@ -67,7 +122,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
+def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
     global box_lx, box_ly, box_lz
     bond_length_hydrogen = 1.1
     thre = 1e-10
@@ -75,7 +130,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    dimond_sheet = False
+    # dimond_sheet = True #False
     if dimond_sheet is True:
         a1 = np.array((np.sqrt(3)*bond_length,0,0))
         a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
