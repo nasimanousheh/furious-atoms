@@ -467,7 +467,7 @@ number,symbol,name,vdw radius,covalent radius,mass,ionization energy
 2,He,helium,1.4,0.32,4.0026,24.5874
 3,Li,lithium,1.82,1.34,6.941,5.3917
 4,Be,beryllium,1.53,0.9,9.0122,9.3227
-5,B,boron,1.92,0.82,10.811,8.298
+5,B,boron,1.92,0.85,10.811,8.298
 6,C,carbon,1.7,0.77,12.0107,11.2603
 7,N,nitrogen,1.55,0.75,14.0067,14.5341
 8,O,oxygen,1.52,0.73,15.9994,13.6181
@@ -475,9 +475,9 @@ number,symbol,name,vdw radius,covalent radius,mass,ionization energy
 10,Ne,neon,1.54,0.69,20.1797,21.5645
 11,Na,sodium,2.27,1.54,22.9897,5.1391
 12,Mg,magnesium,1.73,1.3,24.305,7.6462
-13,Al,aluminium,1.84,1.18,26.9815,5.9858
+13,Al,aluminium,1.84,1.3,26.9815,5.9858
 14,Si,silicon,2.1,1.11,28.0855,8.1517
-15,P,phosphorus,1.8,1.06,30.9738,10.4867
+15,P,phosphorus,1.8,1.11,30.9738,10.4867
 16,S,sulfur,1.8,1.02,32.065,10.36
 17,Cl,chlorine,1.75,0.99,35.453,12.9676
 18,Ar,argon,1.88,0.97,39.948,15.7596
@@ -493,7 +493,7 @@ number,symbol,name,vdw radius,covalent radius,mass,ionization energy
 28,Ni,nickel,1.63,1.21,58.6934,7.6398
 29,Cu,copper,1.4,1.38,63.546,7.7264
 30,Zn,zinc,1.39,1.31,65.39,9.3942
-31,Ga,gallium,1.87,1.26,69.723,5.9993
+31,Ga,gallium,1.87,1.70,69.723,5.9993
 32,Ge,germanium,2.11,1.22,72.64,7.8994
 33,As,arsenic,1.85,1.19,74.9216,9.7886
 34,Se,selenium,1.9,1.16,78.96,9.7524
