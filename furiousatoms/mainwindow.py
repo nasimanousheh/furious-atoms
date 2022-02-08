@@ -424,13 +424,24 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_box.box.win = self
         Ui_box.box.show()
         Ui_box.box.showNormal()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        Ui_box.box.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
 
     def solution_builder(self):
         Ui_solution.sol = Ui_solution()
         Ui_solution.sol.win = self
         Ui_solution.sol.show()
         Ui_solution.sol.showNormal()
-        self.update_bonds_ui()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        Ui_solution.sol.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
+        Ui_solution.sol.show()
+        Ui_solution.sol.showNormal()
 
     def multiple_walls(self):
         Ui_MWNT.smnt = Ui_MWNT()
@@ -647,16 +658,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             else:
                 SM.universe_save.atoms.write(fname)
 
-            # with open(fname, 'r+') as fp:
-            #     lines = fp.readlines()
-            #     fp.seek(0)
-            #     fp.truncate()
-            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-            #         lines[0] = "Created by FURIOUS ATOMS. Box dimensions are 90x90x90 Å^3 by default\n"
-            #     else:
-            #         lines[0] = "Created by FURIOUS ATOMS.\n"
-            #     fp.writelines(lines[:])
-                # fp.writelines(lines[1:])
+            with open(fname, 'r+') as fp:
+                lines = fp.readlines()
+                fp.seek(0)
+                fp.truncate()
+                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+                    lines[0] = "Created by FURIOUS ATOMS. By default the box dimensions are 90x90x90 cubic angstrom \n"
+                else:
+                    lines[0] = "Created by FURIOUS ATOMS.\n"
+                fp.writelines(lines[:])
 
         # suffix = '.pdb'
         # fname = fname + suffix

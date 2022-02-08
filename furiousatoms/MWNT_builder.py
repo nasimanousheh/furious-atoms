@@ -9,6 +9,8 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
+from fury import window, utils
+from furiousatoms.structure import bbox
 
 thre = 1e-10
 vacuum = 4
@@ -41,6 +43,9 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
         self.MWNT.pushButton_build_MWNT.clicked.connect(lambda:self.close())
         self.MWNT.spinBox_num_walls_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.MWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
+
 
     def MWNT_diameter_changed(self):
         global bond_length_MWNT
@@ -71,10 +76,21 @@ class Ui_MWNT(QtWidgets.QMainWindow):
 
         self.MWNT.lineEdit_wall_separation_MWNT.setText(str(wall_separation))
 
-
+    def initial_box_dim(self):
+        global box_lx, box_ly, box_lz
+        box_lx = float(self.MWNT.SpinBox_lx.text())
+        box_ly = float(self.MWNT.SpinBox_lx.text())
+        box_lz = float(self.MWNT.SpinBox_lz.text())
+        self.MWNT.lineEdit_ly.setText(str(box_ly))
+        return
 
     def MWNT_builder_callback(self):
-        global bond_length_MWNT
+        global bond_length_MWNT, box_lx, box_ly, box_lz
+        try:
+            box_lx or box_ly or box_lz
+        except NameError:
+            box_lx = box_ly = box_lz = 0.0
+
         number_of_walls = int(self.MWNT.spinBox_num_walls_MWNT.text())
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
@@ -89,7 +105,12 @@ class Ui_MWNT(QtWidgets.QMainWindow):
             next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1)
             xyz.extend(next_universe.universe.atoms.positions)
             type_atoms.extend(next_universe.atoms.types)
-            universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types)
+            # try:
+            universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+            # except NameError:
+            #     box_lx = box_ly = box_lz = 0.0
+                # universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(universe_all)
@@ -102,6 +123,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
 """
 
 def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
+    global box_lx, box_ly, box_lz
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
@@ -140,5 +162,11 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (n_atoms_swnt, 3)
     all_bonds_swnt = np.array(fragments['bonds'])
-    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt)
+
+    try:
+        box_lx or box_ly or box_lz
+    except NameError:
+        box_lx = box_ly = box_lz = 0.0
+
+    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, box_lx, box_ly, box_lz)
     return univ_swnt

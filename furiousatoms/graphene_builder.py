@@ -7,7 +7,7 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-from furiousatoms.io import merged_universe_with_H
+from furiousatoms.io import merged_universe_with_H, create_universe
 
 
 """
@@ -36,6 +36,8 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
         self.graphene.pushButton_build_graphene.clicked.connect(self.graphene_builder_callback)
         self.graphene.pushButton_build_graphene.clicked.connect(lambda:self.close())
+        self.graphene.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.graphene.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
     def graphene_builder_callback(self):
         H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
@@ -51,6 +53,13 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         window.make_title()
         window.load_universe(structure_info)
         window.show()
+    def initial_box_dim(self):
+        global box_lx, box_ly, box_lz
+        box_lx = float(self.graphene.SpinBox_lx.text())
+        box_ly = float(self.graphene.SpinBox_lx.text())
+        box_lz = float(self.graphene.SpinBox_lz.text())
+        self.graphene.lineEdit_ly.setText(str(box_ly))
+        return
 
 """
   The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
@@ -59,6 +68,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
 """
 
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
+    global box_lx, box_ly, box_lz
     bond_length_hydrogen = 1.1
     thre = 1e-10
     d = gcd(n, m)
@@ -113,8 +123,13 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
     coord_array_graphene = np.array(xyz)
     assert coord_array_graphene.shape == (num_atoms_graphene, 3)
     all_bonds_graphene = np.array(fragments['bonds'])
-    from furiousatoms.io import create_universe
-    univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene)
+
+    try:
+        box_lx or box_ly or box_lz
+    except NameError:
+        box_lx = box_ly = box_lz = 0.0
+
+    univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene, box_lx, box_ly, box_lz)
     if H_termination_graphene == 'None':
         return univ_graphene
    ##############################################Create Hydrogens at the end of graphene##############################################
@@ -253,8 +268,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
             bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
     atom_types_Hydrogen = list(['H']*num_hydrogen)
-    merged_graphene_hydrogen = merged_universe_with_H(coord_array_graphene,  all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)
-
+    merged_graphene_hydrogen = merged_universe_with_H(coord_array_graphene, all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen, box_lx, box_ly, box_lz)
     # If the user chooses "All", hydrogenated graphene structure will be returned:
     if H_termination_graphene == 'All':
         return merged_graphene_hydrogen

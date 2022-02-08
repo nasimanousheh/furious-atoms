@@ -167,6 +167,11 @@ class Viewer3D(QtWidgets.QWidget):
         except:
             pass
 
+        try:
+            self.scene.add(self.universe_manager.bbox_actor)
+        except:
+            pass
+
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
@@ -224,7 +229,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.selected_particle[object_indices_particles] = False
         SM.deleted_particles[object_indices_particles] = True
-        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types)
+        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
 
     def delete_bonds(self):
@@ -250,7 +255,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
         SM.selected_bond[object_indices_bonds] = False
         SM.deleted_bonds[object_indices_bonds] = True
-        SM.universe_save = create_universe(SM.pos, final_bonds, SM.atom_type)
+        SM.universe_save = create_universe(SM.pos, final_bonds, SM.atom_type, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
 
 
