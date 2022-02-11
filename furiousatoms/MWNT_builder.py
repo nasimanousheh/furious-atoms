@@ -46,6 +46,50 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.MWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
+        self.MWNT.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
+        self.MWNT.radioButton_bond_length.toggled.connect(self.get_atom_type)
+        self.MWNT.comboBox_type1_MWNT.activated.connect(self.get_atom_type)
+        self.MWNT.comboBox_type2_MWNT.activated.connect(self.get_atom_type)
+
+    def get_atom_type(self):
+        global bond_length_MWNT
+        if self.MWNT.radioButton_bond_length.isChecked() == True:
+            self.MWNT.SpinBox_desired_bond_length.setEnabled(False)
+            MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
+            MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
+            if MWNT_type_1=="C" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.421 # default value of C-C bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.47 # default value of N-B bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 1.95 # default value of N-Ga bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="Al":
+                bond_length_MWNT = 1.83 # default value of N-Al bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="Al":
+                bond_length_MWNT = 2.3 # default value of P-Al bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 2.28 # default value of P-Ga bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.87 # default value of P-C bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.47 # default value of N-C bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.56 # default value of C-B bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="Al":
+                bond_length_MWNT = 2.0 # default value of C-Al bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 2.46 # default value of P-B bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.74 # default value of P-B bond length
+            self.MWNT.lineEdit_bond_length_MWNT.setText(str(bond_length_MWNT))
+
+        elif self.MWNT.radioButton_desired_bond_length.isChecked() == True:
+            self.MWNT.lineEdit_bond_length_MWNT.setText(str(' '))
+            self.MWNT.SpinBox_desired_bond_length.setEnabled(True)
+            bond_length_MWNT = float(self.MWNT.SpinBox_desired_bond_length.text())
+        else:
+            bond_length_MWNT = 1.421
+
 
     def MWNT_diameter_changed(self):
         global bond_length_MWNT
@@ -86,6 +130,11 @@ class Ui_MWNT(QtWidgets.QMainWindow):
 
     def MWNT_builder_callback(self):
         global bond_length_MWNT, box_lx, box_ly, box_lz
+        try:
+            bond_length_MWNT
+        except NameError:
+            bond_length_MWNT = 1.421
+
         try:
             box_lx or box_ly or box_lz
         except NameError:
