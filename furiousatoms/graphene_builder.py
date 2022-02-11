@@ -136,6 +136,10 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
         a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
+        # a1 = np.array((bond_length,0,0))
+        # a2 = bond_length/2*(np.array((-1, np.sqrt(3),0)))
+        # Ch = n*a1-m*a2
+        # T = t1*a1+t2*a2
         if length:
             N = int(np.ceil(length/np.linalg.norm(T)))
         Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
