@@ -230,6 +230,11 @@
                 <string>Al</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>Ga</string>
+               </property>
+              </item>
              </widget>
             </item>
            </layout>
