@@ -34,19 +34,20 @@ jobs:
       - name: Install FuriousAtoms
         run: pip install .
       - name: Build Docs
-        run: cd doc && make -C .html
+        run: cd docs && make -C . html
       - name: Deploy docs
-        # if: success() && github.ref == 'refs/heads/master'
+        if: success() && github.ref == 'refs/heads/master'
         run: |
           echo "-- pushing docs --"
-          git clone --quiet --branch main --single-branch main https://${GH_REF} gh_pages
-          cp -r _build/html/* gh-pages/
+          cd docs
+          git clone --quiet --branch=main --single-branch https://${GH_REF} gh_pages
+          cp -r build/html/* gh_pages/
           cd gh_pages
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action Bot"
           git add .
           git commit -m "Deployed to GitHub Pages / Update documentation" -a || true
-          git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" gh-pages > /dev/null 2>&1
+          git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" main > /dev/null 2>&1
           echo "-- Deployment done --"
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
