@@ -36,7 +36,7 @@ jobs:
       - name: Build Docs
         run: cd docs && make -C . html
       - name: Deploy docs
-        # if: success() && github.ref == 'refs/heads/master'
+        if: success() && github.ref == 'refs/heads/master'
         run: |
           echo "-- pushing docs --"
           cd docs
