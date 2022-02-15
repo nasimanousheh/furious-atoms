@@ -46,11 +46,59 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.MWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
+        self.MWNT.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
+        self.MWNT.radioButton_bond_length.toggled.connect(self.get_atom_type)
+        self.MWNT.comboBox_type1_MWNT.activated.connect(self.get_atom_type)
+        self.MWNT.comboBox_type2_MWNT.activated.connect(self.get_atom_type)
+
+    def get_atom_type(self):
+        global bond_length_MWNT
+        if self.MWNT.radioButton_bond_length.isChecked() == True:
+            self.MWNT.SpinBox_desired_bond_length.setEnabled(False)
+            MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
+            MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
+            if MWNT_type_1=="C" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.421 # default value of C-C bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.47 # default value of N-B bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 1.95 # default value of N-Ga bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="Al":
+                bond_length_MWNT = 1.83 # default value of N-Al bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="Al":
+                bond_length_MWNT = 2.3 # default value of P-Al bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 2.28 # default value of P-Ga bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.87 # default value of P-C bond length
+            if MWNT_type_1=="N" and MWNT_type_2=="C":
+                bond_length_MWNT = 1.47 # default value of N-C bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.56 # default value of C-B bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="Al":
+                bond_length_MWNT = 2.0 # default value of C-Al bond length
+            if MWNT_type_1=="C" and MWNT_type_2=="Ga":
+                bond_length_MWNT = 2.46 # default value of P-B bond length
+            if MWNT_type_1=="P" and MWNT_type_2=="B":
+                bond_length_MWNT = 1.74 # default value of P-B bond length
+            self.MWNT.lineEdit_bond_length_MWNT.setText(str(bond_length_MWNT))
+
+        elif self.MWNT.radioButton_desired_bond_length.isChecked() == True:
+            self.MWNT.lineEdit_bond_length_MWNT.setText(str(' '))
+            self.MWNT.SpinBox_desired_bond_length.setEnabled(True)
+            bond_length_MWNT = float(self.MWNT.SpinBox_desired_bond_length.text())
+        else:
+            bond_length_MWNT = 1.421
+
 
     def MWNT_diameter_changed(self):
         global bond_length_MWNT
-        bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
-        bond_length_MWNT = float(bond_length_MWNT)
+        try:
+            bond_length_MWNT
+        except NameError:
+            bond_length_MWNT = 1.421
+        # bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
+        # bond_length_MWNT = float(bond_length_MWNT)
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
@@ -86,6 +134,11 @@ class Ui_MWNT(QtWidgets.QMainWindow):
 
     def MWNT_builder_callback(self):
         global bond_length_MWNT, box_lx, box_ly, box_lz
+        try:
+            bond_length_MWNT
+        except NameError:
+            bond_length_MWNT = 1.421
+
         try:
             box_lx or box_ly or box_lz
         except NameError:
@@ -147,10 +200,13 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
                 for k in range(N):
                     pts.append((sp, pt+k*T))
-    diameter = (norm(Ch)/np.pi)*wan
+    # diameter = (norm(Ch)/np.pi)*wan
+    bendFactor = 0.8
+    diameter = (norm(Ch)/(np.pi*bendFactor))*wan
     print(diameter)
     def gr2tube(v):
-        phi = 2*np.pi*v.dot(Ch_proj)
+        # phi = 2*np.pi*v.dot(Ch_proj)
+        phi = np.pi + bendFactor * 2*np.pi*v.dot(Ch_proj)
         return np.array((diameter/2*np.cos(phi),
                          diameter/2*np.sin(phi),
                          v.dot(T_proj)*norm(T)))
