@@ -34,7 +34,7 @@ jobs:
       - name: Install FuriousAtoms
         run: pip install .
       - name: Build Docs
-        run: cd doc && make -C .html
+        run: cd docs && make -C .html
       - name: Deploy docs
         # if: success() && github.ref == 'refs/heads/master'
         run: |
