@@ -39,7 +39,7 @@ jobs:
         # if: success() && github.ref == 'refs/heads/master'
         run: |
           echo "-- pushing docs --"
-          git clone --quiet --branch=main --single-branch=main https://${GH_REF} gh_pages
+          git clone --quiet --branch=main --single-branch https://${GH_REF} gh_pages
           cp -r _build/html/* gh-pages/
           cd gh_pages
           git config --global user.email "action@github.com"
