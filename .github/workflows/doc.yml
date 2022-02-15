@@ -41,17 +41,17 @@ jobs:
           echo "-- pushing docs --"
           cd docs
           git clone --quiet --branch=main --single-branch https://${GH_REF} gh_pages
-          cp -r build/html/* gh-pages/
+          cp -r build/html/* gh_pages/
           cd gh_pages
           git config --global user.email "action@github.com"
           git config --global user.name "GitHub Action Bot"
           git add .
           git commit -m "Deployed to GitHub Pages / Update documentation" -a || true
-          git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" gh-pages > /dev/null 2>&1
+          git push --force --quiet "https://${GH_TOKEN}@${GH_REF}" main > /dev/null 2>&1
           echo "-- Deployment done --"
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
-      - name: Setup tmate session
-        if: ${{ failure() }}
-        uses: mxschmitt/action-tmate@v3
+      # - name: Setup tmate session
+      #   if: ${{ failure() }}
+      #   uses: mxschmitt/action-tmate@v3
 
