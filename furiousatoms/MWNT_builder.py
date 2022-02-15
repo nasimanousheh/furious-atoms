@@ -93,8 +93,12 @@ class Ui_MWNT(QtWidgets.QMainWindow):
 
     def MWNT_diameter_changed(self):
         global bond_length_MWNT
-        bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
-        bond_length_MWNT = float(bond_length_MWNT)
+        try:
+            bond_length_MWNT
+        except NameError:
+            bond_length_MWNT = 1.421
+        # bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
+        # bond_length_MWNT = float(bond_length_MWNT)
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
@@ -196,10 +200,13 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
                 for k in range(N):
                     pts.append((sp, pt+k*T))
-    diameter = (norm(Ch)/np.pi)*wan
+    # diameter = (norm(Ch)/np.pi)*wan
+    bendFactor = 0.8
+    diameter = (norm(Ch)/(np.pi*bendFactor))*wan
     print(diameter)
     def gr2tube(v):
-        phi = 2*np.pi*v.dot(Ch_proj)
+        # phi = 2*np.pi*v.dot(Ch_proj)
+        phi = np.pi + bendFactor * 2*np.pi*v.dot(Ch_proj)
         return np.array((diameter/2*np.cos(phi),
                          diameter/2*np.sin(phi),
                          v.dot(T_proj)*norm(T)))
