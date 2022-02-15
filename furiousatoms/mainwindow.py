@@ -117,7 +117,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
-        self.ui.mdiArea.subWindowActivated.connect(self.update_bonds_ui)
+        self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
     def show_radius_value(self):
         active_window = self.active_mdi_child()
@@ -732,7 +732,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
                     for j in mem_block:
                         SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
-
+                SM.colors_backup_bond = SM.vcolors_bond.copy()
                 utils.update_actor(SM.bond_actor)
                 SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
 
@@ -754,13 +754,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             for object_index in object_indices_bonds:
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+        SM.colors_backup_bond = SM.vcolors_bond.copy()
         utils.update_actor(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
-    # TODO: name potentially confusing is this really only about bonds?
-    def update_bonds_ui(self):
+    def update_information_ui(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
