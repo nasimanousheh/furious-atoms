@@ -91,6 +91,10 @@ class Ui_SWNT(QtWidgets.QMainWindow):
 
     def SWNT_diameter_changed(self):
         global bond_length_SWNT
+        try:
+            bond_length_SWNT
+        except NameError:
+            bond_length_SWNT = 1.421
         # bond_length_SWNT = self.SWNT.lineEdit_bond_length_SWNT.text()
         # bond_length_SWNT = float(bond_length_SWNT)
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
@@ -117,7 +121,6 @@ class Ui_SWNT(QtWidgets.QMainWindow):
             bond_length_SWNT
         except NameError:
             bond_length_SWNT = 1.421
-        # bond_length_SWNT = float(self.SWNT.lineEdit_bond_length_SWNT.text())
         H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
         value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
@@ -168,10 +171,13 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                     pts.append((sp, pt+k*T))
 
     # Here we define the diameter of SWNT:
-    diameter_SWNT = np.linalg.norm(Ch)/np.pi
+    # diameter_SWNT = np.linalg.norm(Ch)/np.pi
+    bendFactor = 1.0
+    diameter_SWNT = np.linalg.norm(Ch)/(np.pi*bendFactor)
     # This function converts the SWNT to nanotube with given diameter:
     def gr2tube(v):
-        phi = 2*np.pi*v.dot(Ch_proj)
+        phi = np.pi + bendFactor * 2*np.pi*v.dot(Ch_proj)
+
         return np.array((diameter_SWNT/2*np.cos(phi),
                          diameter_SWNT/2*np.sin(phi),
                          v.dot(T_proj)*np.linalg.norm(T)))
