@@ -139,7 +139,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         window.load_universe(structure_info)
         window.show()
     def initial_box_dim(self):
-        global box_lx, box_ly, box_lz
+        global box_lx, box_ly, box_lz, bendFactor
         box_lx = float(self.SWNT.SpinBox_lx.text())
         box_ly = float(self.SWNT.SpinBox_lx.text())
         box_lz = float(self.SWNT.SpinBox_lz.text())
