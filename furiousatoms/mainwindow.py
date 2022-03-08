@@ -21,6 +21,8 @@ import MDAnalysis
 from numpy.linalg import norm
 import sys
 import furiousatoms.forms.icons
+from fury.io import save_image
+from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.graphene_builder import  Ui_graphene
@@ -63,6 +65,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionNew_file.triggered.connect(self.new_window)
         self.ui.actionLoad_file.triggered.connect(self.open)
         self.ui.actionSave_file.triggered.connect(self.save)
+        self.ui.actionSave_Image_File.triggered.connect(self.save_image)
         self.ui.actionExit.triggered.connect(self.quit_fired)
 
         self.ui.actionZoom_in.triggered.connect(self.slotZoomIn)
@@ -617,6 +620,29 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             child.show()
         else:
             child.close()
+
+    def save_image(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = active_window.universe_manager
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'PNG (*.png)')
+        magnification = 4
+        renderLarge = RenderLargeImage()
+        renderLarge.SetInput(active_window.scene)
+        renderLarge.SetMagnification(magnification)
+        renderLarge.Update()
+        renderLarge = RenderLargeImage()
+        renderLarge.SetInput(active_window.scene)
+        renderLarge.SetMagnification(magnification)
+        renderLarge.Update()
+        arr = numpy_support.vtk_to_numpy(renderLarge.GetOutput().GetPointData()
+                                        .GetScalars())
+        w, h, _ = renderLarge.GetOutput().GetDimensions()
+        components = renderLarge.GetOutput().GetNumberOfScalarComponents()
+        arr = arr.reshape((h, w, components))
+        save_image(arr, filename)
+
 
     def save(self):
         active_window = self.active_mdi_child()

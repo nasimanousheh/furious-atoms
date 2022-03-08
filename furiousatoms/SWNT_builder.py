@@ -51,7 +51,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.comboBox_type1_SWNT.activated.connect(self.get_atom_type)
         self.SWNT.comboBox_type2_SWNT.activated.connect(self.get_atom_type)
     def get_atom_type(self):
-        global bond_length_SWNT
+        global bond_length_SWNT, bendFactor
         if self.SWNT.radioButton_bond_length.isChecked() == True:
             self.SWNT.SpinBox_desired_bond_length.setEnabled(False)
             SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
@@ -90,7 +90,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
             bond_length_SWNT = 1.421
 
     def SWNT_diameter_changed(self):
-        global bond_length_SWNT
+        global bond_length_SWNT, bendFactor
         try:
             bond_length_SWNT
         except NameError:
@@ -116,24 +116,30 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.lineEdit_length_SWNT.setText(str(length_SWNT))
 
     def SWNT_builder_callback(self):
-        global bond_length_SWNT
+        global bond_length_SWNT, bendFactor
         try:
             bond_length_SWNT
         except NameError:
             bond_length_SWNT = 1.421
+
+        try:
+            bendFactor
+        except NameError:
+            bendFactor = 1.0
         H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
         value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
         repeat_units_SWNT = int(self.SWNT.spinBox_repeat_units_SWNT.text())
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
-        structure_info = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
+        bendFactor = float(self.SWNT.doubleSpinBox_bend_factor.text())
+        structure_info = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True, bend=bendFactor)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
         window.show()
     def initial_box_dim(self):
-        global box_lx, box_ly, box_lz
+        global box_lx, box_ly, box_lz, bendFactor
         box_lx = float(self.SWNT.SpinBox_lx.text())
         box_ly = float(self.SWNT.SpinBox_lx.text())
         box_lz = float(self.SWNT.SpinBox_lz.text())
@@ -146,8 +152,8 @@ class Ui_SWNT(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
-    global box_lx, box_ly, box_lz
+def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False, bend=1):
+    global box_lx, box_ly, box_lz, bendFactor
     bond_length_hydrogen = 1.1
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
@@ -172,7 +178,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
 
     # Here we define the diameter of SWNT:
     # diameter_SWNT = np.linalg.norm(Ch)/np.pi
-    bendFactor = 1.0
     diameter_SWNT = np.linalg.norm(Ch)/(np.pi*bendFactor)
     # This function converts the SWNT to nanotube with given diameter:
     def gr2tube(v):
