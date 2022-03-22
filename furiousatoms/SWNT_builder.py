@@ -118,14 +118,13 @@ class Ui_SWNT(QtWidgets.QMainWindow):
     def SWNT_builder_callback(self):
         global bond_length_SWNT, bendFactor
         try:
-            bond_length_SWNT
-        except NameError:
-            bond_length_SWNT = 1.421
-
-        try:
             bendFactor
         except NameError:
             bendFactor = 1.0
+        try:
+            bond_length_SWNT
+        except NameError:
+            bond_length_SWNT = 1.421
         H_termination_SWNT = self.SWNT.comboBox_H_termination_SWNT.currentText()
         value_n_SWNT = int(self.SWNT.spinBox_chirality_N_SWNT.text())
         value_m_SWNT = int(self.SWNT.spinBox_chirality_M_SWNT.text())
@@ -133,13 +132,13 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
         SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
         bendFactor = float(self.SWNT.doubleSpinBox_bend_factor.text())
-        structure_info = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True, bend=bendFactor)
+        structure_info = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True, bend = bendFactor)
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
         window.show()
     def initial_box_dim(self):
-        global box_lx, box_ly, box_lz, bendFactor
+        global box_lx, box_ly, box_lz
         box_lx = float(self.SWNT.SpinBox_lx.text())
         box_ly = float(self.SWNT.SpinBox_lx.text())
         box_lz = float(self.SWNT.SpinBox_lz.text())
@@ -152,7 +151,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False, bend=1):
+def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False, bend = 1):
     global box_lx, box_ly, box_lz, bendFactor
     bond_length_hydrogen = 1.1
     d = gcd(n, m)
