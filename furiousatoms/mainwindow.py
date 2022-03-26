@@ -270,6 +270,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
         active_window.render()
+
     def change_slice_sheen(self, sheen_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -279,6 +280,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
         active_window.render()
+
     def change_slice_sheen_tint(self, sheen_tint_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -299,6 +301,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.no_bonds > 0:
             SM.pbr_params_bond.coat_roughness = SM.coat_rough
         active_window.render()
+
     def change_slice_Coat_strength(self, coat_strength_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -336,6 +339,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         num = int(SM.no_vertices_per_particle)
+        SM.colors_backup_particles = SM.vcolors_particle.copy()
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
         SM.colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
