@@ -643,7 +643,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         arr = arr.reshape((h, w, components))
         save_image(arr, filename)
 
-
     def save(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -761,6 +760,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.colors_backup_bond = SM.vcolors_bond.copy()
                 utils.update_actor(SM.bond_actor)
                 SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            if SM.universe_save:
+                SM.universe_save = active_window.delete_particles()
+
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -781,6 +783,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
                 SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
         SM.colors_backup_bond = SM.vcolors_bond.copy()
+        if SM.universe_save:
+            SM.universe_save = active_window.delete_bonds()
         utils.update_actor(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
