@@ -655,7 +655,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         ext_file = os.path.splitext(file_name)[1]
         from furiousatoms.pdb2lmp import save_PDB2LMP
         if ext_file =='.data':
-            save_PDB2LMP(SM, fname)
+            if SM.universe_save is None:
+                save_PDB2LMP(SM, fname, SM.universe)
+            else:
+                save_PDB2LMP(SM, fname, SM.universe_save)
         else:
             if SM.universe_save is None:
                 num_atoms = SM.pos.shape[0]
@@ -692,20 +695,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 else:
                     lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
-
-        # suffix = '.pdb'
-        # fname = fname + suffix
-
-        # fname2 = 'data.data'
-        # with MDAnalysis.Writer(fname2) as W:
-        #     W.write(savelmp.atoms)
-
-
-        # if SM.universe_save is None:
-        #     SM.universe.atoms.write(fname)
-        # else:
-        #     SM.universe_save.atoms.write(fname)
-
 
     def delete_particles(self):
         active_window = self.active_mdi_child()
@@ -752,9 +741,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 half_bond = SM.sec_bond
 
                 for k in object_indices_particles.tolist():
-
                     mem_block = np.where(bond_indices_1d==k)[0]
-                    # mem_block = np.where(bond_indices_1d==object_indices_particles)[0]
                     for j in mem_block:
                         SM.vcolors_bond[j * half_bond: j * half_bond + half_bond] = selected_color_particle.getRgb()
                 SM.colors_backup_bond = SM.vcolors_bond.copy()
