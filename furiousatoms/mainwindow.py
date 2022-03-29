@@ -142,7 +142,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
-        SM.sphere_actor.GetProperty().SetOpacity(SM.opacity)
+        SM.sphere_actor.GetProperty().SetOpacity(opacity_degree/100)
         utils.update_actor(SM.sphere_actor)
         if SM.no_bonds > 0:
             SM.bond_actor.GetProperty().SetInterpolationToPBR()
@@ -270,6 +270,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
         active_window.render()
+
     def change_slice_sheen(self, sheen_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -279,6 +280,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
         active_window.render()
+
     def change_slice_sheen_tint(self, sheen_tint_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -299,6 +301,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.no_bonds > 0:
             SM.pbr_params_bond.coat_roughness = SM.coat_rough
         active_window.render()
+
     def change_slice_Coat_strength(self, coat_strength_degree):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -336,6 +339,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         num = int(SM.no_vertices_per_particle)
+        SM.colors_backup_particles = SM.vcolors_particle.copy()
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
         SM.colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
@@ -346,11 +350,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         active_window.scene.add(SM.sphere_actor)
-        vertices_particle = utils.vertices_from_actor(SM.sphere_actor)
-        SM.no_vertices_all_particles = vertices_particle.shape[0]
-        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
+
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
+        vertices = utils.vertices_from_actor(SM.sphere_actor)
+        SM.no_vertices_all_particles = vertices.shape[0]
+        SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
 
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
@@ -365,7 +370,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, SM)
+        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         active_window.render()
 
     def change_particle_shape(self):
@@ -702,7 +707,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = active_window.universe_manager
         SM.universe_save = active_window.delete_particles()
-        self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
+        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
@@ -710,6 +717,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         active_window.delete_bonds()
         SM = active_window.universe_manager
+        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
@@ -782,9 +792,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, SM)
+        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         if SM.no_bonds > 0:
-            SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, SM)
+            SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
@@ -834,14 +844,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.setChecked(SM.n_frames > 1)
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
-            self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
-            self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
+            if SM.universe_save:
+                self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+                self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+                self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+
+            else:
+                self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
+                self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
+                self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
         if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
         if SM.no_bonds > 0:
             self.ui.Box_bonds.stateChanged.connect(self.check_bonds)
 
-        self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
         self.ui.Edit_widthX.setText(str(SM.box_lx))
         self.ui.Edit_widthY.setText(str(SM.box_ly))
         self.ui.Edit_widthZ.setText(str(SM.box_lz))
