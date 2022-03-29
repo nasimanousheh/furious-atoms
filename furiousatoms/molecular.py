@@ -65,18 +65,17 @@ class UniverseManager:
         self.play_factor = 0
         self.enable_timer = True
         self.cnt = 0
-
-        self.roughness = 0.2
-        self.metallic = 0.2
-        self.anisotropic = 0.0
+        self.roughness = 0.01
+        self.metallic = 0.01
+        self.anisotropic = 0.01
         self.opacity = 1.0
-        self.selected_value_radius = 0.0
-        self.anisotropic_rot = 0.0
-        self.anisotropic_X = 0.0
-        self.anisotropic_Y = 0.0
-        self.anisotropic_Z = 0.0
-        self.coat_rough = 0
-        self.coat_strength = 0
+        self.selected_value_radius = 0.01
+        self.anisotropic_rot = 0.01
+        self.anisotropic_X = 0.01
+        self.anisotropic_Y = 0.01
+        self.anisotropic_Z = 0.01
+        self.coat_rough = 0.01
+        self.coat_strength = 0.01
         self.pbr_params_atom = None
         self.pbr_params_bond = None
 
