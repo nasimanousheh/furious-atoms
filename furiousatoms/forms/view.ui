@@ -1154,6 +1154,9 @@
                <property name="minimum">
                 <number>1</number>
                </property>
+               <property name="maximum">
+                <number>95</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -1469,7 +1472,7 @@
      <x>0</x>
      <y>0</y>
      <width>2846</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1570,7 +1573,7 @@
      <normaloff>:/icons/save.png</normaloff>:/icons/save.png</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save As</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
