@@ -237,7 +237,7 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>4</number>
+          <number>2</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
@@ -1113,8 +1113,8 @@
             <rect>
              <x>6</x>
              <y>20</y>
-             <width>301</width>
-             <height>291</height>
+             <width>290</width>
+             <height>323</height>
             </rect>
            </property>
            <property name="minimumSize">
@@ -1144,57 +1144,30 @@
              <string>Effect</string>
             </attribute>
             <layout class="QGridLayout" name="gridLayout_6">
-             <item row="8" column="0">
-              <widget class="QLabel" name="label_Coat_Strength">
+             <item row="1" column="1">
+              <widget class="QSlider" name="horizontalSlider_Metallic">
                <property name="font">
                 <font>
                  <pointsize>11</pointsize>
                 </font>
                </property>
-               <property name="text">
-                <string>Coat Strength</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_opacity">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Opacity</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSlider" name="horizontalSlider_Opacity">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="sliderPosition">
-                <number>99</number>
+               <property name="minimum">
+                <number>1</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_Metallic">
+             <item row="9" column="0">
+              <widget class="QLabel" name="label_Coat_Roughness">
                <property name="font">
                 <font>
                  <pointsize>11</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>Metallic</string>
+                <string>Coat Roughness</string>
                </property>
               </widget>
              </item>
@@ -1217,87 +1190,11 @@
                  <pointsize>11</pointsize>
                 </font>
                </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_Anisotropic">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Anisotropic</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSlider" name="horizontalSlider_Roughness">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
+               <property name="minimum">
+                <number>1</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="0">
-              <widget class="QLabel" name="label_Anisotropic_rot">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Anisotropic Rotation</string>
-               </property>
-              </widget>
-             </item>
-             <item row="5" column="1">
-              <widget class="QSlider" name="horizontalSlider_Anisotropic_X">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="7" column="0">
-              <widget class="QLabel" name="label_Sheen_Tint">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Anisotropic Z</string>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="1">
-              <widget class="QSlider" name="horizontalSlider_Anisotropic_rot">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item row="9" column="0">
-              <widget class="QLabel" name="label_Coat_Roughness">
-               <property name="font">
-                <font>
-                 <pointsize>11</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Coat Roughness</string>
                </property>
               </widget>
              </item>
@@ -1313,20 +1210,114 @@
                </property>
               </widget>
              </item>
-             <item row="9" column="1">
-              <widget class="QSlider" name="horizontalSlider_Coat_roughness">
-               <property name="font">
-                <font>
-                 <pointsize>2</pointsize>
-                </font>
+             <item row="6" column="1">
+              <widget class="QSlider" name="horizontalSlider_Anisotropic_Y">
+               <property name="minimum">
+                <number>1</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
-             <item row="8" column="1">
-              <widget class="QSlider" name="horizontalSlider_Coat_strength">
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_opacity">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Opacity</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_Anisotropic_rot">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Anisotropic Rotation</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QLabel" name="label_Sheen_Tint">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Anisotropic Z</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QLabel" name="label_Anisotropic">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Anisotropic</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QSlider" name="horizontalSlider_Anisotropic_rot">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="8" column="0">
+              <widget class="QLabel" name="label_Coat_Strength">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="text">
+                <string>Coat Strength</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QSlider" name="horizontalSlider_Anisotropic_X">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSlider" name="horizontalSlider_Opacity">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="sliderPosition">
+                <number>99</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
@@ -1344,26 +1335,62 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="1">
-              <widget class="QSlider" name="horizontalSlider_Anisotropic_Y">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
              <item row="7" column="1">
               <widget class="QSlider" name="horizontalSlider_Anisotropic_Z">
+               <property name="minimum">
+                <number>1</number>
+               </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
-              <widget class="QSlider" name="horizontalSlider_Metallic">
+             <item row="8" column="1">
+              <widget class="QSlider" name="horizontalSlider_Coat_strength">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_Metallic">
                <property name="font">
                 <font>
                  <pointsize>11</pointsize>
                 </font>
+               </property>
+               <property name="text">
+                <string>Metallic</string>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QSlider" name="horizontalSlider_Coat_roughness">
+               <property name="font">
+                <font>
+                 <pointsize>2</pointsize>
+                </font>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QSlider" name="horizontalSlider_Roughness">
+               <property name="font">
+                <font>
+                 <pointsize>11</pointsize>
+                </font>
+               </property>
+               <property name="minimum">
+                <number>1</number>
                </property>
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -1442,7 +1469,7 @@
      <x>0</x>
      <y>0</y>
      <width>2846</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
