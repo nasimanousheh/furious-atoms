@@ -350,13 +350,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         active_window.scene.add(SM.sphere_actor)
-
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
         vertices = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_all_particles = vertices.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
-
         for atom_typ in SM.unique_types:
             selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
@@ -371,6 +369,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
+        SM.pbr_params_atom.metallic = SM.metallic
         active_window.render()
 
     def change_particle_shape(self):
@@ -806,6 +805,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Coat_strength.setValue(SM.coat_strength*100)
         self.ui.horizontalSlider_Coat_roughness.setValue(SM.coat_rough*100)
         self.ui.treeWidget.clear()
+        print("metallic: ", SM.metallic)
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
@@ -876,6 +876,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         duration = 200
         self.timer.start(duration)
         # MainWindow.iren.Initialize()
+        active_window.render()
 
     def timer_callback(self):
         active_window = self.active_mdi_child()
