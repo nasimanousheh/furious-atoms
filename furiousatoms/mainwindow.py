@@ -120,6 +120,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
+
+
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
     def show_radius_value(self):
@@ -370,6 +372,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         SM.pbr_params_atom.metallic = SM.metallic
+        SM.pbr_params_atom.roughness = SM.roughness
+        SM.pbr_params_atom.anisotropy = SM.anisotropic
+        SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
         active_window.render()
 
     def change_particle_shape(self):
@@ -756,8 +761,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.colors_backup_bond = SM.vcolors_bond.copy()
                 utils.update_actor(SM.bond_actor)
                 SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-            if SM.universe_save:
-                SM.universe_save = active_window.delete_particles()
+            # if SM.universe_save:
+            #     SM.universe_save = active_window.delete_particles()
 
 
         utils.update_actor(SM.sphere_actor)
@@ -791,9 +796,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
-        if SM.no_bonds > 0:
-            SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
+
+        if SM.create_pbr_actor is True:
+            SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
+            if SM.no_bonds > 0:
+                SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
+            SM.create_pbr_actor = False
+
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
@@ -876,7 +885,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         duration = 200
         self.timer.start(duration)
         # MainWindow.iren.Initialize()
-        active_window.render()
+        # active_window.render()
 
     def timer_callback(self):
         active_window = self.active_mdi_child()
