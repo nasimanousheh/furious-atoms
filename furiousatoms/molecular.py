@@ -65,6 +65,7 @@ class UniverseManager:
         self.play_factor = 0
         self.enable_timer = True
         self.cnt = 0
+
         self.roughness = 0.01
         self.metallic = 0.01
         self.anisotropic = 0.01
@@ -78,6 +79,7 @@ class UniverseManager:
         self.coat_strength = 0.01
         self.pbr_params_atom = None
         self.pbr_params_bond = None
+        self.create_pbr_actor = True
 
     @property
     def no_atoms(self):
