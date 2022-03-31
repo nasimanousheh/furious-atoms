@@ -16,6 +16,7 @@ jobs:
   build:
     runs-on: ${{ matrix.buildplat[0] }}
     strategy:
+      fail-fast: false
       matrix:
         # Github Actions doesn't support pairing matrix values together, let's improvise
         # https://github.com/github/feedback/discussions/7835#discussioncomment-1769026
