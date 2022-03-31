@@ -909,6 +909,15 @@ ol {
   height: 50px;
 }
 
+.social-grid {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 10px;
+  font-size: 4em;
+  padding-left: 25%;
+  padding-right: 25%;
+}
+
 @media only screen and (min-width: 480px) and (max-width: 767px) {
   .container {
     width: 450px;
