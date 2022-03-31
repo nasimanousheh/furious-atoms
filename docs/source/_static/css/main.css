@@ -887,28 +887,6 @@ ol {
   height: 100%;
 }
 
-.grow {
-  transition: all .2s ease-in-out; }
-
-.grow:hover {
-  transform: scale(1.1); }
-
-.white {
-    color: #ffffff; }
-
-.form-control {
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 1);
-  color: rgba(0, 0, 0, 1) !important;
-  box-shadow: none!important;
-}
-
-.h-50 {
-  height: 50px;
-}
-
 @media only screen and (min-width: 480px) and (max-width: 767px) {
   .container {
     width: 450px;
