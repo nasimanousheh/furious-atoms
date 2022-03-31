@@ -894,7 +894,12 @@ ol {
   transform: scale(1.1); }
 
 .white {
-    color: #ffffff; }
+    color: #ffffff;
+  }
+
+.black {
+    color: #000;
+  }
 
 .form-control {
   font-size: 16px;
@@ -1712,6 +1717,10 @@ ol {
   color: #fff;
 }
 
+.header-2 .navbar .navbar-nav .nav-item a {
+  color: #000;
+}
+
 .sticky .navbar .navbar-nav .nav-item a.active {
   color: #8a307f;
 }
@@ -1722,6 +1731,10 @@ ol {
 
 .header .navbar .navbar-nav .nav-item .sub-menu a.active {
   color: #fff;
+}
+
+.header-2 .navbar .navbar-nav .nav-item .sub-menu a {
+  color: #000;
 }
 
 .sticky .navbar .navbar-nav .nav-item .sub-menu a.active {
