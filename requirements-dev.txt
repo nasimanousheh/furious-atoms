@@ -6,6 +6,8 @@ flake8
 pytest
 sphinx>=4.2
 pyinstaller>=4.1
+netCDF4
+tornado
 click>=7.1.2
 # These are dependencies of various sphinx extensions for documentation.
 ipython
