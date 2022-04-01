@@ -14,3 +14,10 @@ include furiousatoms/_version.py
 
 # If including data files in the package, add them like:
 # include path/to/data_file
+recursive-include docs *
+recursive-include bin *
+recursive-include tools *
+recursive-include furiousatoms/forms *
+recursive-include furiousatoms/languages *
+recursive-include furiousatoms/resources *
+recursive-include furiousatoms/skybox0 *
