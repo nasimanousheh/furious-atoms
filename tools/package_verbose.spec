@@ -19,6 +19,10 @@ MDA_PATH = MDAnalysis.__path__ + [pjoin(dirname(MDAnalysis.__file__), 'lib'),
            pjoin(dirname(MDAnalysis.__file__), 'lib', 'format')]
 FA_PATH = pjoin(dirname(furiousatoms.__file__), os.pardir)
 
+FA_BIN = pjoin(FA_PATH, 'bin/furious-atoms')
+if not os.path.isfile(FA_BIN):
+    FA_BIN = pjoin(os.path.dirname(sys.executable), 'furious-atoms')
+
 added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (pjoin(FA_PATH, 'furiousatoms/languages'), 'languages'),
                (pjoin(FA_PATH, 'furiousatoms/resources'), 'resources'),
@@ -26,11 +30,11 @@ added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (DATA_DIR, 'fury/data/files')
               ]
 
-a = Analysis([pjoin(FA_PATH, 'bin/furious-atoms')],
+a = Analysis([FA_BIN],
              pathex=[VTK_PATH, NUMPY_PATH, SCIPY_PATH] + MDA_PATH,
              binaries=[],
              datas=added_files,
-             hiddenimports=['cython', 'PySide2', 'PySide2.QtXml', 'scipy._lib.messagestream',
+             hiddenimports=['cython', 'PySide2', 'PySide2.QtXml', 'shiboken2', 'scipy._lib.messagestream',
                             'vtkmodules', 'vtkmodules.all', 'vtkmodules.qt.QVTKRenderWindowInteractor',
                             'vtkmodules.util', 'vtkmodules.util.numpy_support', 'vtkmodules.numpy_interface',
                             'vtkmodules.numpy_interface.dataset_adapter', 'vtkmodules.util.colors',
