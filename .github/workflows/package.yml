@@ -47,6 +47,7 @@ jobs:
         with:
           name: furious-atoms-${{ matrix.python-version }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./installer_dist/*
+          retention-days: 5
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       # - name: Setup tmate session

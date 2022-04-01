@@ -1,6 +1,7 @@
 # -*- mode: python -*-
 
 import os
+import platform
 from os.path import join as pjoin, dirname
 import vtk
 import numpy
@@ -21,7 +22,11 @@ FA_PATH = pjoin(dirname(furiousatoms.__file__), os.pardir)
 
 FA_BIN = pjoin(FA_PATH, 'bin/furious-atoms')
 if not os.path.isfile(FA_BIN):
-    FA_BIN = pjoin(os.path.dirname(sys.executable), 'furious-atoms')
+    plt = platform.system()
+    if plt == "Windows":
+        FA_BIN = pjoin(os.path.dirname(sys.executable), 'Scripts/furious-atoms')
+    else:
+        FA_BIN = pjoin(os.path.dirname(sys.executable), 'furious-atoms')
 
 added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (pjoin(FA_PATH, 'furiousatoms/languages'), 'languages'),
