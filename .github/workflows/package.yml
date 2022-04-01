@@ -43,11 +43,14 @@ jobs:
         run: pip install .
       - name: Build Executable
         run: python tools/make.py installer
-      - uses: actions/upload-artifact@v2
+      - name: Upload Artifact
+        continue-on-error: true
+        uses: actions/upload-artifact@v2
         with:
           name: furious-atoms-${{ matrix.python-version }}-${{ startsWith(matrix.buildplat[1], 'macosx') && 'macosx' || matrix.buildplat[1] }}
           path: ./installer_dist/*
-          retention-days: 5
+          retention-days: 1
+
 
       # Enable tmate debugging of manually-triggered workflows if the input option was provided
       # - name: Setup tmate session
