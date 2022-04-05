@@ -747,6 +747,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     exclude = []
                     if SM.no_bonds > 0:
                         bonds_indices = SM.universe.bonds.to_indices()
+                        for b in range(bonds_indices.shape[0]):
+                            if SM.deleted_bonds[b]:
+                                exclude.append(2 * b)
+                                exclude.append(2 * b + 1)
+
                         for k in delete_points.tolist():
                             for b in range(bonds_indices.shape[0]):
                                 if bonds_indices[b, 0] == k:
@@ -756,6 +761,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                         exclude = np.asarray(exclude)
                         bond_indices_1d = bonds_indices.ravel()
                         half_bond = SM.sec_bond
+
                         for k in object_indices_particles.tolist():
                             mem_block = np.where((bond_indices_1d==k))[0]
                             final_mem_index = np.setdiff1d(mem_block, exclude)
