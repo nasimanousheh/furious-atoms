@@ -347,6 +347,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=SM.colors, scales= SM.radii_spheres)
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        active_window.create_universe_connections()  #This is connecting the actor to the picker
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         active_window.scene.add(SM.sphere_actor)
@@ -365,7 +366,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
 
         utils.update_actor(SM.sphere_actor)
-        print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
@@ -760,22 +760,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                     exclude.append(2 * b)
                         exclude = np.asarray(exclude)
                         bond_indices_1d = bonds_indices.ravel()
-                        half_bond = SM.sec_bond
-
                         for k in object_indices_particles.tolist():
                             mem_block = np.where((bond_indices_1d==k))[0]
                             final_mem_index = np.setdiff1d(mem_block, exclude)
                             for j in final_mem_index:
-                                SM.vcolors_bond[(j * half_bond): (j * half_bond + half_bond)] = selected_color_particle.getRgb()
+                                SM.vcolors_bond[(j * SM.sec_bond): (j * SM.sec_bond + SM.sec_bond)] = selected_color_particle.getRgb()
 
                         SM.colors_backup_bond = SM.vcolors_bond.copy()
                         utils.update_actor(SM.bond_actor)
                         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-
-        utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        active_window.render()
-
 
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
@@ -790,14 +783,31 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM = active_window.universe_manager
         selected_color_bond = QtWidgets.QColorDialog.getColor()
         if selected_color_bond.isValid():
-            select_all_bonds = np.zeros(SM.no_bonds*2, dtype=np.bool)
-            object_indices_bonds = np.where(select_all_bonds == False)[0]
-            for object_index in object_indices_bonds:
-                SM.colors_backup_bond[object_index] = selected_color_bond.getRgb()
-                SM.vcolors_bond[object_index * SM.sec_bond: object_index * SM.sec_bond + SM.sec_bond] = SM.colors_backup_bond[object_index]
+            delete_points = np.where(SM.deleted_particles == True)[0]
+            object_indices_particles = np.where(SM.deleted_particles == False)[0]
+            exclude = []
+            if SM.no_bonds > 0:
+                bonds_indices = SM.universe.bonds.to_indices()
+                for b in range(bonds_indices.shape[0]):
+                    if SM.deleted_bonds[b]:
+                        exclude.append(2 * b)
+                        exclude.append(2 * b + 1)
+
+                for k in delete_points.tolist():
+                    for b in range(bonds_indices.shape[0]):
+                        if bonds_indices[b, 0] == k:
+                            exclude.append(2 * b + 1)
+                        if bonds_indices[b, 1] == k:
+                            exclude.append(2 * b)
+                exclude = np.asarray(exclude)
+                bond_indices_1d = bonds_indices.ravel()
+                for k in object_indices_particles.tolist():
+                    mem_block = np.where((bond_indices_1d==k))[0]
+                    final_mem_index = np.setdiff1d(mem_block, exclude)
+                    for j in final_mem_index:
+                        SM.vcolors_bond[(j * SM.sec_bond): (j * SM.sec_bond + SM.sec_bond)] = selected_color_bond.getRgb()
+
         SM.colors_backup_bond = SM.vcolors_bond.copy()
-        if SM.universe_save:
-            SM.universe_save = active_window.delete_bonds()
         utils.update_actor(SM.bond_actor)
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
