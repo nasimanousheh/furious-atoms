@@ -347,6 +347,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=SM.colors, scales= SM.radii_spheres)
         big_verts, big_faces, big_colors, _ = res
         SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        active_window.create_universe_connections()  #This is connecting the actor to the picker
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
         active_window.scene.add(SM.sphere_actor)
@@ -365,7 +366,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
 
         utils.update_actor(SM.sphere_actor)
-        print('current value of radius: ',selected_value_radius)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
