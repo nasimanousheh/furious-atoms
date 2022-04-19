@@ -26,10 +26,10 @@ Author: GrayGrids
         var logo = document.querySelector('.navbar-brand img')
         if (window.pageYOffset > sticky) {
           header_navbar.classList.add("sticky");
-          logo.src = 'assets/images/logo/logo.svg';
+          logo.src = '_static/images/logo.png';
         } else {
           header_navbar.classList.remove("sticky");
-          logo.src = 'assets/images/logo/white-logo.svg';
+          logo.src = '_static/images/logo.png';
         }
 
         // show or hide the back-top-top button
@@ -42,7 +42,7 @@ Author: GrayGrids
     };
 
 
-    
+
     // section menu active
 	function onScroll(event) {
 		var sections = document.querySelectorAll('.page-scroll');
@@ -63,8 +63,8 @@ Author: GrayGrids
 	};
 
     window.document.addEventListener('scroll', onScroll);
-    
-    // for menu scroll 
+
+    // for menu scroll
     var pageLink = document.querySelectorAll('.page-scroll');
 
     pageLink.forEach(elem => {
