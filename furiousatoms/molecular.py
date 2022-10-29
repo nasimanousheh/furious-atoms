@@ -50,7 +50,7 @@ class UniverseManager:
         # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
         # big_verts, big_faces, big_colors, _ = res
         # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors)
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
