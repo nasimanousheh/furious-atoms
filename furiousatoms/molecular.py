@@ -43,8 +43,8 @@ class UniverseManager:
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
         # TODO: the two variables below take a fixed value. Maybe this should be provided by atom_type
         # self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_spheres = 0.4 * np.ones((self.no_atoms))
-        self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
+        self.radii_spheres = 0.5 * np.ones((self.no_atoms))
+        self.radii_unique_types = 0.5 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
         # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
