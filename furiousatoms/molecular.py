@@ -92,18 +92,6 @@ class UniverseManager:
         return self.universe.trajectory.ts.dimensions
 
     @property
-    def box_lx(self):
-        return self.universe.trajectory.ts.dimensions[0]
-
-    @property
-    def box_ly(self):
-        return self.universe.trajectory.ts.dimensions[1]
-
-    @property
-    def box_lz(self):
-        return self.universe.trajectory.ts.dimensions[2]
-
-    @property
     def no_unique_types_particles(self):
         return len(np.unique(self.universe.atoms.types))
 
