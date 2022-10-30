@@ -102,7 +102,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_forward.clicked.connect(self.forward_movie)
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
-        self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
+        # self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
