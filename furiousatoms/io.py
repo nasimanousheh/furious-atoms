@@ -111,9 +111,7 @@ def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
     universe.add_TopologyAttr('masses')
-    universe.trajectory.ts.dimensions[0] = box_lx
-    universe.trajectory.ts.dimensions[1] = box_ly
-    universe.trajectory.ts.dimensions[2] = box_lz
+    universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
     try:
         universe.add_bonds(bonds)
     except:
