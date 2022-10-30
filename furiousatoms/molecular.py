@@ -14,6 +14,9 @@ class UniverseManager:
         """
         self.universe = universe
         self.universe_save = None
+        self.box_lx = self.box[0]
+        self.box_ly = self.box[1]
+        self.box_lz = self.box[2]
         self.bbox_actor, _ = bbox(self.box, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
