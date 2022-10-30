@@ -64,7 +64,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         box_lz = float(self.solution.SpinBox_lz.text())
 
         self.solution.lineEdit_ly.setText(str(box_ly))
-        SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz,90,90,90]
+        SM.universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
         SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
@@ -154,9 +154,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
         file_name = tempfile.mkstemp(suffix='.pdb', prefix='Solution', dir=dir_name)[1]
         combined.atoms.write(file_name)
-        combined.universe.trajectory.ts.dimensions[0] = SM.box_lx
-        combined.universe.trajectory.ts.dimensions[1] = SM.box_ly
-        combined.universe.trajectory.ts.dimensions[2] = SM.box_lz
+        combined.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_lx, SM.box_lx, 90, 90, 90]
         SM = active_window.universe_manager
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
