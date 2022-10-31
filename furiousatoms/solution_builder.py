@@ -38,7 +38,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.solution.pushButton_build_solution.clicked.connect(lambda:self.close())
         water_diameter = 3.1655
         self.solution.lineEdit_water_dia.setText(str(water_diameter))
-        self.solution.SpinBox_space_dia.valueChanged.connect(self.initial_values)
 
     def initial_box_dim(self, box_lx, box_ly, box_lz):
         self.solution.SpinBox_lx.setValue(box_lx)
@@ -48,10 +47,9 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def initial_values(self):
         water_diameter = 3.1655
         avoid_overlap = 2
-        spacing_dia = float(self.solution.SpinBox_space_dia.text())
+        spacing_dia = 0.98
         spacing = spacing_dia * water_diameter
         space_format = "{:.4f}".format(spacing)
-        self.solution.lineEdit_spacing.setText(str(space_format))
         self.solution.lineEdit_water_dia.setText(str(water_diameter))
         self.solution.SpinBox_avoid_overlap.setValue((avoid_overlap))
 
@@ -79,17 +77,13 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         SM.box_ly = float(self.solution.SpinBox_lx.text())
         SM.box_lz = float(self.solution.SpinBox_lz.text())
         water_diameter = 3.1655
-        try:
-            spacing_dia = float(self.solution.SpinBox_space_dia.text())
-        except:
-            spacing_dia = 0.98
+        spacing_dia = 0.98
         try:
             avoid_overlap = float(self.solution.SpinBox_avoid_overlap.text())
         except:
             avoid_overlap = 2
 
         spacing = spacing_dia * water_diameter
-        self.solution.lineEdit_spacing.setText(str(spacing))
         total_water_inside = int((int(SM.box_lx/spacing) * int(SM.box_ly/spacing) * int(SM.box_lz/spacing)))
         water_amount = (SM.box_lx/spacing * SM.box_ly/spacing * SM.box_lz/spacing)
         water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz) * 0.001)
