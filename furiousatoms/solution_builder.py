@@ -112,7 +112,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
                             dist = np.linalg.norm(xyz - SM.pos[p_n])
                             if dist < avoid_overlap:
                                 close = True
-                                print("close")
                                 break
                         if not close:
                             coordinates.extend(h2o + xyz.T)
@@ -121,9 +120,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         coord_array = np.array(coordinates)
         n_atoms = len(coord_array)
         assert coord_array.shape == (n_atoms, 3)
-        # n_residues = total_water_inside
         n_residues = int(n_atoms/3)
-        # n_atoms = n_residues * 3
         resindices = np.repeat(range(n_residues), 3)
         assert len(resindices) == n_atoms
         # all solution molecules belong to 1 segment
