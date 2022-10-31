@@ -92,7 +92,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.solution.lineEdit_spacing.setText(str(spacing))
         total_water_inside = int((int(SM.box_lx/spacing) * int(SM.box_ly/spacing) * int(SM.box_lz/spacing)))
         water_amount = (SM.box_lx/spacing * SM.box_ly/spacing * SM.box_lz/spacing)
-        water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz-water_diameter) * 0.001)
+        water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz) * 0.001)
         print("water_concentration is: ", water_concentration)
 
         h2o = np.array([[ 0,        0,       0      ],  # oxygen
