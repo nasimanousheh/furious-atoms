@@ -44,6 +44,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.solution.SpinBox_lx.setValue(box_lx)
         self.solution.SpinBox_lz.setValue(box_lz)
         self.solution.lineEdit_ly.setText(str(box_ly))
+        # SM.box_lx = box_lx
 
     def initial_values(self):
         water_diameter = 3.1655
@@ -75,6 +76,9 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
+        SM.box_lx = float(self.solution.SpinBox_lx.text())
+        SM.box_ly = float(self.solution.SpinBox_lx.text())
+        SM.box_lz = float(self.solution.SpinBox_lz.text())
         water_diameter = 3.1655
         try:
             spacing_dia = float(self.solution.SpinBox_space_dia.text())
