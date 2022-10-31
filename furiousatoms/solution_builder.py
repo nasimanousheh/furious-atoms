@@ -44,7 +44,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.solution.SpinBox_lx.setValue(box_lx)
         self.solution.SpinBox_lz.setValue(box_lz)
         self.solution.lineEdit_ly.setText(str(box_ly))
-        # SM.box_lx = box_lx
 
     def initial_values(self):
         water_diameter = 3.1655
