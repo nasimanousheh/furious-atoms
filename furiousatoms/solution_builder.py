@@ -141,6 +141,9 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         sol.add_TopologyAttr('segid', ['SOL'])
 
         sol.atoms.positions = coord_array
+        cog = sol.atoms.center_of_geometry()
+        print('Original solvent center of geometry: ', cog)
+        sol.atoms.positions -= cog
         assert not hasattr(sol, 'bonds')
         bonds = []
         for o in range(0, n_atoms, 3):
