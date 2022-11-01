@@ -38,7 +38,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.solution.pushButton_build_solution.clicked.connect(lambda:self.close())
         water_diameter = 3.1655
         self.solution.lineEdit_water_dia.setText(str(water_diameter))
-        self.solution.SpinBox_space_dia.valueChanged.connect(self.initial_values)
 
     def initial_box_dim(self, box_lx, box_ly, box_lz):
         self.solution.SpinBox_lx.setValue(box_lx)
@@ -48,10 +47,9 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def initial_values(self):
         water_diameter = 3.1655
         avoid_overlap = 2
-        spacing_dia = float(self.solution.SpinBox_space_dia.text())
+        spacing_dia = 0.98
         spacing = spacing_dia * water_diameter
         space_format = "{:.4f}".format(spacing)
-        self.solution.lineEdit_spacing.setText(str(space_format))
         self.solution.lineEdit_water_dia.setText(str(water_diameter))
         self.solution.SpinBox_avoid_overlap.setValue((avoid_overlap))
 
@@ -64,9 +62,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         box_lz = float(self.solution.SpinBox_lz.text())
 
         self.solution.lineEdit_ly.setText(str(box_ly))
-        SM.universe.trajectory.ts.dimensions[0] = box_lx
-        SM.universe.trajectory.ts.dimensions[1] = box_ly
-        SM.universe.trajectory.ts.dimensions[2] = box_lz
+        SM.universe.trajectory.ts.dimensions = [box_lz,box_ly,box_lz, 90, 90, 90]
         SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
@@ -77,21 +73,20 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
+        SM.box_lx = float(self.solution.SpinBox_lx.text())
+        SM.box_ly = float(self.solution.SpinBox_lx.text())
+        SM.box_lz = float(self.solution.SpinBox_lz.text())
         water_diameter = 3.1655
-        try:
-            spacing_dia = float(self.solution.SpinBox_space_dia.text())
-        except:
-            spacing_dia = 0.98
+        spacing_dia = 0.98
         try:
             avoid_overlap = float(self.solution.SpinBox_avoid_overlap.text())
         except:
             avoid_overlap = 2
 
         spacing = spacing_dia * water_diameter
-        self.solution.lineEdit_spacing.setText(str(spacing))
         total_water_inside = int((int(SM.box_lx/spacing) * int(SM.box_ly/spacing) * int(SM.box_lz/spacing)))
         water_amount = (SM.box_lx/spacing * SM.box_ly/spacing * SM.box_lz/spacing)
-        water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz-water_diameter) * 0.001)
+        water_concentration = water_amount / (0.602214076 * (SM.box_lx) * (SM.box_ly) * (SM.box_lz) * 0.001)
         print("water_concentration is: ", water_concentration)
 
         h2o = np.array([[ 0,        0,       0      ],  # oxygen
@@ -117,7 +112,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
                             dist = np.linalg.norm(xyz - SM.pos[p_n])
                             if dist < avoid_overlap:
                                 close = True
-                                print("close")
                                 break
                         if not close:
                             coordinates.extend(h2o + xyz.T)
@@ -126,9 +120,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         coord_array = np.array(coordinates)
         n_atoms = len(coord_array)
         assert coord_array.shape == (n_atoms, 3)
-        # n_residues = total_water_inside
         n_residues = int(n_atoms/3)
-        # n_atoms = n_residues * 3
         resindices = np.repeat(range(n_residues), 3)
         assert len(resindices) == n_atoms
         # all solution molecules belong to 1 segment
@@ -146,6 +138,9 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         sol.add_TopologyAttr('segid', ['SOL'])
 
         sol.atoms.positions = coord_array
+        cog = sol.atoms.center_of_geometry()
+        print('Original solvent center of geometry: ', cog)
+        sol.atoms.positions -= cog
         assert not hasattr(sol, 'bonds')
         bonds = []
         for o in range(0, n_atoms, 3):
@@ -156,9 +151,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
         file_name = tempfile.mkstemp(suffix='.pdb', prefix='Solution', dir=dir_name)[1]
         combined.atoms.write(file_name)
-        combined.universe.trajectory.ts.dimensions[0] = SM.box_lx
-        combined.universe.trajectory.ts.dimensions[1] = SM.box_ly
-        combined.universe.trajectory.ts.dimensions[2] = SM.box_lz
+        combined.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
         SM = active_window.universe_manager
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)

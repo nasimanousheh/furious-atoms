@@ -14,8 +14,16 @@ class UniverseManager:
         """
         self.universe = universe
         self.universe_save = None
-        self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
-                                  colors=(0, 0, 0), linewidth=2, fake_tube=True)
+        try:
+            self.box_lx = self.box[0]
+            self.box_ly = self.box[1]
+            self.box_lz = self.box[2]
+        except TypeError:
+            self.box_lx = 0
+            self.box_ly = 0
+            self.box_lz = 0
+
+        self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
         self._pos = self.universe.trajectory[0].positions.copy().astype(float)
@@ -43,13 +51,14 @@ class UniverseManager:
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
         # TODO: the two variables below take a fixed value. Maybe this should be provided by atom_type
         # self.radii_spheres = np.ones((self.no_atoms))
-        self.radii_spheres = 0.4 * np.ones((self.no_atoms))
-        self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
+        self.radii_spheres = 0.5 * np.ones((self.no_atoms))
+        self.radii_unique_types = 0.5 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
-        vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
-        big_verts, big_faces, big_colors, _ = res
-        self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
+        # big_verts, big_faces, big_colors, _ = res
+        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
@@ -90,18 +99,6 @@ class UniverseManager:
     @property
     def box(self):
         return self.universe.trajectory.ts.dimensions
-
-    @property
-    def box_lx(self):
-        return self.universe.trajectory.ts.dimensions[0]
-
-    @property
-    def box_ly(self):
-        return self.universe.trajectory.ts.dimensions[1]
-
-    @property
-    def box_lz(self):
-        return self.universe.trajectory.ts.dimensions[2]
 
     @property
     def no_unique_types_particles(self):
