@@ -111,9 +111,7 @@ def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):
     universe.add_TopologyAttr('type', atom_types_list)
     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
     universe.add_TopologyAttr('masses')
-    universe.trajectory.ts.dimensions[0] = box_lx
-    universe.trajectory.ts.dimensions[1] = box_ly
-    universe.trajectory.ts.dimensions[2] = box_lz
+    universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
     try:
         universe.add_bonds(bonds)
     except:
@@ -141,9 +139,7 @@ def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bo
     universe_2.add_TopologyAttr('type', atom_types_uni_2)
     universe_2.add_TopologyAttr('resname', ['MOL']*n_residues)
     merged_universes = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
-    merged_universes.trajectory.ts.dimensions[0] = box_lx
-    merged_universes.trajectory.ts.dimensions[1] = box_ly
-    merged_universes.trajectory.ts.dimensions[2] = box_lz
+    merged_universes.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
     merged_universes.add_bonds(universe_1.bonds.indices)
     return merged_universes
 
@@ -168,6 +164,7 @@ def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, 
     merged_universe_Hyd = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
     merged_universe_Hyd.add_bonds(bonds_uni_1)
     merged_universe_Hyd.add_bonds(bonds_uni_2)
+    merged_universe_Hyd.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
     merged_universe_Hyd.trajectory.ts.dimensions[0] = box_lx
     merged_universe_Hyd.trajectory.ts.dimensions[1] = box_ly
     merged_universe_Hyd.trajectory.ts.dimensions[2] = box_lz

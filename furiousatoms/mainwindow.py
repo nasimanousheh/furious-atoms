@@ -102,10 +102,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_forward.clicked.connect(self.forward_movie)
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
-        self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
+        # self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
-        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
+        # self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
         self.ui.horizontalSlider_Opacity.valueChanged[int].connect(self.change_slice_opacity)
         self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
@@ -915,8 +915,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
-            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
+            pos = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
+            # pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
