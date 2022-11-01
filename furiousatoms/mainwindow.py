@@ -915,8 +915,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
-            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
+            pos = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
+            # pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
