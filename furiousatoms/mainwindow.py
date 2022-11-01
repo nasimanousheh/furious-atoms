@@ -671,13 +671,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 n_residues = 1
                 atom_types_list = list(SM.atom_type)
                 if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-                    universe.dimensions[0] = 90
-                    universe.dimensions[1] = 90
-                    universe.dimensions[2] = 90
+                    universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
                 else:
-                    universe.dimensions[0] = SM.box_lx
-                    universe.dimensions[1] = SM.box_ly
-                    universe.dimensions[2] = SM.box_lz
+                    universe.dimensions = [0.0, 0.0, 0.0, 90, 90, 90]
                 universe.add_TopologyAttr('name', atom_types_list)
                 universe.add_TopologyAttr('type', atom_types_list)
                 universe.add_TopologyAttr('resname', ['MOL']*n_residues)
