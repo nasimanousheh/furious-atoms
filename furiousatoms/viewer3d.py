@@ -259,14 +259,6 @@ class Viewer3D(QtWidgets.QWidget):
         self.render()
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
-        fb_shape = final_bonds.shape
-        map_old_to_new = {}
-        for i in range(final_pos.shape[0]):
-            map_old_to_new[final_pos_index[i]] = i
-        fb = final_bonds.ravel()
-        for i in range(fb.shape[0]):
-            fb[i] = map_old_to_new[fb[i]]
-        final_bonds = fb.reshape(fb_shape)
 
         if len(object_indices_particles)> 0:
             final_pos = np.delete(final_pos, object_indices_particles, axis=0)
@@ -274,6 +266,14 @@ class Viewer3D(QtWidgets.QWidget):
                                         object_indices_particles)
             final_atom_types = np.delete(final_atom_types,
                                         object_indices_particles)
+            fb_shape = final_bonds.shape
+            map_old_to_new = {}
+            for i in range(final_pos.shape[0]):
+                map_old_to_new[final_pos_index[i]] = i
+            fb = final_bonds.ravel()
+            for i in range(fb.shape[0]):
+                fb[i] = map_old_to_new[fb[i]]
+            final_bonds = fb.reshape(fb_shape)
 
 
         SM.selected_bond[object_indices_bonds] = False
