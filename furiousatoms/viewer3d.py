@@ -231,9 +231,20 @@ class Viewer3D(QtWidgets.QWidget):
         SM.deleted_particles[object_indices_particles] = True
         SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
-
     def delete_bonds(self):
         SM = self.universe_manager
+        object_indices_particles = np.where(SM.selected_particle)[0].tolist()
+        object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
+        object_indices_particles = np.asarray(object_indices_particles)
+        final_pos = SM.pos.copy()
+        final_pos_index = np.arange(final_pos.shape[0])
+        final_pos = np.delete(final_pos, object_indices_particles, axis=0)
+        final_pos_index = np.delete(final_pos_index,
+                                    object_indices_particles)
+        final_atom_types = SM.atom_type.copy()
+        final_atom_types = np.delete(final_atom_types,
+                                    object_indices_particles)
+
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)
@@ -253,11 +264,19 @@ class Viewer3D(QtWidgets.QWidget):
         self.render()
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
+        fb_shape = final_bonds.shape
+        map_old_to_new = {}
+        for i in range(final_pos.shape[0]):
+            map_old_to_new[final_pos_index[i]] = i
+        fb = final_bonds.ravel()
+        for i in range(fb.shape[0]):
+            fb[i] = map_old_to_new[fb[i]]
+
+        final_bonds = fb.reshape(fb_shape)
         SM.selected_bond[object_indices_bonds] = False
         SM.deleted_bonds[object_indices_bonds] = True
-        SM.universe_save = create_universe(SM.pos, final_bonds, SM.atom_type, SM.box_lx, SM.box_ly, SM.box_lz)
+        SM.universe_save = create_universe(final_pos, final_bonds, SM.universe_save.atoms.names, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
-
 
     def left_button_press_particle_callback(self, obj, event):
         SM = self.universe_manager
