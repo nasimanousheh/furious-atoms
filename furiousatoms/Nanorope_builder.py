@@ -158,15 +158,9 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
         universe_all = universe.copy()
         space = 3.347
-        shifted_tube = np.array([0, diameter+space,0.0])
         for i in range(1, number_of_walls):
-            xyz = []
-            type_atoms = []
-            next_universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
-            xyz.extend(next_universe.universe.atoms.positions.astype("float64"))
-            type_atoms.extend(next_universe.atoms.types)
-
-            universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions.astype("float64") + shifted_tube, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+            shifted_tube = np.array([0, diameter+space,0.0])
+            universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, universe_all.atoms.positions.astype("float64") + shifted_tube, universe_all.bonds.indices, universe_all.atoms.types, box_lx, box_ly, box_lz)
         cog = universe_all.atoms.center_of_geometry()
         universe_all.atoms.positions -= cog
 
