@@ -29,6 +29,7 @@ from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
+from furiousatoms.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
@@ -455,6 +456,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_MWNT.smnt.win = self
         Ui_MWNT.smnt.show()
         Ui_MWNT.smnt.showNormal()
+
+    def NanoRope(self):
+        Ui_NanoRope.smnt = Ui_NanoRope()
+        Ui_NanoRope.smnt.win = self
+        Ui_NanoRope.smnt.show()
+        Ui_NanoRope.smnt.showNormal()
 
     def calculate_distance(self):
         active_window = self.active_mdi_child()
