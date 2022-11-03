@@ -154,12 +154,13 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
         bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
-        universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, wan = 1, bend=bendFactor)
+
+        universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
         universe_all = universe.copy()
         for i in range(1, number_of_walls):
             xyz = []
             type_atoms = []
-            next_universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, wan = i+1, bend=bendFactor)
+            next_universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
             xyz.extend(next_universe.universe.atoms.positions)
             type_atoms.extend(next_universe.atoms.types)
             # try:
@@ -179,7 +180,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def NanoRope_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1, bend=1):
+def NanoRope_builder(n, m, N, a, species=('B', 'C'), centered=False, bend=1):
     global box_lx, box_ly, box_lz, bendFactor
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
@@ -190,23 +191,20 @@ def NanoRope_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1, be
     Ch = (n*a1+m*a2)
     T = t1*a1+t2*a2
 
-    # diameter = (norm(Ch)/np.pi)*wan
-    # Ch = (diameter*np.pi)/wan
-    Ch_proj, T_proj = [(v/norm(v)**2) for v in [Ch*wan, T]]
+    Ch_proj, T_proj = [(v/norm(v)**2) for v in [Ch, T]]
     basis = [np.array((0, 0)), ((a1+a2)/3)]
     pts = []
     xyz = []
     atom_types_swnt = []
-    for i1, i2 in product(range(0, wan*n+t1+1), range(t2, wan*m+1)):
+    for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
             pt = b+shift
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
                 for k in range(N):
                     pts.append((sp, pt+k*T))
-    # diameter = (norm(Ch)/np.pi)*wan
 
-    diameter = (norm(Ch)/(np.pi*bendFactor))*wan
+    diameter = (norm(Ch)/(np.pi*bendFactor))
     print(diameter)
     def gr2tube(v):
         # phi = 2*np.pi*v.dot(Ch_proj)
