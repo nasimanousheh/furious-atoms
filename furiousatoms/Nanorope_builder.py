@@ -147,7 +147,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             bendFactor
         except NameError:
             bendFactor = 1.0
-        number_of_walls = 2
+        number_of_walls = 3
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
         repeat_units_NanoRope = int(self.NanoRope.spinBox_repeat_units_NanoRope.text())
@@ -161,10 +161,10 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             xyz = []
             type_atoms = []
             next_universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
-            xyz.extend(next_universe.universe.atoms.positions)
+            xyz.extend(next_universe.universe.atoms.positions.astype("float64"))
             type_atoms.extend(next_universe.atoms.types)
 
-            universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+            universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions.astype("float64") , next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
 
         window = self.win.create_mdi_child()
         window.make_title()
@@ -194,7 +194,7 @@ def NanoRope_builder(n, m, N, a, species=('B', 'C'), centered=False, bend=1):
     xyz = []
     atom_types_swnt = []
     for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
-        shift = i1*a1+i2*a2
+        shift = (i1*a1+i2*a2)
         for sp, b in zip(species, basis):
             pt = b+shift
             if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
