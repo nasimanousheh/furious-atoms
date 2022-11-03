@@ -90,6 +90,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
+        self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
         self.ui.actionAdd_Box.triggered.connect(self.box_builder)
