@@ -458,10 +458,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_MWNT.smnt.showNormal()
 
     def NanoRope(self):
-        Ui_NanoRope.smnt = Ui_NanoRope()
-        Ui_NanoRope.smnt.win = self
-        Ui_NanoRope.smnt.show()
-        Ui_NanoRope.smnt.showNormal()
+        Ui_NanoRope.rope = Ui_NanoRope()
+        Ui_NanoRope.rope.win = self
+        Ui_NanoRope.rope.show()
+        Ui_NanoRope.rope.showNormal()
 
     def calculate_distance(self):
         active_window = self.active_mdi_child()
