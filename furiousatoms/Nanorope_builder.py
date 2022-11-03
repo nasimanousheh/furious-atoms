@@ -52,7 +52,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.comboBox_type2_NanoRope.activated.connect(self.get_atom_type)
 
     def get_atom_type(self):
-        global bond_length_NanoRope, bendFactor
+        global bond_length_NanoRope, bendFactor, diameter
         if self.NanoRope.radioButton_bond_length.isChecked() == True:
             self.NanoRope.SpinBox_desired_bond_length.setEnabled(False)
             NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
@@ -92,7 +92,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
 
     def NanoRope_diameter_changed(self):
-        global bond_length_NanoRope, bendFactor
+        global bond_length_NanoRope, bendFactor, diameter
         try:
             bond_length_NanoRope
         except NameError:
@@ -133,7 +133,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         return
 
     def NanoRope_builder_callback(self):
-        global bond_length_NanoRope, box_lx, box_ly, box_lz, bendFactor
+        global bond_length_NanoRope, box_lx, box_ly, box_lz, bendFactor, diameter
         try:
             bond_length_NanoRope
         except NameError:
@@ -157,6 +157,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
         universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
         universe_all = universe.copy()
+        space = 3.347
+        shifted_tube = np.array([0, diameter+space,0.0])
         for i in range(1, number_of_walls):
             xyz = []
             type_atoms = []
@@ -164,7 +166,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             xyz.extend(next_universe.universe.atoms.positions.astype("float64"))
             type_atoms.extend(next_universe.atoms.types)
 
-            universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions.astype("float64") , next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+            universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions.astype("float64") + shifted_tube, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
 
         window = self.win.create_mdi_child()
         window.make_title()
@@ -178,7 +180,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 """
 
 def NanoRope_builder(n, m, N, a, species=('B', 'C'), centered=False, bend=1):
-    global box_lx, box_ly, box_lz, bendFactor
+    global box_lx, box_ly, box_lz, bendFactor, diameter
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
