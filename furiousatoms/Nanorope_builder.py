@@ -167,6 +167,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             type_atoms.extend(next_universe.atoms.types)
 
             universe_all = merged_two_universes(universe_all.atoms.positions.astype("float64"), universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions.astype("float64") + shifted_tube, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+        cog = universe_all.atoms.center_of_geometry()
+        universe_all.atoms.positions -= cog
 
         window = self.win.create_mdi_child()
         window.make_title()
