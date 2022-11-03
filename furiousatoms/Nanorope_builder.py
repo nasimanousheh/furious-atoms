@@ -163,11 +163,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             next_universe = NanoRope_builder(value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
             xyz.extend(next_universe.universe.atoms.positions)
             type_atoms.extend(next_universe.atoms.types)
-            # try:
+
             universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
-            # except NameError:
-            #     box_lx = box_ly = box_lz = 0.0
-                # universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
 
         window = self.win.create_mdi_child()
         window.make_title()
