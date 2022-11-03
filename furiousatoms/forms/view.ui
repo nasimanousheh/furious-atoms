@@ -308,7 +308,7 @@
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>9</x>
@@ -478,7 +478,7 @@
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -1250,7 +1250,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string> </string>
+     <string/>
     </property>
    </widget>
    <widget class="QMenu" name="menuBuild">
@@ -1264,8 +1264,9 @@
      <addaction name="actionGraphene_sheet"/>
      <addaction name="actionSingle_Wall_Nanotube"/>
      <addaction name="actionMulti_Wall_nanotube"/>
-     <addaction name="actionElectrolyte"/>
+     <addaction name="actionNanorope"/>
      <addaction name="actionFullerenes"/>
+     <addaction name="actionElectrolyte"/>
     </widget>
     <addaction name="menuBuild_Nanostructure"/>
    </widget>
@@ -1490,6 +1491,11 @@
   <action name="actionAdd_solution">
    <property name="text">
     <string>Add Water</string>
+   </property>
+  </action>
+  <action name="actionNanorope">
+   <property name="text">
+    <string>Nanorope</string>
    </property>
   </action>
  </widget>
