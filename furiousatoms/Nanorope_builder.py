@@ -42,7 +42,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.spinBox_repeat_units_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.pushButton_build_NanoRope.clicked.connect(self.NanoRope_builder_callback)
         self.NanoRope.pushButton_build_NanoRope.clicked.connect(lambda:self.close())
-        self.NanoRope.spinBox_num_walls_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
+        # self.NanoRope.spinBox_num_walls_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.NanoRope.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
@@ -116,13 +116,13 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         length_NanoRope = "{:.2f}".format(float(length_NanoRope))
         self.NanoRope.lineEdit_diameter_NanoRope.setText(str(diameter_NanoRope))
         self.NanoRope.lineEdit_length_NanoRope.setText(str(length_NanoRope))
-        number_of_walls = int(self.NanoRope.spinBox_num_walls_NanoRope.text())
+        number_of_walls = 2
         if number_of_walls > 1:
             wall_separation = 3.43
         else:
             wall_separation = 0.0
 
-        self.NanoRope.lineEdit_wall_separation_NanoRope.setText(str(wall_separation))
+        # self.NanoRope.lineEdit_wall_separation_NanoRope.setText(str(wall_separation))
 
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz, bendFactor
@@ -147,7 +147,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             bendFactor
         except NameError:
             bendFactor = 1.0
-        number_of_walls = int(self.NanoRope.spinBox_num_walls_NanoRope.text())
+        number_of_walls = 2
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
         repeat_units_NanoRope = int(self.NanoRope.spinBox_repeat_units_NanoRope.text())
