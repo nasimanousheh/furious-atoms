@@ -35,6 +35,11 @@ added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (DATA_DIR, 'fury/data/files')
               ]
 
+optional_args = {}
+# if platform.system() in ["Windows", "Darwin"]:
+#    optional_args["icon"] = os.path.join(FA_PATH, 'furiousatoms','resources',
+#                                         'splash.png')
+
 a = Analysis([FA_BIN],
              pathex=[VTK_PATH, NUMPY_PATH, SCIPY_PATH] + MDA_PATH,
              binaries=[],
@@ -49,7 +54,8 @@ a = Analysis([FA_BIN],
              excludes=[],
              win_no_prefer_redirects=False,
              win_private_assemblies=False,
-             cipher=block_cipher)
+             cipher=block_cipher,
+             **optional_args)
 pyz = PYZ(a.pure, a.zipped_data,
              cipher=block_cipher)
 exe = EXE(pyz,
