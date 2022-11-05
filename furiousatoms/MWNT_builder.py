@@ -154,19 +154,22 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
         bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
-        universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1, bend=bendFactor)
-        universe_all = universe.copy()
-        for i in range(1, number_of_walls):
-            xyz = []
-            type_atoms = []
-            next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1, bend=bendFactor)
-            xyz.extend(next_universe.universe.atoms.positions)
-            type_atoms.extend(next_universe.atoms.types)
-            # try:
-            universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
-            # except NameError:
-            #     box_lx = box_ly = box_lz = 0.0
-                # universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+        # universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1, bend=bendFactor)
+        # universe_all = universe.copy()
+        # for i in range(1, number_of_walls):
+        #     xyz = []
+        #     type_atoms = []
+        #     next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1, bend=bendFactor)
+        #     xyz.extend(next_universe.universe.atoms.positions)
+        #     type_atoms.extend(next_universe.atoms.types)
+        #     universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+
+        import MDAnalysis as mda
+        list_universe = []
+        for i in range(1, number_of_walls+1):
+            universe_all = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i, bend=bendFactor)
+            list_universe.append(universe_all.atoms)
+        universe_all = mda.Merge(*list_universe)
 
         window = self.win.create_mdi_child()
         window.make_title()
