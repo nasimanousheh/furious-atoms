@@ -159,12 +159,9 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
         bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
         universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend = bendFactor)
-
-        # universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
         universe_all = universe.copy()
         list_universe = []
         import MDAnalysis as mda
-        # number_tubes = 38
         distance_between_tubes = 0
         for i in range(number_tubes):
             if i == 0:
@@ -233,7 +230,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                     pts.append((sp, pt+k*T))
 
     # Here we define the diameter of SWNT:
-    # diameter_SWNT = np.linalg.norm(Ch)/np.pi
     diameter_SWNT = np.linalg.norm(Ch)/(np.pi*bendFactor)
     # This function converts the SWNT to nanotube with given diameter:
     def gr2tube(v):
