@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>320</width>
-    <height>440</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>320</width>
-    <height>440</height>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>320</width>
-    <height>440</height>
+    <height>500</height>
    </size>
   </property>
   <property name="font">
@@ -42,10 +42,16 @@
   <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0">
     <widget class="QWidget" name="SWNT" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>490</height>
+      </size>
+     </property>
      <property name="maximumSize">
       <size>
        <width>300</width>
-       <height>420</height>
+       <height>490</height>
       </size>
      </property>
      <property name="autoFillBackground">
@@ -55,83 +61,7 @@
       <string notr="true">background-color: rgb(223, 223, 223);</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="5" column="4">
-       <widget class="QComboBox" name="comboBox_H_termination_nanorope">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>None</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>One end</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Both ends</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="8" column="4">
-       <widget class="QDoubleSpinBox" name="SpinBox_lz">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="maximum">
-         <double>200.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="7" column="2">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>13</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="4">
-       <widget class="QLineEdit" name="lineEdit_bond_length_NanoRope">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="clearButtonEnabled">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0" colspan="5">
+      <item row="0" column="0" colspan="3">
        <layout class="QGridLayout" name="gridLayout_3">
         <item row="0" column="0">
          <layout class="QGridLayout" name="gridLayout">
@@ -295,24 +225,24 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="4">
-       <widget class="QDoubleSpinBox" name="SpinBox_desired_bond_length">
+      <item row="1" column="2">
+       <widget class="QLineEdit" name="lineEdit_bond_length_NanoRope">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
         </property>
-        <property name="maximum">
-         <double>2.500000000000000</double>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
-        <property name="singleStep">
-         <double>0.010000000000000</double>
+        <property name="readOnly">
+         <bool>true</bool>
         </property>
-        <property name="value">
-         <double>1.200000000000000</double>
+        <property name="clearButtonEnabled">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -334,27 +264,24 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label">
+      <item row="2" column="2">
+       <widget class="QDoubleSpinBox" name="SpinBox_desired_bond_length">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
         </property>
-        <property name="text">
-         <string>Bend factor:</string>
+        <property name="maximum">
+         <double>2.500000000000000</double>
         </property>
-       </widget>
-      </item>
-      <item row="7" column="0">
-       <widget class="QLabel" name="label_ly">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
+        <property name="singleStep">
+         <double>0.010000000000000</double>
         </property>
-        <property name="text">
-         <string>ly (A):</string>
+        <property name="value">
+         <double>1.200000000000000</double>
         </property>
        </widget>
       </item>
@@ -370,7 +297,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="4">
+      <item row="3" column="2">
        <widget class="QSpinBox" name="spinBox_repeat_units_NanoRope">
         <property name="font">
          <font>
@@ -388,7 +315,19 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="4">
+      <item row="4" column="0">
+       <widget class="QLabel" name="label">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Bend factor:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
        <widget class="QDoubleSpinBox" name="doubleSpinBox_bend_factor">
         <property name="font">
          <font>
@@ -418,7 +357,172 @@
         </property>
        </widget>
       </item>
+      <item row="5" column="2">
+       <widget class="QComboBox" name="comboBox_H_termination_SWNT">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>None</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>One end</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Both ends</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Number of nanotubes:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QSpinBox" name="spinBox_num_nanotubes">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>37</number>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0" colspan="2">
+       <widget class="QLabel" name="label_ntsep">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Nanotube Separation (Å):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QDoubleSpinBox" name="spinBox_nanotube_separation">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="decimals">
+         <number>3</number>
+        </property>
+        <property name="minimum">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>20.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>3.347000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QLabel" name="label_lx">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>lx  (Å):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QDoubleSpinBox" name="SpinBox_lx">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
       <item row="9" column="0">
+       <widget class="QLabel" name="label_ly">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>ly (Å):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QLineEdit" name="lineEdit_ly">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="label_lz">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>lz (Å):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2">
+       <widget class="QDoubleSpinBox" name="SpinBox_lz">
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="0">
        <widget class="QLabel" name="labl_properties_NanoRope">
         <property name="font">
          <font>
@@ -433,7 +537,7 @@
         </property>
        </widget>
       </item>
-      <item row="10" column="0">
+      <item row="12" column="0">
        <widget class="QLabel" name="Diameter_NanoRope">
         <property name="font">
          <font>
@@ -445,7 +549,7 @@
         </property>
        </widget>
       </item>
-      <item row="10" column="4">
+      <item row="12" column="2">
        <widget class="QLineEdit" name="lineEdit_diameter_NanoRope">
         <property name="font">
          <font>
@@ -469,19 +573,19 @@
         </property>
        </widget>
       </item>
-      <item row="12" column="1" colspan="4">
-       <widget class="QPushButton" name="pushButton_help_build_NanoRope">
+      <item row="13" column="0">
+       <widget class="QLabel" name="label_length_NanoRope">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>Help</string>
+         <string>Length (Å)  :</string>
         </property>
        </widget>
       </item>
-      <item row="11" column="4">
+      <item row="13" column="2">
        <widget class="QLineEdit" name="lineEdit_length_NanoRope">
         <property name="font">
          <font>
@@ -505,19 +609,7 @@
         </property>
        </widget>
       </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="label_length_NanoRope">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Length (Å)  :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="12" column="0">
+      <item row="14" column="0">
        <widget class="QPushButton" name="pushButton_build_NanoRope">
         <property name="font">
          <font>
@@ -529,64 +621,15 @@
         </property>
        </widget>
       </item>
-      <item row="7" column="3">
-       <spacer name="horizontalSpacer_2">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>13</width>
-          <height>19</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="7" column="4">
-       <widget class="QLineEdit" name="lineEdit_ly">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="4">
-       <widget class="QDoubleSpinBox" name="SpinBox_lx">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="decimals">
-         <number>2</number>
-        </property>
-        <property name="maximum">
-         <double>200.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="8" column="0">
-       <widget class="QLabel" name="label_lz">
+      <item row="14" column="1" colspan="2">
+       <widget class="QPushButton" name="pushButton_help_build_NanoRope">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
         </property>
         <property name="text">
-         <string>lz (A):</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_lx">
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>lx (A):</string>
+         <string>Help</string>
         </property>
        </widget>
       </item>
