@@ -41,13 +41,13 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.spinBox_chirality_N_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.spinBox_chirality_M_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.spinBox_repeat_units_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
+        self.NanoRope.spinBox_nanotube_separation.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.pushButton_build_NanoRope.clicked.connect(self.NanoRope_builder_callback)
+        self.NanoRope.spinBox_num_nanotubes.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.pushButton_build_NanoRope.clicked.connect(lambda:self.close())
-        # self.NanoRope.spinBox_num_walls_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.comboBox_H_termination_SWNT.currentTextChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.NanoRope.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
-
         self.NanoRope.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
         self.NanoRope.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.NanoRope.comboBox_type1_NanoRope.activated.connect(self.get_atom_type)
@@ -103,6 +103,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
         repeat_units_NanoRope = int(self.NanoRope.spinBox_repeat_units_NanoRope.text())
+        nanotube_separation = float(self.NanoRope.spinBox_nanotube_separation.text())
         a1 = np.array((np.sqrt(3)*bond_length_NanoRope, 0))
         a2 = np.array((np.sqrt(3)/2*bond_length_NanoRope, -3*bond_length_NanoRope/2))
         Ch = value_n_NanoRope*a1+value_m_NanoRope*a2
@@ -152,6 +153,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
         repeat_units_NanoRope = int(self.NanoRope.spinBox_repeat_units_NanoRope.text())
+        nanotube_separation = float(self.NanoRope.spinBox_nanotube_separation.text())
+        number_tubes = int(self.NanoRope.spinBox_num_nanotubes.text())
         NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
         bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
@@ -159,27 +162,26 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
         # universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, a=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend=bendFactor)
         universe_all = universe.copy()
-        space = 3.347
         list_universe = []
         import MDAnalysis as mda
-        number_tubes = 38
+        # number_tubes = 38
         distance_between_tubes = 0
         for i in range(number_tubes):
             if i == 0:
                 pos = universe_all.atoms.positions
             else:
                 if (i > 0 and i <=6):
-                    distance_between_tubes = diameter_SWNT + space
+                    distance_between_tubes = diameter_SWNT + nanotube_separation
                     shifted_tube_i = np.array([np.cos(np.radians(60*i)) * distance_between_tubes, np.sin(np.radians(60*i))* distance_between_tubes, 0.0])
                     pos = universe_all.atoms.positions + shifted_tube_i
 
                 if (i > 6 and i <= 19):
-                    distance_between_tubes = 2 * (diameter_SWNT + space)
+                    distance_between_tubes = 2 * (diameter_SWNT + nanotube_separation)
                     shifted_tube_i = np.array([np.cos(np.radians(30*i)) * distance_between_tubes, np.sin(np.radians(30*i))* distance_between_tubes, 0.0])
                     pos = universe_all.atoms.positions + shifted_tube_i
 
                 if (i > 19 and i <= 38):
-                    distance_between_tubes = 3 * (diameter_SWNT + space)
+                    distance_between_tubes = 3 * (diameter_SWNT + nanotube_separation)
                     shifted_tube_i = np.array([np.cos(np.radians(20*i)) * distance_between_tubes, np.sin(np.radians(20*i))* distance_between_tubes, 0.0])
                     pos = universe_all.atoms.positions + shifted_tube_i
 
