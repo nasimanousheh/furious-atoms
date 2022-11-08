@@ -16,11 +16,6 @@ def create_installer(working_dir, use_debug=False):
     spec_file = spec_file_debug if use_debug else spec_file_rel
     PyInstaller.__main__.run(['--distpath', dist_dir,
                               '--workpath', build_dir,
-                              '--specpath', working_dir,
-                              '--icon', os.path.join(working_dir,
-                                                     'furiousatoms',
-                                                     'resources',
-                                                     'splash.png'),
                               spec_file])
 
 

@@ -29,6 +29,7 @@ from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
+from furiousatoms.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
@@ -89,12 +90,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
+        self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
         self.ui.actionAdd_Box.triggered.connect(self.box_builder)
         self.ui.actionAdd_solution.triggered.connect(self.solution_builder)
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
-        self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
+        # self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
@@ -102,10 +104,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_forward.clicked.connect(self.forward_movie)
         self.ui.Button_backward.clicked.connect(self.backward_movie)
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
-        self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
-        self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
+        # self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
+        # self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
-        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
+        # self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
         self.ui.horizontalSlider_Opacity.valueChanged[int].connect(self.change_slice_opacity)
         self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
@@ -456,6 +458,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_MWNT.smnt.show()
         Ui_MWNT.smnt.showNormal()
 
+    def NanoRope(self):
+        Ui_NanoRope.rope = Ui_NanoRope()
+        Ui_NanoRope.rope.win = self
+        Ui_NanoRope.rope.show()
+        Ui_NanoRope.rope.showNormal()
+
     def calculate_distance(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -671,13 +679,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 n_residues = 1
                 atom_types_list = list(SM.atom_type)
                 if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-                    universe.dimensions[0] = 90
-                    universe.dimensions[1] = 90
-                    universe.dimensions[2] = 90
+                    universe.dimensions = [90, 90, 90, 90, 90, 90]
                 else:
-                    universe.dimensions[0] = SM.box_lx
-                    universe.dimensions[1] = SM.box_ly
-                    universe.dimensions[2] = SM.box_lz
+                    universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
                 universe.add_TopologyAttr('name', atom_types_list)
                 universe.add_TopologyAttr('type', atom_types_list)
                 universe.add_TopologyAttr('resname', ['MOL']*n_residues)
@@ -714,8 +718,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        active_window.delete_bonds()
         SM = active_window.universe_manager
+        SM.universe_save = active_window.delete_bonds()
         self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
         self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
         self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
@@ -915,8 +919,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if SM.cnt == SM.n_frames:
             return
         if SM.n_frames > 1:
-            pos_R = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
-            pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
+            pos = SM.universe.trajectory[SM.cnt].positions.copy().astype('f8')
+            # pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, SM.box, backend='serial')
             SM.all_vertices_particles[:] = SM.initial_vertices_particles + \
                 np.repeat(pos, SM.no_vertices_per_particle, axis=0)
             utils.update_actor(SM.sphere_actor)
