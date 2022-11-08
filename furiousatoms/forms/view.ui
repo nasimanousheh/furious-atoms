@@ -308,7 +308,7 @@
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>9</x>
@@ -478,7 +478,7 @@
            <property name="styleSheet">
             <string notr="true"/>
            </property>
-           <widget class="QWidget" name="">
+           <widget class="QWidget" name="layoutWidget">
             <property name="geometry">
              <rect>
               <x>10</x>
@@ -609,256 +609,265 @@
           <attribute name="title">
            <string>Particle</string>
           </attribute>
-          <widget class="QWidget" name="widget_particleproperties" native="true">
-           <property name="geometry">
-            <rect>
-             <x>9</x>
-             <y>9</y>
-             <width>271</width>
-             <height>590</height>
-            </rect>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>290</height>
-            </size>
-           </property>
-           <property name="font">
-            <font>
-             <pointsize>10</pointsize>
-            </font>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_5">
-            <item row="0" column="0">
-             <layout class="QGridLayout" name="gridLayout_4">
+          <layout class="QGridLayout" name="gridLayout_7">
+           <item row="0" column="0">
+            <widget class="QWidget" name="widget_particleproperties" native="true">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>290</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::LeftToRight</enum>
+             </property>
+             <property name="styleSheet">
+              <string notr="true"/>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_5">
               <item row="0" column="0">
-               <widget class="QLabel" name="label_num_of_particles">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Number of atoms:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1">
-               <widget class="QLineEdit" name="Edit_num_of_particles">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
+               <layout class="QGridLayout" name="gridLayout_4">
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="Edit_num_of_particles">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="dragEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_num_of_particletypes">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Number of atom types:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="0">
+                 <widget class="QLabel" name="label_num_of_bonds_2">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Number of bonds:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1">
+                 <widget class="QLineEdit" name="Edit_num_of_bonds">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="dragEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QLineEdit" name="Edit_num_of_particle_types">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="autoFillBackground">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="dragEnabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="readOnly">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_radius">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Radius:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_particlecolor">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Color:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="1">
+                 <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="acceptDrops">
+                   <bool>true</bool>
+                  </property>
+                  <property name="correctionMode">
+                   <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                  </property>
+                  <property name="decimals">
+                   <number>5</number>
+                  </property>
+                  <property name="minimum">
+                   <double>0.000100000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>2.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>0.500000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item row="5" column="0">
+                 <widget class="QLabel" name="label_choose_type_of_particle">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Choose type:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="1">
+                 <widget class="QPushButton" name="Button_particlecolor">
+                  <property name="font">
+                   <font>
+                    <pointsize>11</pointsize>
+                    <weight>50</weight>
+                    <italic>false</italic>
+                    <bold>false</bold>
+                    <underline>false</underline>
+                    <kerning>true</kerning>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Change color</string>
+                  </property>
+                  <property name="autoRepeat">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_num_of_particles">
+                  <property name="font">
+                   <font>
+                    <family>.SF NS Text</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>Number of atoms:</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item row="1" column="0">
-               <widget class="QLabel" name="label_num_of_particletypes">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
+               <widget class="QTreeWidget" name="treeWidget">
+                <property name="minimumSize">
+                 <size>
+                  <width>120</width>
+                  <height>400</height>
+                 </size>
                 </property>
-                <property name="text">
-                 <string>Number of atom types:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1">
-               <widget class="QLineEdit" name="Edit_num_of_particle_types">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
+                <property name="maximumSize">
+                 <size>
+                  <width>250</width>
+                  <height>400</height>
+                 </size>
                 </property>
                 <property name="autoFillBackground">
                  <bool>false</bool>
                 </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
+                <property name="itemsExpandable">
                  <bool>true</bool>
                 </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
+                <column>
+                 <property name="text">
+                  <string/>
+                 </property>
+                </column>
                </widget>
               </item>
               <item row="2" column="0">
-               <widget class="QLabel" name="label_num_of_bonds_2">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
+               <spacer name="verticalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
                 </property>
-                <property name="text">
-                 <string>Number of bonds:</string>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>20</width>
+                  <height>40</height>
+                 </size>
                 </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLineEdit" name="Edit_num_of_bonds">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="autoFillBackground">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="dragEnabled">
-                 <bool>true</bool>
-                </property>
-                <property name="readOnly">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_particlecolor">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Color:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="1">
-               <widget class="QPushButton" name="Button_particlecolor">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                  <weight>50</weight>
-                  <italic>false</italic>
-                  <bold>false</bold>
-                  <underline>false</underline>
-                  <kerning>true</kerning>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Change color</string>
-                </property>
-                <property name="autoRepeat">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="0">
-               <widget class="QLabel" name="label_radius">
-                <property name="font">
-                 <font>
-                  <family>.SF NS Text</family>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Radius:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="4" column="1">
-               <widget class="QDoubleSpinBox" name="SpinBox_atom_radius">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="acceptDrops">
-                 <bool>true</bool>
-                </property>
-                <property name="correctionMode">
-                 <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
-                </property>
-                <property name="decimals">
-                 <number>5</number>
-                </property>
-                <property name="minimum">
-                 <double>0.000100000000000</double>
-                </property>
-                <property name="maximum">
-                 <double>2.000000000000000</double>
-                </property>
-                <property name="singleStep">
-                 <double>0.010000000000000</double>
-                </property>
-                <property name="value">
-                 <double>0.500000000000000</double>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_choose_type_of_particle">
-                <property name="font">
-                 <font>
-                  <pointsize>11</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Choose type:</string>
-                </property>
-               </widget>
+               </spacer>
               </item>
              </layout>
-            </item>
-            <item row="1" column="0">
-             <widget class="QTreeWidget" name="treeWidget">
-              <property name="minimumSize">
-               <size>
-                <width>120</width>
-                <height>400</height>
-               </size>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>250</width>
-                <height>400</height>
-               </size>
-              </property>
-              <property name="autoFillBackground">
-               <bool>false</bool>
-              </property>
-              <property name="itemsExpandable">
-               <bool>true</bool>
-              </property>
-              <column>
-               <property name="text">
-                <string/>
-               </property>
-              </column>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+            </widget>
+           </item>
+          </layout>
          </widget>
          <widget class="QWidget" name="effects_tab">
           <attribute name="title">
@@ -1250,7 +1259,7 @@
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string> </string>
+     <string/>
     </property>
    </widget>
    <widget class="QMenu" name="menuBuild">
@@ -1264,8 +1273,9 @@
      <addaction name="actionGraphene_sheet"/>
      <addaction name="actionSingle_Wall_Nanotube"/>
      <addaction name="actionMulti_Wall_nanotube"/>
-     <addaction name="actionElectrolyte"/>
+     <addaction name="actionNanorope"/>
      <addaction name="actionFullerenes"/>
+     <addaction name="actionElectrolyte"/>
     </widget>
     <addaction name="menuBuild_Nanostructure"/>
    </widget>
@@ -1490,6 +1500,11 @@
   <action name="actionAdd_solution">
    <property name="text">
     <string>Add Water</string>
+   </property>
+  </action>
+  <action name="actionNanorope">
+   <property name="text">
+    <string>Nanorope</string>
    </property>
   </action>
  </widget>
