@@ -29,6 +29,7 @@ from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
+from furiousatoms.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
@@ -89,6 +90,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
+        self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
         self.ui.actionAdd_Box.triggered.connect(self.box_builder)
@@ -455,6 +457,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_MWNT.smnt.win = self
         Ui_MWNT.smnt.show()
         Ui_MWNT.smnt.showNormal()
+
+    def NanoRope(self):
+        Ui_NanoRope.rope = Ui_NanoRope()
+        Ui_NanoRope.rope.win = self
+        Ui_NanoRope.rope.show()
+        Ui_NanoRope.rope.showNormal()
 
     def calculate_distance(self):
         active_window = self.active_mdi_child()

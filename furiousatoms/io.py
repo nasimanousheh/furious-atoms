@@ -164,10 +164,11 @@ def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, 
     merged_universe_Hyd = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
     merged_universe_Hyd.add_bonds(bonds_uni_1)
     merged_universe_Hyd.add_bonds(bonds_uni_2)
+    try:
+        box_lx or box_ly or box_lz
+    except NameError:
+        box_lx = box_ly = box_lz = 0.0
     merged_universe_Hyd.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
-    merged_universe_Hyd.trajectory.ts.dimensions[0] = box_lx
-    merged_universe_Hyd.trajectory.ts.dimensions[1] = box_ly
-    merged_universe_Hyd.trajectory.ts.dimensions[2] = box_lz
     cog = merged_universe_Hyd.atoms.center_of_geometry()
     merged_universe_Hyd.atoms.positions -= cog
     return merged_universe_Hyd
