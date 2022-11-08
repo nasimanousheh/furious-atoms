@@ -591,6 +591,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
             for n in range(total_water_inside):
                 outdump.write("{}\t{}\t{}\t{}\t{}\n".format( n + 1, '1', (n + 2 + num_molecules + num_molecules), (n + 1 + num_molecules + num_molecules), (n + 3 + num_molecules + num_molecules)))
                 num_molecules = num_molecules + 1
+            outdump.close()
 
         child = self.win.create_mdi_child()
         if child.load_file(file_name):
