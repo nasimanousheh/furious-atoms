@@ -177,29 +177,29 @@ class Viewer3D(QtWidgets.QWidget):
 
     def delete_particles(self):
         SM = self.universe_manager
-        object_indices_particles = np.where(SM.selected_particle)[0].tolist()
-        object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
-        object_indices_particles = np.asarray(object_indices_particles)
-        print('object_indices_particles: ', object_indices_particles)
-        print(SM.pos[object_indices_particles])
+        SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
+        SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
+        SM.object_indices_particles = np.asarray(SM.object_indices_particles)
+        print('object_indices_particles: ', SM.object_indices_particles)
+        print(SM.pos[SM.object_indices_particles])
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
-        for object_index in object_indices_particles:
+        for object_index in SM.object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
-        final_pos = np.delete(final_pos, object_indices_particles, axis=0)
+        final_pos = np.delete(final_pos, SM.object_indices_particles, axis=0)
         final_pos_index = np.delete(final_pos_index,
-                                    object_indices_particles)
+                                    SM.object_indices_particles)
         final_atom_types = SM.atom_type.copy()
         final_atom_types = np.delete(final_atom_types,
-                                    object_indices_particles)
+                                    SM.object_indices_particles)
         try:
             bonds_indices = SM.universe.bonds.to_indices()
             object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
-            for object_index in object_indices_particles:
+            for object_index in SM.object_indices_particles:
                 object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
                 object_indices_bonds += np.where(bonds_indices[:, 0] == object_index)[0].tolist()
             bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
@@ -227,15 +227,15 @@ class Viewer3D(QtWidgets.QWidget):
         except:
             final_bonds = None
 
-        SM.selected_particle[object_indices_particles] = False
-        SM.deleted_particles[object_indices_particles] = True
+        SM.selected_particle[SM.object_indices_particles] = False
+        SM.deleted_particles[SM.object_indices_particles] = True
         SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
     def delete_bonds(self):
         SM = self.universe_manager
-        object_indices_particles = np.where(SM.selected_particle)[0].tolist()
-        object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
-        object_indices_particles = np.asarray(object_indices_particles)
+        SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
+        SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
+        SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_atom_types = SM.atom_type.copy()
@@ -260,12 +260,12 @@ class Viewer3D(QtWidgets.QWidget):
         final_bonds = bonds_indices.copy()
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
 
-        if len(object_indices_particles)> 0:
-            final_pos = np.delete(final_pos, object_indices_particles, axis=0)
+        if len(SM.object_indices_particles)> 0:
+            final_pos = np.delete(final_pos, SM.object_indices_particles, axis=0)
             final_pos_index = np.delete(final_pos_index,
-                                        object_indices_particles)
+                                        SM.object_indices_particles)
             final_atom_types = np.delete(final_atom_types,
-                                        object_indices_particles)
+                                        SM.object_indices_particles)
             fb_shape = final_bonds.shape
             map_old_to_new = {}
             for i in range(final_pos.shape[0]):
@@ -290,6 +290,7 @@ class Viewer3D(QtWidgets.QWidget):
         SM.no_vertices_all_particles = vertices.shape[0]
         object_index = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_particles) * SM.no_atoms))
         print('left_button_press_particle_callback number of atoms is: ',SM.no_atoms)
+
         if not SM.selected_particle[object_index]:
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
