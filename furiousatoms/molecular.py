@@ -54,11 +54,12 @@ class UniverseManager:
         self.radii_spheres = 0.5 * np.ones((self.no_atoms))
         self.radii_unique_types = 0.5 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
-        # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-        # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
-        # big_verts, big_faces, big_colors, _ = res
-        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
+        self.object_indices_particles = np.where(self.selected_particle)[0].tolist()
+        vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
+        big_verts, big_faces, big_colors, _ = res
+        self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
