@@ -1,0 +1,50 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 19:36:48 US Eastern Standard Time 2022
+ATOM      1  C5  12B P   1       3.516   1.122  -9.208  1.00  0.00           C    
+ATOM      2  H5  12B P   1       3.263   0.172  -9.722  1.00  0.00           H    
+ATOM      3  O   12B P   1       4.813   0.980  -8.559  1.00  0.00           O    
+ATOM      4  C1  12B P   1       4.920  -0.104  -7.594  1.00  0.00           C    
+ATOM      5  H12 12B P   1       5.900  -0.092  -7.117  1.00  0.00           H    
+ATOM      6  H11 12B P   1       4.785  -1.083  -8.097  1.00  0.00           H    
+ATOM      7  C2  12B P   1       3.872   0.069  -6.467  1.00  0.00           C    
+ATOM      8  H2  12B P   1       4.156   0.947  -5.856  1.00  0.00           H    
+ATOM      9  O2  12B P   1       3.847  -1.092  -5.644  1.00  0.00           O    
+ATOM     10  HO2 12B P   1       3.116  -1.181  -5.025  1.00  0.00           H    
+ATOM     11  C3  12B P   1       2.457   0.293  -7.057  1.00  0.00           C    
+ATOM     12  H3  12B P   1       2.111  -0.653  -7.521  1.00  0.00           H    
+ATOM     13  O3  12B P   1       1.557   0.635  -6.011  1.00  0.00           O    
+ATOM     14  HO3 12B P   1       1.657   1.584  -5.892  1.00  0.00           H    
+ATOM     15  C4  12B P   1       2.436   1.416  -8.126  1.00  0.00           C    
+ATOM     16  H4  12B P   1       1.436   1.467  -8.601  1.00  0.00           H    
+ATOM     17  O4  12B P   1       2.711   2.667  -7.496  1.00  0.00           O    
+ATOM     18  HO4 12B P   1       3.666   2.675  -7.380  1.00  0.00           H    
+ATOM     19  C6  12B P   1       3.640   2.209 -10.285  1.00  0.00           C    
+ATOM     20  H61 12B P   1       4.513   1.991 -10.930  1.00  0.00           H    
+ATOM     21  O6  12B P   1       2.453   2.268 -11.075  1.00  0.00           O    
+ATOM     22  H6  12B P   1       2.558   2.993 -11.699  1.00  0.00           H    
+ATOM     23  H62 12B P   1       3.847   3.191  -9.817  1.00  0.00           H    
+TER      24 
+CONECT    1    2   19   15    3
+CONECT    2    1
+CONECT    3    1    4
+CONECT    4    3    6    5    7
+CONECT    5    4
+CONECT    6    4
+CONECT    7    4    8   11    9
+CONECT    8    7
+CONECT    9    7   10
+CONECT   10    9
+CONECT   11    7   12   15   13
+CONECT   12   11
+CONECT   13   11   14
+CONECT   14   13
+CONECT   15    1   11   16   17
+CONECT   16   15
+CONECT   17   15   18
+CONECT   18   17
+CONECT   19    1   20   23   21
+CONECT   20   19
+CONECT   21   19   22
+CONECT   22   21
+CONECT   23   19
+END

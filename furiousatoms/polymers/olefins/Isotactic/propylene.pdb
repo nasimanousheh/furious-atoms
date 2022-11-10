@@ -1,0 +1,26 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:01:12 US Eastern Standard Time 2022
+ATOM      1  HT  PRO P   1       1.000   0.590   0.000  1.00  0.00           H    
+ATOM      2  C1  PRO P   1       1.000   1.540   0.000  1.00  0.00           C    
+ATOM      3  C2* PRO P   1       2.456   2.041   0.000  1.00  0.00           C    
+ATOM      4 1H1C PRO P   1       0.480   1.898   0.901  1.00  0.00           H    
+ATOM      5 1H2C PRO P   1       0.480   1.898  -0.901  1.00  0.00           H    
+ATOM      6  HC2 PRO P   1       2.964   1.666  -0.901  1.00  0.00           H    
+ATOM      7  C3  PRO P   1       3.167   1.516   1.261  1.00  0.00           C    
+ATOM      8 3H1C PRO P   1       4.207   1.874   1.261  1.00  0.00           H    
+ATOM      9 3H2C PRO P   1       3.149   0.416   1.251  1.00  0.00           H    
+ATOM     10 3H3C PRO P   1       2.641   1.892   2.151  1.00  0.00           H    
+ATOM     11  HH  PRO P   1       2.456   2.991   0.000  1.00  0.00           H    
+TER      12 
+CONECT    1    2
+CONECT    2    1    3    4    5
+CONECT    3    2    6    7   11
+CONECT    4    2
+CONECT    5    2
+CONECT    6    3
+CONECT    7   10    3    8    9
+CONECT    8    7
+CONECT    9    7
+CONECT   10    7
+CONECT   11    3
+END

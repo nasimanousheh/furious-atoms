@@ -1,0 +1,40 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 19:42:29 US Eastern Standard Time 2022
+ATOM      1  C   14H P   1       2.709   1.156  -8.689  1.00  0.00           C    
+ATOM      2  HC1 14H P   1       2.171   0.522  -8.017  1.00  0.00           H    
+ATOM      3  HC2 14H P   1       2.312   2.149  -8.637  1.00  0.00           H    
+ATOM      4  HC3 14H P   1       2.609   0.785  -9.687  1.00  0.00           H    
+ATOM      5  C1  14H P   1       4.198   1.177  -8.295  1.00  0.00           C    
+ATOM      6  H11 14H P   1       4.736   1.812  -8.967  1.00  0.00           H    
+ATOM      7  H12 14H P   1       4.298   1.549  -7.296  1.00  0.00           H    
+ATOM      8  C3  14H P   1       3.996  -1.165  -7.403  1.00  0.00           C    
+ATOM      9  H3  14H P   1       4.513  -1.663  -6.609  1.00  0.00           H    
+ATOM     10  C2  14H P   1       4.770  -0.251  -8.369  1.00  0.00           C    
+ATOM     11  H21 14H P   1       5.804  -0.236  -8.095  1.00  0.00           H    
+ATOM     12  H22 14H P   1       4.671  -0.623  -9.368  1.00  0.00           H    
+ATOM     13  C4  14H P   1       2.676  -1.337  -7.554  1.00  0.00           C    
+ATOM     14  H4  14H P   1       2.160  -0.838  -8.348  1.00  0.00           H    
+ATOM     15  C5  14H P   1       1.907  -2.246  -6.593  1.00  0.00           C    
+ATOM     16  H51 14H P   1       2.583  -2.654  -5.871  1.00  0.00           H    
+ATOM     17  H52 14H P   1       1.151  -1.678  -6.092  1.00  0.00           H    
+ATOM     18  H53 14H P   1       1.450  -3.041  -7.143  1.00  0.00           H    
+TER      19 
+CONECT    1    5    2    3    4
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1
+CONECT    5    1    6    7   10
+CONECT    6    5
+CONECT    7    5
+CONECT    8   13    9   10
+CONECT    9    8
+CONECT   10    5    8   11   12
+CONECT   11   10
+CONECT   12   10
+CONECT   13    8   15   14
+CONECT   14   13
+CONECT   15   13   16   17   18
+CONECT   16   15
+CONECT   17   15
+CONECT   18   15
+END

@@ -1,0 +1,24 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:08:19 US Eastern Standard Time 2022
+ATOM      1  C   PYR P   1       7.712   2.131  -7.563  1.00  0.00           C    
+ATOM      2  HC  PYR P   1       7.297   3.034  -8.009  1.00  0.00           H    
+ATOM      3  N2  PYR P   1       8.001  -0.053  -6.992  1.00  0.00           N    
+ATOM      4  H2  PYR P   1       7.754  -1.053  -6.983  1.00  0.00           H    
+ATOM      5  C1  PYR P   1       7.193   0.866  -7.690  1.00  0.00           C    
+ATOM      6  H1  PYR P   1       6.292   0.611  -8.247  1.00  0.00           H    
+ATOM      7  C3  PYR P   1       9.039   0.837  -6.419  1.00  0.00           C    
+ATOM      8  H3  PYR P   1       9.846   0.473  -5.783  1.00  0.00           H    
+ATOM      9  C4  PYR P   1       8.908   2.066  -6.736  1.00  0.00           C    
+ATOM     10  H4  PYR P   1       9.555   2.894  -6.447  1.00  0.00           H    
+TER      11 
+CONECT    1    5    9    2
+CONECT    2    1
+CONECT    3    5    4    7
+CONECT    4    3
+CONECT    5    1    3    6
+CONECT    6    5
+CONECT    7    3    9    8
+CONECT    8    7
+CONECT    9    1    7   10
+CONECT   10    9
+END

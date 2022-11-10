@@ -1,0 +1,32 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:00:25 US Eastern Standard Time 2022
+ATOM      1  C1  1_B P   1       2.709   1.156  -8.689  1.00  0.00           C    
+ATOM      2  H11 1_B P   1       2.171   0.522  -8.017  1.00  0.00           H    
+ATOM      3  H12 1_B P   1       2.312   2.149  -8.637  1.00  0.00           H    
+ATOM      4  H13 1_B P   1       2.609   0.785  -9.687  1.00  0.00           H    
+ATOM      5  C2  1_B P   1       4.198   1.177  -8.295  1.00  0.00           C    
+ATOM      6  H21 1_B P   1       4.736   1.812  -8.967  1.00  0.00           H    
+ATOM      7  H22 1_B P   1       4.298   1.549  -7.296  1.00  0.00           H    
+ATOM      8  C31 1_B P   1       6.258  -0.230  -7.975  1.00  0.00           C    
+ATOM      9 1H31 1_B P   1       6.360   0.149  -6.958  1.00  0.00           H    
+ATOM     10 2H31 1_B P   1       6.663  -1.240  -8.028  1.00  0.00           H    
+ATOM     11 3H31 1_B P   1       6.807   0.417  -8.660  1.00  0.00           H    
+ATOM     12  C3  1_B P   1       4.770  -0.251  -8.369  1.00  0.00           C    
+ATOM     13  H31 1_B P   1       4.232  -0.886  -7.697  1.00  0.00           H    
+ATOM     14  H32 1_B P   1       4.671  -0.623  -9.368  1.00  0.00           H    
+TER      15 
+CONECT    1    5    2    3    4
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1
+CONECT    5    1    6    7   12
+CONECT    6    5
+CONECT    7    5
+CONECT    8   12    9   10   11
+CONECT    9    8
+CONECT   10    8
+CONECT   11    8
+CONECT   12    5    8   13   14
+CONECT   13   12
+CONECT   14   12
+END

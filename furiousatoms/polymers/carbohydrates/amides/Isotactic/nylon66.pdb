@@ -1,0 +1,84 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 19:33:34 US Eastern Standard Time 2022
+ATOM      1  N1  NYL P   1       1.125   1.581  -0.562  1.00  0.00           N    
+ATOM      2  HT  NYL P   1       1.332   1.638   0.312  1.00  0.00           H    
+ATOM      3  HN1 NYL P   1       0.134   1.829  -0.678  1.00  0.00           H    
+ATOM      4  C1  NYL P   1       1.323   0.232  -1.132  1.00  0.00           C    
+ATOM      5 1H2C NYL P   1       2.371  -0.066  -1.025  1.00  0.00           H    
+ATOM      6 1H1C NYL P   1       0.696  -0.502  -0.613  1.00  0.00           H    
+ATOM      7  C2  NYL P   1       0.945   0.285  -2.629  1.00  0.00           C    
+ATOM      8 2H2C NYL P   1      -0.107   0.574  -2.720  1.00  0.00           H    
+ATOM      9 2H1C NYL P   1       1.545   1.065  -3.110  1.00  0.00           H    
+ATOM     10  C3  NYL P   1       1.175  -1.073  -3.347  1.00  0.00           C    
+ATOM     11 3H2C NYL P   1       2.227  -1.363  -3.248  1.00  0.00           H    
+ATOM     12 3H1C NYL P   1       0.566  -1.847  -2.868  1.00  0.00           H    
+ATOM     13  C4  NYL P   1       0.806  -0.985  -4.852  1.00  0.00           C    
+ATOM     14 4H2C NYL P   1       1.400  -0.193  -5.322  1.00  0.00           H    
+ATOM     15 4H1C NYL P   1      -0.251  -0.711  -4.948  1.00  0.00           H    
+ATOM     16  C5  NYL P   1       1.061  -2.325  -5.593  1.00  0.00           C    
+ATOM     17 5H2C NYL P   1       2.115  -2.603  -5.495  1.00  0.00           H    
+ATOM     18 5H1C NYL P   1       0.460  -3.119  -5.136  1.00  0.00           H    
+ATOM     19  C6  NYL P   1       0.705  -2.224  -7.094  1.00  0.00           C    
+ATOM     20 6H2C NYL P   1       1.287  -1.423  -7.565  1.00  0.00           H    
+ATOM     21 6H1C NYL P   1      -0.358  -1.986  -7.217  1.00  0.00           H    
+ATOM     22  N2  NYL P   1       0.995  -3.468  -7.739  1.00  0.00           N    
+ATOM     23  HN2 NYL P   1       1.312  -4.205  -7.197  1.00  0.00           H    
+ATOM     24  C7  NYL P   1       0.854  -3.696  -9.063  1.00  0.00           C    
+ATOM     25  O1  NYL P   1       0.441  -2.786  -9.819  1.00  0.00           O    
+ATOM     26  C8  NYL P   1       1.204  -5.031  -9.592  1.00  0.00           C    
+ATOM     27 8H2C NYL P   1       0.574  -5.760  -9.080  1.00  0.00           H    
+ATOM     28 8H1C NYL P   1       2.243  -5.224  -9.319  1.00  0.00           H    
+ATOM     29  C9  NYL P   1       1.044  -5.209 -11.133  1.00  0.00           C    
+ATOM     30 9H2C NYL P   1      -0.000  -5.013 -11.406  1.00  0.00           H    
+ATOM     31 9H1C NYL P   1       1.660  -4.459 -11.643  1.00  0.00           H    
+ATOM     32  C10 NYL P   1       1.450  -6.630 -11.605  1.00  0.00           C    
+ATOM     33  H2C NYL P   1       2.493  -6.828 -11.323  1.00  0.00           H    
+ATOM     34  H1C NYL P   1       0.825  -7.376 -11.102  1.00  0.00           H    
+ATOM     35  C11 NYL P   1       1.299  -6.788 -13.147  1.00  0.00           C    
+ATOM     36  H2C NYL P   1       0.263  -6.587 -13.431  1.00  0.00           H    
+ATOM     37  H1C NYL P   1       1.932  -6.062 -13.661  1.00  0.00           H    
+ATOM     38  C12 NYL P   1       1.691  -8.122 -13.640  1.00  0.00           C    
+ATOM     39  O2  NYL P   1       2.876  -8.504 -13.542  1.00  0.00           O    
+ATOM     40  HH  NYL P   1       1.058  -8.705 -14.042  1.00  0.00           H    
+TER      41 
+CONECT    1    3    2    4
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1    6    5    7
+CONECT    5    4
+CONECT    6    4
+CONECT    7    4    9    8   10
+CONECT    8    7
+CONECT    9    7
+CONECT   10    7   12   11   13
+CONECT   11   10
+CONECT   12   10
+CONECT   13   10   15   14   16
+CONECT   14   13
+CONECT   15   13
+CONECT   16   13   18   17   19
+CONECT   17   16
+CONECT   18   16
+CONECT   19   16   21   20   22
+CONECT   20   19
+CONECT   21   19
+CONECT   22   19   23   24
+CONECT   23   22
+CONECT   24   22   25   26
+CONECT   25   24
+CONECT   26   24   28   27   29
+CONECT   27   26
+CONECT   28   26
+CONECT   29   26   31   30   32
+CONECT   30   29
+CONECT   31   29
+CONECT   32   29   34   33   35
+CONECT   33   32
+CONECT   34   32
+CONECT   35   32   37   36   38
+CONECT   36   35
+CONECT   37   35
+CONECT   38   40   35   39
+CONECT   39   38
+CONECT   40   38
+END

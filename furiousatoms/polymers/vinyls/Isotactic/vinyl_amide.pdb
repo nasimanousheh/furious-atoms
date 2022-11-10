@@ -1,0 +1,28 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:21:32 US Eastern Standard Time 2022
+ATOM      1  C   VIN P   1       3.123   0.724  -8.548  1.00  0.00           C    
+ATOM      2  HC1 VIN P   1       2.523   0.975  -7.652  1.00  0.00           H    
+ATOM      3  HC2 VIN P   1       2.977   1.568  -9.248  1.00  0.00           H    
+ATOM      4  C1  VIN P   1       4.601   0.667  -8.132  1.00  0.00           C    
+ATOM      5  H11 VIN P   1       4.733  -0.005  -7.268  1.00  0.00           H    
+ATOM      6  H12 VIN P   1       5.262   0.309  -8.945  1.00  0.00           H    
+ATOM      7  H13 VIN P   1       4.975   1.663  -7.827  1.00  0.00           H    
+ATOM      8  C2  VIN P   1       2.576  -0.542  -9.224  1.00  0.00           C    
+ATOM      9  O   VIN P   1       3.285  -1.401  -9.750  1.00  0.00           O    
+ATOM     10  N   VIN P   1       1.256  -0.613  -9.282  1.00  0.00           N    
+ATOM     11  HN1 VIN P   1       0.899  -0.324 -10.199  1.00  0.00           H    
+ATOM     12  HN2 VIN P   1       0.803  -0.307  -8.415  1.00  0.00           H    
+TER      13 
+CONECT    1    2    3    4    8
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1    5    6    7
+CONECT    5    4
+CONECT    6    4
+CONECT    7    4
+CONECT    8    1    9   10
+CONECT    9    8
+CONECT   10    8   11   12
+CONECT   11   10
+CONECT   12   10
+END
