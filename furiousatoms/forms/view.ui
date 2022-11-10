@@ -1206,7 +1206,7 @@
      <x>0</x>
      <y>0</y>
      <width>2846</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -1278,6 +1278,7 @@
      <addaction name="actionElectrolyte"/>
     </widget>
     <addaction name="menuBuild_Nanostructure"/>
+    <addaction name="actionPolymer"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuView"/>
@@ -1505,6 +1506,11 @@
   <action name="actionNanorope">
    <property name="text">
     <string>Nanorope</string>
+   </property>
+  </action>
+  <action name="actionPolymer">
+   <property name="text">
+    <string>Polymer</string>
    </property>
   </action>
  </widget>
