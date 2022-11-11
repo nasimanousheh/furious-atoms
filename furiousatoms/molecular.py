@@ -26,7 +26,7 @@ class UniverseManager:
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
-        self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        self._pos = self.universe.trajectory[0].positions.copy().astype('float64')
         # self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         # if self.n_frames > 1:
         #     pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
