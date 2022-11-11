@@ -83,7 +83,8 @@ class Viewer3D(QtWidgets.QWidget):
             iren=self._showm.iren)
 
         self.universe_manager = None
-        self.pickm = pick.PickingManager()
+        self.pickm = pick.SelectionManager(select='faces')
+        # self.pickm = pick.PickingManager(False, True, False)
 
     def create_connections(self):
         pass
@@ -187,7 +188,7 @@ class Viewer3D(QtWidgets.QWidget):
         for object_index in SM.object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
         utils.update_actor(SM.sphere_actor)
-        SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+        # SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_pos = np.delete(final_pos, SM.object_indices_particles, axis=0)
@@ -282,16 +283,28 @@ class Viewer3D(QtWidgets.QWidget):
         return SM.universe_save
 
     def left_button_press_particle_callback(self, obj, event):
+        # print(obj)
         SM = self.universe_manager
+
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
-        vertex_index_particle = picked_info['vertex']
+        # icked_info = self.pickm.pick(event_pos, self.showm.scene)
+        # picked_info = self.pickm.select(event_pos, self.showm.scene, 1)
+
+        print('###########')
+        print(picked_info)
+
+        polydata = obj.GetMapper().GetInput()
+        faces = utils.get_polydata_triangles(polydata)
+
+        face_indices = picked_info['face']
+        vertex_index_particle = faces[face_indices[0]][0]
         vertices = utils.vertices_from_actor(obj)
         SM.no_vertices_all_particles = vertices.shape[0]
         object_index = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_particles) * SM.no_atoms))
         print('left_button_press_particle_callback number of atoms is: ',SM.no_atoms)
 
-        if not SM.selected_particle[object_index]:
+        if (not SM.selected_particle[object_index]): # and (not SM.deleted_particles[object_index]):
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
         else:
@@ -308,7 +321,10 @@ class Viewer3D(QtWidgets.QWidget):
     def left_button_press_bond_callback(self, obj, event):
         SM = self.universe_manager
         event_pos = self.pickm.event_position(iren=self.showm.iren)
-        picked_info = self.pickm.pick(event_pos, self.showm.scene)
+        # picked_info = self.pickm.pick(event_pos, self.showm.scene)
+        # picked_info = self.pickm.select(event_pos, self.showm.scene, 10)
+
+        # self.
         vertex_index_bond = picked_info['vertex']
         vertices_bonds = utils.vertices_from_actor(obj)
         object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
