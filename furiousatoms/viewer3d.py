@@ -298,7 +298,7 @@ class Viewer3D(QtWidgets.QWidget):
         object_index = np.int(np.floor((vertex_index_particle / SM.no_vertices_all_particles) * SM.no_atoms))
         print('left_button_press_particle_callback number of atoms is: ',SM.no_atoms)
 
-        if (not SM.selected_particle[object_index]): # and (not SM.deleted_particles[object_index]):
+        if (not SM.selected_particle[object_index]):
             SM.particle_color_add = np.array([255, 0, 0, 255], dtype='uint8')
             SM.selected_particle[object_index] = True
         else:
