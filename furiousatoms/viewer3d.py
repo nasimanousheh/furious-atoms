@@ -288,12 +288,6 @@ class Viewer3D(QtWidgets.QWidget):
 
         event_pos = self.pickm.event_position(iren=self.showm.iren)
         picked_info = self.pickm.pick(event_pos, self.showm.scene)
-        # icked_info = self.pickm.pick(event_pos, self.showm.scene)
-        # picked_info = self.pickm.select(event_pos, self.showm.scene, 1)
-
-        print('###########')
-        print(picked_info)
-
         polydata = obj.GetMapper().GetInput()
         faces = utils.get_polydata_triangles(polydata)
 
