@@ -149,8 +149,8 @@ class UniverseManager:
             self.bond_colors_2[i * 4 + 3] = self.colors[bonds_indices[i][1]]
 
         self.line_thickness = 0.2
-        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
-        # self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness,
+                                      lod=False, replace_strips=True)
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
         self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
