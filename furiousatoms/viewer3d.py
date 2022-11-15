@@ -14,6 +14,7 @@ from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
                         tangents_from_direction_of_anisotropy, update_polydata_normals)
+from fury.lib import numpy_support
 
 
 def sky_box_effect_atom(scene, actor, universem):
@@ -84,7 +85,6 @@ class Viewer3D(QtWidgets.QWidget):
 
         self.universe_manager = None
         self.pickm = pick.SelectionManager(select='faces')
-        # self.pickm = pick.PickingManager(False, True, False)
 
     def create_connections(self):
         pass
@@ -315,12 +315,15 @@ class Viewer3D(QtWidgets.QWidget):
     def left_button_press_bond_callback(self, obj, event):
         SM = self.universe_manager
         event_pos = self.pickm.event_position(iren=self.showm.iren)
-        # picked_info = self.pickm.pick(event_pos, self.showm.scene)
-        # picked_info = self.pickm.select(event_pos, self.showm.scene, 10)
+        picked_info = self.pickm.pick(event_pos, self.showm.scene)
+        polydata = obj.GetMapper().GetInput()
+        faces = utils.get_polydata_triangles(polydata)
 
-        # self.
-        vertex_index_bond = picked_info['vertex']
-        vertices_bonds = utils.vertices_from_actor(obj)
+        face_indices = picked_info['face']
+        vertex_index_bond = faces[face_indices[0]][0]
+        vertices = utils.vertices_from_actor(obj)
+        SM.no_vertices_all_bonds = vertices.shape[0]
+
         object_index_bond = np.int(np.floor((vertex_index_bond / SM.no_vertices_all_bonds) * 2 * SM.no_bonds))
         if object_index_bond % 2 == 0:
             object_index_bond2 = object_index_bond + 1
