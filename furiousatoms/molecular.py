@@ -26,7 +26,7 @@ class UniverseManager:
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
-        self._pos = self.universe.trajectory[0].positions.copy().astype(float)
+        self._pos = self.universe.trajectory[0].positions.copy().astype('float64')
         # self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         # if self.n_frames > 1:
         #     pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
@@ -54,11 +54,12 @@ class UniverseManager:
         self.radii_spheres = 0.5 * np.ones((self.no_atoms))
         self.radii_unique_types = 0.5 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
-        # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-        # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
-        # big_verts, big_faces, big_colors, _ = res
-        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
+        self.object_indices_particles = np.where(self.selected_particle)[0].tolist()
+        vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=self.colors, scales=self.radii_spheres)#, dtype='uint8')
+        big_verts, big_faces, big_colors, _ = res
+        self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
         self.initial_vertices_particles = self.all_vertices_particles.copy() - np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
@@ -148,8 +149,8 @@ class UniverseManager:
             self.bond_colors_2[i * 4 + 3] = self.colors[bonds_indices[i][1]]
 
         self.line_thickness = 0.2
-        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
-        # self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness,
+                                      lod=False, replace_strips=True)
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
         self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
