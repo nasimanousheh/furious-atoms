@@ -1,0 +1,32 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 19:28:48 US Eastern Standard Time 2022
+ATOM      1  C   MET P   1       2.709   1.156  -8.689  1.00  0.00           C    
+ATOM      2  HC1 MET P   1       2.171   0.522  -8.017  1.00  0.00           H    
+ATOM      3  HC2 MET P   1       2.312   2.149  -8.637  1.00  0.00           H    
+ATOM      4  HC3 MET P   1       2.609   0.785  -9.687  1.00  0.00           H    
+ATOM      5  C1  MET P   1       4.198   1.177  -8.295  1.00  0.00           C    
+ATOM      6  H11 MET P   1       4.602   0.167  -8.348  1.00  0.00           H    
+ATOM      7  H12 MET P   1       4.298   1.549  -7.296  1.00  0.00           H    
+ATOM      8  O1  MET P   1       6.039   1.557 -10.049  1.00  0.00           O    
+ATOM      9  C4  MET P   1       4.972   2.091  -9.261  1.00  0.00           C    
+ATOM     10  O   MET P   1       4.674   3.280  -9.356  1.00  0.00           O    
+ATOM     11  C3  MET P   1       7.252   2.243  -9.736  1.00  0.00           C    
+ATOM     12  H31 MET P   1       7.478   2.115  -8.697  1.00  0.00           H    
+ATOM     13  H32 MET P   1       8.050   1.842 -10.327  1.00  0.00           H    
+ATOM     14  H33 MET P   1       7.137   3.285  -9.951  1.00  0.00           H    
+TER      15 
+CONECT    1    5    2    3    4
+CONECT    2    1
+CONECT    3    1
+CONECT    4    1
+CONECT    5    1    6    7    9
+CONECT    6    5
+CONECT    7    5
+CONECT    8   11    9
+CONECT    9    5    8   10
+CONECT   10    9
+CONECT   11    8   12   13   14
+CONECT   12   11
+CONECT   13   11
+CONECT   14   11
+END

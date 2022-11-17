@@ -1,0 +1,46 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:20:16 US Eastern Standard Time 2022
+ATOM      1  HT  MET P   1       1.747   1.762  -2.064  1.00  0.00           H    
+ATOM      2  C1  MET P   1       2.334   1.502  -1.364  1.00  0.00           C    
+ATOM      3  C2* MET P   1       2.447   2.058  -0.049  1.00  0.00           C    
+ATOM      4 1H1C MET P   1       3.163   1.587  -1.819  1.00  0.00           H    
+ATOM      5 1H2C MET P   1       2.099   0.583  -1.301  1.00  0.00           H    
+ATOM      6  C3  MET P   1       1.272   1.804   0.637  1.00  0.00           C    
+ATOM      7  C4  MET P   1       2.650   3.457  -0.038  1.00  0.00           C    
+ATOM      8  C6  MET P   1       1.837   4.274   0.766  1.00  0.00           C    
+ATOM      9  C8  MET P   1       2.092   5.651   0.859  1.00  0.00           C    
+ATOM     10  C9  MET P   1       3.168   6.212   0.165  1.00  0.00           C    
+ATOM     11  C7  MET P   1       4.004   5.397  -0.604  1.00  0.00           C    
+ATOM     12  C5  MET P   1       3.753   4.021  -0.701  1.00  0.00           C    
+ATOM     13  HC6 MET P   1       1.120   3.881   1.245  1.00  0.00           H    
+ATOM     14  HC8 MET P   1       1.524   6.189   1.399  1.00  0.00           H    
+ATOM     15  HC9 MET P   1       3.329   7.150   0.226  1.00  0.00           H    
+ATOM     16  HC7 MET P   1       4.749   5.771  -1.067  1.00  0.00           H    
+ATOM     17  HC5 MET P   1       4.324   3.457  -1.208  1.00  0.00           H    
+ATOM     18  HH  MET P   1       3.193   1.689   0.409  1.00  0.00           H    
+ATOM     19 3H1C MET P   1       0.575   2.341   0.277  1.00  0.00           H    
+ATOM     20 3H2C MET P   1       1.045   0.887   0.547  1.00  0.00           H    
+ATOM     21 3H3C MET P   1       1.391   2.015   1.555  1.00  0.00           H    
+TER      22 
+CONECT    1    2
+CONECT    2    1    3    4    5
+CONECT    3    2    6    7   18
+CONECT    4    2
+CONECT    5    2
+CONECT    6    3   19   20   21
+CONECT    7    3    8   12
+CONECT    8    7    9   13
+CONECT    9    8   10   14
+CONECT   10    9   11   15
+CONECT   11   10   12   16
+CONECT   12   17    7   11
+CONECT   13    8
+CONECT   14    9
+CONECT   15   10
+CONECT   16   11
+CONECT   17   12
+CONECT   18    3
+CONECT   19    6
+CONECT   20    6
+CONECT   21    6
+END

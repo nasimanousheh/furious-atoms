@@ -1,0 +1,94 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:09:02 US Eastern Standard Time 2022
+ATOM      1  C   P_B P   1       5.274   1.999  -8.568  1.00  0.00           C    
+ATOM      2  HC  P_B P   1       4.704   2.916  -8.573  1.00  0.00           H    
+ATOM      3  C1  P_B P   1       6.627   2.018  -8.209  1.00  0.00           C    
+ATOM      4  H1  P_B P   1       7.101   2.950  -7.938  1.00  0.00           H    
+ATOM      5  C2  P_B P   1       7.366   0.829  -8.202  1.00  0.00           C    
+ATOM      6  C3  P_B P   1       6.752  -0.379  -8.554  1.00  0.00           C    
+ATOM      7  H3  P_B P   1       7.322  -1.296  -8.548  1.00  0.00           H    
+ATOM      8  C4  P_B P   1       5.399  -0.398  -8.912  1.00  0.00           C    
+ATOM      9  H4  P_B P   1       4.925  -1.330  -9.183  1.00  0.00           H    
+ATOM     10  C5  P_B P   1       4.660   0.791  -8.919  1.00  0.00           C    
+ATOM     11  H5  P_B P   1       3.616   0.776  -9.196  1.00  0.00           H    
+ATOM     12  C6  P_B P   1       8.854   0.850  -7.808  1.00  0.00           C    
+ATOM     13  C7  P_B P   1      11.039   3.419 -10.538  1.00  0.00           C    
+ATOM     14  H7  P_B P   1      11.583   4.059 -11.217  1.00  0.00           H    
+ATOM     15  C8  P_B P   1       9.994   3.944  -9.767  1.00  0.00           C    
+ATOM     16  H8  P_B P   1       9.733   4.988  -9.852  1.00  0.00           H    
+ATOM     17  C9  P_B P   1       9.289   3.115  -8.886  1.00  0.00           C    
+ATOM     18  H9  P_B P   1       8.484   3.520  -8.292  1.00  0.00           H    
+ATOM     19  C10 P_B P   1       9.629   1.761  -8.776  1.00  0.00           C    
+ATOM     20  C11 P_B P   1      10.673   1.237  -9.547  1.00  0.00           C    
+ATOM     21  H11 P_B P   1      10.935   0.192  -9.462  1.00  0.00           H    
+ATOM     22  C12 P_B P   1      11.378   2.066 -10.428  1.00  0.00           C    
+ATOM     23  H12 P_B P   1      12.184   1.661 -11.022  1.00  0.00           H    
+ATOM     24  C13 P_B P   1       9.258   2.358  -3.760  1.00  0.00           C    
+ATOM     25  H13 P_B P   1       9.359   2.733  -2.752  1.00  0.00           H    
+ATOM     26  C14 P_B P   1       8.507   1.203  -4.005  1.00  0.00           C    
+ATOM     27  H14 P_B P   1       8.027   0.687  -3.186  1.00  0.00           H    
+ATOM     28  C15 P_B P   1       8.376   0.716  -5.311  1.00  0.00           C    
+ATOM     29  H15 P_B P   1       7.796  -0.175  -5.500  1.00  0.00           H    
+ATOM     30  C16 P_B P   1       8.997   1.385  -6.372  1.00  0.00           C    
+ATOM     31  C17 P_B P   1       9.749   2.540  -6.128  1.00  0.00           C    
+ATOM     32  H17 P_B P   1      10.228   3.056  -6.947  1.00  0.00           H    
+ATOM     33  C18 P_B P   1       9.880   3.027  -4.822  1.00  0.00           C    
+ATOM     34  H18 P_B P   1      10.460   3.918  -4.633  1.00  0.00           H    
+ATOM     35  C19 P_B P   1      10.466  -3.173  -8.015  1.00  0.00           C    
+ATOM     36  H19 P_B P   1      10.868  -4.174  -8.066  1.00  0.00           H    
+ATOM     37  C20 P_B P   1       9.928  -2.575  -9.161  1.00  0.00           C    
+ATOM     38  H20 P_B P   1       9.914  -3.115 -10.096  1.00  0.00           H    
+ATOM     39  C21 P_B P   1       9.408  -1.277  -9.094  1.00  0.00           C    
+ATOM     40  H21 P_B P   1       8.993  -0.816  -9.978  1.00  0.00           H    
+ATOM     41  C22 P_B P   1       9.426  -0.577  -7.882  1.00  0.00           C    
+ATOM     42  C23 P_B P   1       9.964  -1.175  -6.736  1.00  0.00           C    
+ATOM     43  H23 P_B P   1       9.978  -0.635  -5.801  1.00  0.00           H    
+ATOM     44  C24 P_B P   1      10.484  -2.473  -6.802  1.00  0.00           C    
+ATOM     45  H24 P_B P   1      10.900  -2.934  -5.919  1.00  0.00           H    
+TER      46 
+CONECT    1    3   10    2
+CONECT    2    1
+CONECT    3    1    5    4
+CONECT    4    3
+CONECT    5    3    6   12
+CONECT    6    5    8    7
+CONECT    7    6
+CONECT    8    6   10    9
+CONECT    9    8
+CONECT   10    1    8   11
+CONECT   11   10
+CONECT   12    5   30   41   19
+CONECT   13   15   22   14
+CONECT   14   13
+CONECT   15   13   17   16
+CONECT   16   15
+CONECT   17   15   19   18
+CONECT   18   17
+CONECT   19   12   17   20
+CONECT   20   19   22   21
+CONECT   21   20
+CONECT   22   13   20   23
+CONECT   23   22
+CONECT   24   26   33   25
+CONECT   25   24
+CONECT   26   24   28   27
+CONECT   27   26
+CONECT   28   26   30   29
+CONECT   29   28
+CONECT   30   12   28   31
+CONECT   31   30   33   32
+CONECT   32   31
+CONECT   33   24   31   34
+CONECT   34   33
+CONECT   35   37   44   36
+CONECT   36   35
+CONECT   37   35   39   38
+CONECT   38   37
+CONECT   39   37   41   40
+CONECT   40   39
+CONECT   41   12   39   42
+CONECT   42   41   44   43
+CONECT   43   42
+CONECT   44   35   42   45
+CONECT   45   44
+END

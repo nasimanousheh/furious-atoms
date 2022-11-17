@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form_polymer</class>
+ <widget class="QWidget" name="Form_polymer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>378</width>
+    <height>268</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>378</width>
+    <height>268</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>378</width>
+    <height>268</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>360</width>
+    <height>268</height>
+   </size>
+  </property>
+  <property name="font">
+   <font>
+    <pointsize>11</pointsize>
+   </font>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: rgb(223, 223, 223);</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="polymer">
+     <property name="minimumSize">
+      <size>
+       <width>360</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>360</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>360</width>
+       <height>250</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Polymerize</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Library:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" colspan="2">
+        <widget class="QComboBox" name="comboBox_library">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <item>
+          <property name="text">
+           <string>acrylates</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>amides</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>carbohydrates</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>carbonates</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>dienes</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>esters</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>halides</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>imidazoles</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>imides</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ketones</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>olefins</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>oxides</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>rings</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>siloxanes</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>sulfones</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>urea</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>urethanes</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>vinyls</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>current project</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Repeat unit:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" colspan="2">
+        <widget class="QComboBox" name="comboBox_repeat_unit"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Tacticity:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="comboBox_tacticity">
+         <item>
+          <property name="text">
+           <string>Isotactic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Syndiotactic</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Atactic</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QLabel" name="label_6">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Chiral inversion:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="3">
+        <widget class="QComboBox" name="comboBox_chiral"/>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Chain legth:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="comboBox_chain_length"/>
+       </item>
+       <item row="3" column="2">
+        <widget class="QLabel" name="label_5">
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Number of chain:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QComboBox" name="comboBox_chain_number"/>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QPushButton" name="pushButton_build_polymer">
+         <property name="text">
+          <string>Build</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="2" colspan="2">
+        <widget class="QPushButton" name="pushButton_help">
+         <property name="text">
+          <string>Help</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_2">
+      <attribute name="title">
+       <string>Advanced</string>
+      </attribute>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

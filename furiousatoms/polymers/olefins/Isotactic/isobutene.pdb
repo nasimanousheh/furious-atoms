@@ -1,0 +1,32 @@
+REMARK   Materials Studio PDB file
+REMARK   Created:  Tue Jun 07 20:00:59 US Eastern Standard Time 2022
+ATOM      1  HT  ISO P   1       1.000   0.590   0.000  1.00  0.00           H    
+ATOM      2  C1  ISO P   1       1.000   1.540   0.000  1.00  0.00           C    
+ATOM      3  C2  ISO P   1       2.456   2.041   0.000  1.00  0.00           C    
+ATOM      4 1H1C ISO P   1       0.480   1.898   0.901  1.00  0.00           H    
+ATOM      5 1H2C ISO P   1       0.480   1.898  -0.901  1.00  0.00           H    
+ATOM      6  C3  ISO P   1       3.167   1.516   1.261  1.00  0.00           C    
+ATOM      7 3H1C ISO P   1       4.207   1.874   1.261  1.00  0.00           H    
+ATOM      8 3H2C ISO P   1       3.149   0.416   1.251  1.00  0.00           H    
+ATOM      9 3H3C ISO P   1       2.641   1.892   2.151  1.00  0.00           H    
+ATOM     10  C4  ISO P   1       3.167   1.516  -1.261  1.00  0.00           C    
+ATOM     11 4H1C ISO P   1       4.207   1.874  -1.261  1.00  0.00           H    
+ATOM     12 4H2C ISO P   1       2.641   1.892  -2.151  1.00  0.00           H    
+ATOM     13 4H3C ISO P   1       3.149   0.416  -1.251  1.00  0.00           H    
+ATOM     14  HH  ISO P   1       2.456   2.991   0.000  1.00  0.00           H    
+TER      15 
+CONECT    1    2
+CONECT    2    1    3    4    5
+CONECT    3    2    6   10   14
+CONECT    4    2
+CONECT    5    2
+CONECT    6    3    7    8    9
+CONECT    7    6
+CONECT    8    6
+CONECT    9    6
+CONECT   10   13    3   11   12
+CONECT   11   10
+CONECT   12   10
+CONECT   13   10
+CONECT   14    3
+END
