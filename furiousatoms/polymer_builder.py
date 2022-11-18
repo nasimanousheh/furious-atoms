@@ -60,7 +60,7 @@ class Ui_polymer(QtWidgets.QMainWindow):
         # chain_number = int(self.polymer.comboBox_chain_number.text())
 
         # fname_monomer = "polymers\acrylates\acrylic_acid.pdb"
-        fname_monomer = 'C:/Users/nasim/Devel/furious-atoms/furiousatoms/polymers/acrylates/acrylic_acid.pdb'
+        fname_monomer = 'C:/Users/nasim/Downloads/NewNS/gammaGraphyne_unitcell.pdb'
         universe_all = self.polymer_builder(fname_monomer)
         window = self.win.create_mdi_child()
         window.make_title()
@@ -72,21 +72,25 @@ class Ui_polymer(QtWidgets.QMainWindow):
         load_file,_ = load_files(fname_monomer)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
-        pos = pos.astype('foat64')
+        pos = pos.astype('float64')
         first_carbon = pos[np.where(load_file.atoms.types=='C')][0]
         last_carbon = pos[np.where(load_file.atoms.types=='C')][-1]
-        distance = max(pos[:, 0]) - min(pos[:, 0])
+        distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
         # [ 4.97200012  2.09100008 -9.26099968]
-        load_file.dimensions = [distance, distance, distance, 90, 90, 90]
+        nx = load_file.dimensions [3]
+        ny= load_file.dimensions [4]
+        nz= load_file.dimensions [5]
+        load_file.dimensions = [distance, distance, distance, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        for x in range(1):
-            for y in range(1):
+        for x in range(3):
+            for y in range(3):
                 for z in range(1):
                     u_ = load_file.copy()
                     move_by = box*(x, y, z)
                     u_.atoms.translate(move_by)
-                    copied.append(u_.atoms)
+                    copied.append(u_.atoms) #u_.bonds.indices
+                    copied.add_bonds(universe_all.bonds.indices)
 
         import MDAnalysis as mda
         new_universe = mda.Merge(*copied)
