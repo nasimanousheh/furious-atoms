@@ -615,12 +615,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             child.close()
 
     def open_dataset_fullerene(self):
-        # dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
-        dir_fullerene_folder = os.path.dirname(io.get_resources_file(__file__))
+        dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
+
+
         fullerene_folder = os.path.join(dir_fullerene_folder,
                                         'fullerene_dataset')
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),
-                                                         dir=fullerene_folder,
+                                                         dir=io.get_resources_file(fullerene_folder),
                                                          filter="*.cc1*")
         existing = self.find_mdi_child(fname)
         if existing:
@@ -633,6 +634,24 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             child.show()
         else:
             child.close()
+    # def open_dataset_fullerene(self):
+    #     dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
+    #     fullerene_folder = os.path.join(dir_fullerene_folder,
+    #                                     'fullerene_dataset')
+    #     fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),
+    #                                                      dir=fullerene_folder,
+    #                                                      filter="*.cc1*")
+    #     existing = self.find_mdi_child(fname)
+    #     if existing:
+    #         self.ui.mdiArea.setActiveSubWindow(existing)
+    #         return
+
+    #     child = self.create_mdi_child()
+
+    #     if child.load_fullerene_cc1_file(fname):
+    #         child.show()
+    #     else:
+    #         child.close()
 
     def save_image(self):
         active_window = self.active_mdi_child()
