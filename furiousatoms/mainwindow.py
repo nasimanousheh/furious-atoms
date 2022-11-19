@@ -616,7 +616,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def open_dataset_fullerene(self):
         # dir_fullerene_folder = os.path.dirname(os.path.realpath(__file__))
-        dir_fullerene_folder = os.path.dirname(os.path.abspath(__file__))
+        dir_fullerene_folder = os.path.dirname(io.get_resources_file(__file__))
         fullerene_folder = os.path.join(dir_fullerene_folder,
                                         'fullerene_dataset')
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),
