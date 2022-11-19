@@ -73,30 +73,94 @@ class Ui_polymer(QtWidgets.QMainWindow):
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
-        first_carbon = pos[np.where(load_file.atoms.types=='C')][0]
-        last_carbon = pos[np.where(load_file.atoms.types=='C')][-1]
+        # first_carbon = pos[np.where(load_file.atoms.types=='C')][0]
+        # last_carbon = pos[np.where(load_file.atoms.types=='C')][-1]
         distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
-        # [ 4.97200012  2.09100008 -9.26099968]
         nx = load_file.dimensions [3]
         ny= load_file.dimensions [4]
         nz= load_file.dimensions [5]
         load_file.dimensions = [distance, distance, distance, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        for x in range(3):
-            for y in range(3):
-                for z in range(1):
-                    u_ = load_file.copy()
-                    move_by = box*(x, y, z)
-                    u_.atoms.translate(move_by)
-                    copied.append(u_.atoms) #u_.bonds.indices
-                    copied.add_bonds(universe_all.bonds.indices)
+        extend_in_x = 5
+        extend_in_y = 5
+        b = 0
+        for x in range(extend_in_x):
+            for y in range(extend_in_y):
+                u_ = load_file.copy()
+                move_by = box*(x , y, 1) #- (x * 2*1.73205080757) - (1.4*2)
+                u_.atoms.translate(move_by)
+                copied.append(u_.atoms)#+ np.array([[b, 0, 0]]))
+            b = b + 1.73
 
         import MDAnalysis as mda
         new_universe = mda.Merge(*copied)
-        # new_box = box*(n_x, n_y, n_z)
-        # new_universe.dimensions = list(new_box) + [90]*3
-        return new_universe
+        b = 0
+        c = 0
+        bond_connect = 12 * extend_in_y
+
+        num_bonds_connect = (extend_in_x-1)
+
+        for b in range(extend_in_y):
+            b = c *12
+            for i in range(num_bonds_connect):
+                added_bonds = np.array([[(bond_connect*i)+8+b, (bond_connect*(i+1))+7+b]])
+                if c < extend_in_y-1:
+                    added_bonds_2 = np.array([[(bond_connect*i)+3+b, (bond_connect*i)+b+(13+bond_connect)]])
+                    new_universe.add_bonds(added_bonds_2)
+                new_universe.add_bonds(added_bonds)
+            for j in range(extend_in_x):
+                if c < extend_in_y-1:
+                    added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+12]])
+                    new_universe.add_bonds(added_bonds_1)
+
+            c = c + 1
+
+
+        copied_new = []
+        for z in range(1):
+            b_ = new_universe.copy()
+            move_by = box*(x, y, z)
+            b_.atoms.translate(move_by)
+            copied_new.append(b_.atoms)
+
+        new = mda.Merge(*copied_new)
+        new_box = box*(nx, ny, nz)
+        new_universe.dimensions = list(new_box) + [90]*3
+
+        # new_universe.atoms.positions = xyz
+
+
+        # def getPosOnBentLine(lineStart, lineEnd, t, bendFactor, pivot):
+            # lineDir = lineEnd - lineStart
+        PI = 3.14
+        t=new_universe.atoms.positions
+        pivot=1
+        lineEnd = new_universe.atoms.positions[296]#[ 2.41700006 30.69400024 21.93000031]
+        bendFactor = 1
+        lineLength = 33.24999976158142 #len(lineDir)
+        lineStart = new_universe.atoms.positions[55] #[[ 2.41700006 30.69400024 21.93000031]]
+        circleRad = lineLength / (bendFactor * 2 * PI)
+        circleCenter = lineStart +  (lineEnd - lineStart)  * pivot + perp(lineDir) * circleRad
+
+        angle = PI + bendFactor * (1.0 - (t+pivot)) * 2 * PI
+        posOnCircle = circleCenter + (np.cos(angle), np.sin(angle)) * circleRad
+
+        return posOnCircle
+
+        # return sol
+
+
+        # for i in range(num_bonds_connect):
+        #     added_bonds = np.array([[(bond_connect*i)+8, (bond_connect*(i+1))+7]])
+        #     added_bonds_2 = np.array([[(bond_connect*i)+8+12, (bond_connect*(i+1))+7+12]])
+        #     added_bonds_3 = np.array([[(bond_connect*i)+8+24, (bond_connect*(i+1))+7+24]])
+        #     added_bonds_4 = np.array([[(bond_connect*i)+8+24+12, (bond_connect*(i+1))+7+24+12]])
+            # new_universe.add_bonds(added_bonds)
+            # new_universe.add_bonds(added_bonds_2)
+            # new_universe.add_bonds(added_bonds_3)
+            # new_universe.add_bonds(added_bonds_4)
+
 
         # for x in range(n_x):
         #     for y in range(n_y):
