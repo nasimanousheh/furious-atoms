@@ -2,8 +2,7 @@ import numpy as np
 
 
 def load_CC1_file(fname, debug=False):
-    # lammps_file = open(fname, 'r')
-    lammps_file = open(oi.get_dateset_file(fname))
+    lammps_file = open(fname, 'r')
     lines = lammps_file.readlines()
     no_lines = len(lines)
     lammps_dix = {'index': {}}
