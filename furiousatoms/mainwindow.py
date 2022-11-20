@@ -621,7 +621,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         fullerene_folder = os.path.join(dir_fullerene_folder,
                                         'fullerene_dataset')
         fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'),
-                                                         dir=io.get_dateset_file(fullerene_folder),
+                                                         dir=io.get_dateset_file(),
                                                          filter="*.cc1*")
         existing = self.find_mdi_child(fname)
         if existing:
