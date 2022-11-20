@@ -51,6 +51,11 @@ def get_resources_file(fname):
     return os.path.join(base_path, "resources", fname)
 
 
+def get_dateset_file(fname):
+    base_path = get_frozen_path() if is_frozen() else get_application_path()
+    return os.path.join(base_path, "fullerene_dataset", fname)
+
+
 def load_ui_widget(uifilename, cls_to_register=None, parent=None):
     loader = QtUiTools.QUiLoader()
     loader.setLanguageChangeEnabled(True)
