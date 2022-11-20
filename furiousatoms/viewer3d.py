@@ -138,14 +138,10 @@ class Viewer3D(QtWidgets.QWidget):
 
     def load_fullerene_cc1_file(self, fname):
         success = False
-        base_path = ''
-        try:
-            base_path = sys._MEIPASS
-        except Exception:
-            base_path = os.path.abspath(".")
-        self.current_file = os.path.basename(fname)
+        # self.current_file = os.path.basename(fname)
         # self.current_filepath = os.path.abspath(fname)
-        self.current_filepath = os.path.abspath(base_path, "fullerene_dataset")
+
+        self.current_filepath = io.get_dateset_file(fname)
         self.current_filedir = os.path.dirname(self.current_filepath)
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
