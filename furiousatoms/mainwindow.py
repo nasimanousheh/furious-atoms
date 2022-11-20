@@ -32,7 +32,6 @@ from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
-from furiousatoms.polymer_builder import Ui_polymer
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)
@@ -93,7 +92,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
-        self.ui.actionPolymer.triggered.connect(self.polymer)
         self.ui.actionFullerenes.triggered.connect(self.open_dataset_fullerene)
         self.ui.actionAdd_Box.triggered.connect(self.box_builder)
         self.ui.actionAdd_solution.triggered.connect(self.solution_builder)
@@ -412,11 +410,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.render()
 
-    def polymer(self):
-        Ui_polymer.polymer = Ui_polymer()
-        Ui_polymer.polymer.win = self
-        Ui_polymer.polymer.show()
-        Ui_polymer.polymer.showNormal()
     def electrolyte(self):
         Ui_electrolyte.electrolyte = Ui_electrolyte()
         Ui_electrolyte.electrolyte.win = self

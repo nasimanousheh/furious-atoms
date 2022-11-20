@@ -46,7 +46,7 @@ def get_languages_path():
     return l_path
 
 
-def get_resources_file():
+def get_resources_file(fname):
     base_path = get_frozen_path() if is_frozen() else get_application_path()
     return os.path.join(base_path, "resources", fname)
 
