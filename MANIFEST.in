@@ -21,3 +21,4 @@ recursive-include furiousatoms/forms *
 recursive-include furiousatoms/languages *
 recursive-include furiousatoms/resources *
 recursive-include furiousatoms/skybox0 *
+recursive-include furiousatoms/fullerene_dataset *
