@@ -75,23 +75,27 @@ class Ui_polymer(QtWidgets.QMainWindow):
         pos = pos.astype('float64')
         # first_carbon = pos[np.where(load_file.atoms.types=='C')][0]
         # last_carbon = pos[np.where(load_file.atoms.types=='C')][-1]
-        distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
+        distance_2 = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
+        distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.4    #1.4000015258789062  #1.4000014682858655
+        print(max(pos[:, 0]) - min(pos[:, 0]))
         nx = load_file.dimensions [3]
         ny= load_file.dimensions [4]
         nz= load_file.dimensions [5]
-        load_file.dimensions = [distance, distance, distance, nx, ny, nz]
+        load_file.dimensions = [distance, distance_2, distance, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        extend_in_x = 5
-        extend_in_y = 5
+        extend_in_x = 12
+        extend_in_y = 7
         b = 0
+        i = 0
         for x in range(extend_in_x):
+            i = 0
             for y in range(extend_in_y):
                 u_ = load_file.copy()
-                move_by = box*(x , y, 1) #- (x * 2*1.73205080757) - (1.4*2)
+                move_by = box*(x-i, y, 1) #- (x * 2*1.73205080757) - (1.4*2)
                 u_.atoms.translate(move_by)
-                copied.append(u_.atoms)#+ np.array([[b, 0, 0]]))
-            b = b + 1.73
+                copied.append(u_.atoms)
+                i = i+(0.5)
 
         import MDAnalysis as mda
         new_universe = mda.Merge(*copied)
@@ -118,7 +122,7 @@ class Ui_polymer(QtWidgets.QMainWindow):
 
 
         copied_new = []
-        for z in range(1):
+        for z in range(7):
             b_ = new_universe.copy()
             move_by = box*(x, y, z)
             b_.atoms.translate(move_by)
@@ -133,20 +137,20 @@ class Ui_polymer(QtWidgets.QMainWindow):
 
         # def getPosOnBentLine(lineStart, lineEnd, t, bendFactor, pivot):
             # lineDir = lineEnd - lineStart
-        PI = 3.14
-        t=new_universe.atoms.positions
-        pivot=1
-        lineEnd = new_universe.atoms.positions[296]#[ 2.41700006 30.69400024 21.93000031]
-        bendFactor = 1
-        lineLength = 33.24999976158142 #len(lineDir)
-        lineStart = new_universe.atoms.positions[55] #[[ 2.41700006 30.69400024 21.93000031]]
-        circleRad = lineLength / (bendFactor * 2 * PI)
-        circleCenter = lineStart +  (lineEnd - lineStart)  * pivot + perp(lineDir) * circleRad
+        # PI = 3.14
+        # t=new_universe.atoms.positions
+        # pivot=1
+        # lineEnd = new_universe.atoms.positions[296]#[ 2.41700006 30.69400024 21.93000031]
+        # bendFactor = 1
+        # lineLength = 33.24999976158142 #len(lineDir)
+        # lineStart = new_universe.atoms.positions[55] #[[ 2.41700006 30.69400024 21.93000031]]
+        # circleRad = lineLength / (bendFactor * 2 * PI)
+        # circleCenter = lineStart +  (lineEnd - lineStart)  * pivot + perp(lineDir) * circleRad
 
-        angle = PI + bendFactor * (1.0 - (t+pivot)) * 2 * PI
-        posOnCircle = circleCenter + (np.cos(angle), np.sin(angle)) * circleRad
+        # angle = PI + bendFactor * (1.0 - (t+pivot)) * 2 * PI
+        # posOnCircle = circleCenter + (np.cos(angle), np.sin(angle)) * circleRad
 
-        return posOnCircle
+        return new
 
         # return sol
 
