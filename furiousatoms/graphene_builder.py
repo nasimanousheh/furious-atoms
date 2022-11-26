@@ -8,6 +8,7 @@ import numpy as np
 from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import merged_universe_with_H, create_universe
+import MDAnalysis as mda
 
 
 """
@@ -104,6 +105,11 @@ class Ui_graphene(QtWidgets.QMainWindow):
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
+        number_of_sheets = 3
+        sheet_separation = 3.4
+        if number_of_sheets > 1:
+            structure_info = extend_the_sheets(structure_info, number_of_sheets, sheet_separation)
+
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
@@ -121,6 +127,26 @@ class Ui_graphene(QtWidgets.QMainWindow):
   that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
+
+
+def extend_the_sheets(structure_info, number_of_sheets, sheet_separation):
+    copied = []
+    # sheet_separation
+    box_lx=box_ly=box_lz=50
+    structure_info.dimensions = [box_lx, box_ly, sheet_separation, 90, 90, 90]
+    box = structure_info.dimensions[:3]
+    for x in range(1):
+        for y in range(1):
+            for z in range(number_of_sheets):
+                u_ = structure_info.copy()
+                move_by = box*(x, y, z)
+                u_.atoms.translate(move_by)
+                copied.append(u_.atoms)
+
+        extended_universe = mda.Merge(*copied)
+        # new_box = box*(n_x, n_y, n_z)
+        # extended_universe.dimensions = list(new_box) + [90]*3
+        return extended_universe
 
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
     global box_lx, box_ly, box_lz
