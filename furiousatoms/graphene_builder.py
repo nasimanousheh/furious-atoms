@@ -46,6 +46,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene.comboBox_type1_graphene.activated.connect(self.get_atom_type)
         self.graphene.comboBox_type2_graphene.activated.connect(self.get_atom_type)
 
+
     def get_atom_type(self):
         global bond_length_graphene
         if self.graphene.radioButton_bond_length.isChecked() == True:
@@ -105,14 +106,15 @@ class Ui_graphene(QtWidgets.QMainWindow):
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
         try:
-            num_sheets = float(self.garphene.spinBox_num_sheets.text())
-        except:
+            num_sheets = int(self.graphene.SpinBox_num_sheets.text())
+        except NameError:
             num_sheets = 1
 
         try:
-            sheet_separation = float(self.garphene.SpinBox_sheet_sep.text())
-        except:
+            sheet_separation = float(self.graphene.SpinBox_sheet_sep.text())
+        except NameError:
             sheet_separation = 3.347
+
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
         if sheet_separation > 1:
             structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
@@ -138,7 +140,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
 
 def extend_the_sheets(structure_info, num_sheets, sheet_separation):
     copied = []
-    structure_info.dimensions = [box_lx, box_ly, sheet_separation, 90, 90, 90]
+    structure_info.dimensions = [sheet_separation, sheet_separation, sheet_separation, 90, 90, 90]
     box = structure_info.dimensions[:3]
     for x in range(1):
         for y in range(1):
