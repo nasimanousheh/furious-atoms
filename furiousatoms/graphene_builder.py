@@ -104,10 +104,17 @@ class Ui_graphene(QtWidgets.QMainWindow):
         repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
+        try:
+            num_sheets = float(self.garphene.spinBox_num_sheets.text())
+        except:
+            num_sheets = 1
+
+        try:
+            sheet_separation = float(self.garphene.SpinBox_sheet_sep.text())
+        except:
+            sheet_separation = 3.347
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
-        number_of_sheets = 3
-        sheet_separation = 3.4
-        if number_of_sheets > 1:
+        if sheet_separation > 1:
             structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         window = self.win.create_mdi_child()
