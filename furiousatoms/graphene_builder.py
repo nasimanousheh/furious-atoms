@@ -108,7 +108,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         number_of_sheets = 3
         sheet_separation = 3.4
         if number_of_sheets > 1:
-            structure_info = extend_the_sheets(structure_info, number_of_sheets, sheet_separation)
+            structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         window = self.win.create_mdi_child()
         window.make_title()
@@ -129,7 +129,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
 """
 
 
-def extend_the_sheets(structure_info, number_of_sheets, sheet_separation):
+def extend_the_sheets(structure_info, num_sheets, sheet_separation):
     copied = []
     # sheet_separation
     box_lx=box_ly=box_lz=50
@@ -137,7 +137,7 @@ def extend_the_sheets(structure_info, number_of_sheets, sheet_separation):
     box = structure_info.dimensions[:3]
     for x in range(1):
         for y in range(1):
-            for z in range(number_of_sheets):
+            for z in range(num_sheets):
                 u_ = structure_info.copy()
                 move_by = box*(x, y, z)
                 u_.atoms.translate(move_by)
