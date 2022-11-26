@@ -441,7 +441,7 @@
              </widget>
             </item>
             <item row="0" column="1">
-             <widget class="QSpinBox" name="spinBox_num_walls_MWNT">
+             <widget class="QSpinBox" name="SpinBox_num_sheets">
               <property name="font">
                <font>
                 <pointsize>10</pointsize>
@@ -474,20 +474,21 @@
              </widget>
             </item>
             <item row="1" column="1">
-             <widget class="QLineEdit" name="lineEdit_wall_separation_MWNT">
-              <property name="enabled">
-               <bool>false</bool>
+             <widget class="QDoubleSpinBox" name="SpinBox_sheet_sep">
+              <property name="decimals">
+               <number>3</number>
               </property>
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
+              <property name="minimum">
+               <double>0.100000000000000</double>
               </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(255, 255, 255);</string>
+              <property name="maximum">
+               <double>50.000000000000000</double>
               </property>
-              <property name="clearButtonEnabled">
-               <bool>false</bool>
+              <property name="singleStep">
+               <double>0.001000000000000</double>
+              </property>
+              <property name="value">
+               <double>3.347000000000000</double>
               </property>
              </widget>
             </item>
