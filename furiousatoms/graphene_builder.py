@@ -138,8 +138,6 @@ class Ui_graphene(QtWidgets.QMainWindow):
 
 def extend_the_sheets(structure_info, num_sheets, sheet_separation):
     copied = []
-    # sheet_separation
-    box_lx=box_ly=box_lz=50
     structure_info.dimensions = [box_lx, box_ly, sheet_separation, 90, 90, 90]
     box = structure_info.dimensions[:3]
     for x in range(1):
