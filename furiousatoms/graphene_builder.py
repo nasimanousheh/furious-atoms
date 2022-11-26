@@ -116,7 +116,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
             sheet_separation = 3.347
 
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
-        if sheet_separation > 1:
+        if num_sheets > 1:
             structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         window = self.win.create_mdi_child()
