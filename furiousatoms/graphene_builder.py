@@ -152,6 +152,8 @@ def extend_the_sheets(structure_info, num_sheets, sheet_separation):
 
         extended_universe = mda.Merge(*copied)
         extended_universe.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
+        cog = extended_universe.atoms.center_of_geometry()
+        extended_universe.atoms.positions -= cog
         return extended_universe
 
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
