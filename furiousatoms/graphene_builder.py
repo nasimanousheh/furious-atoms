@@ -151,8 +151,7 @@ def extend_the_sheets(structure_info, num_sheets, sheet_separation):
                 copied.append(u_.atoms)
 
         extended_universe = mda.Merge(*copied)
-        # new_box = box*(n_x, n_y, n_z)
-        # extended_universe.dimensions = list(new_box) + [90]*3
+        extended_universe.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
         return extended_universe
 
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
