@@ -13,7 +13,7 @@ from furiousatoms.io import merged_universe_with_H, create_universe
 """
     Ui_Graphene class creates a widget for building graphenes
 """
-class Ui_graphene(QtWidgets.QMainWindow): #QWidget
+class Ui_graphene(QtWidgets.QMainWindow):
 
     def __init__(self, app_path=None, parent=None):
         super(Ui_graphene, self).__init__(parent)
@@ -130,16 +130,11 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    # dimond_sheet = True #False
     if dimond_sheet is True:
         a1 = np.array((np.sqrt(3)*bond_length,0,0))
         a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
-        # a1 = np.array((bond_length,0,0))
-        # a2 = bond_length/2*(np.array((-1, np.sqrt(3),0)))
-        # Ch = n*a1-m*a2
-        # T = t1*a1+t2*a2
         if length:
             N = int(np.ceil(length/np.linalg.norm(T)))
         Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
