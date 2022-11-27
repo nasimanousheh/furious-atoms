@@ -61,6 +61,7 @@ class Ui_polymer(QtWidgets.QMainWindow):
 
         # fname_monomer = "polymers\acrylates\acrylic_acid.pdb"
         fname_monomer = 'C:/Users/nasim/Downloads/NewNS/gammaGraphyne_unitcell.pdb'
+
         universe_all = self.polymer_builder(fname_monomer)
         window = self.win.create_mdi_child()
         window.make_title()
@@ -122,7 +123,7 @@ class Ui_polymer(QtWidgets.QMainWindow):
 
 
         copied_new = []
-        for z in range(7):
+        for z in range(1):
             b_ = new_universe.copy()
             move_by = box*(x, y, z)
             b_.atoms.translate(move_by)
