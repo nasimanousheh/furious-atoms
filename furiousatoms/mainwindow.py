@@ -32,7 +32,8 @@ from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
-from furiousatoms.polymer_builder import Ui_polymer
+# from furiousatoms.polymer_builder import Ui_polymer
+from furiousatoms.TwinGraphene import Ui_polymer
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)
