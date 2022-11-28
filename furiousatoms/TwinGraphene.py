@@ -86,8 +86,8 @@ class Ui_polymer(QtWidgets.QMainWindow):
         load_file.dimensions = [distance, distance_2, distance, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        extend_in_x = 1
-        extend_in_y = 2
+        extend_in_x = 8
+        extend_in_y = 13
         b = 0
         i = 0
         for x in range(extend_in_x):
@@ -108,20 +108,19 @@ class Ui_polymer(QtWidgets.QMainWindow):
         num_bonds_connect = (extend_in_x-1)
 
         for b in range(extend_in_y):
-            b = c *18
+            b = c * 18
             for i in range(num_bonds_connect):
                 added_bonds = np.array([[(bond_connect*i)+6+b, (bond_connect*(i+1))+b]])
-                # added_bonds = np.array([[(bond_connect*i)+8+b, (bond_connect*(i+1))+7+b]])
                 if c < extend_in_y-1:
-                    added_bonds_2 = np.array([[(bond_connect*i)+10+b, (bond_connect*i)+b+(13+bond_connect)]])
+                    added_bonds_2 = np.array([[(bond_connect*i)+8+b, (bond_connect*i)+b+(20+bond_connect)]])
                     # added_bonds_2 = np.array([[(bond_connect*i)+3+b, (bond_connect*i)+b+(13+bond_connect)]])
                     new_universe.add_bonds(added_bonds_2)
                 new_universe.add_bonds(added_bonds)
-            # for j in range(extend_in_x):
-            #     if c < extend_in_y-1:
-            #         added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+18]])
-            #         # added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+12]])
-            #         new_universe.add_bonds(added_bonds_1)
+            for j in range(extend_in_x):
+                if c < extend_in_y-1:
+                    added_bonds_1 = np.array([[(bond_connect*j)+10+b, (bond_connect*j)+b+22]])
+                    # added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+12]])
+                    new_universe.add_bonds(added_bonds_1)
 
             c = c + 1
 
