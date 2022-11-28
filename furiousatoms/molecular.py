@@ -3,6 +3,7 @@ from fury import utils, actor, primitive
 
 from furiousatoms.structure import bbox
 import MDAnalysis
+from fury import window, actor, ui, molecular as mol
 
 
 # TODO: I have to replace this class with the ViewerMemoryManager class
