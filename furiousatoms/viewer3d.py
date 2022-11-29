@@ -64,7 +64,7 @@ class Viewer3D(QtWidgets.QWidget):
         self.v_layout = QtWidgets.QVBoxLayout()
         self.v_layout.addWidget(self._qvtkwidget, stretch=1)
         self.ui.viewer_frame.setLayout(self.v_layout)
-        self._scene.background((1, 1, 1))
+        self._scene.background((0, 0, 0))
         self._showm.initialize()
 
     def init_variables(self):

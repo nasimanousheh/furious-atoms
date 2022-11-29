@@ -271,11 +271,11 @@
           </font>
          </property>
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="filename_tab">
           <attribute name="title">
-           <string>File name</string>
+           <string>Style</string>
           </attribute>
           <widget class="QRadioButton" name="button_animation">
            <property name="geometry">
@@ -300,7 +300,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>30</y>
+             <y>340</y>
              <width>300</width>
              <height>157</height>
             </rect>
@@ -470,7 +470,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>220</y>
+             <y>530</y>
              <width>311</width>
              <height>111</height>
             </rect>
@@ -582,7 +582,7 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>210</y>
+             <y>520</y>
              <width>111</width>
              <height>16</height>
             </rect>
@@ -595,13 +595,78 @@
            <property name="geometry">
             <rect>
              <x>10</x>
-             <y>10</y>
+             <y>320</y>
              <width>111</width>
              <height>16</height>
             </rect>
            </property>
            <property name="text">
             <string>File name</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="radioButton">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>50</y>
+             <width>121</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Ball-and-Stick</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="radioButton_2">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>80</y>
+             <width>82</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Stick</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="radioButton_3">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>110</y>
+             <width>82</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>RadioButton</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="radioButton_4">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>140</y>
+             <width>82</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>RadioButton</string>
+           </property>
+          </widget>
+          <widget class="QRadioButton" name="radioButton_Ribbon">
+           <property name="geometry">
+            <rect>
+             <x>10</x>
+             <y>20</y>
+             <width>271</width>
+             <height>17</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Ribbon</string>
            </property>
           </widget>
          </widget>

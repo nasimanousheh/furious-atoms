@@ -25,6 +25,7 @@ from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.SWNT_builder import  Ui_SWNT
+from furiousatoms.vtk_representatives_2 import  get_default_molecular_info
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
@@ -89,6 +90,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # Build menu actions
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
+
+        self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style)
+
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
@@ -421,6 +425,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_SWNT.swnt.win = self
         Ui_SWNT.swnt.show()
         Ui_SWNT.swnt.showNormal()
+
+    # def VTK_style(self):
+    #     VTK_Rep.rep = VTK_Rep()
+    #     VTK_Rep.rep.win = self
+
+
+    def VTK_style(self):
+        active_window = self.active_mdi_child()
+        fn = (str(active_window.current_filedir) + '\\' + str(active_window.current_file))
+        get_default_molecular_info(self, fn)
 
     def graphene(self):
         Ui_graphene.gr = Ui_graphene()
