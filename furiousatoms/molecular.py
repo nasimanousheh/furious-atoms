@@ -6,7 +6,7 @@ import MDAnalysis
 from fury import window, actor, ui, molecular as mol
 import fury.primitive as fp
 
-
+table = mol.PTable()
 # TODO: I have to replace this class with the ViewerMemoryManager class
 # that does not depend on universe (md analysis).
 class UniverseManager:
