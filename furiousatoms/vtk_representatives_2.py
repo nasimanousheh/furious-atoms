@@ -1,7 +1,6 @@
 import numpy.testing as npt
 import numpy as np
 from fury import window, actor, molecular as mol
-from furiousatoms.io import  load_files
 from furiousatoms.viewer3d import Viewer3D
 import os
 from PySide2 import QtWidgets
