@@ -8,12 +8,13 @@ import numpy as np
 from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import merged_universe_with_H, create_universe
+import MDAnalysis as mda
 
 
 """
     Ui_Graphene class creates a widget for building graphenes
 """
-class Ui_graphene(QtWidgets.QMainWindow): #QWidget
+class Ui_graphene(QtWidgets.QMainWindow):
 
     def __init__(self, app_path=None, parent=None):
         super(Ui_graphene, self).__init__(parent)
@@ -44,6 +45,7 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         self.graphene.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.graphene.comboBox_type1_graphene.activated.connect(self.get_atom_type)
         self.graphene.comboBox_type2_graphene.activated.connect(self.get_atom_type)
+
 
     def get_atom_type(self):
         global bond_length_graphene
@@ -103,7 +105,20 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
         repeat_units_graphene = int(self.graphene.spinBox_repeat_units_graphene.text())
         graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
         graphene_type_2 = self.graphene.comboBox_type2_graphene.currentText()
+        try:
+            num_sheets = int(self.graphene.SpinBox_num_sheets.text())
+        except NameError:
+            num_sheets = 1
+
+        try:
+            sheet_separation = float(self.graphene.SpinBox_sheet_sep.text())
+        except NameError:
+            sheet_separation = 3.347
+
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
+        if num_sheets > 1:
+            structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
+
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(structure_info)
@@ -122,6 +137,25 @@ class Ui_graphene(QtWidgets.QMainWindow): #QWidget
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
+
+def extend_the_sheets(structure_info, num_sheets, sheet_separation):
+    copied = []
+    structure_info.dimensions = [sheet_separation, sheet_separation, sheet_separation, 90, 90, 90]
+    box = structure_info.dimensions[:3]
+    for x in range(1):
+        for y in range(1):
+            for z in range(num_sheets):
+                u_ = structure_info.copy()
+                move_by = box*(x, y, z)
+                u_.atoms.translate(move_by)
+                copied.append(u_.atoms)
+
+        extended_universe = mda.Merge(*copied)
+        extended_universe.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
+        cog = extended_universe.atoms.center_of_geometry()
+        extended_universe.atoms.positions -= cog
+        return extended_universe
+
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
     global box_lx, box_ly, box_lz
     bond_length_hydrogen = 1.1
@@ -130,16 +164,11 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, speci
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    # dimond_sheet = True #False
     if dimond_sheet is True:
         a1 = np.array((np.sqrt(3)*bond_length,0,0))
         a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
         Ch = n*a1+m*a2
         T = t1*a1+t2*a2
-        # a1 = np.array((bond_length,0,0))
-        # a2 = bond_length/2*(np.array((-1, np.sqrt(3),0)))
-        # Ch = n*a1-m*a2
-        # T = t1*a1+t2*a2
         if length:
             N = int(np.ceil(length/np.linalg.norm(T)))
         Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
