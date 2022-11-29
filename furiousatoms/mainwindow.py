@@ -45,6 +45,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui = io.load_ui_widget("view.ui")
         self.setCentralWidget(self.ui)
         self.app_path = app_path or io.application_path()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
 
         self.init_settings()
         self.init_interface()
