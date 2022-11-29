@@ -56,7 +56,7 @@ class UniverseManager:
 
 
 
-        self.radii_spheres = 0.5 * np.ones((self.no_atoms))
+        self.radii_spheres = 1 * np.ones((self.no_atoms))
         self.radii_unique_types = 0.5 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.object_indices_particles = np.where(self.selected_particle)[0].tolist()
