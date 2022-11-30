@@ -22,8 +22,8 @@ def get_vtk_ribbon(file_name, active_vtk_window):
     molecule, all_info = get_default_molecular_info(file_name)
     if all_info is True:
         ribbon = mol.ribbon(molecule)
-        box_vtk_stye(molecule, file_name)
-        active_vtk_window.scene.background((1, 1, 1))
+        box_vtk_stye(molecule, active_vtk_window)
+        # active_vtk_window.scene.background((1, 1, 1))
         active_vtk_window.scene.add(ribbon)
         active_vtk_window.render()
         active_vtk_window.show()
@@ -36,7 +36,7 @@ def get_vtk_ball_stick(file_name,active_vtk_window):
         ball_stick_rep = mol.ball_stick(molecule, atom_scale_factor=0.3,
                                 bond_thickness=0.2)
         make_aesthetic(ball_stick_rep)
-        box_vtk_stye(molecule, file_name)
+        box_vtk_stye(molecule, active_vtk_window)
         active_vtk_window.scene.add(ball_stick_rep)
         active_vtk_window.render()
         active_vtk_window.show()
@@ -48,7 +48,7 @@ def get_vtk_stick(file_name,active_vtk_window):
     if molecule.total_num_bonds > 0:
         stick_rep = mol.stick(molecule)
         make_aesthetic(stick_rep)
-        box_vtk_stye(molecule, file_name)
+        box_vtk_stye(molecule, active_vtk_window)
         active_vtk_window.scene.add(stick_rep)
         active_vtk_window.render()
         active_vtk_window.show()
@@ -61,7 +61,7 @@ def get_vtk_sphere(file_name,active_vtk_window):
     if molecule.total_num_atoms > 0:
         sphere_cpk_rep = mol.sphere_cpk(molecule, colormode='discrete')
         make_aesthetic(sphere_cpk_rep)
-        box_vtk_stye(molecule, file_name)
+        box_vtk_stye(molecule, active_vtk_window)
         active_vtk_window.scene.add(sphere_cpk_rep)
         active_vtk_window.render()
         active_vtk_window.show()
