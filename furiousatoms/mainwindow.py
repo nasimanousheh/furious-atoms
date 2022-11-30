@@ -25,7 +25,7 @@ from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.SWNT_builder import  Ui_SWNT
-from furiousatoms.vtk_representatives_2 import  get_default_molecular_info
+from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
@@ -92,7 +92,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
 
-        self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style)
+
+        self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
+        self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
+        self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
+        self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
 
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
@@ -427,15 +431,45 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_SWNT.swnt.show()
         Ui_SWNT.swnt.showNormal()
 
-    # def VTK_style(self):
-    #     VTK_Rep.rep = VTK_Rep()
-    #     VTK_Rep.rep.win = self
+    def VTK_style_ribbon(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            vtk_rep_window = Viewer3D()
+            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_ribbon(fn, vtk_rep_window)
 
+    def VTK_style_ball_stick(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            vtk_rep_window = Viewer3D()
+            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_ball_stick(fn, vtk_rep_window)
 
-    def VTK_style(self):
-        active_window = self.active_mdi_child()
-        fn = (str(active_window.current_filedir) + '\\' + str(active_window.current_file))
-        get_default_molecular_info(self, fn)
+    def VTK_style_stick(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            vtk_rep_window = Viewer3D()
+            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_stick(fn, vtk_rep_window)
+
+    def VTK_style_sphere(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            vtk_rep_window = Viewer3D()
+            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_sphere(fn, vtk_rep_window)
 
     def graphene(self):
         Ui_graphene.gr = Ui_graphene()
@@ -839,9 +873,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = active_window.universe_manager
-        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
-        if SM.no_bonds > 0:
+        try:
+            SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
+        except AttributeError:
+            pass
+
+        try:
             SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
+        except AttributeError:
+            pass
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
@@ -922,7 +962,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.timer = QTimer()
         self.timer.timeout.connect(self.timer_callback)
         duration = 200
-        self.timer.start(duration)
+        if SM.n_frames > 1:
+            self.timer.start(duration)
         # MainWindow.iren.Initialize()
         active_window.render()
 
