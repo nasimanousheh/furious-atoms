@@ -873,6 +873,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
+        if isinstance(active_window, ViewerVTK):
+            return
+
         SM = active_window.universe_manager
         try:
             SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
