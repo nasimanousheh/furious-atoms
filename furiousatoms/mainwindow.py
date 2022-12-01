@@ -24,6 +24,7 @@ import furiousatoms.forms.icons
 from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
+from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
 from furiousatoms.graphene_builder import  Ui_graphene
@@ -434,7 +435,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def VTK_style_ribbon(self):
         radioButton = self.sender()
         if radioButton.isChecked():
-            vtk_rep_window = Viewer3D()
+            vtk_rep_window = ViewerVTK()
             self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
@@ -444,7 +445,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def VTK_style_ball_stick(self):
         radioButton = self.sender()
         if radioButton.isChecked():
-            vtk_rep_window = Viewer3D()
+            vtk_rep_window = ViewerVTK()
             self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
@@ -454,7 +455,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def VTK_style_stick(self):
         radioButton = self.sender()
         if radioButton.isChecked():
-            vtk_rep_window = Viewer3D()
+            vtk_rep_window = ViewerVTK()
             self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
@@ -464,7 +465,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def VTK_style_sphere(self):
         radioButton = self.sender()
         if radioButton.isChecked():
-            vtk_rep_window = Viewer3D()
+            vtk_rep_window = ViewerVTK()
             self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
