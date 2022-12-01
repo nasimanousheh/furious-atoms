@@ -23,7 +23,7 @@ def get_vtk_ribbon(file_name, active_vtk_window):
     if all_info is True:
         ribbon = mol.ribbon(molecule)
         box_vtk_stye(molecule, active_vtk_window)
-        # active_vtk_window.scene.background((1, 1, 1))
+        get_vtk_ball_stick(file_name,active_vtk_window)
         active_vtk_window.scene.add(ribbon)
         active_vtk_window.render()
         active_vtk_window.show()
