@@ -1,5 +1,6 @@
 import numpy as np
 from fury import molecular as mol
+from furiousatoms.io import  load_files
 
 ###############################################################################
 # Creating a `PeriodicTable()` object to obtain atomic numbers from names of
@@ -80,6 +81,16 @@ def get_default_molecular_info(fine_name):
 
     else:
         all_info = False
+        load_file,_ = load_files(fine_name)
+        atom_coords = load_file.atoms.positions
+        atom_types = load_file.atoms.types
+        atom_coords = atom_coords.astype('float64')
+        b = []
+        atom_types = atom_types.tolist()
+        for i in range(len(atom_types)):
+            c = table.GetAtomicNumber(atom_types[i])
+            b.append(c)
+        atomic_numbers = np.array(b)
         molecule = mol.Molecule(atomic_numbers, atom_coords, atom_types)
     try:
         mol.compute_bonding(molecule)
