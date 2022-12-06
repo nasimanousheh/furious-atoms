@@ -32,6 +32,7 @@ added_files = [(pjoin(FA_PATH, 'furiousatoms/forms'), 'forms'),
                (pjoin(FA_PATH, 'furiousatoms/languages'), 'languages'),
                (pjoin(FA_PATH, 'furiousatoms/resources'), 'resources'),
                (pjoin(FA_PATH, 'furiousatoms/skybox0'), 'skybox0'),
+               (pjoin(FA_PATH, 'furiousatoms/fullerene_dataset'), 'fullerene_dataset'),
                (DATA_DIR, 'fury/data/files'),
               ]
 
