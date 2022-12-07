@@ -434,43 +434,99 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def VTK_style_ribbon(self):
         radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+
         if radioButton.isChecked():
-            vtk_rep_window = ViewerVTK()
-            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
-            get_vtk_ribbon(fn, vtk_rep_window)
+            get_vtk_ribbon(self, SM, fn, vtk_rep_window)
 
     def VTK_style_ball_stick(self):
         radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+
         if radioButton.isChecked():
-            vtk_rep_window = ViewerVTK()
-            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
-            get_vtk_ball_stick(fn, vtk_rep_window)
+            get_vtk_ball_stick(self, SM, fn, vtk_rep_window)
 
     def VTK_style_stick(self):
         radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+
         if radioButton.isChecked():
-            vtk_rep_window = ViewerVTK()
-            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
-            get_vtk_stick(fn, vtk_rep_window)
+            get_vtk_stick(self, SM, fn, vtk_rep_window)
 
     def VTK_style_sphere(self):
         radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+
         if radioButton.isChecked():
-            vtk_rep_window = ViewerVTK()
-            self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
-            get_vtk_sphere(fn, vtk_rep_window)
+            get_vtk_sphere(self, SM, fn, vtk_rep_window)
 
     def graphene(self):
         Ui_graphene.gr = Ui_graphene()
