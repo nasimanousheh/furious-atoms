@@ -7,7 +7,7 @@ from furiousatoms.io import  load_files
 # elements
 table = mol.PTable()
 
-def get_default_molecular_info(fine_name):
+def molecular_info_loaded_file(fine_name):
     ###############################################################################
     # Creating empty lists which will be filled with atomic information as we
     # parse the pdb file.
@@ -85,6 +85,41 @@ def get_default_molecular_info(fine_name):
         atom_coords = load_file.atoms.positions
         atom_types = load_file.atoms.types
         atom_coords = atom_coords.astype('float64')
+        b = []
+        atom_types = atom_types.tolist()
+        for i in range(len(atom_types)):
+            c = table.GetAtomicNumber(atom_types[i])
+            b.append(c)
+        atomic_numbers = np.array(b)
+        molecule = mol.Molecule(atomic_numbers, atom_coords, atom_types)
+    try:
+        mol.compute_bonding(molecule)
+        mol.get_all_bond_orders(molecule)
+    except Exception:
+        pass
+
+    return molecule, all_info
+
+import os.path
+
+
+def get_default_molecular_info(self, SM, fine_name):
+    ###############################################################################
+    # Creating empty lists which will be filled with atomic information as we
+    # parse the pdb file.
+    # all_info = False
+    atom_coords = []
+    atomic_numbers = []
+    atom_types = []
+    ###############################################################################
+    # Parsing the pdb file for information about coordinates and atoms
+    file_exists = os.path.exists(fine_name)
+    if file_exists:
+        molecule, all_info = molecular_info_loaded_file(fine_name)
+    else:
+        all_info = False
+        atom_types = SM.atom_type
+        atom_coords = SM.pos
         b = []
         atom_types = atom_types.tolist()
         for i in range(len(atom_types)):
