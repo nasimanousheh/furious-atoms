@@ -1,4 +1,5 @@
 import numpy as np
+import os.path
 from fury import molecular as mol
 from furiousatoms.io import  load_files
 
@@ -99,9 +100,6 @@ def molecular_info_loaded_file(fine_name):
         pass
 
     return molecule, all_info
-
-import os.path
-
 
 def get_default_molecular_info(self, SM, fine_name):
     ###############################################################################
