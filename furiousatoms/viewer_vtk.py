@@ -51,6 +51,7 @@ class ViewerVTK(QtWidgets.QWidget):
         self.current_filepath = ""
         self.current_filedir = ""
         self.current_extension = ""
+        self.parent_window = None
 
         self.init_settings()
         self.init_variables()
