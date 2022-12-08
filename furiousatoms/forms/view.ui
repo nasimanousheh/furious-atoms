@@ -1199,7 +1199,7 @@
    </widget>
    <widget class="QMenu" name="menuModify">
     <property name="title">
-     <string>Modify</string>
+     <string>Edit</string>
     </property>
     <widget class="QMenu" name="menuDelete">
      <property name="title">
