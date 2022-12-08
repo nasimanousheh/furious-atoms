@@ -110,11 +110,10 @@ def get_default_molecular_info(self, SM, fine_name):
     atomic_numbers = []
     atom_types = []
     ###############################################################################
-    # Parsing the pdb file for information about coordinates and atoms
-    file_exists = os.path.exists(fine_name)
-    if file_exists:
+    # Parsing the file for information about coordinates and atoms
+    try:
         molecule, all_info = molecular_info_loaded_file(fine_name)
-    else:
+    except:
         all_info = False
         atom_types = SM.atom_type
         atom_coords = SM.pos
