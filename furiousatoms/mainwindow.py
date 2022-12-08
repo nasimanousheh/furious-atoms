@@ -735,7 +735,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         child = self.create_mdi_child()
-
         if child.load_fullerene_cc1_file(fname):
             child.show()
         else:
@@ -745,7 +744,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'PNG (*.png)')
         magnification = 4
         renderLarge = RenderLargeImage()
