@@ -744,6 +744,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
+        if isinstance(active_window, ViewerVTK):
+            active_window.parent_window.universe_manager
 
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'PNG (*.png)')
         magnification = 4
