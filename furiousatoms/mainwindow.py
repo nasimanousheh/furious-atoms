@@ -98,6 +98,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
+        self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere)
 
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
@@ -503,6 +504,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
             get_vtk_stick(self, SM, fn, vtk_rep_window)
+
+
+    def sky_box_sphere(self):
+        radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if radioButton.isChecked():
+            self.ui.Widget_sky_box_effect.setEnabled(True)
+        else:
+            self.ui.Widget_sky_box_effect.setEnabled(False)
 
     def VTK_style_sphere(self):
         radioButton = self.sender()
