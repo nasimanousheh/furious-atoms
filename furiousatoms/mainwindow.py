@@ -965,6 +965,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # self.ui.horizontalSlider_Anisotropic_Z.setValue(SM.anisotropic_Z*100)
         # self.ui.horizontalSlider_Coat_strength.setValue(SM.coat_strength*100)
         # self.ui.horizontalSlider_Coat_roughness.setValue(SM.coat_rough*100)
+        SM.pbr_params_atom.metallic = SM.metallic
+        SM.pbr_params_atom.roughness = SM.roughness
+        SM.pbr_params_atom.anisotropy = SM.anisotropic
+        SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
+
+        active_window.render()
         self.ui.treeWidget.clear()
         print("metallic: ", SM.metallic)
         for i, typ in enumerate(SM.unique_types):
