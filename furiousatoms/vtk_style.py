@@ -25,6 +25,7 @@ def get_vtk_ribbon(self, SM, file_name, active_vtk_window):
         box_vtk_stye(molecule, active_vtk_window)
         # get_vtk_ball_stick(file_name,active_vtk_window)
         active_vtk_window.scene.add(ribbon)
+        active_vtk_window.make_title()
         active_vtk_window.render()
         active_vtk_window.show()
     else:
@@ -38,6 +39,7 @@ def get_vtk_ball_stick(self, SM, file_name, active_vtk_window):
         make_aesthetic(ball_stick_rep)
         box_vtk_stye(molecule, active_vtk_window)
         active_vtk_window.scene.add(ball_stick_rep)
+        active_vtk_window.make_title()
         active_vtk_window.render()
         active_vtk_window.show()
     else:
@@ -50,6 +52,7 @@ def get_vtk_stick(self, SM, file_name, active_vtk_window):
         make_aesthetic(stick_rep)
         box_vtk_stye(molecule, active_vtk_window)
         active_vtk_window.scene.add(stick_rep)
+        active_vtk_window.make_title()
         active_vtk_window.render()
         active_vtk_window.show()
     else:
