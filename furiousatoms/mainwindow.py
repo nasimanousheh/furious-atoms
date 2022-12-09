@@ -535,14 +535,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Widget_sky_box_effect.setEnabled(True)
 
         if isinstance(active_window, ViewerVTK):
-            fn = active_window.parent_window.current_filepath
+            # fn = active_window.parent_window.current_filepath
+            fn = active_window.parent_window.current_file
+
             print('isinstance', fn)
             windows = self.find_mdi_child(fn)
             print(windows)
             self.ui.mdiArea.setActiveSubWindow(windows)
             SM = active_window.parent_window.universe_manager
         else:
-            fn = active_window.current_filepath
+            fn = active_window.current_file
+            # fn = active_window.current_filepath
             print(fn)
             windows = self.find_mdi_child(fn)
             print(windows)
@@ -1143,11 +1146,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # Todo: Make some connections
         return child
 
-    def find_mdi_child(self, fname):
-        canonical_filepath = os.path.abspath(fname)
+    # def find_mdi_child(self, fname):
+    #     canonical_filepath = os.path.abspath(fname)
 
+    #     for window in self.ui.mdiArea.subWindowList():
+    #         if window.widget().current_filepath == canonical_filepath:
+    #             return window
+    #     return None
+    def find_mdi_child(self, fname):
         for window in self.ui.mdiArea.subWindowList():
-            if window.widget().current_filepath == canonical_filepath:
+            if window.widget().current_file == fname:
                 return window
         return None
 
