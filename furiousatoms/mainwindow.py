@@ -445,8 +445,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM = active_window.parent_window.universe_manager
         else:
             SM = active_window.universe_manager
-
         if radioButton.isChecked():
+            self.ui.Widget_sky_box_effect.setEnabled(False)
             if isinstance(active_window, ViewerVTK):
                 vtk_rep_window = active_window
                 vtk_rep_window.scene.clear()
@@ -464,13 +464,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-
         if isinstance(active_window, ViewerVTK):
             SM = active_window.parent_window.universe_manager
         else:
             SM = active_window.universe_manager
-
         if radioButton.isChecked():
+            self.ui.Widget_sky_box_effect.setEnabled(False)
             if isinstance(active_window, ViewerVTK):
                 vtk_rep_window = active_window
                 vtk_rep_window.scene.clear()
@@ -488,13 +487,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-
         if isinstance(active_window, ViewerVTK):
             SM = active_window.parent_window.universe_manager
         else:
             SM = active_window.universe_manager
-
         if radioButton.isChecked():
+            self.ui.Widget_sky_box_effect.setEnabled(False)
             if isinstance(active_window, ViewerVTK):
                 vtk_rep_window = active_window
                 vtk_rep_window.scene.clear()
@@ -527,7 +525,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         self.ui.radioButton_skybox.setChecked(True)
         self.ui.Widget_sky_box_effect.setEnabled(True)
-
         if isinstance(active_window, ViewerVTK):
             fn = active_window.parent_window.current_file
             windows = self.find_mdi_child(fn)
@@ -537,21 +534,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             fn = active_window.current_file
             windows = self.find_mdi_child(fn)
 
-
-
     def VTK_style_sphere(self):
         radioButton = self.sender()
         active_window = self.active_mdi_child()
         if not active_window:
             return
-
         if isinstance(active_window, ViewerVTK):
             SM = active_window.parent_window.universe_manager
         else:
             SM = active_window.universe_manager
-
         if radioButton.isChecked():
-            # self.ui.Widget_sky_box_effect.setEnabled(False)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
             if isinstance(active_window, ViewerVTK):
                 vtk_rep_window = active_window
                 vtk_rep_window.scene.clear()
