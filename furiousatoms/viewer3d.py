@@ -92,6 +92,8 @@ class Viewer3D(QtWidgets.QWidget):
     def make_title(self):
         self.is_untitled = True
         self.current_file = "viewer-%d" % Viewer3D.sequence_number
+        if not self.current_filepath:
+            self.current_filepath = self.current_file
         Viewer3D.sequence_number += 1
         self.setWindowTitle(self.current_file)
 
