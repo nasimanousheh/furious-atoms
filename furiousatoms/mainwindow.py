@@ -527,7 +527,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         #         self.ui.mdiArea.setActiveSubWindow(active_window.parent_window)
         #         SM = active_window.parent_window.universe_manager
     def switch_to_sky_box(self):
-        print("tab is active")
         active_window = self.active_mdi_child()
         if not active_window:
             return
@@ -535,31 +534,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Widget_sky_box_effect.setEnabled(True)
 
         if isinstance(active_window, ViewerVTK):
-            # fn = active_window.parent_window.current_filepath
             fn = active_window.parent_window.current_file
-
-            print('isinstance', fn)
             windows = self.find_mdi_child(fn)
-            print(windows)
             self.ui.mdiArea.setActiveSubWindow(windows)
             SM = active_window.parent_window.universe_manager
         else:
             fn = active_window.current_file
-            # fn = active_window.current_filepath
-            print(fn)
             windows = self.find_mdi_child(fn)
-            print(windows)
 
-            # self.ui.mdiArea.setActiveSubWindow(windows)
-
-
-
-
-        # if isinstance(active_window, ViewerVTK):
-        #     parent_window = ViewerVTK()
-        #     parent_window.parent_window = active_window
-        #     self.ui.mdiArea.setActiveSubWindow(active_window)
-        #     SM = active_window.parent_window.universe_manager
 
 
     def VTK_style_sphere(self):
