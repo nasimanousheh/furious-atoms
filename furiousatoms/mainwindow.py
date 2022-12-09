@@ -98,7 +98,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
-        self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere)
+        # self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere)
+        self.ui.tabWidget_input.currentChanged.connect(self.switch_to_sky_box)
+
 
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
@@ -506,15 +508,56 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             get_vtk_stick(self, SM, fn, vtk_rep_window)
 
 
-    def sky_box_sphere(self):
-        radioButton = self.sender()
+    # def sky_box_sphere(self):
+    #     active_window = self.active_mdi_child()
+    #     if not active_window:
+    #         return
+    #     # self.ui.radioButton_skybox.setChecked(True)
+    #     self.ui.Widget_sky_box_effect.setEnabled(True)
+    #     if isinstance(active_window, ViewerVTK):
+    #         self.ui.mdiArea.setActiveSubWindow(active_window.parent_window)
+    #         SM = active_window.parent_window.universe_manager
+        # radioButton = self.sender()
+        # active_window = self.active_mdi_child()
+        # if not active_window:
+        #     return
+        # if radioButton.isChecked():
+        #     if isinstance(active_window, ViewerVTK):
+        #         print("sky_box_sphere radio is active")
+        #         self.ui.mdiArea.setActiveSubWindow(active_window.parent_window)
+        #         SM = active_window.parent_window.universe_manager
+    def switch_to_sky_box(self):
+        print("tab is active")
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        if radioButton.isChecked():
-            self.ui.Widget_sky_box_effect.setEnabled(True)
+        self.ui.radioButton_skybox.setChecked(True)
+        self.ui.Widget_sky_box_effect.setEnabled(True)
+
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_filepath
+            print('isinstance', fn)
+            windows = self.find_mdi_child(fn)
+            print(windows)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
         else:
-            self.ui.Widget_sky_box_effect.setEnabled(False)
+            fn = active_window.current_filepath
+            print(fn)
+            windows = self.find_mdi_child(fn)
+            print(windows)
+
+            # self.ui.mdiArea.setActiveSubWindow(windows)
+
+
+
+
+        # if isinstance(active_window, ViewerVTK):
+        #     parent_window = ViewerVTK()
+        #     parent_window.parent_window = active_window
+        #     self.ui.mdiArea.setActiveSubWindow(active_window)
+        #     SM = active_window.parent_window.universe_manager
+
 
     def VTK_style_sphere(self):
         radioButton = self.sender()
@@ -528,6 +571,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM = active_window.universe_manager
 
         if radioButton.isChecked():
+            # self.ui.Widget_sky_box_effect.setEnabled(False)
             if isinstance(active_window, ViewerVTK):
                 vtk_rep_window = active_window
                 vtk_rep_window.scene.clear()
@@ -1037,7 +1081,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_animation.setSingleStep(1)
         self.ui.horizontalSlider_animation.setValue(SM.cnt)
         self.ui.Timer_animation.setMaximum(SM.n_frames)
-        self.ui.tabWidget.update()
+        self.ui.tabWidget_input.update()
         self.timer = QTimer()
         self.timer.timeout.connect(self.timer_callback)
         duration = 200
