@@ -98,7 +98,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
-        # self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere)
+        self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere_radio)
         self.ui.tabWidget_input.currentChanged.connect(self.switch_to_sky_box)
 
 
@@ -508,24 +508,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             get_vtk_stick(self, SM, fn, vtk_rep_window)
 
 
-    # def sky_box_sphere(self):
-    #     active_window = self.active_mdi_child()
-    #     if not active_window:
-    #         return
-    #     # self.ui.radioButton_skybox.setChecked(True)
-    #     self.ui.Widget_sky_box_effect.setEnabled(True)
-    #     if isinstance(active_window, ViewerVTK):
-    #         self.ui.mdiArea.setActiveSubWindow(active_window.parent_window)
-    #         SM = active_window.parent_window.universe_manager
-        # radioButton = self.sender()
-        # active_window = self.active_mdi_child()
-        # if not active_window:
-        #     return
-        # if radioButton.isChecked():
-        #     if isinstance(active_window, ViewerVTK):
-        #         print("sky_box_sphere radio is active")
-        #         self.ui.mdiArea.setActiveSubWindow(active_window.parent_window)
-        #         SM = active_window.parent_window.universe_manager
+    def sky_box_sphere_radio(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+
     def switch_to_sky_box(self):
         active_window = self.active_mdi_child()
         if not active_window:
