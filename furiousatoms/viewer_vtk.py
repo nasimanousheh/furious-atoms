@@ -92,7 +92,7 @@ class ViewerVTK(QtWidgets.QWidget):
 
     def make_title(self):
         self.is_untitled = True
-        self.current_file = "viewer-%d" % ViewerVTK.sequence_number
+        self.current_file = "style-%d" % ViewerVTK.sequence_number
         ViewerVTK.sequence_number += 1
         self.setWindowTitle(self.current_file)
 
