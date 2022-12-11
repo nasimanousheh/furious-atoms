@@ -137,10 +137,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
-    def active_window(self):
+    def get_SM_active_window(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
+        self.ui.radioButton_skybox.setChecked(True)
         if isinstance(active_window, ViewerVTK):
             fn = active_window.parent_window.current_file
             windows = self.find_mdi_child(fn)
@@ -150,13 +151,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             fn = active_window.current_file
             windows = self.find_mdi_child(fn)
             SM = active_window.universe_manager
-
         return SM
+
     def show_radius_value(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_item = self.ui.treeWidget.selectionModel()
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
@@ -168,7 +169,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetOpacity(opacity_degree/100)
@@ -183,7 +184,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.metallic = metallic_degree/100
         SM.pbr_params_atom.metallic = SM.metallic
         if SM.no_bonds > 0:
@@ -194,7 +195,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.roughness = roughness_degree/100
         SM.pbr_params_atom.roughness = SM.roughness
         if SM.no_bonds > 0:
@@ -205,7 +206,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic = anisotropic_degree/100
         SM.pbr_params_atom.anisotropy = SM.anisotropic
         if SM.no_bonds > 0:
@@ -216,7 +217,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_rot = anisotropic_rot_degree/100
         SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
         if SM.no_bonds > 0:
@@ -227,7 +228,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_X = anisotropic_X_degree/100
         doa = [0, 1, .5]
         doa[0] = SM.anisotropic_X
@@ -246,7 +247,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_Y = anisotropic_Y_degree/100
         doa = [0, 1, .5]
         doa[1] = SM.anisotropic_Y
@@ -265,7 +266,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_Z = anisotropic_Z_degree/100
         doa = [0, 1, .5]
         doa[2] = SM.anisotropic_Z
@@ -284,7 +285,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.clearcoat = clearcoat_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -294,7 +295,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.clearcoat_gloss = clearcoat_gloss_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -304,7 +305,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.sheen = sheen_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -314,7 +315,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.sheen_tint = sheen_tint_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -324,7 +325,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.coat_rough = coat_rough_degree/100
         SM.pbr_params_atom.coat_roughness = SM.coat_rough
         if SM.no_bonds > 0:
@@ -335,7 +336,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.coat_strength = coat_strength_degree/100
         SM.pbr_params_atom.coat_strength = SM.coat_strength
         if SM.no_bonds > 0:
@@ -366,7 +367,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         num = int(SM.no_vertices_per_particle)
         SM.colors_backup_particles = SM.vcolors_particle.copy()
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
@@ -405,7 +406,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
         if comboBox_particleshape == 'Point':
             SM.sphere_actor.VisibilityOff()
@@ -419,7 +420,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         comboBox_bondshape = self.ui.comboBox_bondshape.currentText()
         if comboBox_bondshape == 'Line':
             SM.bond_actor.VisibilityOff()
@@ -585,7 +586,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         Ui_box.box.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
 
     def solution_builder(self):
@@ -596,7 +597,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         Ui_solution.sol.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
         Ui_solution.sol.show()
         Ui_solution.sol.showNormal()
@@ -617,7 +618,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         object_indices_particles = np.where(SM.selected_particle == True)[0]
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
@@ -646,42 +647,42 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.cnt = self.ui.horizontalSlider_animation.value()
 
     def play_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 1
 
     def pause_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 0
 
     def forward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 5
 
     def backward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = -5
 
     def update_particle_size(self, selected_value_radius):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_item = self.ui.treeWidget.selectionModel()
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
@@ -704,7 +705,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if (state == QtCore.Qt.Checked):
             SM.bbox_actor.VisibilityOn()
         else:
@@ -716,7 +717,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if (state == QtCore.Qt.Checked):
             SM.sphere_actor.VisibilityOn()
         else:
@@ -729,7 +730,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if SM.bond_actor is None:
             active_window.render()
             return
@@ -811,7 +812,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
         if not fname:
             return
@@ -871,8 +872,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             windows = self.find_mdi_child(fn)
             SM = active_window.universe_manager
             SM.universe_save = active_window.delete_particles()
-        # SM = active_window.universe_manager
-        # SM.universe_save = active_window.delete_particles()
+
         self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
         self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
         self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
@@ -881,8 +881,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
-        SM.universe_save = active_window.delete_bonds()
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+            SM.universe_save = active_window.parent_window.delete_bonds()
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+            SM.universe_save = active_window.delete_bonds()
+
         self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
         self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
         self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
@@ -891,7 +901,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
         delete_points = np.where(SM.deleted_particles == True)[0]
@@ -947,7 +957,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_color_bond = QtWidgets.QColorDialog.getColor()
         if selected_color_bond.isValid():
             delete_points = np.where(SM.deleted_particles == True)[0]
@@ -987,7 +997,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if isinstance(active_window, ViewerVTK):
             return
 
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         try:
             SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         except AttributeError:
@@ -1092,7 +1102,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         # if SM.enable_timer is False:
         #     return
         if SM.cnt == SM.n_frames:
