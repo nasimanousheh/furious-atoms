@@ -137,6 +137,21 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
+    def active_window(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+
+        return SM
     def show_radius_value(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -148,7 +163,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
                 set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
-
 
     def change_slice_opacity(self, opacity_degree):
         active_window = self.active_mdi_child()
@@ -846,8 +860,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
-        SM.universe_save = active_window.delete_particles()
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+            SM.universe_save = active_window.parent_window.delete_particles()
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+            SM.universe_save = active_window.delete_particles()
+        # SM = active_window.universe_manager
+        # SM.universe_save = active_window.delete_particles()
         self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
         self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
         self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
