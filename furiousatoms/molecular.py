@@ -25,7 +25,8 @@ class UniverseManager:
             self.box_ly = 0
             self.box_lz = 0
 
-        self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
+        self.box_color = (0,0,0)
+        self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=self.box_color, linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
         self._pos = self.universe.trajectory[0].positions.copy().astype('float64')
