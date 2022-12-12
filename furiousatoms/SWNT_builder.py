@@ -44,8 +44,8 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.pushButton_build_SWNT.clicked.connect(lambda:self.close())
         self.SWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.SWNT.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
         self.SWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
-
         self.SWNT.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
         self.SWNT.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.SWNT.comboBox_type1_SWNT.activated.connect(self.get_atom_type)
@@ -140,9 +140,8 @@ class Ui_SWNT(QtWidgets.QMainWindow):
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz
         box_lx = float(self.SWNT.SpinBox_lx.text())
-        box_ly = float(self.SWNT.SpinBox_lx.text())
+        box_ly = float(self.SWNT.SpinBox_ly.text())
         box_lz = float(self.SWNT.SpinBox_lz.text())
-        self.SWNT.lineEdit_ly.setText(str(box_ly))
         return
 
 """
