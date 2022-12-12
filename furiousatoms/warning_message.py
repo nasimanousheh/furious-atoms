@@ -122,7 +122,7 @@ class Ui_warning_bond_delete(QtWidgets.QMainWindow):
         self.v_layout.addWidget(self.msg)
         self.setCentralWidget(self.msg)
         self.setLayout(self.v_layout)
-        self.resize(657, 49)
+        self.resize(460, 80)
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
