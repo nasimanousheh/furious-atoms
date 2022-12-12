@@ -251,18 +251,18 @@ class Viewer3D(QtWidgets.QWidget):
 
     def delete_bonds(self):
         SM = self.universe_manager
+        if not any(SM.selected_bond) == True:
+            self.error_message_delete_bond()
+            return
+
         SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
         SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_atom_types = SM.atom_type.copy()
-
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
-        if not object_indices_bonds:
-            self.error_message_delete_bond()
-            return
         object_indices_bonds = np.asarray(object_indices_bonds)
         bonds_indices = SM.universe.bonds.to_indices()
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
