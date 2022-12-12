@@ -858,12 +858,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 fp.writelines(lines[:])
 
 
-
-    # def error_message_delete_bond(self):
-    #     Ui_warning_bond_delete.pt = Ui_warning_bond_delete()
-    #     Ui_warning_bond_delete.pt.win = self
-    #     Ui_warning_bond_delete.pt.show()
-
     def delete_particles(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -903,10 +897,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             windows = self.find_mdi_child(fn)
             SM = active_window.universe_manager
             SM.universe_save = active_window.delete_bonds()
-
-        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
-        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
-        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        try:
+            self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+            self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+            self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        except AttributeError:
+            return
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
