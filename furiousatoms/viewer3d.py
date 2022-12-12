@@ -190,13 +190,12 @@ class Viewer3D(QtWidgets.QWidget):
         Ui_warning_bond_delete.pt.show()
     def delete_particles(self):
         SM = self.universe_manager
+        if not any(SM.selected_particle) == True:
+            self.error_message_delete_atom()
+            return
         SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
         SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
-        if not SM.object_indices_particles:
-            self.error_message_delete_atom()
-            return
-
         print('object_indices_particles: ', SM.object_indices_particles)
         print(SM.pos[SM.object_indices_particles])
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
