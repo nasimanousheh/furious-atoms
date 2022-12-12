@@ -50,7 +50,7 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         if SM.bbox_actor:
             SM.bbox_actor.VisibilityOff()
             active_window.render()
-        SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
+        SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
