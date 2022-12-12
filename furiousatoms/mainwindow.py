@@ -94,8 +94,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         # self.ui.Box_boundary_VTK.clicked.stateChanged.connect(self.Box_boundary_VTK)
         self.ui.Button_box_col_edit_mode.clicked.connect(self.openColorDialog_Box_VTK)
-
-
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
@@ -146,7 +144,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             g = (selected_color_box.getRgb()[1])/255
             b = (selected_color_box.getRgb()[2])/255
             SM.box_color = (r, g, b)
-
             if  SM.bbox_actor:
                 active_window.scene.rm(SM.bbox_actor)
             SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
@@ -179,7 +176,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         selected_color_backgound = QtWidgets.QColorDialog.getColor()
         if selected_color_backgound.isValid():
-            color_backgound = selected_color_backgound.getRgb()[0:3]
+            if selected_color_backgound.isValid():
+            r = (selected_color_backgound.getRgb()[0])/255
+            g = (selected_color_backgound.getRgb()[1])/255
+            b = (selected_color_backgound.getRgb()[2])/255
+            color_backgound = (r, g, b)
             active_window.scene.background(color_backgound)
             active_window.render()
 
