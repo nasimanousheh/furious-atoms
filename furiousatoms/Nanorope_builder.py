@@ -47,6 +47,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.pushButton_build_NanoRope.clicked.connect(lambda:self.close())
         self.NanoRope.comboBox_H_termination_SWNT.currentTextChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.NanoRope.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
         self.NanoRope.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
         self.NanoRope.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
         self.NanoRope.radioButton_bond_length.toggled.connect(self.get_atom_type)
@@ -128,9 +129,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz, bendFactor
         box_lx = float(self.NanoRope.SpinBox_lx.text())
-        box_ly = float(self.NanoRope.SpinBox_lx.text())
+        box_ly = float(self.NanoRope.SpinBox_ly.text())
         box_lz = float(self.NanoRope.SpinBox_lz.text())
-        self.NanoRope.lineEdit_ly.setText(str(box_ly))
         return
 
     def NanoRope_builder_callback(self):
@@ -194,6 +194,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
             list_universe.append(universe_1.atoms)
         universe_tot = mda.Merge(*list_universe)
+        universe_tot.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(universe_tot)
