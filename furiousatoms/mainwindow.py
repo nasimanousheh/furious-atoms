@@ -104,8 +104,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         # self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
-        self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)#####################################
-        # self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)#####################################
+        self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)
+        self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
 
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
@@ -134,12 +134,24 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
 
+        selected_color_backgound = QtWidgets.QColorDialog.getColor()
+        if selected_color_backgound.isValid():
+            color_backgound = selected_color_backgound.getRgb()[0:3]
+            active_window.scene.background(color_backgound)
+            active_window.render()
+
+
+
+    def openColorDialog_backgr_view(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
 
         selected_color_backgound = QtWidgets.QColorDialog.getColor()
         if selected_color_backgound.isValid():
-            active_window.scene.background(selected_color_backgound.getRgb()[0:3])
+            color_backgound = selected_color_backgound.getRgb()[0:3]
+            active_window.scene.background(color_backgound)
             active_window.render()
-
 
 
     def get_SM_active_window(self):
