@@ -10,6 +10,7 @@ from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, ui, primitive, material
+from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
@@ -178,14 +179,25 @@ class Viewer3D(QtWidgets.QWidget):
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
+    def error_message_delete_atom(self):
+        Ui_warning_atom_delete.pt = Ui_warning_atom_delete()
+        Ui_warning_atom_delete.pt.win = self
+        Ui_warning_atom_delete.pt.show()
+
+
     def delete_particles(self):
         SM = self.universe_manager
         SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
         SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
+        if not SM.object_indices_particles:
+            self.error_message_delete_atom()
+            return
+
         print('object_indices_particles: ', SM.object_indices_particles)
         print(SM.pos[SM.object_indices_particles])
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in SM.object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
