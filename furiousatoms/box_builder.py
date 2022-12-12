@@ -27,25 +27,22 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
 
     def create_connections(self):
         self.box.pushButton_build_box.clicked.connect(self.box_builder_callback)
-        self.box.SpinBox_lx.valueChanged.connect(self.box_builder_callback)
-        self.box.SpinBox_lz.valueChanged.connect(self.box_builder_callback)
         self.box.pushButton_build_box.clicked.connect(lambda:self.close())
 
 
     def initial_box_dim(self, box_lx, box_ly, box_lz):
         self.box.SpinBox_lx.setValue(box_lx)
+        self.box.SpinBox_ly.setValue(box_ly)
         self.box.SpinBox_lz.setValue(box_lz)
-        self.box.lineEdit_ly.setText(str(box_ly))
+
 
     def box_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
         active_window.scene.rm(SM.bbox_actor)
         box_lx = float(self.box.SpinBox_lx.text())
-        box_ly = float(self.box.SpinBox_lx.text())
+        box_ly = float(self.box.SpinBox_ly.text())
         box_lz = float(self.box.SpinBox_lz.text())
-        self.box.lineEdit_ly.setText(str(box_ly))
-
         SM.universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
         SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
         SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
