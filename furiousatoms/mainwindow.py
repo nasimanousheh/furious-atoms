@@ -32,6 +32,7 @@ from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.Nanorope_builder import  Ui_NanoRope
+from furiousatoms.structure import bbox
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
@@ -89,6 +90,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
+
+
+        # self.ui.Box_boundary_VTK.clicked.stateChanged.connect(self.Box_boundary_VTK)
+        self.ui.Button_box_col_edit_mode.clicked.connect(self.openColorDialog_Box_VTK)
+
+
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
@@ -106,7 +113,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)
         self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
-
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
@@ -129,6 +135,27 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
+    def openColorDialog_Box_VTK(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = self.get_SM_active_window()
+        selected_color_box = QtWidgets.QColorDialog.getColor()
+        if selected_color_box.isValid():
+            r = (selected_color_box.getRgb()[0])/255
+            g = (selected_color_box.getRgb()[1])/255
+            b = (selected_color_box.getRgb()[2])/255
+            color_box = (r, g, b)
+
+            if  SM.bbox_actor:
+                active_window.scene.rm(SM.bbox_actor)
+            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=color_box, linewidth=2, fake_tube=True)
+            active_window.scene.add(SM.bbox_actor)
+            utils.update_actor(SM.bbox_actor)
+            SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            active_window.render()
+            # active_window.scene.background(color_box)
+
     def openColorDialog_backgr_edit(self):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -136,10 +163,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         selected_color_backgound = QtWidgets.QColorDialog.getColor()
         if selected_color_backgound.isValid():
-            color_backgound = selected_color_backgound.getRgb()[0:3]
+            r = (selected_color_backgound.getRgb()[0])/255
+            g = (selected_color_backgound.getRgb()[1])/255
+            b = (selected_color_backgound.getRgb()[2])/255
+            color_backgound = (r, g, b)
+
             active_window.scene.background(color_backgound)
             active_window.render()
-
 
 
     def openColorDialog_backgr_view(self):
@@ -491,6 +521,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
+            # if self.ui.Box_boundary_VTK.isChecked()==True:
+            #     print("the botton is checked")
+            # else:
+            #     print("NOT checked")
             get_vtk_ribbon(self, SM, fn, vtk_rep_window)
 
     def VTK_style_ball_stick(self):
