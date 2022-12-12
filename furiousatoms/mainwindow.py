@@ -81,19 +81,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actioncascade.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
         self.ui.actiontiled.triggered.connect(self.ui.mdiArea.tileSubWindows)
 
-        # Help menu actions
-
         # Modify menu actions
         self.ui.actionParticles.triggered.connect(self.delete_particles)
         self.ui.actionBonds.triggered.connect(self.delete_bonds)
 
-        # Compute menu actions
-
         # Build menu actions
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
-
-
         self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
@@ -101,8 +95,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere_radio)
         self.ui.radioButton_view_mode.toggled.connect(self.switch_to_vtk)
         self.ui.tabWidget_input.currentChanged.connect(self.switch_to_sky_box)
-
-
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
@@ -127,11 +119,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
         self.ui.horizontalSlider_Anisotropic.valueChanged[int].connect(self.change_slice_anisotropic)
         self.ui.horizontalSlider_Anisotropic_rot.valueChanged[int].connect(self.change_slice_anisotropic_rot)
-        # self.ui.horizontalSlider_Anisotropic_X.valueChanged[int].connect(self.change_slice_anisotropic_X)
-        # self.ui.horizontalSlider_Anisotropic_Y.valueChanged[int].connect(self.change_slice_anisotropic_Y)
-        # self.ui.horizontalSlider_Anisotropic_Z.valueChanged[int].connect(self.change_slice_anisotropic_Z)
-        # self.ui.horizontalSlider_Coat_strength.valueChanged[int].connect(self.change_slice_Coat_strength)
-        # self.ui.horizontalSlider_Coat_roughness.valueChanged[int].connect(self.change_slice_Coat_rough)
+
 
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
@@ -144,11 +132,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         self.ui.radioButton_skybox.setChecked(True)
         self.ui.Widget_sky_box_effect.setEnabled(True)
-        # self.ui.radioButton_view_mode.setChecked(False)
-        # self.ui.Widget_VTK_style.setEnabled(False)
-
         if isinstance(active_window, ViewerVTK):
-            # self.ui.radioButton_view_mode.setChecked(True)
             fn = active_window.parent_window.current_file
             windows = self.find_mdi_child(fn)
             self.ui.mdiArea.setActiveSubWindow(windows)
@@ -567,20 +551,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Widget_VTK_style.setEnabled(False)
 
         if isinstance(active_window, ViewerVTK):
-            # self.ui.radioButton_skybox.setChecked(False)##########
-            # self.ui.Widget_sky_box_effect.setEnabled(False)######
-            # self.ui.radioButton_view_mode.setChecked(True)######
-            # self.ui.Widget_VTK_style.setEnabled(True)#######
-
             fn = active_window.parent_window.current_file
             windows = self.find_mdi_child(fn)
             self.ui.mdiArea.setActiveSubWindow(windows)
             SM = active_window.parent_window.universe_manager
         else:
-            # self.ui.radioButton_skybox.setChecked(True)#########
-            # self.ui.Widget_sky_box_effect.setEnabled(True)#########
-            # self.ui.radioButton_view_mode.setChecked(False)###########
-            # self.ui.Widget_VTK_style.setEnabled(False)############
             fn = active_window.current_file
             windows = self.find_mdi_child(fn)
 
@@ -1038,10 +1013,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         if isinstance(active_window, ViewerVTK):
-            self.ui.radioButton_skybox.setChecked(False)##########
-            self.ui.Widget_sky_box_effect.setEnabled(False)######
-            self.ui.radioButton_view_mode.setChecked(True)######
-            self.ui.Widget_VTK_style.setEnabled(True)#######
+            self.ui.radioButton_skybox.setChecked(False)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            self.ui.radioButton_view_mode.setChecked(True)
+            self.ui.Widget_VTK_style.setEnabled(True)
             return
 
         SM = self.get_SM_active_window()
@@ -1059,11 +1034,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
         self.ui.horizontalSlider_Anisotropic.setValue(SM.anisotropic*100)
         self.ui.horizontalSlider_Anisotropic_rot.setValue(SM.anisotropic_rot*100)
-        # self.ui.horizontalSlider_Anisotropic_X.setValue(SM.anisotropic_X*100)
-        # self.ui.horizontalSlider_Anisotropic_Y.setValue(SM.anisotropic_Y*100)
-        # self.ui.horizontalSlider_Anisotropic_Z.setValue(SM.anisotropic_Z*100)
-        # self.ui.horizontalSlider_Coat_strength.setValue(SM.coat_strength*100)
-        # self.ui.horizontalSlider_Coat_roughness.setValue(SM.coat_rough*100)
         SM.pbr_params_atom.metallic = SM.metallic
         SM.pbr_params_atom.roughness = SM.roughness
         SM.pbr_params_atom.anisotropy = SM.anisotropic
@@ -1198,13 +1168,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # Todo: Make some connections
         return child
 
-    # def find_mdi_child(self, fname):
-    #     canonical_filepath = os.path.abspath(fname)
-
-    #     for window in self.ui.mdiArea.subWindowList():
-    #         if window.widget().current_filepath == canonical_filepath:
-    #             return window
-    #     return None
     def find_mdi_child(self, fname):
         for window in self.ui.mdiArea.subWindowList():
             if window.widget().current_file == fname:
