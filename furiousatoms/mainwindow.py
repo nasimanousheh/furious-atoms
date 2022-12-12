@@ -857,10 +857,18 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
 
+
+
+    # def error_message_delete_bond(self):
+    #     Ui_warning_bond_delete.pt = Ui_warning_bond_delete()
+    #     Ui_warning_bond_delete.pt.win = self
+    #     Ui_warning_bond_delete.pt.show()
+
     def delete_particles(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
+
         if isinstance(active_window, ViewerVTK):
             fn = active_window.parent_window.current_file
             windows = self.find_mdi_child(fn)
@@ -872,10 +880,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             windows = self.find_mdi_child(fn)
             SM = active_window.universe_manager
             SM.universe_save = active_window.delete_particles()
+        try:
+            self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+            self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+            self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        except AttributeError:
+            return
 
-        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
-        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
-        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
