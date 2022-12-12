@@ -99,7 +99,7 @@ class Ui_warning_atom_delete(QtWidgets.QMainWindow):
         self.v_layout.addWidget(self.msg)
         self.setCentralWidget(self.msg)
         self.setLayout(self.v_layout)
-        self.resize(657, 49)
+        self.resize(460, 80)
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
@@ -110,6 +110,7 @@ class Ui_warning_atom_delete(QtWidgets.QMainWindow):
 
     def create_connections(self):
         self.msg.pushButton_warning.clicked.connect(lambda:self.close())
+        self.msg.pushButton_Ok.clicked.connect(lambda:self.close())
 
 class Ui_warning_bond_delete(QtWidgets.QMainWindow):
     """ Ui_warning_message class
@@ -132,3 +133,4 @@ class Ui_warning_bond_delete(QtWidgets.QMainWindow):
 
     def create_connections(self):
         self.msg.pushButton_warning.clicked.connect(lambda:self.close())
+        self.msg.pushButton_Ok.clicked.connect(lambda:self.close())
