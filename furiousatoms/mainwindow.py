@@ -177,12 +177,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         selected_color_backgound = QtWidgets.QColorDialog.getColor()
         if selected_color_backgound.isValid():
             if selected_color_backgound.isValid():
-            r = (selected_color_backgound.getRgb()[0])/255
-            g = (selected_color_backgound.getRgb()[1])/255
-            b = (selected_color_backgound.getRgb()[2])/255
-            color_backgound = (r, g, b)
-            active_window.scene.background(color_backgound)
-            active_window.render()
+                r = (selected_color_backgound.getRgb()[0])/255
+                g = (selected_color_backgound.getRgb()[1])/255
+                b = (selected_color_backgound.getRgb()[2])/255
+                color_backgound = (r, g, b)
+                active_window.scene.background(color_backgound)
+                active_window.render()
 
 
     def get_SM_active_window(self):
