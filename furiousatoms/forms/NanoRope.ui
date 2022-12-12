@@ -487,11 +487,17 @@
        </widget>
       </item>
       <item row="9" column="2">
-       <widget class="QLineEdit" name="lineEdit_ly">
+       <widget class="QDoubleSpinBox" name="SpinBox_ly">
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
+        </property>
+        <property name="decimals">
+         <number>2</number>
+        </property>
+        <property name="maximum">
+         <double>200.000000000000000</double>
         </property>
        </widget>
       </item>
