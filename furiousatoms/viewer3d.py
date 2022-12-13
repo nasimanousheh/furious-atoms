@@ -155,9 +155,9 @@ class Viewer3D(QtWidgets.QWidget):
         return success
 
     def display_universe(self):
-        axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
+        self.axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
-        self.scene.add(axes_actor)
+        self.scene.add(self.axes_actor)
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
