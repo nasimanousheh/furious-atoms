@@ -26,7 +26,7 @@ from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.SWNT_builder import  Ui_SWNT
-from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
+from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere, box_vtk_style
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
@@ -111,6 +111,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)
         self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
+        self.ui.Button_box_col_view_mode.clicked.connect(self.openColorDialog_box_view)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
@@ -133,11 +134,38 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
+
+    def openColorDialog_box_view(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            return
+        selected_color_box = QtWidgets.QColorDialog.getColor()
+        if selected_color_box.isValid():
+            r = (selected_color_box.getRgb()[0])/255
+            g = (selected_color_box.getRgb()[1])/255
+            b = (selected_color_box.getRgb()[2])/255
+            SM.box_color = (r, g, b)
+            if  SM.bbox_actor:
+                active_window.scene.rm(SM.bbox_actor)
+            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
+            active_window.scene.add(SM.bbox_actor)
+            utils.update_actor(SM.bbox_actor)
+            SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            active_window.render()
+
     def openColorDialog_Box_VTK(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = self.get_SM_active_window()
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            return
+
         selected_color_box = QtWidgets.QColorDialog.getColor()
         if selected_color_box.isValid():
             r = (selected_color_box.getRgb()[0])/255
@@ -164,16 +192,19 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             g = (selected_color_backgound.getRgb()[1])/255
             b = (selected_color_backgound.getRgb()[2])/255
             color_backgound = (r, g, b)
-
             active_window.scene.background(color_backgound)
             active_window.render()
-
 
     def openColorDialog_backgr_view(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            return
         selected_color_backgound = QtWidgets.QColorDialog.getColor()
         if selected_color_backgound.isValid():
             if selected_color_backgound.isValid():
@@ -522,10 +553,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             dir = self.ui.Edit_directory.text()
             name = self.ui.Edit_currentfile.text()
             fn = dir + '\\' + name
-            # if self.ui.Box_boundary_VTK.isChecked()==True:
-            #     print("the botton is checked")
-            # else:
-            #     print("NOT checked")
             get_vtk_ribbon(self, SM, fn, vtk_rep_window)
 
     def VTK_style_ball_stick(self):
@@ -603,6 +630,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.radioButton_skybox.setChecked(False)
             self.ui.Widget_sky_box_effect.setEnabled(False)
             self.ui.Widget_VTK_style.setEnabled(True)
+            self.ui.Button_back_col_view_mode.setEnabled(True)
+            self.ui.Button_box_col_view_mode.setEnabled(True)
 
     def switch_to_sky_box(self):
         active_window = self.active_mdi_child()
