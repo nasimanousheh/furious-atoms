@@ -47,8 +47,8 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
         SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
         SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
-        if SM.bbox_actor:
-            SM.bbox_actor.VisibilityOff()
+        if  SM.bbox_actor:
+            active_window.scene.rm(SM.bbox_actor)
             active_window.render()
         SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
