@@ -148,10 +148,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             r = (selected_color_box.getRgb()[0])/255
             g = (selected_color_box.getRgb()[1])/255
             b = (selected_color_box.getRgb()[2])/255
-            SM.box_color = (r, g, b)
+            SM.box_viewer_color = (r, g, b)
             if  SM.bbox_actor:
                 active_window.scene.rm(SM.bbox_actor)
-            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
+            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_viewer_color, linewidth=2, fake_tube=True)
             active_window.scene.add(SM.bbox_actor)
             utils.update_actor(SM.bbox_actor)
             SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
