@@ -26,6 +26,7 @@ class UniverseManager:
             self.box_lz = 0
 
         self.box_color = (0,0,0)
+        self.box_viewer_color = (1,1,1)
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz, colors=self.box_color, linewidth=2, fake_tube=True)
         # Anispmation Player
         self.cnt = 0
