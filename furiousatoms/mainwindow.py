@@ -93,7 +93,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
 
         # self.ui.Box_boundary_VTK.clicked.stateChanged.connect(self.Box_boundary_VTK)
-        self.ui.Button_box_col_edit_mode.clicked.connect(self.openColorDialog_Box_VTK)
+        self.ui.Button_box_col_edit_mode.clicked.connect(self.openColorDialog_box_edit)
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
@@ -110,7 +110,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
         self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)
-        self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
+        # self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
         self.ui.Button_box_col_view_mode.clicked.connect(self.openColorDialog_box_view)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
@@ -157,14 +157,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
             active_window.render()
 
-    def openColorDialog_Box_VTK(self):
+    def openColorDialog_box_edit(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         if isinstance(active_window, ViewerVTK):
-            SM = active_window.parent_window.universe_manager
-        else:
             return
+        else:
+            SM = active_window.universe_manager
 
         selected_color_box = QtWidgets.QColorDialog.getColor()
         if selected_color_box.isValid():
@@ -179,7 +179,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             utils.update_actor(SM.bbox_actor)
             SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
             active_window.render()
-            # active_window.scene.background(color_box)
 
     def openColorDialog_backgr_edit(self):
         active_window = self.active_mdi_child()
@@ -609,6 +608,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if radioButton.isChecked():
             self.ui.Widget_VTK_style.setEnabled(False)
             self.ui.radioButton_view_mode.setChecked(False)
+            self.ui.Widget_sky_box_effect.setEnabled(True)
         active_window = self.active_mdi_child()
         if not active_window:
             return
@@ -630,7 +630,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.radioButton_skybox.setChecked(False)
             self.ui.Widget_sky_box_effect.setEnabled(False)
             self.ui.Widget_VTK_style.setEnabled(True)
-            self.ui.Button_back_col_view_mode.setEnabled(True)
+            # self.ui.Button_back_col_view_mode.setEnabled(True)
             self.ui.Button_box_col_view_mode.setEnabled(True)
 
     def switch_to_sky_box(self):
