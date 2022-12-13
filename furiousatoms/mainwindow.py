@@ -816,6 +816,17 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.bbox_actor)
         active_window.render()
 
+    def check_axis(self, state):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = self.get_SM_active_window()
+        if (state == QtCore.Qt.Checked):
+            active_window.axes_actor.VisibilityOn()
+        else:
+            active_window.axes_actor.VisibilityOff()
+        active_window.render()
+
     def check_particles(self, state):
         active_window = self.active_mdi_child()
         if not active_window:
@@ -1112,6 +1123,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         SM = self.get_SM_active_window()
+        self.ui.Box_Axis.setChecked(True)
+        self.ui.Box_Axis.stateChanged.connect(self.check_axis)
         try:
             SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         except AttributeError:
