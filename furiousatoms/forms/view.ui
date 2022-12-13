@@ -67,28 +67,100 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="1">
-     <widget class="QMdiArea" name="mdiArea">
-      <property name="font">
-       <font>
-        <pointsize>11</pointsize>
-       </font>
+    <item row="1" column="0" colspan="5">
+     <widget class="QWidget" name="widget_Animation" native="true">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>50</height>
+       </size>
       </property>
-      <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAsNeeded</enum>
-      </property>
-      <property name="sizeAdjustPolicy">
-       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
-      </property>
-      <property name="documentMode">
-       <bool>false</bool>
-      </property>
-      <property name="tabsClosable">
-       <bool>false</bool>
-      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QSpinBox" name="Timer_animation"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_backward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/backward.png</normaloff>:/icons/backward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_pause">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_play">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>45</width>
+           <height>45</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="Button_forward">
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>40</width>
+           <height>40</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QSlider" name="horizontalSlider_animation">
+         <property name="mouseTracking">
+          <bool>true</bool>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="tickPosition">
+          <enum>QSlider::TicksBothSides</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
     <item row="0" column="0">
@@ -102,7 +174,7 @@
       <property name="styleSheet">
        <string notr="true"/>
       </property>
-      <layout class="QGridLayout" name="gridLayout_9">
+      <layout class="QGridLayout" name="gridLayout_8">
        <item row="0" column="0">
         <widget class="QLabel" name="label_Dispaly_Input">
          <property name="font">
@@ -125,60 +197,56 @@
         </widget>
        </item>
        <item row="1" column="0">
-        <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="Box_simulationcell">
-           <property name="font">
-            <font>
-             <family>.SF NS Text</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Box</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="Box_particles">
-           <property name="font">
-            <font>
-             <family>.SF NS Text</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Particles</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QCheckBox" name="Box_bonds">
-           <property name="font">
-            <font>
-             <family>.SF NS Text</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Bonds</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QCheckBox" name="Box_Axis">
-           <property name="font">
-            <font>
-             <family>.SF NS Text</family>
-             <pointsize>11</pointsize>
-            </font>
-           </property>
-           <property name="text">
-            <string>Axis</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <widget class="QCheckBox" name="Box_simulationcell">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Box</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QCheckBox" name="Box_particles">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Particles</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QCheckBox" name="Box_bonds">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Bonds</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QCheckBox" name="Box_Axis">
+         <property name="font">
+          <font>
+           <family>.SF NS Text</family>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>Axis</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_Input">
@@ -201,7 +269,7 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="3" column="0" colspan="4">
         <widget class="QTabWidget" name="tabWidget_input">
          <property name="font">
           <font>
@@ -816,7 +884,65 @@
           <attribute name="title">
            <string>Style</string>
           </attribute>
-          <layout class="QGridLayout" name="gridLayout_10">
+          <layout class="QGridLayout" name="gridLayout_9">
+           <item row="4" column="0">
+            <widget class="QLabel" name="label_4">
+             <property name="text">
+              <string>Background Color:</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QPushButton" name="Button_back_col_edit_mode">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>120</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="baseSize">
+              <size>
+               <width>25</width>
+               <height>120</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+               <weight>50</weight>
+               <italic>false</italic>
+               <bold>false</bold>
+               <underline>false</underline>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="text">
+              <string>Change Color</string>
+             </property>
+             <property name="autoRepeat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>475</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
            <item row="0" column="0">
             <widget class="QRadioButton" name="radioButton_skybox">
              <property name="enabled">
@@ -830,6 +956,32 @@
              </property>
             </widget>
            </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="radioButton_view_mode">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
+             <property name="text">
+              <string>View Mode</string>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QRadioButton" name="button_animation">
+             <property name="font">
+              <font>
+               <family>Arial</family>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Animation</string>
+             </property>
+            </widget>
+           </item>
            <item row="1" column="0" colspan="2">
             <widget class="QTabWidget" name="Widget_sky_box_effect">
              <property name="enabled">
@@ -838,19 +990,19 @@
              <property name="minimumSize">
               <size>
                <width>308</width>
-               <height>230</height>
+               <height>220</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>308</width>
-               <height>230</height>
+               <height>220</height>
               </size>
              </property>
              <property name="baseSize">
               <size>
                <width>308</width>
-               <height>230</height>
+               <height>220</height>
               </size>
              </property>
              <property name="font">
@@ -1030,62 +1182,31 @@
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0" colspan="2">
-                <widget class="QPushButton" name="Button_back_col_edit_mode">
-                 <property name="minimumSize">
-                  <size>
-                   <width>180</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>180</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="baseSize">
-                  <size>
-                   <width>25</width>
-                   <height>180</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                   <weight>50</weight>
-                   <italic>false</italic>
-                   <bold>false</bold>
-                   <underline>false</underline>
-                   <kerning>true</kerning>
-                  </font>
-                 </property>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_3">
                  <property name="text">
-                  <string>Change Background Color</string>
-                 </property>
-                 <property name="autoRepeat">
-                  <bool>false</bool>
+                  <string>Box Color:</string>
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="2">
+               <item row="5" column="1">
                 <widget class="QPushButton" name="Button_box_col_edit_mode">
                  <property name="minimumSize">
                   <size>
-                   <width>180</width>
+                   <width>120</width>
                    <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>180</width>
+                   <width>120</width>
                    <height>25</height>
                   </size>
                  </property>
                  <property name="baseSize">
                   <size>
-                   <width>25</width>
-                   <height>180</height>
+                   <width>120</width>
+                   <height>25</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1099,7 +1220,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Change Box Color</string>
+                  <string>Change color</string>
                  </property>
                  <property name="autoRepeat">
                   <bool>false</bool>
@@ -1110,19 +1231,6 @@
              </widget>
             </widget>
            </item>
-           <item row="2" column="0">
-            <widget class="QRadioButton" name="radioButton_view_mode">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="text">
-              <string>View Mode</string>
-             </property>
-             <property name="checked">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
            <item row="3" column="0" colspan="2">
             <widget class="QTabWidget" name="Widget_VTK_style">
              <property name="enabled">
@@ -1131,19 +1239,19 @@
              <property name="minimumSize">
               <size>
                <width>308</width>
-               <height>225</height>
+               <height>130</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>308</width>
-               <height>225</height>
+               <height>130</height>
               </size>
              </property>
              <property name="baseSize">
               <size>
                <width>308</width>
-               <height>225</height>
+               <height>130</height>
               </size>
              </property>
              <property name="font">
@@ -1181,115 +1289,55 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QRadioButton" name="radioButton_Ball_Stick">
-                 <property name="text">
-                  <string>Ball-Stick</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
+               <item row="0" column="2">
                 <widget class="QRadioButton" name="radioButton_Stick">
                  <property name="text">
                   <string>Stick</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="1" column="0" colspan="2">
+                <widget class="QRadioButton" name="radioButton_Ball_Stick">
+                 <property name="text">
+                  <string>Ball-Stick</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
                 <widget class="QRadioButton" name="radioButton_Sphere">
                  <property name="text">
                   <string>Sphere</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <spacer name="horizontalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>95</width>
-                   <height>17</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item row="4" column="0">
-                <widget class="QRadioButton" name="button_animation">
-                 <property name="font">
-                  <font>
-                   <family>Arial</family>
-                   <pointsize>11</pointsize>
-                  </font>
-                 </property>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_5">
                  <property name="text">
-                  <string>Animation</string>
+                  <string>Box Color:</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
-                <widget class="QPushButton" name="Button_back_col_view_mode">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="minimumSize">
-                  <size>
-                   <width>180</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>180</width>
-                   <height>25</height>
-                  </size>
-                 </property>
-                 <property name="baseSize">
-                  <size>
-                   <width>25</width>
-                   <height>180</height>
-                  </size>
-                 </property>
-                 <property name="font">
-                  <font>
-                   <pointsize>11</pointsize>
-                   <weight>50</weight>
-                   <italic>false</italic>
-                   <bold>false</bold>
-                   <underline>false</underline>
-                   <kerning>true</kerning>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Change Background Color</string>
-                 </property>
-                 <property name="autoRepeat">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
+               <item row="2" column="1" colspan="2">
                 <widget class="QPushButton" name="Button_box_col_view_mode">
                  <property name="enabled">
                   <bool>false</bool>
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>180</width>
+                   <width>120</width>
                    <height>25</height>
                   </size>
                  </property>
                  <property name="maximumSize">
                   <size>
-                   <width>180</width>
+                   <width>120</width>
                    <height>25</height>
                   </size>
                  </property>
                  <property name="baseSize">
                   <size>
                    <width>25</width>
-                   <height>180</height>
+                   <height>120</height>
                   </size>
                  </property>
                  <property name="font">
@@ -1303,7 +1351,7 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>Change Box Color</string>
+                  <string>Change color</string>
                  </property>
                  <property name="autoRepeat">
                   <bool>false</bool>
@@ -1314,19 +1362,6 @@
              </widget>
             </widget>
            </item>
-           <item row="4" column="1">
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>475</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
           </layout>
          </widget>
         </widget>
@@ -1334,100 +1369,28 @@
       </layout>
      </widget>
     </item>
-    <item row="1" column="0" colspan="5">
-     <widget class="QWidget" name="widget_Animation" native="true">
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>50</height>
-       </size>
+    <item row="0" column="1">
+     <widget class="QMdiArea" name="mdiArea">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QSpinBox" name="Timer_animation"/>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_backward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/backward.png</normaloff>:/icons/backward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_pause">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/pause.png</normaloff>:/icons/pause.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_play">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/play.png</normaloff>:/icons/play.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>45</width>
-           <height>45</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Button_forward">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="icons.qrc">
-           <normaloff>:/icons/forward.png</normaloff>:/icons/forward.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>40</width>
-           <height>40</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QSlider" name="horizontalSlider_animation">
-         <property name="mouseTracking">
-          <bool>true</bool>
-         </property>
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="tickPosition">
-          <enum>QSlider::TicksBothSides</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAsNeeded</enum>
+      </property>
+      <property name="sizeAdjustPolicy">
+       <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
    </layout>
