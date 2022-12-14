@@ -156,7 +156,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
             active_window.render()
 
-    def openColorDialog_backgr_edit(self):
+    def openColorDialog_background(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
