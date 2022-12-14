@@ -1,5 +1,5 @@
 import numpy as np
-from furiousatoms.sharedmem import SharedMemory
+# from furiousatoms.sharedmem import SharedMemory
 from furiousatoms import io
 import numpy as np
 from fury import window, utils
@@ -7,7 +7,7 @@ from PySide2 import QtWidgets
 from furiousatoms.structure import bbox
 import MDAnalysis
 
-SM = SharedMemory()
+# SM = SharedMemory()
 """
     Ui_solution class creates a widget for building box and solution
 """
@@ -74,9 +74,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
         SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
         SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
-        # SM.box_lx = float(self.solution.SpinBox_lx.text())
-        # SM.box_ly = float(self.solution.SpinBox_ly.text())
-        # SM.box_lz = float(self.solution.SpinBox_lz.text())
         water_diameter = 3.1655
         spacing_dia = 0.98
         try:
@@ -157,10 +154,10 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         active_window.scene.rm(SM.bbox_actor)
         SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
-        # utils.update_actor(SM.bbox_actor)
+        utils.update_actor(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
         active_window.load_universe(combined)
         active_window.render()
-        return file_name
+        return combined
