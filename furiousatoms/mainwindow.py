@@ -93,7 +93,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
 
         # self.ui.Box_boundary_VTK.clicked.stateChanged.connect(self.Box_boundary_VTK)
-        self.ui.Button_box_col_edit_mode.clicked.connect(self.openColorDialog_box_edit)
+        self.ui.Button_box_color.clicked.connect(self.openColorDialog_box)
         self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
         self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
         self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
@@ -109,9 +109,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         # self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
-        self.ui.Button_back_col_edit_mode.clicked.connect(self.openColorDialog_backgr_edit)
-        # self.ui.Button_back_col_view_mode.clicked.connect(self.openColorDialog_backgr_view)
-        self.ui.Button_box_col_view_mode.clicked.connect(self.openColorDialog_box_view)
+        self.ui.Button_back_color.clicked.connect(self.openColorDialog_background)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
@@ -134,38 +132,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
-
-    def openColorDialog_box_view(self):
+    def openColorDialog_box(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         if isinstance(active_window, ViewerVTK):
             SM = active_window.parent_window.universe_manager
         else:
-            return
-        selected_color_box = QtWidgets.QColorDialog.getColor()
-        if selected_color_box.isValid():
-            r = (selected_color_box.getRgb()[0])/255
-            g = (selected_color_box.getRgb()[1])/255
-            b = (selected_color_box.getRgb()[2])/255
-            SM.box_viewer_color = (r, g, b)
-            if  SM.bbox_actor:
-                active_window.scene.rm(SM.bbox_actor)
-            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_viewer_color, linewidth=2, fake_tube=True)
-            active_window.scene.add(SM.bbox_actor)
-            utils.update_actor(SM.bbox_actor)
-            SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-            active_window.render()
-
-    def openColorDialog_box_edit(self):
-        active_window = self.active_mdi_child()
-        if not active_window:
-            return
-        if isinstance(active_window, ViewerVTK):
-            return
-        else:
             SM = active_window.universe_manager
-
+        if SM.bbox_actor == None:
+            return
         selected_color_box = QtWidgets.QColorDialog.getColor()
         if selected_color_box.isValid():
             r = (selected_color_box.getRgb()[0])/255
@@ -630,8 +606,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.radioButton_skybox.setChecked(False)
             self.ui.Widget_sky_box_effect.setEnabled(False)
             self.ui.Widget_VTK_style.setEnabled(True)
-            # self.ui.Button_back_col_view_mode.setEnabled(True)
-            self.ui.Button_box_col_view_mode.setEnabled(True)
 
     def switch_to_sky_box(self):
         active_window = self.active_mdi_child()
