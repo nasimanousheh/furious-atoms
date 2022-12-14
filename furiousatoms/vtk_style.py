@@ -5,9 +5,9 @@ from furiousatoms.structure import bbox
 
 
 def box_vtk_style(SM, active_vtk_window):
-    vtk_box_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_viewer_color, linewidth=2, fake_tube=True)
-    utils.update_actor(vtk_box_actor)
-    active_vtk_window.scene.add(vtk_box_actor)
+    SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
+    utils.update_actor(SM.bbox_actor)
+    active_vtk_window.scene.add(SM.bbox_actor)
 
 
 def make_aesthetic(molecule_rep):
