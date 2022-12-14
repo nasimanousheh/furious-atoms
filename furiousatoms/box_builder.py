@@ -3,10 +3,10 @@ from fury import window, utils
 from PySide2 import QtWidgets
 from furiousatoms.structure import bbox
 
+
 """
     Ui_box class creates a widget for building box and water
 """
-
 class Ui_box(QtWidgets.QMainWindow): #QWidget
 
     def __init__(self, app_path=None, parent=None):
@@ -27,6 +27,7 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
 
     def create_connections(self):
         self.box.pushButton_build_box.clicked.connect(self.box_builder_callback)
+        # self.box.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
         self.box.pushButton_build_box.clicked.connect(lambda:self.close())
 
 
@@ -34,7 +35,6 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         self.box.SpinBox_lx.setValue(box_lx)
         self.box.SpinBox_ly.setValue(box_ly)
         self.box.SpinBox_lz.setValue(box_lz)
-
 
     def box_builder_callback(self):
         active_window = self.win.active_mdi_child()
@@ -44,12 +44,13 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         box_ly = float(self.box.SpinBox_ly.text())
         box_lz = float(self.box.SpinBox_lz.text())
         SM.universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
-        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
-        if  SM.bbox_actor:
-            active_window.scene.rm(SM.bbox_actor)
-            active_window.render()
+        try:
+            SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+            SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+            SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
+        except TypeError:
+            SM.box_lx = SM.box_ly = SM.box_lz = 0
+        active_window.scene.rm(SM.bbox_actor)
         SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
