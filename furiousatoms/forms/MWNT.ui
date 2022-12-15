@@ -310,7 +310,7 @@
                </font>
               </property>
               <property name="maximum">
-               <double>1.000000000000000</double>
+               <double>2.000000000000000</double>
               </property>
               <property name="singleStep">
                <double>0.010000000000000</double>
@@ -323,40 +323,6 @@
            </layout>
           </item>
           <item row="4" column="0">
-           <layout class="QGridLayout" name="gridLayout_10">
-            <item row="0" column="0">
-             <widget class="QLabel" name="label">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="text">
-               <string>Bend factor:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QDoubleSpinBox" name="doubleSpinBox_bend_factor">
-              <property name="font">
-               <font>
-                <pointsize>10</pointsize>
-               </font>
-              </property>
-              <property name="maximum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>0.010000000000000</double>
-              </property>
-              <property name="value">
-               <double>1.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="5" column="0">
            <layout class="QGridLayout" name="gridLayout_14">
             <item row="0" column="0">
              <widget class="QLabel" name="label_repeat_units_MWNT">
