@@ -26,7 +26,7 @@ from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.SWNT_builder import  Ui_SWNT
-from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere, box_vtk_style
+from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
