@@ -1156,6 +1156,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                               SM.box_ly > 0 or
                                               SM.box_lz > 0)
         self.ui.Box_bonds.setChecked(SM.no_bonds > 0)
+        self.ui.button_animation.setEnabled(SM.n_frames > 1)
         self.ui.button_animation.setChecked(SM.n_frames > 1)
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
