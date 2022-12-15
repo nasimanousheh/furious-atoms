@@ -132,23 +132,38 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
+
+
     def openColorDialog_box(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        if isinstance(active_window, ViewerVTK):
-            SM = active_window.parent_window.universe_manager
-        else:
-            SM = active_window.universe_manager
-        if SM.bbox_actor == None:
-            return
+        # SM = active_window.universe_manager
         selected_color_box = QtWidgets.QColorDialog.getColor()
         if selected_color_box.isValid():
             r = (selected_color_box.getRgb()[0])/255
             g = (selected_color_box.getRgb()[1])/255
             b = (selected_color_box.getRgb()[2])/255
+        else:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+            SM.box_color_vtk = (r, g, b)
+            vtk_rep_window = active_window
+            if SM.bbox_actor_vtk:
+                vtk_rep_window.scene.rm(SM.bbox_actor_vtk)
+            SM.bbox_actor_vtk, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color_vtk, linewidth=2, fake_tube=True)
+            vtk_rep_window.scene.add(SM.bbox_actor_vtk)
+            utils.update_actor(SM.bbox_actor_vtk)
+            SM.bbox_actor_vtk.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            vtk_rep_window.render()
+        else:
+            SM = active_window.universe_manager
+            active_window.scene.add(SM.bbox_actor)
+            utils.update_actor(SM.bbox_actor)
             SM.box_color = (r, g, b)
-            if  SM.bbox_actor:
+            if SM.bbox_actor:
                 active_window.scene.rm(SM.bbox_actor)
             SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
             active_window.scene.add(SM.bbox_actor)
@@ -658,13 +673,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def box_builder(self):
         Ui_box.box = Ui_box()
         Ui_box.box.win = self
-        Ui_box.box.show()
-        Ui_box.box.showNormal()
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = self.get_SM_active_window()
         Ui_box.box.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
+        Ui_box.box.show()
+        Ui_box.box.showNormal()
 
     def solution_builder(self):
         Ui_solution.sol = Ui_solution()
