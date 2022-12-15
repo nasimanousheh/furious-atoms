@@ -37,6 +37,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.lineEdit_bond_length_MWNT.insert(str(bond_length_MWNT))
         self.MWNT.lineEdit_bond_length_MWNT.textChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_chirality_N_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
         self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
@@ -152,7 +153,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
+        # bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
 
         list_universe = []
         for i in range(1, number_of_walls+1):
