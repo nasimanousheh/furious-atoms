@@ -152,9 +152,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         combined.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
         SM = active_window.universe_manager
         active_window.scene.rm(SM.bbox_actor)
-        SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
-        active_window.scene.add(SM.bbox_actor)
-        utils.update_actor(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
