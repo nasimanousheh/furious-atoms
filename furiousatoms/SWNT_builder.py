@@ -40,6 +40,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.SWNT.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
+        self.SWNT.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
         self.SWNT.pushButton_build_SWNT.clicked.connect(self.SWNT_builder_callback)
         self.SWNT.comboBox_H_termination_SWNT.currentTextChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.pushButton_build_SWNT.clicked.connect(lambda:self.close())
