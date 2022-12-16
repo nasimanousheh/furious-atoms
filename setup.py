@@ -57,6 +57,11 @@ setup(
             # When adding files here, remember to update MANIFEST.in as well,
             # or else they will not be included in the distribution on PyPI!
             # 'path/to/data_file',
+            path.join('fullerene_dataset', '*'),
+            path.join('forms', '*'),
+            path.join('languages', '*'),
+            path.join('resources', '*'),
+            path.join('skybox0', '*'),
         ]
     },
     install_requires=requirements,
