@@ -505,7 +505,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
             print("system is charge neutral again")
         else:
             print("system is not electroneutral; aborting...")
-            self.show_warning_message_salt()
+            # self.show_warning_message_salt()
             return
         file_name, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data)') #;;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
 

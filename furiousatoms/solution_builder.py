@@ -1,5 +1,5 @@
 import numpy as np
-from furiousatoms.sharedmem import SharedMemory
+# from furiousatoms.sharedmem import SharedMemory
 from furiousatoms import io
 import numpy as np
 from fury import window, utils
@@ -7,7 +7,7 @@ from PySide2 import QtWidgets
 from furiousatoms.structure import bbox
 import MDAnalysis
 
-SM = SharedMemory()
+# SM = SharedMemory()
 """
     Ui_solution class creates a widget for building box and solution
 """
@@ -32,7 +32,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
 
     def create_connections(self):
         self.solution.SpinBox_lx.valueChanged.connect(self.box_builder_callback)
-        self.solution.SpinBox_lx.valueChanged.connect(self.box_builder_callback)
+        self.solution.SpinBox_ly.valueChanged.connect(self.box_builder_callback)
         self.solution.SpinBox_lz.valueChanged.connect(self.box_builder_callback)
         self.solution.pushButton_build_solution.clicked.connect(self.solution_builder_callback)
         self.solution.pushButton_build_solution.clicked.connect(lambda:self.close())
@@ -42,7 +42,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def initial_box_dim(self, box_lx, box_ly, box_lz):
         self.solution.SpinBox_lx.setValue(box_lx)
         self.solution.SpinBox_lz.setValue(box_lz)
-        self.solution.lineEdit_ly.setText(str(box_ly))
+        self.solution.SpinBox_ly.setValue(box_ly)
 
     def initial_values(self):
         water_diameter = 3.1655
@@ -56,26 +56,24 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
     def box_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
-        active_window.scene.rm(SM.bbox_actor)
         box_lx = float(self.solution.SpinBox_lx.text())
-        box_ly = float(self.solution.SpinBox_lx.text())
+        box_ly = float(self.solution.SpinBox_ly.text())
         box_lz = float(self.solution.SpinBox_lz.text())
-
-        self.solution.lineEdit_ly.setText(str(box_ly))
-        SM.universe.trajectory.ts.dimensions = [box_lz,box_ly,box_lz, 90, 90, 90]
-        SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=(0, 0, 0), linewidth=2, fake_tube=True)
-        active_window.scene.add(SM.bbox_actor)
-        utils.update_actor(SM.bbox_actor)
-        SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
-        active_window.render()
-        active_window.show()
+        SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
 
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
+        box_lx = float(self.solution.SpinBox_lx.text())
+        box_ly = float(self.solution.SpinBox_ly.text())
+        box_lz = float(self.solution.SpinBox_lz.text())
         SM = active_window.universe_manager
-        SM.box_lx = float(self.solution.SpinBox_lx.text())
-        SM.box_ly = float(self.solution.SpinBox_lx.text())
-        SM.box_lz = float(self.solution.SpinBox_lz.text())
+        SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
         water_diameter = 3.1655
         spacing_dia = 0.98
         try:
@@ -153,8 +151,10 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         combined.atoms.write(file_name)
         combined.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
         SM = active_window.universe_manager
+        active_window.scene.rm(SM.bbox_actor)
+        SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
         active_window.load_universe(combined)
         active_window.render()
-        return file_name
+        return combined
