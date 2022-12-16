@@ -24,12 +24,15 @@ import furiousatoms.forms.icons
 from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
+from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.SWNT_builder import  Ui_SWNT
+from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
 from furiousatoms.graphene_builder import  Ui_graphene
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
 from furiousatoms.Nanorope_builder import  Ui_NanoRope
+from furiousatoms.structure import bbox
 from furiousatoms.electrolyte_builder import Ui_electrolyte
 from furiousatoms.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
@@ -79,17 +82,24 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.actioncascade.triggered.connect(self.ui.mdiArea.cascadeSubWindows)
         self.ui.actiontiled.triggered.connect(self.ui.mdiArea.tileSubWindows)
 
-        # Help menu actions
-
         # Modify menu actions
         self.ui.actionParticles.triggered.connect(self.delete_particles)
         self.ui.actionBonds.triggered.connect(self.delete_bonds)
 
-        # Compute menu actions
-
         # Build menu actions
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
+        self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
+
+
+        # self.ui.Box_boundary_VTK.clicked.stateChanged.connect(self.Box_boundary_VTK)
+        self.ui.Button_box_color.clicked.connect(self.openColorDialog_box)
+        self.ui.radioButton_Ball_Stick.toggled.connect(self.VTK_style_ball_stick)
+        self.ui.radioButton_Stick.toggled.connect(self.VTK_style_stick)
+        self.ui.radioButton_Sphere.toggled.connect(self.VTK_style_sphere)
+        self.ui.radioButton_skybox.toggled.connect(self.sky_box_sphere_radio)
+        self.ui.radioButton_view_mode.toggled.connect(self.switch_to_vtk)
+        self.ui.tabWidget_input.currentChanged.connect(self.switch_to_sky_box)
         self.ui.actionMulti_Wall_nanotube.triggered.connect(self.multiple_walls)
         self.ui.actionNanorope.triggered.connect(self.NanoRope)
         self.ui.actionElectrolyte.triggered.connect(self.electrolyte)
@@ -99,6 +109,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.toggled.connect(self.ui.widget_Animation.setVisible)
         # self.ui.Button_bondcolor.clicked.connect(self.openColorDialog_bond)
         self.ui.Button_particlecolor.clicked.connect(self.openColorDialog_particle)
+        self.ui.Button_back_color.clicked.connect(self.openColorDialog_background)
         self.ui.SpinBox_atom_radius.valueChanged.connect(self.update_particle_size)
         self.ui.Button_play.clicked.connect(self.play_movie)
         self.ui.Button_pause.clicked.connect(self.pause_movie)
@@ -107,29 +118,116 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_animation.sliderMoved.connect(self.slider_changing)
         # self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         # self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
-        self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
+        # self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
         # self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
         self.ui.horizontalSlider_Opacity.valueChanged[int].connect(self.change_slice_opacity)
         self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
         self.ui.horizontalSlider_Anisotropic.valueChanged[int].connect(self.change_slice_anisotropic)
         self.ui.horizontalSlider_Anisotropic_rot.valueChanged[int].connect(self.change_slice_anisotropic_rot)
-        self.ui.horizontalSlider_Anisotropic_X.valueChanged[int].connect(self.change_slice_anisotropic_X)
-        self.ui.horizontalSlider_Anisotropic_Y.valueChanged[int].connect(self.change_slice_anisotropic_Y)
-        self.ui.horizontalSlider_Anisotropic_Z.valueChanged[int].connect(self.change_slice_anisotropic_Z)
-        self.ui.horizontalSlider_Coat_strength.valueChanged[int].connect(self.change_slice_Coat_strength)
-        self.ui.horizontalSlider_Coat_roughness.valueChanged[int].connect(self.change_slice_Coat_rough)
+
 
         self.ui.treeWidget.setHeaderLabels(['color', 'Particle'])
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
 
+
+
+    def openColorDialog_box(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        # SM = active_window.universe_manager
+        selected_color_box = QtWidgets.QColorDialog.getColor()
+        if selected_color_box.isValid():
+            r = (selected_color_box.getRgb()[0])/255
+            g = (selected_color_box.getRgb()[1])/255
+            b = (selected_color_box.getRgb()[2])/255
+        else:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+            SM.box_color_vtk = (r, g, b)
+            vtk_rep_window = active_window
+            if SM.bbox_actor_vtk:
+                vtk_rep_window.scene.rm(SM.bbox_actor_vtk)
+            SM.bbox_actor_vtk, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color_vtk, linewidth=2, fake_tube=True)
+            vtk_rep_window.scene.add(SM.bbox_actor_vtk)
+            utils.update_actor(SM.bbox_actor_vtk)
+            SM.bbox_actor_vtk.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            vtk_rep_window.render()
+        else:
+            SM = active_window.universe_manager
+            active_window.scene.add(SM.bbox_actor)
+            utils.update_actor(SM.bbox_actor)
+            SM.box_color = (r, g, b)
+            if SM.bbox_actor:
+                active_window.scene.rm(SM.bbox_actor)
+            SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
+            active_window.scene.add(SM.bbox_actor)
+            utils.update_actor(SM.bbox_actor)
+            SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
+            active_window.render()
+
+    def openColorDialog_background(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        selected_color_backgound = QtWidgets.QColorDialog.getColor()
+        if selected_color_backgound.isValid():
+            r = (selected_color_backgound.getRgb()[0])/255
+            g = (selected_color_backgound.getRgb()[1])/255
+            b = (selected_color_backgound.getRgb()[2])/255
+            color_backgound = (r, g, b)
+            active_window.scene.background(color_backgound)
+            active_window.render()
+
+    def openColorDialog_backgr_view(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            return
+        selected_color_backgound = QtWidgets.QColorDialog.getColor()
+        if selected_color_backgound.isValid():
+            if selected_color_backgound.isValid():
+                r = (selected_color_backgound.getRgb()[0])/255
+                g = (selected_color_backgound.getRgb()[1])/255
+                b = (selected_color_backgound.getRgb()[2])/255
+                color_backgound = (r, g, b)
+                active_window.scene.background(color_backgound)
+                active_window.render()
+
+
+    def get_SM_active_window(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        self.ui.radioButton_skybox.setChecked(True)
+        self.ui.Widget_sky_box_effect.setEnabled(True)
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+        return SM
+
     def show_radius_value(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_item = self.ui.treeWidget.selectionModel()
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
@@ -137,12 +235,11 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                 set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
 
-
     def change_slice_opacity(self, opacity_degree):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.opacity = opacity_degree/100
         SM.sphere_actor.GetProperty().SetInterpolationToPBR()
         SM.sphere_actor.GetProperty().SetOpacity(opacity_degree/100)
@@ -157,7 +254,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.metallic = metallic_degree/100
         SM.pbr_params_atom.metallic = SM.metallic
         if SM.no_bonds > 0:
@@ -168,7 +265,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.roughness = roughness_degree/100
         SM.pbr_params_atom.roughness = SM.roughness
         if SM.no_bonds > 0:
@@ -179,7 +276,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic = anisotropic_degree/100
         SM.pbr_params_atom.anisotropy = SM.anisotropic
         if SM.no_bonds > 0:
@@ -190,7 +287,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_rot = anisotropic_rot_degree/100
         SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
         if SM.no_bonds > 0:
@@ -201,7 +298,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_X = anisotropic_X_degree/100
         doa = [0, 1, .5]
         doa[0] = SM.anisotropic_X
@@ -220,7 +317,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_Y = anisotropic_Y_degree/100
         doa = [0, 1, .5]
         doa[1] = SM.anisotropic_Y
@@ -239,7 +336,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.anisotropic_Z = anisotropic_Z_degree/100
         doa = [0, 1, .5]
         doa[2] = SM.anisotropic_Z
@@ -258,7 +355,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.clearcoat = clearcoat_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -268,7 +365,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.clearcoat_gloss = clearcoat_gloss_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -278,7 +375,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.sheen = sheen_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -288,7 +385,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.sheen_tint = sheen_tint_degree/100
         utils.update_actor(SM.sphere_actor)
         utils.update_actor(SM.bond_actor)
@@ -298,7 +395,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.coat_rough = coat_rough_degree/100
         SM.pbr_params_atom.coat_roughness = SM.coat_rough
         if SM.no_bonds > 0:
@@ -309,7 +406,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.coat_strength = coat_strength_degree/100
         SM.pbr_params_atom.coat_strength = SM.coat_strength
         if SM.no_bonds > 0:
@@ -340,7 +437,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         num = int(SM.no_vertices_per_particle)
         SM.colors_backup_particles = SM.vcolors_particle.copy()
         comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
@@ -379,7 +476,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         comboBox_particleshape = self.ui.comboBox_particleshape.currentText()
         if comboBox_particleshape == 'Point':
             SM.sphere_actor.VisibilityOff()
@@ -393,7 +490,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         comboBox_bondshape = self.ui.comboBox_bondshape.currentText()
         if comboBox_bondshape == 'Line':
             SM.bond_actor.VisibilityOff()
@@ -423,6 +520,150 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_SWNT.swnt.show()
         Ui_SWNT.swnt.showNormal()
 
+    def VTK_style_ribbon(self):
+        radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+        if radioButton.isChecked():
+            self.ui.radioButton_view_mode.setChecked(True)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_ribbon(self, SM, fn, vtk_rep_window)
+
+    def VTK_style_ball_stick(self):
+        radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+        if radioButton.isChecked():
+            self.ui.radioButton_view_mode.setChecked(True)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_ball_stick(self, SM, fn, vtk_rep_window)
+
+    def VTK_style_stick(self):
+        radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+        if radioButton.isChecked():
+            self.ui.radioButton_view_mode.setChecked(True)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_stick(self, SM, fn, vtk_rep_window)
+
+
+    def sky_box_sphere_radio(self):
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            self.ui.Widget_VTK_style.setEnabled(False)
+            self.ui.radioButton_view_mode.setChecked(False)
+            self.ui.Widget_sky_box_effect.setEnabled(True)
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+
+    def switch_to_vtk(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        radioButton = self.sender()
+        if radioButton.isChecked():
+            self.ui.radioButton_skybox.setChecked(False)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            self.ui.Widget_VTK_style.setEnabled(True)
+
+    def switch_to_sky_box(self):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        self.ui.radioButton_skybox.setChecked(True)
+        self.ui.Widget_sky_box_effect.setEnabled(True)
+        self.ui.radioButton_view_mode.setChecked(False)
+        self.ui.Widget_VTK_style.setEnabled(False)
+
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+
+    def VTK_style_sphere(self):
+        radioButton = self.sender()
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        if isinstance(active_window, ViewerVTK):
+            SM = active_window.parent_window.universe_manager
+        else:
+            SM = active_window.universe_manager
+        if radioButton.isChecked():
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            self.ui.radioButton_view_mode.setChecked(True)
+            if isinstance(active_window, ViewerVTK):
+                vtk_rep_window = active_window
+                vtk_rep_window.scene.clear()
+            else:
+                vtk_rep_window = ViewerVTK()
+                vtk_rep_window.parent_window = active_window
+                self.ui.mdiArea.addSubWindow(vtk_rep_window)
+            dir = self.ui.Edit_directory.text()
+            name = self.ui.Edit_currentfile.text()
+            fn = dir + '\\' + name
+            get_vtk_sphere(self, SM, fn, vtk_rep_window)
+
     def graphene(self):
         Ui_graphene.gr = Ui_graphene()
         Ui_graphene.gr.win = self
@@ -432,13 +673,13 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def box_builder(self):
         Ui_box.box = Ui_box()
         Ui_box.box.win = self
-        Ui_box.box.show()
-        Ui_box.box.showNormal()
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         Ui_box.box.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
+        Ui_box.box.show()
+        Ui_box.box.showNormal()
 
     def solution_builder(self):
         Ui_solution.sol = Ui_solution()
@@ -448,7 +689,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         Ui_solution.sol.initial_box_dim(SM.box_lx, SM.box_ly, SM.box_lz)
         Ui_solution.sol.show()
         Ui_solution.sol.showNormal()
@@ -469,7 +710,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         object_indices_particles = np.where(SM.selected_particle == True)[0]
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
@@ -498,42 +739,42 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.cnt = self.ui.horizontalSlider_animation.value()
 
     def play_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 1
 
     def pause_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 0
 
     def forward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = 5
 
     def backward_movie(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         SM.play_factor = -5
 
     def update_particle_size(self, selected_value_radius):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_item = self.ui.treeWidget.selectionModel()
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
@@ -556,7 +797,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if (state == QtCore.Qt.Checked):
             SM.bbox_actor.VisibilityOn()
         else:
@@ -564,11 +805,22 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         utils.update_actor(SM.bbox_actor)
         active_window.render()
 
+    def check_axis(self, state):
+        active_window = self.active_mdi_child()
+        if not active_window:
+            return
+        SM = self.get_SM_active_window()
+        if (state == QtCore.Qt.Checked):
+            active_window.axes_actor.VisibilityOn()
+        else:
+            active_window.axes_actor.VisibilityOff()
+        active_window.render()
+
     def check_particles(self, state):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if (state == QtCore.Qt.Checked):
             SM.sphere_actor.VisibilityOn()
         else:
@@ -581,7 +833,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         if SM.bond_actor is None:
             active_window.render()
             return
@@ -630,7 +882,6 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         child = self.create_mdi_child()
-
         if child.load_fullerene_cc1_file(fname):
             child.show()
         else:
@@ -640,7 +891,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        if isinstance(active_window, ViewerVTK):
+            active_window.parent_window.universe_manager
+
         filename, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'PNG (*.png)')
         magnification = 4
         renderLarge = RenderLargeImage()
@@ -662,7 +915,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
         if not fname:
             return
@@ -707,31 +960,58 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
 
+
     def delete_particles(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
-        SM.universe_save = active_window.delete_particles()
-        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
-        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
-        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+            SM.universe_save = active_window.parent_window.delete_particles()
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+            SM.universe_save = active_window.delete_particles()
+        try:
+            self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+            self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+            self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        except AttributeError:
+            return
+
 
     def delete_bonds(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
-        SM.universe_save = active_window.delete_bonds()
-        self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
-        self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
-        self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        if isinstance(active_window, ViewerVTK):
+            fn = active_window.parent_window.current_file
+            windows = self.find_mdi_child(fn)
+            self.ui.mdiArea.setActiveSubWindow(windows)
+            SM = active_window.parent_window.universe_manager
+            SM.universe_save = active_window.parent_window.delete_bonds()
+        else:
+            fn = active_window.current_file
+            windows = self.find_mdi_child(fn)
+            SM = active_window.universe_manager
+            SM.universe_save = active_window.delete_bonds()
+        try:
+            self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
+            self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
+            self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
+        except AttributeError:
+            return
 
     def openColorDialog_particle(self):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_color_particle = QtWidgets.QColorDialog.getColor()
         selected_item = self.ui.treeWidget.selectionModel()
         delete_points = np.where(SM.deleted_particles == True)[0]
@@ -787,7 +1067,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         selected_color_bond = QtWidgets.QColorDialog.getColor()
         if selected_color_bond.isValid():
             delete_points = np.where(SM.deleted_particles == True)[0]
@@ -824,20 +1104,36 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
-        SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
-        if SM.no_bonds > 0:
+        if isinstance(active_window, ViewerVTK):
+            self.ui.radioButton_skybox.setChecked(False)
+            self.ui.Widget_sky_box_effect.setEnabled(False)
+            self.ui.radioButton_view_mode.setChecked(True)
+            self.ui.Widget_VTK_style.setEnabled(True)
+            return
+
+        SM = self.get_SM_active_window()
+        self.ui.Box_Axis.setChecked(True)
+        self.ui.Box_Axis.stateChanged.connect(self.check_axis)
+        try:
+            SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
+        except AttributeError:
+            pass
+
+        try:
             SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
+        except AttributeError:
+            pass
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
         self.ui.horizontalSlider_Anisotropic.setValue(SM.anisotropic*100)
         self.ui.horizontalSlider_Anisotropic_rot.setValue(SM.anisotropic_rot*100)
-        self.ui.horizontalSlider_Anisotropic_X.setValue(SM.anisotropic_X*100)
-        self.ui.horizontalSlider_Anisotropic_Y.setValue(SM.anisotropic_Y*100)
-        self.ui.horizontalSlider_Anisotropic_Z.setValue(SM.anisotropic_Z*100)
-        self.ui.horizontalSlider_Coat_strength.setValue(SM.coat_strength*100)
-        self.ui.horizontalSlider_Coat_roughness.setValue(SM.coat_rough*100)
+        SM.pbr_params_atom.metallic = SM.metallic
+        SM.pbr_params_atom.roughness = SM.roughness
+        SM.pbr_params_atom.anisotropy = SM.anisotropic
+        SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
+
+        active_window.render()
         self.ui.treeWidget.clear()
         print("metallic: ", SM.metallic)
         for i, typ in enumerate(SM.unique_types):
@@ -875,6 +1171,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                                               SM.box_ly > 0 or
                                               SM.box_lz > 0)
         self.ui.Box_bonds.setChecked(SM.no_bonds > 0)
+        self.ui.button_animation.setEnabled(SM.n_frames > 1)
         self.ui.button_animation.setChecked(SM.n_frames > 1)
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
@@ -904,11 +1201,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.horizontalSlider_animation.setSingleStep(1)
         self.ui.horizontalSlider_animation.setValue(SM.cnt)
         self.ui.Timer_animation.setMaximum(SM.n_frames)
-        self.ui.tabWidget.update()
+        self.ui.tabWidget_input.update()
         self.timer = QTimer()
         self.timer.timeout.connect(self.timer_callback)
         duration = 200
-        self.timer.start(duration)
+        if SM.n_frames > 1:
+            self.timer.start(duration)
         # MainWindow.iren.Initialize()
         active_window.render()
 
@@ -916,7 +1214,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window = self.active_mdi_child()
         if not active_window:
             return
-        SM = active_window.universe_manager
+        SM = self.get_SM_active_window()
         # if SM.enable_timer is False:
         #     return
         if SM.cnt == SM.n_frames:
@@ -966,10 +1264,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         return child
 
     def find_mdi_child(self, fname):
-        canonical_filepath = os.path.abspath(fname)
-
         for window in self.ui.mdiArea.subWindowList():
-            if window.widget().current_filepath == canonical_filepath:
+            if window.widget().current_file == fname:
                 return window
         return None
 

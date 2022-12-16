@@ -10,6 +10,7 @@ from furiousatoms.molecular import UniverseManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, ui, primitive, material
+from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
@@ -92,6 +93,8 @@ class Viewer3D(QtWidgets.QWidget):
     def make_title(self):
         self.is_untitled = True
         self.current_file = "viewer-%d" % Viewer3D.sequence_number
+        if not self.current_filepath:
+            self.current_filepath = self.current_file
         Viewer3D.sequence_number += 1
         self.setWindowTitle(self.current_file)
 
@@ -152,9 +155,9 @@ class Viewer3D(QtWidgets.QWidget):
         return success
 
     def display_universe(self):
-        axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
+        self.axes_actor = actor.axes(scale=(1, 1, 1), colorx=(1, 0, 0),
                                 colory=(0, 1, 0), colorz=(0, 0, 1), opacity=1)
-        self.scene.add(axes_actor)
+        self.scene.add(self.axes_actor)
         for act in self.universe_manager.actors():
             self.scene.add(act)
 
@@ -176,14 +179,27 @@ class Viewer3D(QtWidgets.QWidget):
         self.scene.set_camera(position=(0, 0, 100), focal_point=(0, 0, 0),
                               view_up=(0, 1, 0))
 
+    def error_message_delete_atom(self):
+        Ui_warning_atom_delete.pt = Ui_warning_atom_delete()
+        Ui_warning_atom_delete.pt.win = self
+        Ui_warning_atom_delete.pt.show()
+
+    def error_message_delete_bond(self):
+        Ui_warning_bond_delete.pt = Ui_warning_bond_delete()
+        Ui_warning_bond_delete.pt.win = self
+        Ui_warning_bond_delete.pt.show()
     def delete_particles(self):
         SM = self.universe_manager
+        if not any(SM.selected_particle) == True:
+            self.error_message_delete_atom()
+            return
         SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
         SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         print('object_indices_particles: ', SM.object_indices_particles)
         print(SM.pos[SM.object_indices_particles])
         SM.particle_color_add = np.array([255, 0, 0, 0], dtype='uint8')
+
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         for object_index in SM.object_indices_particles:
             SM.vcolors_particle[object_index * SM.sec_particle: object_index * SM.sec_particle + SM.sec_particle] = SM.particle_color_add
@@ -232,19 +248,22 @@ class Viewer3D(QtWidgets.QWidget):
         SM.deleted_particles[SM.object_indices_particles] = True
         SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
         return SM.universe_save
+
     def delete_bonds(self):
         SM = self.universe_manager
+        if not any(SM.selected_bond) == True:
+            self.error_message_delete_bond()
+            return
+
         SM.object_indices_particles = np.where(SM.selected_particle)[0].tolist()
         SM.object_indices_particles += np.where(SM.deleted_particles == True)[0].tolist()
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
         final_atom_types = SM.atom_type.copy()
-
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)
-
         bonds_indices = SM.universe.bonds.to_indices()
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')

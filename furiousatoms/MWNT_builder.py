@@ -9,8 +9,7 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-from fury import window, utils
-from furiousatoms.structure import bbox
+import MDAnalysis as mda
 
 thre = 1e-10
 vacuum = 4
@@ -38,12 +37,14 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.lineEdit_bond_length_MWNT.insert(str(bond_length_MWNT))
         self.MWNT.lineEdit_bond_length_MWNT.textChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_chirality_N_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
+        self.MWNT.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
         self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_repeat_units_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.pushButton_build_MWNT.clicked.connect(self.MWNT_builder_callback)
         self.MWNT.pushButton_build_MWNT.clicked.connect(lambda:self.close())
         self.MWNT.spinBox_num_walls_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.MWNT.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
         self.MWNT.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
 
         self.MWNT.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
@@ -127,9 +128,8 @@ class Ui_MWNT(QtWidgets.QMainWindow):
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz, bendFactor
         box_lx = float(self.MWNT.SpinBox_lx.text())
-        box_ly = float(self.MWNT.SpinBox_lx.text())
+        box_ly = float(self.MWNT.SpinBox_ly.text())
         box_lz = float(self.MWNT.SpinBox_lz.text())
-        self.MWNT.lineEdit_ly.setText(str(box_ly))
         return
 
     def MWNT_builder_callback(self):
@@ -153,24 +153,14 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
-        # universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = 1, bend=bendFactor)
-        # universe_all = universe.copy()
-        # for i in range(1, number_of_walls):
-        #     xyz = []
-        #     type_atoms = []
-        #     next_universe = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i+1, bend=bendFactor)
-        #     xyz.extend(next_universe.universe.atoms.positions)
-        #     type_atoms.extend(next_universe.atoms.types)
-        #     universe_all = merged_two_universes(universe_all.atoms.positions, universe_all.bonds.indices, universe_all.atoms.types, next_universe.atoms.positions, next_universe.bonds.indices, next_universe.atoms.types, box_lx, box_ly, box_lz)
+        # bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
 
-        import MDAnalysis as mda
         list_universe = []
         for i in range(1, number_of_walls+1):
             universe_all = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i, bend=bendFactor)
             list_universe.append(universe_all.atoms)
         universe_all = mda.Merge(*list_universe)
-
+        universe_all.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_universe(universe_all)

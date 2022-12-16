@@ -40,6 +40,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene.pushButton_build_graphene_2.clicked.connect(self.graphene_shape_dimond)
         self.graphene.pushButton_build_graphene_2.clicked.connect(lambda:self.close())
         self.graphene.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
+        self.graphene.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
         self.graphene.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
         self.graphene.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
         self.graphene.radioButton_bond_length.toggled.connect(self.get_atom_type)
@@ -126,9 +127,8 @@ class Ui_graphene(QtWidgets.QMainWindow):
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz
         box_lx = float(self.graphene.SpinBox_lx.text())
-        box_ly = float(self.graphene.SpinBox_lx.text())
+        box_ly = float(self.graphene.SpinBox_ly.text())
         box_lz = float(self.graphene.SpinBox_lz.text())
-        self.graphene.lineEdit_ly.setText(str(box_ly))
         return
 
 """
