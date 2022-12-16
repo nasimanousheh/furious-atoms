@@ -51,6 +51,32 @@ def get_resources_file(fname):
     return os.path.join(base_path, "resources", fname)
 
 
+def get_dateset_file(fname):
+    base_path = ''
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    # base_path = get_frozen_path() if is_frozen() else get_application_path()
+    return os.path.join(base_path, "fullerene_dataset", fname)
+
+# def get_dateset_file():
+#     base_path = get_frozen_path() if is_frozen() else get_application_path()
+#     # return os.path.join(base_path, "fullerene_dataset")
+#     dataset_path = os.path.join(base_path, "fullerene_dataset")
+#     if not os.path.isdir(dataset_path):
+#         os.mkdir(dataset_path)
+#     return dataset_path
+
+# def get_dateset_file():
+#     base_path = get_frozen_path() if is_frozen() else get_application_path()
+#     l_path = os.path.join(base_path, "fullerene_dataset")
+#     if not os.path.isdir(l_path):
+#         os.mkdir(l_path)
+#     return l_path
+
+
 def load_ui_widget(uifilename, cls_to_register=None, parent=None):
     loader = QtUiTools.QUiLoader()
     loader.setLanguageChangeEnabled(True)

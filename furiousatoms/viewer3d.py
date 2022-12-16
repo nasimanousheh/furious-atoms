@@ -141,12 +141,15 @@ class Viewer3D(QtWidgets.QWidget):
 
     def load_fullerene_cc1_file(self, fname):
         success = False
-        self.current_file = os.path.basename(fname)
-        self.current_filepath = os.path.abspath(fname)
-        self.current_filedir = os.path.dirname(self.current_filepath)
-        self.current_extension = os.path.splitext(self.current_filepath)[1]
-        self.is_untitled = False
-        un = load_CC1_file(fname)
+        # self.current_file = os.path.basename(fname)
+        # self.current_filepath = os.path.abspath(fname)
+
+        # self.current_filepath = io.get_dateset_file(fname)
+        # self.current_filedir = os.path.dirname(self.current_filepath)
+        # self.current_extension = os.path.splitext(self.current_filepath)[1]
+        # self.is_untitled = False
+        # un = load_CC1_file(fname)
+        un = io.get_dateset_file(fname)
         universe, no_bonds = io.load_files(un)
         if not universe:
             return success
