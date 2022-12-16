@@ -53,6 +53,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.NanoRope.comboBox_type1_NanoRope.activated.connect(self.get_atom_type)
         self.NanoRope.comboBox_type2_NanoRope.activated.connect(self.get_atom_type)
+        self.NanoRope.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
 
     def get_atom_type(self):
         global bond_length_NanoRope, bendFactor, diameter_SWNT
@@ -157,7 +158,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         number_tubes = int(self.NanoRope.spinBox_num_nanotubes.text())
         NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
-        bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
+        # bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
         universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend = bendFactor)
         universe_all = universe.copy()
         list_universe = []
