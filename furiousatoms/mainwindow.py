@@ -28,6 +28,7 @@ from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.SWNT_builder import  Ui_SWNT
 from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
 from furiousatoms.graphene_builder import  Ui_graphene
+from furiousatoms.graphyne_builder import  Ui_graphyne
 from furiousatoms.box_builder import  Ui_box
 from furiousatoms.solution_builder import  Ui_solution
 from furiousatoms.MWNT_builder import  Ui_MWNT
@@ -88,6 +89,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         # Build menu actions
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
+        self.ui.actionGraphyne_Sheet.triggered.connect(self.graphyne)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
 
@@ -669,6 +671,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         Ui_graphene.gr.win = self
         Ui_graphene.gr.show()
         Ui_graphene.gr.showNormal()
+
+    def graphyne(self):
+        Ui_graphyne.gr = Ui_graphyne()
+        Ui_graphyne.gr.win = self
+        Ui_graphyne.gr.show()
+        Ui_graphyne.gr.showNormal()
 
     def box_builder(self):
         Ui_box.box = Ui_box()
