@@ -43,6 +43,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
         self.graphene.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
         self.graphene.radioButton_desired_bond_length.toggled.connect(self.get_atom_type)
+        self.graphene.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
         self.graphene.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.graphene.comboBox_type1_graphene.activated.connect(self.get_atom_type)
         self.graphene.comboBox_type2_graphene.activated.connect(self.get_atom_type)
