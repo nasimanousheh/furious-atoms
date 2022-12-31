@@ -121,7 +121,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         # self.ui.comboBox_particleshape.currentTextChanged.connect(self.change_particle_shape)
         # self.ui.comboBox_bondshape.currentTextChanged.connect(self.change_bond_shape)
         # self.ui.Button_cal_distance.clicked.connect(self.calculate_distance)
-        # self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
+        self.ui.comboBox_particle_resolution.currentTextChanged.connect(self.change_particle_resolution)
         self.ui.horizontalSlider_Opacity.valueChanged[int].connect(self.change_slice_opacity)
         self.ui.horizontalSlider_Metallic.valueChanged[int].connect(self.change_slice_metallic)
         self.ui.horizontalSlider_Roughness.valueChanged[int].connect(self.change_slice_roughness)
@@ -435,24 +435,25 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         active_window.scene.ResetCamera()
         active_window.render()
 
-    def change_particle_resolution(self):
+    def change_particle_resolution(self, ix):
         active_window = self.active_mdi_child()
         if not active_window:
             return
         SM = self.get_SM_active_window()
         num = int(SM.no_vertices_per_particle)
         SM.colors_backup_particles = SM.vcolors_particle.copy()
-        comboBox_particle_resolution = self.ui.comboBox_particle_resolution.currentText()
+        SM.particle_resolution = self.ui.comboBox_particle_resolution.currentText()
         SM.colors = SM.colors_backup_particles[0::num].astype('f8').copy()/255
         active_window.scene.rm(SM.sphere_actor)
-        vertices, faces = primitive.prim_sphere(name=comboBox_particle_resolution, gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=SM.pos, colors=SM.colors, scales= SM.radii_spheres)
-        big_verts, big_faces, big_colors, _ = res
-        SM.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
-        active_window.create_universe_connections()  #This is connecting the actor to the picker
+
+        if SM.particle_resolution == "High":
+            SM.sphere_actor = actor.sphere(centers=SM.pos, colors=SM.colors, radii=SM.radii_spheres, phi=16, theta=16, use_primitive=False)
+        if SM.particle_resolution == "Medium":
+            SM.sphere_actor = actor.sphere(centers=SM.pos, colors=SM.colors, radii=SM.radii_spheres, phi=9, theta=16, use_primitive=False)
+        if SM.particle_resolution == "Low":
+            SM.sphere_actor = actor.sphere(centers=SM.pos, colors=SM.colors, radii=SM.radii_spheres, phi=3, theta=6, use_primitive=False)
         SM.all_vertices_particles = utils.vertices_from_actor(SM.sphere_actor)
         SM.no_vertices_per_particle = len(SM.all_vertices_particles) / SM.no_atoms
-        active_window.scene.add(SM.sphere_actor)
         SM.vcolors_particle = utils.colors_from_actor(SM.sphere_actor, 'colors')
         SM.colors_backup_particles = SM.vcolors_particle.copy()
         vertices = utils.vertices_from_actor(SM.sphere_actor)
@@ -466,12 +467,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             all_vertices_mask = np.repeat(selected_atom_mask, SM.no_vertices_per_particle)
             SM.all_vertices_particles[all_vertices_mask] = float(selected_value_radius) * all_vertices_radii * (SM.all_vertices_particles[all_vertices_mask] - np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)) + np.repeat(SM.pos[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             SM.radii_spheres[SM.atom_type == atom_typ] = float(selected_value_radius)
-
+        active_window.scene.add(SM.sphere_actor)
         utils.update_actor(SM.sphere_actor)
         SM.sphere_actor.GetMapper().GetInput().GetPoints().GetData().Modified()
         SM.sphere_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         SM.pbr_params_atom = sky_box_effect_atom(active_window.scene, SM.sphere_actor, active_window.universe_manager)
         SM.pbr_params_atom.metallic = SM.metallic
+        SM.pbr_params_atom.roughness = SM.roughness
+        SM.pbr_params_atom.anisotropy = SM.anisotropic
+        SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
+        active_window.create_universe_particles_connections()  #This is connecting the actor to the picker
         active_window.render()
 
     def change_particle_shape(self):
@@ -1131,6 +1136,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             SM.pbr_params_bond = sky_box_effect_bond(active_window.scene, SM.bond_actor, active_window.universe_manager)
         except AttributeError:
             pass
+        self.ui.comboBox_particle_resolution.setCurrentText(SM.particle_resolution)
         self.ui.horizontalSlider_Opacity.setValue(SM.opacity*100)
         self.ui.horizontalSlider_Metallic.setValue(SM.metallic*100)
         self.ui.horizontalSlider_Roughness.setValue(SM.roughness*100)
