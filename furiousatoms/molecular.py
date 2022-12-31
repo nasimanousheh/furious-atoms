@@ -102,7 +102,7 @@ class UniverseManager:
         self.enable_timer = True
         self.cnt = 0
         self.roughness = 0.01
-        self.metallic = 0.01
+        self.metallic = 0.5
         self.anisotropic = 0.01
         self.opacity = 1.0
         self.selected_value_radius = 0.01
