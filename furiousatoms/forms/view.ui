@@ -1476,7 +1476,6 @@
       <string>Build Nanostructure</string>
      </property>
      <addaction name="actionGraphene_sheet"/>
-     <addaction name="actionGraphyne_Sheet"/>
      <addaction name="actionSingle_Wall_Nanotube"/>
      <addaction name="actionMulti_Wall_nanotube"/>
      <addaction name="actionNanorope"/>
