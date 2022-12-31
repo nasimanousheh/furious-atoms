@@ -114,6 +114,7 @@ class UniverseManager:
         self.coat_strength = 0.01
         self.pbr_params_atom = None
         self.pbr_params_bond = None
+        self.particle_resolution == "Low"
 
     @property
     def no_atoms(self):
