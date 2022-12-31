@@ -309,6 +309,9 @@
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="minimum">
+               <double>0.400000000000000</double>
+              </property>
               <property name="maximum">
                <double>2.000000000000000</double>
               </property>
@@ -316,7 +319,7 @@
                <double>0.010000000000000</double>
               </property>
               <property name="value">
-               <double>0.000000000000000</double>
+               <double>1.200000000000000</double>
               </property>
              </widget>
             </item>
