@@ -89,7 +89,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         # Build menu actions
         self.ui.actionGraphene_sheet.triggered.connect(self.graphene)
-        self.ui.actionGraphyne_Sheet.triggered.connect(self.graphyne)
+        # self.ui.actionGraphyne_Sheet.triggered.connect(self.graphyne)
         self.ui.actionSingle_Wall_Nanotube.triggered.connect(self.single_wall)
         self.ui.radioButton_Ribbon.toggled.connect(self.VTK_style_ribbon)
 
