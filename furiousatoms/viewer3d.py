@@ -128,17 +128,20 @@ class Viewer3D(QtWidgets.QWidget):
 
     def load_universe(self, universe, no_bonds=0):
         self.universe_manager = UniverseManager(universe, no_bonds)
-        self.create_universe_connections()
+        # self.create_universe_connections()
+        self.create_universe_particles_connections()
+        self.create_universe_bonds_connections()
         self.display_universe()
         self.setWindowTitle(self.current_file)
 
-    def create_universe_connections(self):
-        if self.universe_manager.have_bonds:
-            self.universe_manager.bond_actor.AddObserver(
-                "LeftButtonPressEvent", self.left_button_press_bond_callback)
+    def create_universe_particles_connections(self):
         self.universe_manager.sphere_actor.AddObserver(
             "LeftButtonPressEvent", self.left_button_press_particle_callback)
 
+    def create_universe_bonds_connections(self):
+        if self.universe_manager.have_bonds:
+            self.universe_manager.bond_actor.AddObserver(
+                "LeftButtonPressEvent", self.left_button_press_bond_callback)
     def load_fullerene_cc1_file(self, fname):
         success = False
         self.current_file = os.path.basename(fname)
