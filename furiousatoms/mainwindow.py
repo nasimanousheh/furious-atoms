@@ -476,7 +476,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.pbr_params_atom.roughness = SM.roughness
         SM.pbr_params_atom.anisotropy = SM.anisotropic
         SM.pbr_params_atom.anisotropy_rotation = SM.anisotropic_rot
-        active_window.create_universe_particles_connections()  #This is connecting the actor to the picker
+        active_window.particles_connect_callbacks()  #This is connecting the actor to the picker
         active_window.render()
 
     def change_particle_shape(self):
