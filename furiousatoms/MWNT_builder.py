@@ -53,7 +53,13 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.MWNT.comboBox_type2_MWNT.activated.connect(self.get_atom_type)
 
     def get_atom_type(self):
-        global bond_length_MWNT, bendFactor
+        global bendFactor
+        bendFactor = 1.0
+        # try:
+        #     bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
+        # except NameError:
+            # bendFactor = 1.0
+
         if self.MWNT.radioButton_bond_length.isChecked() == True:
             self.MWNT.SpinBox_desired_bond_length.setEnabled(False)
             MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
@@ -90,16 +96,12 @@ class Ui_MWNT(QtWidgets.QMainWindow):
             bond_length_MWNT = float(self.MWNT.SpinBox_desired_bond_length.text())
         else:
             bond_length_MWNT = 1.421
+        return bond_length_MWNT
 
 
     def MWNT_diameter_changed(self):
-        global bond_length_MWNT, bendFactor
-        try:
-            bond_length_MWNT
-        except NameError:
-            bond_length_MWNT = 1.421
-        # bond_length_MWNT = self.MWNT.lineEdit_bond_length_MWNT.text()
-        # bond_length_MWNT = float(bond_length_MWNT)
+        global bendFactor
+        bond_length_MWNT = self.get_atom_type()
         value_n_MWNT = int(self.MWNT.spinBox_chirality_N_MWNT.text())
         value_m_MWNT = int(self.MWNT.spinBox_chirality_M_MWNT.text())
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
@@ -133,11 +135,8 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         return
 
     def MWNT_builder_callback(self):
-        global bond_length_MWNT, box_lx, box_ly, box_lz, bendFactor
-        try:
-            bond_length_MWNT
-        except NameError:
-            bond_length_MWNT = 1.421
+        global box_lx, box_ly, box_lz, bendFactor
+        bond_length_MWNT = self.get_atom_type()
 
         try:
             box_lx or box_ly or box_lz
@@ -153,11 +152,10 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         repeat_units_MWNT = int(self.MWNT.spinBox_repeat_units_MWNT.text())
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
-        # bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
 
         list_universe = []
         for i in range(1, number_of_walls+1):
-            universe_all = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i, bend=bendFactor)
+            universe_all = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i)
             list_universe.append(universe_all.atoms)
         universe_all = mda.Merge(*list_universe)
         universe_all.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
@@ -172,7 +170,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1, bend=1):
+def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     global box_lx, box_ly, box_lz, bendFactor
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
