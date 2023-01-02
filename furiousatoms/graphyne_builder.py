@@ -75,15 +75,15 @@ class Ui_graphyne(QtWidgets.QMainWindow):
 
         graphyne_type = self.graphyne.comboBox_graphyne.currentText()
         if graphyne_type =="β-graphyne":
-            fname = 'c:/users/nasim/devel/furious-atoms/furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
+            fname = 'furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
             structure_info = self.beta_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="γ-graphyne":
-            fname = 'c:/users/nasim/devel/furious-atoms/furiousatoms/graphyne_dataset/gammaGraphyne_unitcell.pdb'
+            fname = 'furiousatoms/graphyne_dataset/gammaGraphyne_unitcell.pdb'
             structure_info = self.gamma_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne_6_6_12":
-            fname = 'c:/users/nasim/devel/furious-atoms/furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
+            fname = 'furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
             structure_info = self.graphyne_6_6_12_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         cog = universe_all.atoms.center_of_geometry()
