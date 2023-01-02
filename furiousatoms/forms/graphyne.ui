@@ -161,7 +161,7 @@
              </font>
             </property>
             <property name="text">
-             <string>lx (Å):</string>
+             <string>Edge length along x (Å):</string>
             </property>
            </widget>
           </item>
@@ -182,7 +182,7 @@
              </font>
             </property>
             <property name="text">
-             <string>ly (Å):</string>
+             <string>Edge length along y (Å):</string>
             </property>
            </widget>
           </item>
