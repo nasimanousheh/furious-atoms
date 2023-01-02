@@ -50,7 +50,6 @@ class Ui_graphene(QtWidgets.QMainWindow):
 
 
     def get_atom_type(self):
-        global bond_length_graphene
         if self.graphene.radioButton_bond_length.isChecked() == True:
             self.graphene.SpinBox_desired_bond_length.setEnabled(False)
             graphene_type_1 = self.graphene.comboBox_type1_graphene.currentText()
@@ -87,6 +86,8 @@ class Ui_graphene(QtWidgets.QMainWindow):
             bond_length_graphene = float(self.graphene.SpinBox_desired_bond_length.text())
         else:
             bond_length_graphene = 1.421
+        return bond_length_graphene
+
 
     def graphene_shape_dimond(self):
         graphene_shape=True
@@ -96,11 +97,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene_builder_callback(graphene_shape)
 
     def graphene_builder_callback(self, graphene_shape):
-        global bond_length_graphene
-        try:
-            bond_length_graphene
-        except NameError:
-            bond_length_graphene = 1.421
+        bond_length_graphene = self.get_atom_type()
         H_termination_graphene = self.graphene.comboBox_H_termination_graphene.currentText()
         value_n_graphene = int(self.graphene.spinBox_chirality_N_graphene.text())
         value_m_graphene = int(self.graphene.spinBox_chirality_M_graphene.text())
