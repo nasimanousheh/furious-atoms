@@ -35,8 +35,8 @@ class Ui_graphene(QtWidgets.QMainWindow):
     def create_connections(self):
         bond_length_graphene = 1.421 # default value of C-C bond length
         self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
-        self.graphene.pushButton_build_graphene_1.clicked.connect(self.graphene_shape_regtang)
-        self.graphene.pushButton_build_graphene_1.clicked.connect(lambda:self.close())
+        # self.graphene.pushButton_build_graphene_1.clicked.connect(self.graphene_shape_regtang)
+        # self.graphene.pushButton_build_graphene_1.clicked.connect(lambda:self.close())
         self.graphene.pushButton_build_graphene_2.clicked.connect(self.graphene_shape_dimond)
         self.graphene.pushButton_build_graphene_2.clicked.connect(lambda:self.close())
         self.graphene.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
