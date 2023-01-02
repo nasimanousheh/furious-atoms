@@ -56,7 +56,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         self.NanoRope.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
 
     def get_atom_type(self):
-        global bond_length_NanoRope, bendFactor, diameter_SWNT
+        global bendFactor, diameter_SWNT
         if self.NanoRope.radioButton_bond_length.isChecked() == True:
             self.NanoRope.SpinBox_desired_bond_length.setEnabled(False)
             NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
@@ -93,15 +93,12 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             bond_length_NanoRope = float(self.NanoRope.SpinBox_desired_bond_length.text())
         else:
             bond_length_NanoRope = 1.421
+        return bond_length_NanoRope
 
 
     def NanoRope_diameter_changed(self):
-        global bond_length_NanoRope, bendFactor, diameter_SWNT
-        try:
-            bond_length_NanoRope
-        except NameError:
-            bond_length_NanoRope = 1.421
-
+        global bendFactor, diameter_SWNT
+        bond_length_NanoRope = self.get_atom_type()
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
         repeat_units_NanoRope = int(self.NanoRope.spinBox_repeat_units_NanoRope.text())
@@ -135,11 +132,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         return
 
     def NanoRope_builder_callback(self):
-        global bond_length_NanoRope, box_lx, box_ly, box_lz, bendFactor, diameter_SWNT
-        try:
-            bond_length_NanoRope
-        except NameError:
-            bond_length_NanoRope = 1.421
+        global bond_length_NanoRope, box_lx, box_ly, box_lz, bendFactor
+        bond_length_NanoRope = self.get_atom_type()
 
         try:
             box_lx or box_ly or box_lz
@@ -149,7 +143,6 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             bendFactor
         except NameError:
             bendFactor = 1.0
-        number_of_walls = 5
         H_termination_SWNT = self.NanoRope.comboBox_H_termination_SWNT.currentText()
         value_n_NanoRope = int(self.NanoRope.spinBox_chirality_N_NanoRope.text())
         value_m_NanoRope = int(self.NanoRope.spinBox_chirality_M_NanoRope.text())
@@ -159,7 +152,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
         # bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
-        universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True, bend = bendFactor)
+        universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True)
         universe_all = universe.copy()
         list_universe = []
         import MDAnalysis as mda
@@ -207,7 +200,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
   (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
 """
 
-def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False, bend = 1):
+def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
     global box_lx, box_ly, box_lz, bendFactor, diameter_SWNT
     bond_length_hydrogen = 1.1
     d = gcd(n, m)
