@@ -92,6 +92,21 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         window.load_universe(universe_all)
         window.show()
 
+    # def update_edge_length(self, num_unitcell_in_lx, num_unitcell_in_ly):
+    #     graphyne_type = self.graphyne.comboBox_graphyne.currentText()
+    #     if graphyne_type =="β-graphyne":
+    #         unit_cell_lx =
+    #         unit_cell_ly =
+    #     if graphyne_type =="γ-graphyne":
+    #         unit_cell_lx =
+    #         unit_cell_ly =
+    #     if graphyne_type =="graphyne_6_6_12":
+    #         unit_cell_lx =
+    #         unit_cell_ly =
+    #     edge_length_x = num_unitcell_in_lx * unit_cell_lx
+    #     edge_length_y = num_unitcell_in_ly * unit_cell_ly
+    #     self.graphyne.lineEdit_edge_length_x.setText(str((edge_length_x)))
+    #     self.graphyne.lineEdit_edge_length_y.setText(str((edge_length_y)))
 
     def beta_graphyne_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
         load_file,_ = load_files(fname)
