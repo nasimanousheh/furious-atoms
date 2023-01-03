@@ -72,7 +72,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             sheet_separation = 3.347
 
         graphyne_type = self.graphyne.comboBox_graphyne.currentText()
-        if graphyne_type =="β-graphyne":
+        if graphyne_type =="β-graphyne (12,12,12-graphyne)":
             fname = 'furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
             structure_info = self.beta_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
@@ -84,6 +84,11 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             fname = 'furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
             structure_info = self.graphyne_6_6_12_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        if graphyne_type =="twin Graphene":
+            fname = 'furiousatoms/graphyne_dataset/twinGraphene_unitcell.pdb'
+            structure_info = self.twin_graphene_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+
         cog = universe_all.atoms.center_of_geometry()
         print('Original solvent center of geometry: ', cog)
         universe_all.atoms.positions -= cog
@@ -258,6 +263,56 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             c = c + 1
 
         return new_universe
+
+    def twin_graphene_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+        load_file,_ = load_files(fname)
+        load_file.bonds.to_indices()
+        pos = load_file.atoms.positions
+        pos = pos.astype('float64')
+        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.421
+        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.53
+        box_lx = load_file.dimensions [3]
+        box_ly= load_file.dimensions [4]
+        box_lz= load_file.dimensions [5]
+        load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
+        box = load_file.dimensions[:3]
+        copied = []
+        b = 0
+
+        for x in range(num_unitcell_in_lx):
+            i = 0
+            for y in range(num_unitcell_in_ly):
+                u_ = load_file.copy()
+                move_by = box*(x-i, y, 1)
+                u_.atoms.translate(move_by)
+                copied.append(u_.atoms)
+                i = i+(0.5)
+
+
+        new_universe = mda.Merge(*copied)
+        b = 0
+        c = 0
+        bond_connect = 18 * num_unitcell_in_ly
+
+        num_bonds_connect = (num_unitcell_in_lx-1)
+
+        for b in range(num_unitcell_in_ly):
+            b = c *18
+            for i in range(num_bonds_connect):
+                added_bonds = np.array([[(bond_connect*i)+6+b, (bond_connect*(i+1))+b]])
+                if c < num_unitcell_in_ly-1:
+                    added_bonds_2 = np.array([[(bond_connect*i)+8+b, (bond_connect*i)+b+(20+bond_connect)]])
+                    new_universe.add_bonds(added_bonds_2)
+                new_universe.add_bonds(added_bonds)
+
+            for j in range(num_unitcell_in_lx):
+                if c < num_unitcell_in_ly-1:
+                    added_bonds_1 = np.array([[(bond_connect*j)+10+b, (bond_connect*j)+b+22]])
+                    new_universe.add_bonds(added_bonds_1)
+            c = c + 1
+
+        return new_universe
+
 
     def extend_the_sheets(self, structure_info, num_sheets, sheet_separation):
         try:
