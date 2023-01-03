@@ -125,11 +125,11 @@
              </font>
             </property>
             <property name="text">
-             <string>Type of graphyne:</string>
+             <string>Structure name:</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="0" column="1" colspan="2">
            <widget class="QComboBox" name="comboBox_graphyne">
             <property name="font">
              <font>
@@ -138,7 +138,7 @@
             </property>
             <item>
              <property name="text">
-              <string>β-graphyne</string>
+              <string>β-graphyne (12,12,12-graphyne)</string>
              </property>
             </item>
             <item>
@@ -153,8 +153,32 @@
             </item>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="1" column="0" colspan="2">
            <widget class="QLabel" name="label_chirality_N_graphene">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>Number of unit cellsl along x:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QSpinBox" name="spinBox_lx_extent">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" colspan="2">
+           <widget class="QLabel" name="label_edge_length_x">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -165,17 +189,35 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_lx_extent">
+          <item row="2" column="2">
+           <widget class="QLineEdit" name="lineEdit_edge_length_x"/>
+          </item>
+          <item row="3" column="0" colspan="2">
+           <widget class="QLabel" name="label_chirality_M_graphene">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="text">
+             <string>Number of unit cells along y:</string>
+            </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_chirality_M_graphene">
+          <item row="3" column="2">
+           <widget class="QSpinBox" name="spinBox_ly_extent">
+            <property name="font">
+             <font>
+              <pointsize>10</pointsize>
+             </font>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLabel" name="label_edge_length_y">
             <property name="font">
              <font>
               <pointsize>10</pointsize>
@@ -186,14 +228,8 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox_ly_extent">
-            <property name="font">
-             <font>
-              <pointsize>10</pointsize>
-             </font>
-            </property>
-           </widget>
+          <item row="4" column="2">
+           <widget class="QLineEdit" name="lineEdit_edge_length_y"/>
           </item>
          </layout>
         </widget>
