@@ -28,8 +28,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
 
     def create_connections(self):
         self.graphyne.comboBox_graphyne.activated.connect(self.get_info_graphyne)
-        self.graphyne.doubleSpinBox_lx_extent.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.doubleSpinBox_ly_extent.valueChanged.connect(self.get_info_graphyne)
+        self.graphyne.spinBox_lx_extent.valueChanged.connect(self.get_info_graphyne)
+        self.graphyne.spinBox_ly_extent.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.SpinBox_lx.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
@@ -38,8 +38,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         self.graphyne.pushButton_build_graphyne.clicked.connect(lambda:self.close())
 
     def get_info_graphyne(self):
-        num_unitcell_in_lx = int(self.graphyne.doubleSpinBox_lx_extent.text())
-        num_unitcell_in_ly = int(self.graphyne.doubleSpinBox_ly_extent.text())
+        num_unitcell_in_lx = int(self.graphyne.spinBox_lx_extent.text())
+        num_unitcell_in_ly = int(self.graphyne.spinBox_ly_extent.text())
         try:
             box_lx = float(self.graphyne.SpinBox_lx.text())
             box_ly = float(self.graphyne.SpinBox_ly.text())
@@ -59,8 +59,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         return num_unitcell_in_lx, num_unitcell_in_ly, num_sheets
 
     def graphyne_builder_callback(self):
-        num_unitcell_in_lx = int(self.graphyne.doubleSpinBox_lx_extent.text())
-        num_unitcell_in_ly = int(self.graphyne.doubleSpinBox_ly_extent.text())
+        num_unitcell_in_lx = int(self.graphyne.spinBox_lx_extent.text())
+        num_unitcell_in_ly = int(self.graphyne.spinBox_ly_extent.text())
 
         try:
             num_sheets = int(self.graphyne.SpinBox_num_sheets.text())
