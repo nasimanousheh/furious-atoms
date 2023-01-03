@@ -38,8 +38,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         self.graphyne.pushButton_build_graphyne.clicked.connect(lambda:self.close())
 
     def get_info_graphyne(self):
-        num_unitcell_in_lx = float(self.graphyne.doubleSpinBox_lx_extent.text())
-        num_unitcell_in_ly = float(self.graphyne.doubleSpinBox_ly_extent.text())
+        num_unitcell_in_lx = int(self.graphyne.doubleSpinBox_lx_extent.text())
+        num_unitcell_in_ly = int(self.graphyne.doubleSpinBox_ly_extent.text())
         try:
             box_lx = float(self.graphyne.SpinBox_lx.text())
             box_ly = float(self.graphyne.SpinBox_ly.text())
@@ -59,10 +59,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         return num_unitcell_in_lx, num_unitcell_in_ly, num_sheets
 
     def graphyne_builder_callback(self):
-        num_unitcell_in_lx = float(self.graphyne.doubleSpinBox_lx_extent.text())
-        num_unitcell_in_ly = float(self.graphyne.doubleSpinBox_ly_extent.text())
-        num_unitcell_in_lx = int(num_unitcell_in_lx)
-        num_unitcell_in_ly = int(num_unitcell_in_ly)
+        num_unitcell_in_lx = int(self.graphyne.doubleSpinBox_lx_extent.text())
+        num_unitcell_in_ly = int(self.graphyne.doubleSpinBox_ly_extent.text())
 
         try:
             num_sheets = int(self.graphyne.SpinBox_num_sheets.text())
@@ -100,11 +98,12 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
-        distance = np.linalg.norm(pos[4]-pos[11]) + 1.4
+        unit_cell_lx = np.linalg.norm(pos[4]-pos[11]) + 1.4
         box_lx = load_file.dimensions[3]
         box_ly= load_file.dimensions[4]
         box_lz= load_file.dimensions[5]
-        load_file.dimensions = [distance  ,  9.485-1.285, distance, box_lx, box_ly, box_lz]
+        unit_cell_ly = 9.485-1.285
+        load_file.dimensions = [unit_cell_lx  , unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
         box = load_file.dimensions[:3]
         copied = []
         b = 0
@@ -148,13 +147,13 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
-        distance_2 = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
-        distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.4    #1.4000015258789062  #1.4000014682858655
+        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
+        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.4    #1.4000015258789062  #1.4000014682858655
         print(max(pos[:, 0]) - min(pos[:, 0]))
         nx = load_file.dimensions [3]
         ny= load_file.dimensions [4]
         nz= load_file.dimensions [5]
-        load_file.dimensions = [distance, distance_2, distance, nx, ny, nz]
+        load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
         b = 0
@@ -199,12 +198,12 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
-        distance = max(pos[:, 0]) - min(pos[:, 0]) + 1.23
-        distance_2 = np.linalg.norm(pos[10]-pos[17]) + 1.4
+        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.23
+        unit_cell_ly = np.linalg.norm(pos[10]-pos[17]) + 1.4
         box_lx = load_file.dimensions [3]
         box_ly= load_file.dimensions [4]
         box_lz= load_file.dimensions [5]
-        load_file.dimensions = [distance, distance_2, distance, box_lx, box_ly, box_lz]
+        load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
         box = load_file.dimensions[:3]
         copied = []
         b = 0
