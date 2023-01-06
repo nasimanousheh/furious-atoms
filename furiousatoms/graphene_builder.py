@@ -35,9 +35,9 @@ class Ui_graphene(QtWidgets.QMainWindow):
     def create_connections(self):
         bond_length_graphene = 1.421 # default value of C-C bond length
         self.graphene.lineEdit_bond_length_graphene.insert(str(bond_length_graphene))
-        # self.graphene.pushButton_build_graphene_1.clicked.connect(self.graphene_shape_regtang)
-        # self.graphene.pushButton_build_graphene_1.clicked.connect(lambda:self.close())
-        self.graphene.pushButton_build_graphene_2.clicked.connect(self.graphene_shape_dimond)
+        self.graphene.pushButton_build_graphene_2.clicked.connect(self.graphene_shape_regtang)
+        self.graphene.pushButton_build_graphene_1.clicked.connect(lambda:self.close())
+        self.graphene.pushButton_build_graphene_1.clicked.connect(self.graphene_shape_diamond)
         self.graphene.pushButton_build_graphene_2.clicked.connect(lambda:self.close())
         self.graphene.SpinBox_lx.valueChanged.connect(self.initial_box_dim)
         self.graphene.SpinBox_ly.valueChanged.connect(self.initial_box_dim)
@@ -47,6 +47,15 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene.radioButton_bond_length.toggled.connect(self.get_atom_type)
         self.graphene.comboBox_type1_graphene.activated.connect(self.get_atom_type)
         self.graphene.comboBox_type2_graphene.activated.connect(self.get_atom_type)
+        self.graphene.doubleSpinBox_unitcell_along_x.valueChanged.connect(self.initial_box_dim)
+        self.graphene.doubleSpinBox_unitcell_along_y.valueChanged.connect(self.initial_box_dim)
+        self.graphene.comboBox_type1_graphene.activated.connect(self.initial_box_dim)
+        self.graphene.comboBox_type2_graphene.activated.connect(self.initial_box_dim)
+        self.graphene.radioButton_desired_bond_length.toggled.connect(self.initial_box_dim)
+        self.graphene.SpinBox_desired_bond_length.valueChanged.connect(self.initial_box_dim)
+        self.graphene.doubleSpinBox_unitcell_along_x.valueChanged.connect(self.get_atom_type)
+        self.graphene.doubleSpinBox_unitcell_along_y.valueChanged.connect(self.get_atom_type)
+
 
 
     def get_atom_type(self):
@@ -89,7 +98,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         return bond_length_graphene
 
 
-    def graphene_shape_dimond(self):
+    def graphene_shape_diamond(self):
         graphene_shape=True
         self.graphene_builder_callback(graphene_shape)
     def graphene_shape_regtang(self):
@@ -114,7 +123,14 @@ class Ui_graphene(QtWidgets.QMainWindow):
         except NameError:
             sheet_separation = 3.347
 
-        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length=bond_length_graphene, species=(graphene_type_1, graphene_type_2), dimond_sheet=graphene_shape)
+        if self.graphene.radioButton_armchair.isChecked() == True:
+            edge_shape = 'armchair'
+        else:
+            edge_shape = 'zigzag'
+        edge_length_x = float(self.graphene.doubleSpinBox_unitcell_along_x.text())
+        edge_length_y = float(self.graphene.doubleSpinBox_unitcell_along_y.text())
+        structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length_graphene=bond_length_graphene,
+                                            species=(graphene_type_1, graphene_type_2), diamond_sheet=graphene_shape, edge_length_x=edge_length_x, edge_length_y=edge_length_y, edge_shape=edge_shape)
         if num_sheets > 1:
             structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
@@ -122,19 +138,13 @@ class Ui_graphene(QtWidgets.QMainWindow):
         window.make_title()
         window.load_universe(structure_info)
         window.show()
+
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz
         box_lx = float(self.graphene.SpinBox_lx.text())
         box_ly = float(self.graphene.SpinBox_ly.text())
         box_lz = float(self.graphene.SpinBox_lz.text())
         return
-
-"""
-  The numbers (n,m) show that your tube is obtained from taking one atom of the sheet and rolling it onto
-  that atom that is at located na1+ma2 away from your original atom. N is the Number of hexagons in a unit cell. a1 and a2 are lattice vectors.
-  (n,m=n) gives an “armchair” tube,e.g. (5,5). (n,m=0) gives an “zig-zag” tube, e.g. (6,0). Other tubes are “chiral”, e.g. (6,2)
-"""
-
 
 def extend_the_sheets(structure_info, num_sheets, sheet_separation):
     copied = []
@@ -154,75 +164,186 @@ def extend_the_sheets(structure_info, num_sheets, sheet_separation):
         extended_universe.atoms.positions -= cog
         return extended_universe
 
-def graphene_builder(H_termination_graphene, n, m, N, length, bond_length, species=('C', 'C'), dimond_sheet=True):
+
+
+def graphen_armchair(fname, edge_length_x, edge_length_y, bond_length_graphene):
+    fname.bonds.to_indices()
+    pos = fname.atoms.positions
+    pos = pos.astype('float64')
+    unit_cell_ly = np.linalg.norm(pos[2]-pos[3]) + bond_length_graphene
+    unit_cell_lx = np.linalg.norm(pos[2]+pos[3]) * 2
+    nx = 90
+    ny= 90
+    nz= 90
+    fname.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
+    box = fname.dimensions[:3]
+    copied = []
+    b = 0
+    i = 0
+    num_unitcell_in_lx = int(np.ceil(edge_length_x/unit_cell_lx))
+    num_unitcell_in_ly = int(np.ceil(edge_length_y/unit_cell_ly))
+    for x in range(num_unitcell_in_lx):
+        i = 0
+        for y in range(num_unitcell_in_ly):
+            u_ = fname.copy()
+            move_by = box*(x, y, 1)
+            u_.atoms.translate(move_by)
+            copied.append(u_.atoms)
+
+    new_universe = mda.Merge(*copied)
+    b = 0
+    c = 0
+    bond_connect = 4 * num_unitcell_in_ly
+    num_bonds_connect = (num_unitcell_in_lx-1)
+    for b in range(num_unitcell_in_ly):
+        b = c *4
+        for i in range(num_bonds_connect):
+            added_bonds = np.array([[bond_connect*i+3+b, bond_connect*i+bond_connect+b]])
+            added_bonds_2 = np.array([[bond_connect*i+2+b, bond_connect*i+bond_connect+b+1]])
+            new_universe.add_bonds(added_bonds_2)
+            new_universe.add_bonds(added_bonds)
+        for j in range(num_unitcell_in_lx):
+            if c < num_unitcell_in_ly-1:
+                added_bonds_1 = np.array([[(bond_connect*j)+3+b, (bond_connect*j)+b+6]])
+                new_universe.add_bonds(added_bonds_1)
+        c = c + 1
+    cog = new_universe.atoms.center_of_geometry()
+    new_universe.atoms.positions -= cog
+    return new_universe
+
+
+def graphen_zigzag(fname, edge_length_x, edge_length_y, bond_length_graphene):
+    fname.bonds.to_indices()
+    pos = fname.atoms.positions
+    pos = pos.astype('float64')
+    unit_cell_ly = np.linalg.norm(pos[0]+pos[3]) *2
+    unit_cell_lx = np.linalg.norm(pos[0]-pos[3]) + bond_length_graphene
+    nx = 90
+    ny= 90
+    nz= 90
+    fname.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
+    box = fname.dimensions[:3]
+    copied = []
+    b = 0
+    i = 0
+    num_unitcell_in_lx = int(np.ceil(edge_length_x/unit_cell_lx))
+    num_unitcell_in_ly = int(np.ceil(edge_length_y/unit_cell_ly))
+    for x in range(num_unitcell_in_lx):
+        i = 0
+        for y in range(num_unitcell_in_ly):
+            u_ = fname.copy()
+            move_by = box*(x, y, 1)
+            u_.atoms.translate(move_by)
+            copied.append(u_.atoms)
+
+    new_universe = mda.Merge(*copied)
+    b = 0
+    c = 0
+    bond_connect = 4 * num_unitcell_in_ly
+    num_bonds_connect = (num_unitcell_in_lx-1)
+    for b in range(num_unitcell_in_ly):
+        b = c *4
+        for i in range(num_bonds_connect):
+            added_bonds = np.array([[bond_connect*i+3+b, bond_connect*i+bond_connect+b]])
+            new_universe.add_bonds(added_bonds)
+        for j in range(num_unitcell_in_lx):
+            if c < num_unitcell_in_ly-1:
+                added_bonds_1 = np.array([[(bond_connect*j)+b, (bond_connect*j)+b+5]])
+                added_bonds_2 = np.array([[(bond_connect*j)+3+b, (bond_connect*j)+b+6]])
+                new_universe.add_bonds(added_bonds_1)
+                new_universe.add_bonds(added_bonds_2)
+        c = c + 1
+    cog = new_universe.atoms.center_of_geometry()
+    new_universe.atoms.positions -= cog
+    return new_universe
+
+def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphene, species=('C', 'C'), diamond_sheet=True, edge_length_x=1, edge_length_y=1, edge_shape = 'armchair'):
     global box_lx, box_ly, box_lz
+    try:
+        box_lx or box_ly or box_lz
+    except NameError:
+        box_lx = box_ly = box_lz = 0.0
     bond_length_hydrogen = 1.1
-    thre = 1e-10
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    if dimond_sheet is True:
-        a1 = np.array((np.sqrt(3)*bond_length,0,0))
-        a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
-        Ch = n*a1+m*a2
-        T = t1*a1+t2*a2
-        if length:
-            N = int(np.ceil(length/np.linalg.norm(T)))
-        Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
-        basis = [np.array((0,0,0)), (a1+a2)/3]
+    a1 = np.array((np.sqrt(3)*bond_length_graphene,0,0))
+    a2 = np.array((np.sqrt(3)/2*bond_length_graphene, -3*bond_length_graphene/2,0))
+    T = t1*a1+t2*a2
+    basis = [np.array((0,0,0)), (a1+a2)/3]
+    if diamond_sheet is True:
         pts = []
-        for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+        for i1, i2 in product(range(0, n+t1), range(t2, m)):
             shift = i1*a1+i2*a2
             for sp, b in zip(species, basis):
                 pt = b+shift
                 pts.append((sp, pt))
 
         xyz = [v for _, v in pts]
+        atom_types_graphene = [v for v, _ in pts]
+        m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
+        fragments = m.to_json(scale =1)
+        coord_array_graphene = np.array(xyz)
+        # Number of atoms in graphene:
+        num_atoms_graphene = len(coord_array_graphene)
+        # Atom coordinates:
+        assert coord_array_graphene.shape == (num_atoms_graphene, 3)
+        all_bonds_graphene = np.array(fragments['bonds'])
+        univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene, box_lx, box_ly, box_lz)
     else:
-        a1 = np.array((3/2*bond_length, 1*np.sqrt(3)/2 * bond_length, 0))
-        a2 = np.array((3/2*bond_length, -1*np.sqrt(3)/2 * bond_length, 0))
-        Ch = n*a1+m*a2
-        T = t1*a1+t2*a2
-        length = None
-        if length:
-            N = int(np.ceil(length/norm(T)))
-        Ch_proj, T_proj = [v/norm(v)**2 for v in [Ch, T]]
-        basis = [np.array((0, 0, 0)), (a1+a2)/3]
+        if edge_shape == 'zigzag':
+            a1 = np.array((3/2*bond_length_graphene, 1*np.sqrt(3)/2 * bond_length_graphene, 0))
+            a2 = np.array((3/2*bond_length_graphene, -1*np.sqrt(3)/2 * bond_length_graphene, 0))
+            T = t1*a1+t2*a2
+            basis = [np.array((0,0,0)), (a1+a2)/3]
+        m = n = 1
         pts = []
-        for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+        for i1, i2 in product(range(0, n+t1), range(t2, m)):
             shift = i1*a1+i2*a2
             for sp, b in zip(species, basis):
                 pt = b+shift
-                if all(-thre < pt.dot(v) < 1-thre for v in [Ch_proj, T_proj]):
-                    for k in range(N):
-                        pts.append((sp, pt+k*T))
+                pts.append((sp, pt))
+
+        if edge_shape == 'zigzag':
+            pts = pts[1:7]
+            del pts[3]
+            del pts[3]
+        if edge_shape == 'armchair':
+            pts = pts[1:5]
         xyz = [v for _, v in pts]
 
-    atom_types_graphene = [v for v, _ in pts]
-    m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-    fragments = m.to_json(scale =1)
+        primitive_atom_types_graphene = [v for v, _ in pts]
+        m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
+        fragments = m.to_json(scale =1)
+        primitive_coord_graphene = np.array(xyz)
+        primitive_num_atoms_graphene = len(primitive_coord_graphene)
+        # Atom coordinates:
+        assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
+        # primitive_bonds_graphene = np.array(fragments['bonds'])
 
-    # Number of atoms in graphene:
-    num_atoms_graphene = len(xyz)
-    # Atom coordinates:
-    coord_array_graphene = np.array(xyz)
-    assert coord_array_graphene.shape == (num_atoms_graphene, 3)
-    all_bonds_graphene = np.array(fragments['bonds'])
+        if edge_shape == 'zigzag':
+            primitive_bonds_graphene = np.array([[1,0],[2,1],[2,3]])
+            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
+            univ_graphene = graphen_zigzag(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
+        if edge_shape == 'armchair':
+            primitive_bonds_graphene = np.array([[1,0],[2,1],[3,0]])
+            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
+            univ_graphene = graphen_armchair(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
 
-    try:
-        box_lx or box_ly or box_lz
-    except NameError:
-        box_lx = box_ly = box_lz = 0.0
+        all_bonds_graphene = univ_graphene.bonds.to_indices()
+        xyz = univ_graphene.atoms.positions
+        coord_array_graphene = xyz.astype('float64')
+        num_atoms_graphene = len(coord_array_graphene)
+        atom_types_graphene = univ_graphene.atoms.types
 
-    univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene, box_lx, box_ly, box_lz)
     if H_termination_graphene == 'None':
         return univ_graphene
    ##############################################Create Hydrogens at the end of graphene##############################################
-    scale_factor_H = bond_length_hydrogen/bond_length
+    scale_factor_H = bond_length_hydrogen/bond_length_graphene
     num_hydrogen = 0
     H_coordinaes = []
-    if dimond_sheet is True:
+    if diamond_sheet is True:
         for a in range(num_atoms_graphene):
             # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
             indices_of_a = np.where(all_bonds_graphene == a)[0]
