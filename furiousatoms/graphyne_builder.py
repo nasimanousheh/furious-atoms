@@ -76,9 +76,13 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             fname = 'furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
             structure_info = self.beta_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
-        if graphyne_type =="γ-graphyne":
+        if graphyne_type =="graphyne-1":
             fname = 'furiousatoms/graphyne_dataset/gammaGraphyne_unitcell.pdb'
             structure_info = self.gamma_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        if graphyne_type =="graphyne-2":
+            fname = 'furiousatoms/graphyne_dataset/graphdiyne_unitcell.pdb'
+            structure_info = self.graphyne_2_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne_6_6_12":
             fname = 'furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
@@ -187,7 +191,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                 copied.append(u_.atoms)
                 i = i+(0.5)
 
-        import MDAnalysis as mda
+
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
@@ -206,6 +210,57 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
                     added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+12]])
+                    new_universe.add_bonds(added_bonds_1)
+
+            c = c + 1
+
+
+        return new_universe
+
+
+    def graphyne_2_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+        load_file,_ = load_files(fname)
+        load_file.bonds.to_indices()
+        pos = load_file.atoms.positions
+        pos = pos.astype('float64')
+        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) -0.2#+ 0.458509564
+        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.42
+        print(max(pos[:, 0]) - min(pos[:, 0]))
+        nx = load_file.dimensions [3]
+        ny= load_file.dimensions [4]
+        nz= load_file.dimensions [5]
+        load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
+        box = load_file.dimensions[:3]
+        copied = []
+        b = 0
+        i = 0
+        for x in range(num_unitcell_in_lx):
+            i = 0
+            for y in range(num_unitcell_in_ly):
+                u_ = load_file.copy()
+                move_by = box*(x-i, y, 1)
+                u_.atoms.translate(move_by)
+                copied.append(u_.atoms)
+                i = i+(0.5)
+
+        new_universe = mda.Merge(*copied)
+        b = 0
+        c = 0
+        bond_connect = 18 * num_unitcell_in_ly
+
+        num_bonds_connect = (num_unitcell_in_lx-1)
+
+        for b in range(num_unitcell_in_ly):
+            b = c *18
+            for i in range(num_bonds_connect):
+                added_bonds = np.array([[(bond_connect*i)+12+b, (bond_connect*(i+1))+13+b]])
+                if c < num_unitcell_in_ly-1:
+                    added_bonds_2 = np.array([[(bond_connect*i)+1+b, (bond_connect*i)+b+(21+bond_connect)]])
+                    new_universe.add_bonds(added_bonds_2)
+                new_universe.add_bonds(added_bonds)
+            for j in range(num_unitcell_in_lx):
+                if c < num_unitcell_in_ly-1:
+                    added_bonds_1 = np.array([[(bond_connect*j)+b, (bond_connect*j)+b+20]])
                     new_universe.add_bonds(added_bonds_1)
 
             c = c + 1
