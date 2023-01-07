@@ -144,23 +144,23 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
-        bond_connect = 18 * num_unitcell_in_ly
+        num_atoms_in_y_direction = 18 * num_unitcell_in_ly
 
         num_bonds_connect = (num_unitcell_in_lx-1)
 
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
-                added_bonds = np.array([[(bond_connect*i)+4+b, (bond_connect*(i+1))+11+b]])
+                added_bonds = np.array([[(num_atoms_in_y_direction*i)+4+b, (num_atoms_in_y_direction*(i+1))+11+b]])
                 if c < num_unitcell_in_ly:
-                    added_bonds_2 = np.array([[(bond_connect*i)+2+b, (bond_connect*i)+b+(9+bond_connect)]])
+                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+2+b, (num_atoms_in_y_direction*i)+b+(9+num_atoms_in_y_direction)]])
                     new_universe.add_bonds(added_bonds_2)
                 new_universe.add_bonds(added_bonds)
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_3 = np.array([[(bond_connect*j)+16+b, (bond_connect*j)+b+32]])
+                    added_bonds_3 = np.array([[(num_atoms_in_y_direction*j)+16+b, (num_atoms_in_y_direction*j)+b+32]])
                     new_universe.add_bonds(added_bonds_3)
-                    added_bonds_4 = np.array([[(bond_connect*j)+17+b, (bond_connect*j)+b+33]])
+                    added_bonds_4 = np.array([[(num_atoms_in_y_direction*j)+17+b, (num_atoms_in_y_direction*j)+b+33]])
                     new_universe.add_bonds(added_bonds_4)
             c = c + 1
 
@@ -195,21 +195,21 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
-        bond_connect = 12 * num_unitcell_in_ly
+        num_atoms_in_y_direction = 12 * num_unitcell_in_ly
 
         num_bonds_connect = (num_unitcell_in_lx-1)
 
         for b in range(num_unitcell_in_ly):
             b = c *12
             for i in range(num_bonds_connect):
-                added_bonds = np.array([[(bond_connect*i)+8+b, (bond_connect*(i+1))+7+b]])
+                added_bonds = np.array([[(num_atoms_in_y_direction*i)+8+b, (num_atoms_in_y_direction*(i+1))+7+b]])
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_2 = np.array([[(bond_connect*i)+3+b, (bond_connect*i)+b+(13+bond_connect)]])
+                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+3+b, (num_atoms_in_y_direction*i)+b+(13+num_atoms_in_y_direction)]])
                     new_universe.add_bonds(added_bonds_2)
                 new_universe.add_bonds(added_bonds)
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_1 = np.array([[(bond_connect*j)+2+b, (bond_connect*j)+b+12]])
+                    added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+2+b, (num_atoms_in_y_direction*j)+b+12]])
                     new_universe.add_bonds(added_bonds_1)
 
             c = c + 1
@@ -246,21 +246,21 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
-        bond_connect = 18 * num_unitcell_in_ly
+        num_atoms_in_y_direction = 18 * num_unitcell_in_ly
 
         num_bonds_connect = (num_unitcell_in_lx-1)
 
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
-                added_bonds = np.array([[(bond_connect*i)+12+b, (bond_connect*(i+1))+13+b]])
+                added_bonds = np.array([[(num_atoms_in_y_direction*i)+12+b, (num_atoms_in_y_direction*(i+1))+13+b]])
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_2 = np.array([[(bond_connect*i)+1+b, (bond_connect*i)+b+(21+bond_connect)]])
+                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+1+b, (num_atoms_in_y_direction*i)+b+(21+num_atoms_in_y_direction)]])
                     new_universe.add_bonds(added_bonds_2)
                 new_universe.add_bonds(added_bonds)
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_1 = np.array([[(bond_connect*j)+b, (bond_connect*j)+b+20]])
+                    added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+b, (num_atoms_in_y_direction*j)+b+20]])
                     new_universe.add_bonds(added_bonds_1)
 
             c = c + 1
@@ -292,28 +292,28 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
-        bond_connect = 18 * num_unitcell_in_ly
+        num_atoms_in_y_direction = 18 * num_unitcell_in_ly
 
         num_bonds_connect = (num_unitcell_in_lx-1)
 
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
-                added_bonds = np.array([[(bond_connect*i)+b, (bond_connect*(i+1))+5+b]])
-                added_bonds_1 = np.array([[(bond_connect*i)+1+b, (bond_connect*(i+1))+4+b]])
+                added_bonds = np.array([[(num_atoms_in_y_direction*i)+b, (num_atoms_in_y_direction*(i+1))+5+b]])
+                added_bonds_1 = np.array([[(num_atoms_in_y_direction*i)+1+b, (num_atoms_in_y_direction*(i+1))+4+b]])
                 new_universe.add_bonds(added_bonds_1)
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_2 = np.array([[(bond_connect*i)+10+b, (bond_connect*i)+b+35]])
+                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+10+b, (num_atoms_in_y_direction*i)+b+35]])
                     new_universe.add_bonds(added_bonds_2)
-                    added_bonds_3 = np.array([[(bond_connect*i)+12+b, (bond_connect*i)+b+33]])
+                    added_bonds_3 = np.array([[(num_atoms_in_y_direction*i)+12+b, (num_atoms_in_y_direction*i)+b+33]])
                     new_universe.add_bonds(added_bonds_3)
                 new_universe.add_bonds(added_bonds)
                 #This loop connects the atoms of the last coloumn
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_4 = np.array([[(bond_connect*j)+10+b, (bond_connect*j)+b+35]])
+                    added_bonds_4 = np.array([[(num_atoms_in_y_direction*j)+10+b, (num_atoms_in_y_direction*j)+b+35]])
                     new_universe.add_bonds(added_bonds_4)
-                    added_bonds_5 = np.array([[(bond_connect*j)+12+b, (bond_connect*j)+b+33]])
+                    added_bonds_5 = np.array([[(num_atoms_in_y_direction*j)+12+b, (num_atoms_in_y_direction*j)+b+33]])
                     new_universe.add_bonds(added_bonds_5)
             c = c + 1
 
@@ -347,22 +347,22 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
-        bond_connect = 18 * num_unitcell_in_ly
+        num_atoms_in_y_direction = 18 * num_unitcell_in_ly
 
         num_bonds_connect = (num_unitcell_in_lx-1)
 
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
-                added_bonds = np.array([[(bond_connect*i)+6+b, (bond_connect*(i+1))+b]])
+                added_bonds = np.array([[(num_atoms_in_y_direction*i)+6+b, (num_atoms_in_y_direction*(i+1))+b]])
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_2 = np.array([[(bond_connect*i)+8+b, (bond_connect*i)+b+(20+bond_connect)]])
+                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+8+b, (num_atoms_in_y_direction*i)+b+(20+num_atoms_in_y_direction)]])
                     new_universe.add_bonds(added_bonds_2)
                 new_universe.add_bonds(added_bonds)
 
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
-                    added_bonds_1 = np.array([[(bond_connect*j)+10+b, (bond_connect*j)+b+22]])
+                    added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+10+b, (num_atoms_in_y_direction*j)+b+22]])
                     new_universe.add_bonds(added_bonds_1)
             c = c + 1
 
