@@ -166,17 +166,14 @@ def extend_the_sheets(structure_info, num_sheets, sheet_separation):
 
 
 
-def graphen_armchair(fname, edge_length_x, edge_length_y, bond_length_graphene):
-    fname.bonds.to_indices()
-    pos = fname.atoms.positions
+def graphen_armchair(primitive_unitcell, edge_length_x, edge_length_y, bond_length_graphene):
+    primitive_unitcell.bonds.to_indices()
+    pos = primitive_unitcell.atoms.positions
     pos = pos.astype('float64')
     unit_cell_ly = np.linalg.norm(pos[2]-pos[3]) + bond_length_graphene
     unit_cell_lx = np.linalg.norm(pos[2]+pos[3]) * 2
-    nx = 90
-    ny= 90
-    nz= 90
-    fname.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
-    box = fname.dimensions[:3]
+    primitive_unitcell.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, 90, 90, 90]
+    box = primitive_unitcell.dimensions[:3]
     copied = []
     b = 0
     i = 0
@@ -185,7 +182,7 @@ def graphen_armchair(fname, edge_length_x, edge_length_y, bond_length_graphene):
     for x in range(num_unitcell_in_lx):
         i = 0
         for y in range(num_unitcell_in_ly):
-            u_ = fname.copy()
+            u_ = primitive_unitcell.copy()
             move_by = box*(x, y, 1)
             u_.atoms.translate(move_by)
             copied.append(u_.atoms)
@@ -193,36 +190,33 @@ def graphen_armchair(fname, edge_length_x, edge_length_y, bond_length_graphene):
     new_universe = mda.Merge(*copied)
     b = 0
     c = 0
-    bond_connect = 4 * num_unitcell_in_ly
+    num_atoms_in_y_direction = 4 * num_unitcell_in_ly
     num_bonds_connect = (num_unitcell_in_lx-1)
     for b in range(num_unitcell_in_ly):
         b = c *4
         for i in range(num_bonds_connect):
-            added_bonds = np.array([[bond_connect*i+3+b, bond_connect*i+bond_connect+b]])
-            added_bonds_2 = np.array([[bond_connect*i+2+b, bond_connect*i+bond_connect+b+1]])
+            added_bonds_1 = np.array([[num_atoms_in_y_direction*i+3+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b]])
+            added_bonds_2 = np.array([[num_atoms_in_y_direction*i+2+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b+1]])
+            new_universe.add_bonds(added_bonds_1)
             new_universe.add_bonds(added_bonds_2)
-            new_universe.add_bonds(added_bonds)
         for j in range(num_unitcell_in_lx):
             if c < num_unitcell_in_ly-1:
-                added_bonds_1 = np.array([[(bond_connect*j)+3+b, (bond_connect*j)+b+6]])
-                new_universe.add_bonds(added_bonds_1)
+                added_bonds_3 = np.array([[(num_atoms_in_y_direction*j)+3+b, (num_atoms_in_y_direction*j)+b+6]])
+                new_universe.add_bonds(added_bonds_3)
         c = c + 1
     cog = new_universe.atoms.center_of_geometry()
     new_universe.atoms.positions -= cog
     return new_universe
 
 
-def graphen_zigzag(fname, edge_length_x, edge_length_y, bond_length_graphene):
-    fname.bonds.to_indices()
-    pos = fname.atoms.positions
+def graphen_zigzag(primitive_unitcell, edge_length_x, edge_length_y, bond_length_graphene):
+    primitive_unitcell.bonds.to_indices()
+    pos = primitive_unitcell.atoms.positions
     pos = pos.astype('float64')
     unit_cell_ly = np.linalg.norm(pos[0]+pos[3]) *2
     unit_cell_lx = np.linalg.norm(pos[0]-pos[3]) + bond_length_graphene
-    nx = 90
-    ny= 90
-    nz= 90
-    fname.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
-    box = fname.dimensions[:3]
+    primitive_unitcell.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, 90, 90, 90]
+    box = primitive_unitcell.dimensions[:3]
     copied = []
     b = 0
     i = 0
@@ -231,7 +225,7 @@ def graphen_zigzag(fname, edge_length_x, edge_length_y, bond_length_graphene):
     for x in range(num_unitcell_in_lx):
         i = 0
         for y in range(num_unitcell_in_ly):
-            u_ = fname.copy()
+            u_ = primitive_unitcell.copy()
             move_by = box*(x, y, 1)
             u_.atoms.translate(move_by)
             copied.append(u_.atoms)
@@ -239,19 +233,19 @@ def graphen_zigzag(fname, edge_length_x, edge_length_y, bond_length_graphene):
     new_universe = mda.Merge(*copied)
     b = 0
     c = 0
-    bond_connect = 4 * num_unitcell_in_ly
+    num_atoms_in_y_direction = 4 * num_unitcell_in_ly
     num_bonds_connect = (num_unitcell_in_lx-1)
     for b in range(num_unitcell_in_ly):
         b = c *4
         for i in range(num_bonds_connect):
-            added_bonds = np.array([[bond_connect*i+3+b, bond_connect*i+bond_connect+b]])
-            new_universe.add_bonds(added_bonds)
+            added_bonds_1 = np.array([[num_atoms_in_y_direction*i+3+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b]])
+            new_universe.add_bonds(added_bonds_1)
         for j in range(num_unitcell_in_lx):
             if c < num_unitcell_in_ly-1:
-                added_bonds_1 = np.array([[(bond_connect*j)+b, (bond_connect*j)+b+5]])
-                added_bonds_2 = np.array([[(bond_connect*j)+3+b, (bond_connect*j)+b+6]])
-                new_universe.add_bonds(added_bonds_1)
+                added_bonds_2 = np.array([[(num_atoms_in_y_direction*j)+b, (num_atoms_in_y_direction*j)+b+5]])
+                added_bonds_3 = np.array([[(num_atoms_in_y_direction*j)+3+b, (num_atoms_in_y_direction*j)+b+6]])
                 new_universe.add_bonds(added_bonds_2)
+                new_universe.add_bonds(added_bonds_3)
         c = c + 1
     cog = new_universe.atoms.center_of_geometry()
     new_universe.atoms.positions -= cog
@@ -264,15 +258,15 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
     except NameError:
         box_lx = box_ly = box_lz = 0.0
     bond_length_hydrogen = 1.1
-    d = gcd(n, m)
-    dR = 3*d if (n-m) % (3*d) == 0 else d
-    t1 = (2*m+n)//dR
-    t2 = -(2*n+m)//dR
-    a1 = np.array((np.sqrt(3)*bond_length_graphene,0,0))
-    a2 = np.array((np.sqrt(3)/2*bond_length_graphene, -3*bond_length_graphene/2,0))
-    T = t1*a1+t2*a2
-    basis = [np.array((0,0,0)), (a1+a2)/3]
     if diamond_sheet is True:
+        d = gcd(n, m)
+        dR = 3*d if (n-m) % (3*d) == 0 else d
+        t1 = (2*m+n)//dR
+        t2 = -(2*n+m)//dR
+        a1 = np.array((np.sqrt(3)*bond_length_graphene,0,0))
+        a2 = np.array((np.sqrt(3)/2*bond_length_graphene, -3*bond_length_graphene/2,0))
+        T = t1*a1+t2*a2
+        basis = [np.array((0,0,0)), (a1+a2)/3]
         pts = []
         for i1, i2 in product(range(0, n+t1), range(t2, m)):
             shift = i1*a1+i2*a2
@@ -285,51 +279,63 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
         m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
         fragments = m.to_json(scale =1)
         coord_array_graphene = np.array(xyz)
-        # Number of atoms in graphene:
         num_atoms_graphene = len(coord_array_graphene)
-        # Atom coordinates:
         assert coord_array_graphene.shape == (num_atoms_graphene, 3)
         all_bonds_graphene = np.array(fragments['bonds'])
         univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene, box_lx, box_ly, box_lz)
     else:
+        m = n = 1
+        d = gcd(n, m)
+        dR = 3*d if (n-m) % (3*d) == 0 else d
+        t1 = (2*m+n)//dR
+        t2 = -(2*n+m)//dR
+        if edge_shape == 'armchair':
+            a1 = np.array((np.sqrt(3)*bond_length_graphene,0,0))
+            a2 = np.array((np.sqrt(3)/2*bond_length_graphene, -3*bond_length_graphene/2,0))
+            T = t1*a1+t2*a2
+            basis = [np.array((0,0,0)), (a1+a2)/3]
+            pts = []
+            for i1, i2 in product(range(0, n+t1), range(t2, m)):
+                shift = i1*a1+i2*a2
+                for sp, b in zip(species, basis):
+                    pt = b+shift
+                    pts.append((sp, pt))
+            pts = pts[1:5]
+            xyz = [v for _, v in pts]
+            primitive_atom_types_graphene = [v for v, _ in pts]
+            m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
+            fragments = m.to_json(scale =1)
+            primitive_coord_graphene = np.array(xyz)
+            primitive_num_atoms_graphene = len(primitive_coord_graphene)
+            assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
+            primitive_bonds_graphene = np.array([[1,0],[2,1],[3,0]])
+            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
+            univ_graphene = graphen_armchair(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
+
         if edge_shape == 'zigzag':
             a1 = np.array((3/2*bond_length_graphene, 1*np.sqrt(3)/2 * bond_length_graphene, 0))
             a2 = np.array((3/2*bond_length_graphene, -1*np.sqrt(3)/2 * bond_length_graphene, 0))
             T = t1*a1+t2*a2
             basis = [np.array((0,0,0)), (a1+a2)/3]
-        m = n = 1
-        pts = []
-        for i1, i2 in product(range(0, n+t1), range(t2, m)):
-            shift = i1*a1+i2*a2
-            for sp, b in zip(species, basis):
-                pt = b+shift
-                pts.append((sp, pt))
-
-        if edge_shape == 'zigzag':
+            pts = []
+            for i1, i2 in product(range(0, n+t1), range(t2, m)):
+                shift = i1*a1+i2*a2
+                for sp, b in zip(species, basis):
+                    pt = b+shift
+                    pts.append((sp, pt))
             pts = pts[1:7]
             del pts[3]
             del pts[3]
-        if edge_shape == 'armchair':
-            pts = pts[1:5]
-        xyz = [v for _, v in pts]
-
-        primitive_atom_types_graphene = [v for v, _ in pts]
-        m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-        fragments = m.to_json(scale =1)
-        primitive_coord_graphene = np.array(xyz)
-        primitive_num_atoms_graphene = len(primitive_coord_graphene)
-        # Atom coordinates:
-        assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
-        # primitive_bonds_graphene = np.array(fragments['bonds'])
-
-        if edge_shape == 'zigzag':
+            xyz = [v for _, v in pts]
+            primitive_atom_types_graphene = [v for v, _ in pts]
+            m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
+            fragments = m.to_json(scale =1)
+            primitive_coord_graphene = np.array(xyz)
+            primitive_num_atoms_graphene = len(primitive_coord_graphene)
+            assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
             primitive_bonds_graphene = np.array([[1,0],[2,1],[2,3]])
             primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
             univ_graphene = graphen_zigzag(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
-        if edge_shape == 'armchair':
-            primitive_bonds_graphene = np.array([[1,0],[2,1],[3,0]])
-            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
-            univ_graphene = graphen_armchair(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
 
         all_bonds_graphene = univ_graphene.bonds.to_indices()
         xyz = univ_graphene.atoms.positions
