@@ -174,7 +174,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     # This function converts the SWNT to nanotube with given diameter:
     def gr2tube(v):
         phi = np.pi + bendFactor * 2*np.pi*v.dot(Ch_proj)
-
         return np.array((diameter_SWNT/2*np.cos(phi),
                          diameter_SWNT/2*np.sin(phi),
                          v.dot(T_proj)*np.linalg.norm(T)))
@@ -208,12 +207,9 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     length_SWNT = np.linalg.norm(T) * 4
 
     for a in range(num_atoms_swnt):
-
         if ((np.linalg.norm(coord_array_swnt[a])) < (length_SWNT/2)):
-
             # 'a' is the atom id. We look at the bond indices to verify where the atom 'a' index is appeared:
             indices_of_a = np.where(all_bonds_swnt == a)[0]
-
             # If 'a' in bond indices is repeated only once, it means it has connected to one atom. So to hydrogenate the atom, we need to connect it to two hydrogen atoms.
             if len(indices_of_a) == 1:
                 # Here we identify the indices of all atoms at the end of tube that are need to be hydrogenized.
@@ -273,7 +269,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     pos_one_end_H = np.array(H_coordinaes)
     assert pos_one_end_H.shape == (num_hydrogen, 3)
     num_hydrogen = 0
-    n_residues = 1
     one_end_bonds_H = []
     for x in range(num_atoms_swnt):
         if ((np.linalg.norm(coord_array_swnt[x])) < (length_SWNT/2)):
@@ -287,11 +282,9 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                 num_hydrogen = num_hydrogen + 1
     one_end_atom_types_H = list(['H']*num_hydrogen)
     merged_swnt_one_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H, box_lx, box_ly, box_lz)
-
     # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
     if H_termination_SWNT == 'One end':
         return merged_swnt_one_end_H
-
 #########################################################
     num_hydrogen = 0
     H_coordinaes = []
@@ -351,7 +344,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
 
     num_hydrogen = 0
     two_end_bonds_H = []
-    n_residues = 1
     pos_two_end_H = np.array(H_coordinaes)
     # assert pos_two_end_H.shape == (num_hydrogen, 3)#######################
     for x in range(num_atoms_swnt):
