@@ -27,19 +27,19 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         pass
 
     def create_connections(self):
-        self.graphyne.comboBox_graphyne.activated.connect(self.get_info_graphyne)
-        self.graphyne.spinBox_lx_extent.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.spinBox_ly_extent.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.SpinBox_lx.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
-        self.graphyne.SpinBox_num_sheets.valueChanged.connect(self.get_info_graphyne)
+        # self.graphyne.comboBox_graphyne.activated.connect(self.get_info_graphyne)
+        self.graphyne.doubleSpinBox_lx_extent.valueChanged.connect(self.get_info_graphyne)
+        self.graphyne.doubleSpinBox_ly_extent.valueChanged.connect(self.get_info_graphyne)
+        # self.graphyne.SpinBox_lx.valueChanged.connect(self.get_info_graphyne)
+        # self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
+        # self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
+        # self.graphyne.SpinBox_num_sheets.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.pushButton_build_graphyne.clicked.connect(self.graphyne_builder_callback)
         self.graphyne.pushButton_build_graphyne.clicked.connect(lambda:self.close())
 
     def get_info_graphyne(self):
-        num_unitcell_in_lx = int(self.graphyne.spinBox_lx_extent.text())
-        num_unitcell_in_ly = int(self.graphyne.spinBox_ly_extent.text())
+        edge_length_x = float(self.graphyne.doubleSpinBox_lx_extent.text())
+        edge_length_y = float(self.graphyne.doubleSpinBox_ly_extent.text())
         try:
             box_lx = float(self.graphyne.SpinBox_lx.text())
             box_ly = float(self.graphyne.SpinBox_ly.text())
@@ -56,11 +56,11 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         except NameError:
             sheet_separation = 3.347
 
-        return num_unitcell_in_lx, num_unitcell_in_ly, num_sheets
+        return edge_length_x, edge_length_y, num_sheets
 
     def graphyne_builder_callback(self):
-        num_unitcell_in_lx = int(self.graphyne.spinBox_lx_extent.text())
-        num_unitcell_in_ly = int(self.graphyne.spinBox_ly_extent.text())
+        edge_length_x = float(self.graphyne.doubleSpinBox_lx_extent.text())
+        edge_length_y = float(self.graphyne.doubleSpinBox_ly_extent.text())
 
         try:
             num_sheets = int(self.graphyne.SpinBox_num_sheets.text())
@@ -72,25 +72,25 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             sheet_separation = 3.347
 
         graphyne_type = self.graphyne.comboBox_graphyne.currentText()
-        if graphyne_type =="β-graphyne (12,12,12-graphyne)":
+        if graphyne_type =="graphyne_12_12_12":
             fname = 'furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
-            structure_info = self.beta_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            structure_info = self.beta_graphyne_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne-1":
             fname = 'furiousatoms/graphyne_dataset/gammaGraphyne_unitcell.pdb'
-            structure_info = self.gamma_graphyne_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            structure_info = self.gamma_graphyne_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne-2":
             fname = 'furiousatoms/graphyne_dataset/graphdiyne_unitcell.pdb'
-            structure_info = self.graphyne_2_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            structure_info = self.graphyne_2_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne_6_6_12":
             fname = 'furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
-            structure_info = self.graphyne_6_6_12_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            structure_info = self.graphyne_6_6_12_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="twin Graphene":
             fname = 'furiousatoms/graphyne_dataset/twinGraphene_unitcell.pdb'
-            structure_info = self.twin_graphene_builder(fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets)
+            structure_info = self.twin_graphene_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         cog = universe_all.atoms.center_of_geometry()
@@ -101,23 +101,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         window.load_universe(universe_all)
         window.show()
 
-    # def update_edge_length(self, num_unitcell_in_lx, num_unitcell_in_ly):
-    #     graphyne_type = self.graphyne.comboBox_graphyne.currentText()
-    #     if graphyne_type =="β-graphyne":
-    #         unit_cell_lx =
-    #         unit_cell_ly =
-    #     if graphyne_type =="γ-graphyne":
-    #         unit_cell_lx =
-    #         unit_cell_ly =
-    #     if graphyne_type =="graphyne_6_6_12":
-    #         unit_cell_lx =
-    #         unit_cell_ly =
-    #     edge_length_x = num_unitcell_in_lx * unit_cell_lx
-    #     edge_length_y = num_unitcell_in_ly * unit_cell_ly
-    #     self.graphyne.lineEdit_edge_length_x.setText(str((edge_length_x)))
-    #     self.graphyne.lineEdit_edge_length_y.setText(str((edge_length_y)))
-
-    def beta_graphyne_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+    def beta_graphyne_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
@@ -130,8 +114,9 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.dimensions = [unit_cell_lx  , unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
         box = load_file.dimensions[:3]
         copied = []
-        b = 0
         i = 0
+        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
+        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         for x in range(num_unitcell_in_lx):
             i = 0
             for y in range(num_unitcell_in_ly):
@@ -166,13 +151,13 @@ class Ui_graphyne(QtWidgets.QMainWindow):
 
         return new_universe
 
-    def gamma_graphyne_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+    def gamma_graphyne_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
         unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.4    #1.4000015258789062  #1.4000014682858655
+        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
         print(max(pos[:, 0]) - min(pos[:, 0]))
         nx = load_file.dimensions [3]
         ny= load_file.dimensions [4]
@@ -180,13 +165,14 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        b = 0
         i = 0
+        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
+        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         for x in range(num_unitcell_in_lx):
             i = 0
             for y in range(num_unitcell_in_ly):
                 u_ = load_file.copy()
-                move_by = box*(x-i, y, 1) #- (x * 2*1.73205080757) - (1.4*2)
+                move_by = box*(x-i, y, 1)
                 u_.atoms.translate(move_by)
                 copied.append(u_.atoms)
                 i = i+(0.5)
@@ -211,19 +197,15 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                 if c < num_unitcell_in_ly-1:
                     added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+2+b, (num_atoms_in_y_direction*j)+b+12]])
                     new_universe.add_bonds(added_bonds_1)
-
             c = c + 1
-
-
         return new_universe
 
-
-    def graphyne_2_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+    def graphyne_2_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
-        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) -0.2#+ 0.458509564
+        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) -0.2
         unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.42
         print(max(pos[:, 0]) - min(pos[:, 0]))
         nx = load_file.dimensions [3]
@@ -232,8 +214,9 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
         box = load_file.dimensions[:3]
         copied = []
-        b = 0
         i = 0
+        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
+        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         for x in range(num_unitcell_in_lx):
             i = 0
             for y in range(num_unitcell_in_ly):
@@ -247,9 +230,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         b = 0
         c = 0
         num_atoms_in_y_direction = 18 * num_unitcell_in_ly
-
         num_bonds_connect = (num_unitcell_in_lx-1)
-
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
@@ -262,13 +243,10 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                 if c < num_unitcell_in_ly-1:
                     added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+b, (num_atoms_in_y_direction*j)+b+20]])
                     new_universe.add_bonds(added_bonds_1)
-
             c = c + 1
-
-
         return new_universe
 
-    def graphyne_6_6_12_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+    def graphyne_6_6_12_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
@@ -281,7 +259,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
         box = load_file.dimensions[:3]
         copied = []
-        b = 0
+        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
+        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         for x in range(num_unitcell_in_lx):
             for y in range(num_unitcell_in_ly):
                 u_ = load_file.copy()
@@ -293,9 +272,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         b = 0
         c = 0
         num_atoms_in_y_direction = 18 * num_unitcell_in_ly
-
         num_bonds_connect = (num_unitcell_in_lx-1)
-
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
@@ -308,7 +285,6 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     added_bonds_3 = np.array([[(num_atoms_in_y_direction*i)+12+b, (num_atoms_in_y_direction*i)+b+33]])
                     new_universe.add_bonds(added_bonds_3)
                 new_universe.add_bonds(added_bonds)
-                #This loop connects the atoms of the last coloumn
             for j in range(num_unitcell_in_lx):
                 if c < num_unitcell_in_ly-1:
                     added_bonds_4 = np.array([[(num_atoms_in_y_direction*j)+10+b, (num_atoms_in_y_direction*j)+b+35]])
@@ -316,10 +292,9 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     added_bonds_5 = np.array([[(num_atoms_in_y_direction*j)+12+b, (num_atoms_in_y_direction*j)+b+33]])
                     new_universe.add_bonds(added_bonds_5)
             c = c + 1
-
         return new_universe
 
-    def twin_graphene_builder(self, fname, num_unitcell_in_lx, num_unitcell_in_ly, num_sheets):
+    def twin_graphene_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
@@ -332,8 +307,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, box_lx, box_ly, box_lz]
         box = load_file.dimensions[:3]
         copied = []
-        b = 0
-
+        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
+        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         for x in range(num_unitcell_in_lx):
             i = 0
             for y in range(num_unitcell_in_ly):
@@ -343,14 +318,11 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                 copied.append(u_.atoms)
                 i = i+(0.5)
 
-
         new_universe = mda.Merge(*copied)
         b = 0
         c = 0
         num_atoms_in_y_direction = 18 * num_unitcell_in_ly
-
         num_bonds_connect = (num_unitcell_in_lx-1)
-
         for b in range(num_unitcell_in_ly):
             b = c *18
             for i in range(num_bonds_connect):
@@ -365,9 +337,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+10+b, (num_atoms_in_y_direction*j)+b+22]])
                     new_universe.add_bonds(added_bonds_1)
             c = c + 1
-
         return new_universe
-
 
     def extend_the_sheets(self, structure_info, num_sheets, sheet_separation):
         try:
