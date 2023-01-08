@@ -90,6 +90,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="twin Graphene":
             fname = 'furiousatoms/graphyne_dataset/twinGraphene_unitcell.pdb'
+            sheet_separation = sheet_separation + 2.034
             structure_info = self.twin_graphene_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
