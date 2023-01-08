@@ -493,7 +493,7 @@ number,symbol,name,vdw radius,covalent radius,mass,ionization energy
 28,Ni,nickel,1.63,1.21,58.6934,7.6398
 29,Cu,copper,1.4,1.38,63.546,7.7264
 30,Zn,zinc,1.39,1.31,65.39,9.3942
-31,Ga,gallium,1.87,1.70,69.723,5.9993
+31,Ga,gallium,1.87,1.26,69.723,5.9993
 32,Ge,germanium,2.11,1.22,72.64,7.8994
 33,As,arsenic,1.85,1.19,74.9216,9.7886
 34,Se,selenium,1.9,1.16,78.96,9.7524
