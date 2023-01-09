@@ -10,6 +10,7 @@ import numpy as np
 from fury import window
 from PySide2 import QtWidgets
 import MDAnalysis as mda
+from PySide2.QtGui import QIcon
 
 thre = 1e-10
 vacuum = 4
@@ -25,6 +26,7 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(248, 313)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()

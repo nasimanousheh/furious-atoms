@@ -6,7 +6,6 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 import sys
-from io import StringIO
 from functools import cmp_to_key
 
 class Ui_warning_build_elect(QtWidgets.QMainWindow):
@@ -21,6 +20,7 @@ class Ui_warning_build_elect(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(657, 49)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
@@ -44,6 +44,7 @@ class Ui_warning_oppos_charge(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(622, 72)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
@@ -72,6 +73,7 @@ class Ui_warning_charge_salt_1(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(622, 72)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
@@ -101,6 +103,7 @@ class Ui_warning_atom_delete(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(460, 80)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
@@ -124,6 +127,7 @@ class Ui_warning_bond_delete(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(460, 80)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()

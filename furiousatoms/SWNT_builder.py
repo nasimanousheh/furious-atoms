@@ -8,6 +8,7 @@ import numpy as np
 from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import create_universe, merged_universe_with_H
+from PySide2.QtGui import QIcon
 
 thre = 1e-10
 vacuum = 4
@@ -26,6 +27,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(247, 285)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()

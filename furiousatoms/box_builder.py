@@ -2,6 +2,7 @@ from furiousatoms import io
 from fury import window, utils
 from PySide2 import QtWidgets
 from furiousatoms.structure import bbox
+from PySide2.QtGui import QIcon
 
 
 """
@@ -18,6 +19,7 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         self.setLayout(self.v_layout)
         self.resize(225, 202)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()

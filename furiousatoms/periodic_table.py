@@ -9,6 +9,7 @@ from furiousatoms.sharedmem import SharedMemory
 import sys
 import csv
 from io import StringIO
+from PySide2.QtGui import QIcon
 from functools import cmp_to_key
 elems_csv = """\
 number,symbol,name,mass,valency
@@ -144,6 +145,7 @@ class Ui_periodic_cation(QtWidgets.QMainWindow):
         self.setCentralWidget(self.periodic_cation)
         self.setLayout(self.v_layout)
         self.resize(1074, 488)
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
@@ -194,6 +196,7 @@ class Ui_periodic_anion(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(1074, 488)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
