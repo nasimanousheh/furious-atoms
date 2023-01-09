@@ -35,7 +35,6 @@ class Ui_MWNT(QtWidgets.QMainWindow):
     def create_connections(self):
         bond_length_MWNT = 1.421 # default value of C-C bond length
         self.MWNT.lineEdit_bond_length_MWNT.insert(str(bond_length_MWNT))
-        self.MWNT.lineEdit_bond_length_MWNT.textChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.spinBox_chirality_N_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
         self.MWNT.SpinBox_desired_bond_length.valueChanged.connect(self.get_atom_type)
         self.MWNT.spinBox_chirality_M_MWNT.valueChanged.connect(self.MWNT_diameter_changed)
@@ -59,43 +58,68 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         #     bendFactor = float(self.MWNT.doubleSpinBox_bend_factor.text())
         # except NameError:
             # bendFactor = 1.0
-
-        if self.MWNT.radioButton_bond_length.isChecked() == True:
+        if self.MWNT.radioButton_bond_length.isChecked() == True or self.MWNT.radioButton_desired_bond_length.isChecked() == True:
             self.MWNT.SpinBox_desired_bond_length.setEnabled(False)
             MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
             MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
             if MWNT_type_1=="C" and MWNT_type_2=="C":
                 bond_length_MWNT = 1.421 # default value of C-C bond length
+                min = 1.3
+                max = 2.0
             if MWNT_type_1=="N" and MWNT_type_2=="B":
                 bond_length_MWNT = 1.47 # default value of N-B bond length
+                min = 1.3
+                max = 2.0
             if MWNT_type_1=="N" and MWNT_type_2=="Ga":
                 bond_length_MWNT = 1.95 # default value of N-Ga bond length
+                min = 1.9
+                max = 2.5
             if MWNT_type_1=="N" and MWNT_type_2=="Al":
                 bond_length_MWNT = 1.83 # default value of N-Al bond length
+                min = 1.8
+                max = 2.5
             if MWNT_type_1=="P" and MWNT_type_2=="Al":
                 bond_length_MWNT = 2.3 # default value of P-Al bond length
+                min = 1.8
+                max = 2.6
             if MWNT_type_1=="P" and MWNT_type_2=="Ga":
                 bond_length_MWNT = 2.28 # default value of P-Ga bond length
+                min = 1.9
+                max = 2.6
             if MWNT_type_1=="P" and MWNT_type_2=="C":
                 bond_length_MWNT = 1.87 # default value of P-C bond length
+                min = 1.6
+                max = 2.3
             if MWNT_type_1=="N" and MWNT_type_2=="C":
                 bond_length_MWNT = 1.47 # default value of N-C bond length
+                min = 1.3
+                max = 1.9
             if MWNT_type_1=="C" and MWNT_type_2=="B":
                 bond_length_MWNT = 1.56 # default value of C-B bond length
+                min = 1.3
+                max = 2.0
             if MWNT_type_1=="C" and MWNT_type_2=="Al":
                 bond_length_MWNT = 2.0 # default value of C-Al bond length
+                min = 1.8
+                max = 2.5
             if MWNT_type_1=="C" and MWNT_type_2=="Ga":
                 bond_length_MWNT = 2.46 # default value of P-B bond length
+                min = 1.9
+                max = 2.6
             if MWNT_type_1=="P" and MWNT_type_2=="B":
                 bond_length_MWNT = 1.74 # default value of P-B bond length
+                min = 1.6
+                max = 2.4
+
+            self.MWNT.SpinBox_desired_bond_length.setRange(min, max)
             self.MWNT.lineEdit_bond_length_MWNT.setText(str(bond_length_MWNT))
 
-        elif self.MWNT.radioButton_desired_bond_length.isChecked() == True:
+        if self.MWNT.radioButton_desired_bond_length.isChecked() == True:
+            self.MWNT.SpinBox_desired_bond_length.setRange(min, max)
             self.MWNT.lineEdit_bond_length_MWNT.setText(str(' '))
             self.MWNT.SpinBox_desired_bond_length.setEnabled(True)
             bond_length_MWNT = float(self.MWNT.SpinBox_desired_bond_length.text())
-        else:
-            bond_length_MWNT = 1.421
+
         return bond_length_MWNT
 
 
@@ -188,7 +212,7 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     pts = []
     xyz = []
     atom_types_swnt = []
-    for i1, i2 in product(range(0, wan*n+t1+1), range(t2, wan*m+1)):
+    for i1, i2 in product(range(0, wan*n+t1), range(t2, wan*m)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
             pt = b+shift
@@ -208,7 +232,7 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     xyz = [gr2tube(v) for _, v in pts]
     atom_types_swnt = [v for v, _ in pts]
     mol_1 = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-    fragments = mol_1.to_json(scale =1)
+    fragments = mol_1.to_json(scale =1.3)
     n_atoms_swnt = len(xyz)
     coord_array_swnt = np.array(xyz)
     assert coord_array_swnt.shape == (n_atoms_swnt, 3)
