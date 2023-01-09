@@ -37,7 +37,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
     def create_connections(self):
         bond_length_NanoRope = 1.421 # default value of C-C bond length
         self.NanoRope.lineEdit_bond_length_NanoRope.insert(str(bond_length_NanoRope))
-        self.NanoRope.lineEdit_bond_length_NanoRope.textChanged.connect(self.NanoRope_diameter_changed)
+        # self.NanoRope.lineEdit_bond_length_NanoRope.textChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.spinBox_chirality_N_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.spinBox_chirality_M_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
         self.NanoRope.spinBox_repeat_units_NanoRope.valueChanged.connect(self.NanoRope_diameter_changed)
@@ -57,42 +57,68 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
     def get_atom_type(self):
         global bendFactor, diameter_SWNT
-        if self.NanoRope.radioButton_bond_length.isChecked() == True:
+        if self.NanoRope.radioButton_bond_length.isChecked() == True or self.NanoRope.radioButton_desired_bond_length.isChecked() == True:
             self.NanoRope.SpinBox_desired_bond_length.setEnabled(False)
             NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
             NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
             if NanoRope_type_1=="C" and NanoRope_type_2=="C":
                 bond_length_NanoRope = 1.421 # default value of C-C bond length
+                min = 1.3
+                max = 2.0
             if NanoRope_type_1=="N" and NanoRope_type_2=="B":
                 bond_length_NanoRope = 1.47 # default value of N-B bond length
+                min = 1.3
+                max = 2.0
             if NanoRope_type_1=="N" and NanoRope_type_2=="Ga":
                 bond_length_NanoRope = 1.95 # default value of N-Ga bond length
+                min = 1.9
+                max = 2.5
             if NanoRope_type_1=="N" and NanoRope_type_2=="Al":
                 bond_length_NanoRope = 1.83 # default value of N-Al bond length
+                min = 1.8
+                max = 2.5
             if NanoRope_type_1=="P" and NanoRope_type_2=="Al":
                 bond_length_NanoRope = 2.3 # default value of P-Al bond length
+                min = 1.8
+                max = 2.6
             if NanoRope_type_1=="P" and NanoRope_type_2=="Ga":
                 bond_length_NanoRope = 2.28 # default value of P-Ga bond length
+                min = 1.9
+                max = 2.6
             if NanoRope_type_1=="P" and NanoRope_type_2=="C":
                 bond_length_NanoRope = 1.87 # default value of P-C bond length
+                min = 1.6
+                max = 2.3
             if NanoRope_type_1=="N" and NanoRope_type_2=="C":
                 bond_length_NanoRope = 1.47 # default value of N-C bond length
+                min = 1.3
+                max = 1.9
             if NanoRope_type_1=="C" and NanoRope_type_2=="B":
                 bond_length_NanoRope = 1.56 # default value of C-B bond length
+                min = 1.3
+                max = 2.0
             if NanoRope_type_1=="C" and NanoRope_type_2=="Al":
                 bond_length_NanoRope = 2.0 # default value of C-Al bond length
+                min = 1.8
+                max = 2.5
             if NanoRope_type_1=="C" and NanoRope_type_2=="Ga":
                 bond_length_NanoRope = 2.46 # default value of P-B bond length
+                min = 1.9
+                max = 2.6
             if NanoRope_type_1=="P" and NanoRope_type_2=="B":
                 bond_length_NanoRope = 1.74 # default value of P-B bond length
+                min = 1.6
+                max = 2.4
+
+            self.NanoRope.SpinBox_desired_bond_length.setRange(min, max)
             self.NanoRope.lineEdit_bond_length_NanoRope.setText(str(bond_length_NanoRope))
 
-        elif self.NanoRope.radioButton_desired_bond_length.isChecked() == True:
+        if self.NanoRope.radioButton_desired_bond_length.isChecked() == True:
+            self.NanoRope.SpinBox_desired_bond_length.setRange(min, max)
             self.NanoRope.lineEdit_bond_length_NanoRope.setText(str(' '))
             self.NanoRope.SpinBox_desired_bond_length.setEnabled(True)
             bond_length_NanoRope = float(self.NanoRope.SpinBox_desired_bond_length.text())
-        else:
-            bond_length_NanoRope = 1.421
+
         return bond_length_NanoRope
 
 
@@ -236,7 +262,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     xyz = [gr2tube(v) for _, v in pts]
     atom_types_swnt = [v for v, _ in pts]
     m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-    fragments = m.to_json(scale=1)
+    fragments = m.to_json(scale=1.3)
     # Number of atoms in SWNT:
     num_atoms_swnt = len(xyz)
     n_residues = 1
