@@ -103,7 +103,7 @@
              <string notr="true">background-color: rgb(255, 255, 255);</string>
             </property>
             <property name="minimum">
-             <number>0</number>
+             <number>1</number>
             </property>
             <property name="maximum">
              <number>50</number>
@@ -370,11 +370,6 @@
         <item>
          <property name="text">
           <string>None</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>One end</string>
          </property>
         </item>
         <item>
