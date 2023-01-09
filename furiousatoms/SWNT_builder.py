@@ -36,7 +36,6 @@ class Ui_SWNT(QtWidgets.QMainWindow):
     def create_connections(self):
         bond_length_SWNT = 1.421 # default value of C-C bond length
         self.SWNT.lineEdit_bond_length_SWNT.insert(str(bond_length_SWNT))
-        self.SWNT.lineEdit_bond_length_SWNT.textChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_chirality_N_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_chirality_M_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
         self.SWNT.spinBox_repeat_units_SWNT.valueChanged.connect(self.SWNT_diameter_changed)
@@ -59,42 +58,70 @@ class Ui_SWNT(QtWidgets.QMainWindow):
             bendFactor = float(self.SWNT.doubleSpinBox_bend_factor.text())
         except NameError:
             bendFactor = 1.0
-        if self.SWNT.radioButton_bond_length.isChecked() == True:
+        min = 1.3
+        max = 2.6
+        if self.SWNT.radioButton_bond_length.isChecked() == True or self.SWNT.radioButton_desired_bond_length.isChecked() == True:
             self.SWNT.SpinBox_desired_bond_length.setEnabled(False)
             SWNT_type_1 = self.SWNT.comboBox_type1_SWNT.currentText()
             SWNT_type_2 = self.SWNT.comboBox_type2_SWNT.currentText()
             if SWNT_type_1=="C" and SWNT_type_2=="C":
                 bond_length_SWNT = 1.421 # default value of C-C bond length
+                min = 1.3
+                max = 2.0
             if SWNT_type_1=="N" and SWNT_type_2=="B":
                 bond_length_SWNT = 1.47 # default value of N-B bond length
+                min = 1.3
+                max = 2.0
             if SWNT_type_1=="N" and SWNT_type_2=="Ga":
                 bond_length_SWNT = 1.95 # default value of N-Ga bond length
+                min = 1.9
+                max = 2.5
             if SWNT_type_1=="N" and SWNT_type_2=="Al":
                 bond_length_SWNT = 1.83 # default value of N-Al bond length
+                min = 1.8
+                max = 2.5
             if SWNT_type_1=="P" and SWNT_type_2=="Al":
                 bond_length_SWNT = 2.3 # default value of P-Al bond length
+                min = 1.8
+                max = 2.6
             if SWNT_type_1=="P" and SWNT_type_2=="Ga":
                 bond_length_SWNT = 2.28 # default value of P-Ga bond length
+                min = 1.9
+                max = 2.6
             if SWNT_type_1=="P" and SWNT_type_2=="C":
                 bond_length_SWNT = 1.87 # default value of P-C bond length
+                min = 1.6
+                max = 2.3
             if SWNT_type_1=="N" and SWNT_type_2=="C":
                 bond_length_SWNT = 1.47 # default value of N-C bond length
+                min = 1.3
+                max = 1.9
             if SWNT_type_1=="C" and SWNT_type_2=="B":
                 bond_length_SWNT = 1.56 # default value of C-B bond length
+                min = 1.3
+                max = 2.0
             if SWNT_type_1=="C" and SWNT_type_2=="Al":
                 bond_length_SWNT = 2.0 # default value of C-Al bond length
+                min = 1.8
+                max = 2.5
             if SWNT_type_1=="C" and SWNT_type_2=="Ga":
                 bond_length_SWNT = 2.46 # default value of P-B bond length
+                min = 1.9
+                max = 2.6
             if SWNT_type_1=="P" and SWNT_type_2=="B":
                 bond_length_SWNT = 1.74 # default value of P-B bond length
+                min = 1.6
+                max = 2.4
+
+            self.SWNT.SpinBox_desired_bond_length.setRange(min, max)
             self.SWNT.lineEdit_bond_length_SWNT.setText(str(bond_length_SWNT))
 
-        elif self.SWNT.radioButton_desired_bond_length.isChecked() == True:
+        if self.SWNT.radioButton_desired_bond_length.isChecked() == True:
+            self.SWNT.SpinBox_desired_bond_length.setRange(min, max)
             self.SWNT.lineEdit_bond_length_SWNT.setText(str(' '))
             self.SWNT.SpinBox_desired_bond_length.setEnabled(True)
             bond_length_SWNT = float(self.SWNT.SpinBox_desired_bond_length.text())
-        else:
-            bond_length_SWNT = 1.421
+
         return bond_length_SWNT
 
     def SWNT_diameter_changed(self):
@@ -160,7 +187,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     Ch_proj, T_proj = [v/np.linalg.norm(v)**2 for v in [Ch, T]]
     basis = [np.array((0, 0)), (a1+a2)/3]
     pts = []
-    for i1, i2 in product(range(0, n+t1+1), range(t2, m+1)):
+    for i1, i2 in product(range(0, n+t1), range(t2, m)):
         shift = i1*a1+i2*a2
         for sp, b in zip(species, basis):
             pt = b+shift
@@ -180,7 +207,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     xyz = [gr2tube(v) for _, v in pts]
     atom_types_swnt = [v for v, _ in pts]
     m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
-    fragments = m.to_json(scale=1)
+    fragments = m.to_json(scale=1.3)
     # Number of atoms in SWNT:
     num_atoms_swnt = len(xyz)
     n_residues = 1
