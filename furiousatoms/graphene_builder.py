@@ -9,6 +9,7 @@ from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import merged_universe_with_H, create_universe
 import MDAnalysis as mda
+from PySide2.QtGui import QIcon
 
 
 """
@@ -25,6 +26,7 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(244, 226)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()

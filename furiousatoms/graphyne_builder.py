@@ -4,6 +4,8 @@ from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import  load_files
 import MDAnalysis as mda
+from PySide2.QtGui import QIcon
+
 
 thre = 1e-10
 vacuum = 4
@@ -18,6 +20,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         self.setCentralWidget(self.graphyne)
         self.setLayout(self.v_layout)
         self.resize(248, 313)
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.scene = window.Scene()
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
@@ -27,13 +30,8 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         pass
 
     def create_connections(self):
-        # self.graphyne.comboBox_graphyne.activated.connect(self.get_info_graphyne)
         self.graphyne.doubleSpinBox_lx_extent.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.doubleSpinBox_ly_extent.valueChanged.connect(self.get_info_graphyne)
-        # self.graphyne.SpinBox_lx.valueChanged.connect(self.get_info_graphyne)
-        # self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
-        # self.graphyne.SpinBox_ly.valueChanged.connect(self.get_info_graphyne)
-        # self.graphyne.SpinBox_num_sheets.valueChanged.connect(self.get_info_graphyne)
         self.graphyne.pushButton_build_graphyne.clicked.connect(self.graphyne_builder_callback)
         self.graphyne.pushButton_build_graphyne.clicked.connect(lambda:self.close())
 
