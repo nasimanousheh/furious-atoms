@@ -228,7 +228,7 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
 
 def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C', 'C'), centered=False):
     global box_lx, box_ly, box_lz, bendFactor, diameter_SWNT
-    bond_length_hydrogen = 1.1
+    bond_length_hydrogen = 1.0
     d = gcd(n, m)
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
