@@ -70,30 +70,31 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             sheet_separation = 3.347
 
         graphyne_type = self.graphyne.comboBox_graphyne.currentText()
+        dir_Graphyne_folder = io.get_frozen_path() if io.is_frozen() else io.get_application_path()
+        Graphyne_folder = os.path.join(dir_Graphyne_folder, 'graphyne_dataset')
         if graphyne_type =="graphyne_12_12_12":
-            fname = 'furiousatoms/graphyne_dataset/betaGraphyne_unitcell.pdb'
+            fname= os.path.join(Graphyne_folder, 'betaGraphyne_unitcell.pdb')
             structure_info = self.beta_graphyne_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne-1":
-            fname = 'furiousatoms/graphyne_dataset/gammaGraphyne_unitcell.pdb'
+            fname=os.path.join(Graphyne_folder, 'gammaGraphyne_unitcell.pdb')
             structure_info = self.gamma_graphyne_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne-2":
-            fname = 'furiousatoms/graphyne_dataset/graphdiyne_unitcell.pdb'
+            fname=os.path.join(Graphyne_folder, 'graphdiyne_unitcell.pdb')
             structure_info = self.graphyne_2_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="graphyne_6_6_12":
-            fname = 'furiousatoms/graphyne_dataset/6-6-12-graphyne_unitcell.pdb'
+            fname=os.path.join(Graphyne_folder, '6-6-12-graphyne_unitcell.pdb')
             structure_info = self.graphyne_6_6_12_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
         if graphyne_type =="twin Graphene":
-            fname = 'furiousatoms/graphyne_dataset/twinGraphene_unitcell.pdb'
+            fname=os.path.join(Graphyne_folder, 'twinGraphene_unitcell.pdb')
             sheet_separation = sheet_separation + 2.034
             structure_info = self.twin_graphene_builder(fname, edge_length_x, edge_length_y)
             universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         cog = universe_all.atoms.center_of_geometry()
-        print('Original solvent center of geometry: ', cog)
         universe_all.atoms.positions -= cog
         window = self.win.create_mdi_child()
         window.make_title()
