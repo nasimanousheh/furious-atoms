@@ -56,7 +56,6 @@ class Ui_graphene(QtWidgets.QMainWindow):
         self.graphene.doubleSpinBox_unitcell_along_x.valueChanged.connect(self.get_atom_type)
         self.graphene.doubleSpinBox_unitcell_along_y.valueChanged.connect(self.get_atom_type)
 
-
     def get_atom_type(self):
         min = 1.3
         max = 2.6
