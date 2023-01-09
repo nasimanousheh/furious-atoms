@@ -311,6 +311,7 @@
               </property>
               <property name="minimum">
                <double>1.300000000000000</double>
+
               </property>
               <property name="maximum">
                <double>2.600000000000000</double>
@@ -320,6 +321,7 @@
               </property>
               <property name="value">
                <double>1.300000000000000</double>
+
               </property>
              </widget>
             </item>
