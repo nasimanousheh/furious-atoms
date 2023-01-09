@@ -5,6 +5,7 @@ from PySide2 import QtWidgets
 from furiousatoms.io import  load_files
 import MDAnalysis as mda
 from PySide2.QtGui import QIcon
+import os
 
 
 thre = 1e-10
