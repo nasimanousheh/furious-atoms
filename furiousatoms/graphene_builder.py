@@ -281,7 +281,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
         box_lx or box_ly or box_lz
     except NameError:
         box_lx = box_ly = box_lz = 0.0
-    bond_length_hydrogen = 1.1
+    bond_length_hydrogen = 1.0
     if diamond_sheet is True:
         d = gcd(n, m)
         dR = 3*d if (n-m) % (3*d) == 0 else d
