@@ -6,7 +6,7 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.molecular import UniverseManager
+from furiousatoms.molecular import UniverseManager, ViewerMemoryManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, ui, primitive, material
@@ -119,13 +119,30 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
-        universe, no_bonds = io.load_files(fname)
-        if not universe:
-            return success
-        self.load_universe(universe, no_bonds)
-        success = True
-        return success
+        # universe, no_bonds = io.load_files(fname)
+        # if not universe:
+        #     return success
+        # self.load_universe(universe, no_bonds)
+        # success = True
+        # return success
 
+        box_size = [100, 200, 100]
+        positions, bonds, atom_types = io.load_files(fname)
+        self.load_structure(box_size, positions, bonds, atom_types)
+        return True
+
+
+    def load_structure(self, box_size, positions, bonds, atom_types):
+        # positions = np.array([[8, 0, 0], [0, 1, 0]])
+        bonds = np.array([[0, 1, 0]])
+        # bonds = np.array([[1, 0, 3]])
+        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, [])
+
+        self.create_universe_connections()
+        self.display_universe()
+        self.setWindowTitle(self.current_file)
+
+    #TODO: Remove
     def load_universe(self, universe, no_bonds=0):
         self.universe_manager = UniverseManager(universe, no_bonds)
         self.create_universe_connections()

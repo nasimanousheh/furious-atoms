@@ -1,12 +1,15 @@
 # Standard package
 import os
 import sys
+import warnings
 
 import furiousatoms
 from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
+
+from furiousatoms.parsers.pdb_parser import PDBParser
 
 
 def is_frozen():
@@ -79,7 +82,7 @@ def load_files(fname, debug=False):
     load_file_export = open(fname, 'r')
     lines = load_file_export.readlines()
     no_lines = len(lines)
-    frames_cnt = 0
+    # frames_cnt = 0
     format_data = None
     no_bonds = 0
     bonds = 0
@@ -90,15 +93,20 @@ def load_files(fname, debug=False):
             break
         i += 1
 
-    load_file = MDAnalysis.Universe(fname, format=format_data)
-    if format_data is None:
-        load_file = MDAnalysis.Universe(fname)
-        try:
-            bonds = load_file.bonds.to_indices()
-            no_bonds = len(load_file.bonds)
-        except MDAnalysis.exceptions.NoDataError:
-            no_bonds = 0
-    return load_file, no_bonds
+    #TODO remove MDAnalysis here
+    
+    parser = PDBParser()
+    return parser.parse(fname)
+
+    # load_file = MDAnalysis.Universe(fname, format=format_data)
+    # if format_data is None:
+    #     load_file = MDAnalysis.Universe(fname)
+    #     try:
+    #         bonds = load_file.bonds.to_indices()
+    #         no_bonds = len(load_file.bonds)
+    #     except MDAnalysis.exceptions.NoDataError:
+    #         no_bonds = 0
+    # return load_file, no_bonds
 
 
 def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):

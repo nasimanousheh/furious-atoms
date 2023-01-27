@@ -7,6 +7,24 @@ from fury import window, actor, ui, molecular as mol
 import fury.primitive as fp
 
 table = mol.PTable()
+
+#TODO remove this comment
+# class Atom:
+#     def __init__(self, element):
+#         """
+#         :param str element: an abbreviation of the element (e.g. C or Si)
+#         """
+#         self.element = element
+
+# class Structure:
+#     def __init__(self):
+#         self.bonds = {} #adjacency list graph
+#         self.atoms = []
+    
+#     def addBond():
+#         # if 
+#         pass
+
 # TODO: I have to replace this class with the ViewerMemoryManager class
 # that does not depend on universe (md analysis).
 class UniverseManager:
@@ -15,7 +33,7 @@ class UniverseManager:
         """
         """
         self.universe = universe
-        self.universe_save = None
+        self.universe_save = None #a copy of the universe with any user modifications
         try:
             self.box_lx = self.box[0]
             self.box_ly = self.box[1]
@@ -169,7 +187,7 @@ class UniverseManager:
 
         self.line_thickness = 0.2
         bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness,
-                                      lod=False, replace_strips=True)
+                                      lod=False)
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
         self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
@@ -185,102 +203,112 @@ class UniverseManager:
             l_actors += [self.bond_actor, ]
         return l_actors
 
-# class ViewerMemoryManager:
-
-#     def __init__(self, box, pos, bonds, atom_types):
-#         """
-#         """
-#         self.box_lx, self.box_ly, self.box_lz = box
-#         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
-#                                   colors=(0, 0, 0), linewidth=1, fake_tube=True)
-
-#         self.pos = pos
-#         self.no_atoms = pos.shape[0]
-#         self.bonds = bonds
-#         self.atom_types = atom_types
-#         self.no_bonds = bonds.shape[0]
-#         self.have_bonds = self.no_bonds > 0
-#         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
-#         colors = np.ones((self.no_atoms, 4))
-#         self.unique_types = np.unique(self.atom_types)
-#         self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
-#         self.colors_unique_types[:, 3] = 1
-#         for i, typ in enumerate(self.unique_types):
-#             colors[self.atom_type == typ] = self.colors_unique_types[i]
-
-#         # set all radii to 1
-#         self.radii_spheres = np.ones((self.no_atoms))
-#         # but then switch to 0.2 for each type
-#         self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
-#         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
-#         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
-
-#         # create the sphere particles actor using primitives
-#         vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-#         res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
-#         big_verts, big_faces, big_colors, _ = res
-#         self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
 
 
-#         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
-#         self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
-#         self.initial_vertices_particles = self.all_vertices_particles.copy() - \
-#             np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
-#         vertices_particle = utils.vertices_from_actor(self.sphere_actor)
-#         self.no_vertices_all_particles = vertices_particle.shape[0]
-#         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
-#         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
-#         self.colors_backup_particles = self.vcolors_particle.copy()
-#         # TODO: check if this is truly used
-#         self.set_value_radius = 0
-#         # Animation Player
-#         self.cnt = 0
-#         self.selected_value_radius = 0
 
 
-#     @property
-#     def n_frames(self):
-#         return 1
 
-#     @property
-#     def atom_type(self):
-#         return ['C']
 
-#     def get_bonds(self):
-#         if not self.have_bonds:
-#             return 0
-#         return self._bonds
 
-#     def generate_bond_actor(self):
-#         # bonds_indices = self.universe.bonds.to_indices()
-#         bonds_indices = self.bonds
-#         first_pos_bond = self.pos[(bonds_indices[:, 0])]
-#         second_pos_bond = self.pos[(bonds_indices[:, 1])]
-#         bonds = np.hstack((first_pos_bond, second_pos_bond))
-#         self._bonds = bonds.reshape(self.no_bonds, 2, 3)
-#         self._bonds_2 = np.zeros((self.no_bonds*2, 2, 3))
-#         for i in range(self.no_bonds):
-#             p1, p2 = self._bonds[i]
-#             phalf = 0.5 * (p1 + p2)
-#             self._bonds_2[i * 2][0] = p1
-#             self._bonds_2[i * 2][1] = phalf
-#             self._bonds_2[i * 2 + 1][0] = phalf
-#             self._bonds_2[i * 2 + 1][1] = p2
 
-#         self.bond_colors_2 = (0, 0, 0., 1)
-#         self.line_thickness = 0.2
-#         bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
-#         self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
-#         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
-#         self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
-#         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
-#         self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
-#         self.unique_types_bond = np.unique(self.bond_types)
-#         return bond_actor
 
-#     def actors(self):
-#         l_actors = [self.sphere_actor, self.bbox_actor]
-#         if self.have_bonds:
-#             l_actors += [self.bond_actor, ]
+class ViewerMemoryManager:
 
-#         return l_actors
+    def __init__(self, box, pos, bonds, atom_types):
+        """
+        """
+        self.box_lx, self.box_ly, self.box_lz = box
+        self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
+                                  colors=(0, 0, 0), linewidth=1, fake_tube=True)
+
+        self.pos = pos
+        self.no_atoms = pos.shape[0]
+        self.bonds = bonds
+        self.atom_types = atom_types
+        self.no_bonds = bonds.shape[0]
+        self.have_bonds = self.no_bonds > 0
+        self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
+        colors = np.ones((self.no_atoms, 4))
+        self.unique_types = np.unique(self.atom_types)
+        self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
+        self.colors_unique_types[:, 3] = 1
+        for i, typ in enumerate(self.unique_types):
+            colors[self.atom_type == typ] = self.colors_unique_types[i]
+
+        # set all radii to 1
+        self.radii_spheres = np.ones((self.no_atoms))
+        # but then switch to 0.2 for each type
+        self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
+        self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
+        self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
+
+        # create the sphere particles actor using primitives
+        vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
+        big_verts, big_faces, big_colors, _ = res
+        self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+
+
+        self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
+        self.no_vertices_per_particle = len(self.all_vertices_particles) / self.no_atoms
+        self.initial_vertices_particles = self.all_vertices_particles.copy() - \
+            np.repeat(self.pos, self.no_vertices_per_particle, axis=0)
+        vertices_particle = utils.vertices_from_actor(self.sphere_actor)
+        self.no_vertices_all_particles = vertices_particle.shape[0]
+        self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
+        self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
+        self.colors_backup_particles = self.vcolors_particle.copy()
+        # TODO: check if this is truly used
+        self.set_value_radius = 0
+        # Animation Player
+        self.cnt = 0
+        self.selected_value_radius = 0
+
+
+    @property
+    def n_frames(self):
+        return 1
+
+    @property
+    def atom_type(self):
+        return ['C']
+
+    def get_bonds(self):
+        if not self.have_bonds:
+            return 0
+        return self._bonds
+
+    def generate_bond_actor(self):
+        # bonds_indices = self.universe.bonds.to_indices()
+        bonds_indices = self.bonds
+        first_pos_bond = self.pos[(bonds_indices[:, 0])]
+        second_pos_bond = self.pos[(bonds_indices[:, 1])]
+        bonds = np.hstack((first_pos_bond, second_pos_bond))
+        self._bonds = bonds.reshape(self.no_bonds, 2, 3)
+        self._bonds_2 = np.zeros((self.no_bonds*2, 2, 3))
+        for i in range(self.no_bonds):
+            p1, p2 = self._bonds[i]
+            phalf = 0.5 * (p1 + p2)
+            self._bonds_2[i * 2][0] = p1
+            self._bonds_2[i * 2][1] = phalf
+            self._bonds_2[i * 2 + 1][0] = phalf
+            self._bonds_2[i * 2 + 1][1] = p2
+
+        self.bond_colors_2 = (0, 0, 0., 1)
+        self.line_thickness = 0.2
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
+        self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
+        self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
+        self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
+        self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
+        self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
+        #TODO UNUSED
+        # self.unique_types_bond = np.unique(self.bond_types)
+        return bond_actor
+
+    def actors(self):
+        l_actors = [self.sphere_actor, self.bbox_actor]
+        if self.have_bonds:
+            l_actors += [self.bond_actor, ]
+
+        return l_actors
