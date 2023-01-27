@@ -22,8 +22,16 @@ class PDBParser:
         with open(fname, "r") as f:
             for line in f.read().split("\n"):
                 if line.startswith("CONECT"): #Note the spelling. 
-                    # return NotImplementedError()
-                    pass
+                    for i, j in ((12,16), (17,21), (22,26)): #indices of atom IDs to connect to within the string
+                        try:
+                            otherId = int(line[i:j]) - 1 #ID of atom to connect to
+                            bond = np.zeros((2), dtype='int')
+                            bond[0] = abs(int(line[7:11]) - 1) #ID of first atom
+                            bond[1] = abs(otherId)
+                            if bond[0] != bond[1]:
+                                bonds.append(bond)
+                        except (ValueError, IndexError):
+                            pass
                 elif line.startswith("ATOM"):
                     try:
                         pos = np.zeros((3))
