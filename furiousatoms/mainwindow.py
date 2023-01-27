@@ -69,7 +69,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def create_connections(self):
         # File menu actions
         self.ui.actionNew_file.triggered.connect(self.new_window)
-        self.ui.actionLoad_file.triggered.connect(self.open)
+        self.ui.actionLoad_file.triggered.connect(self.open_from_widget)
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionSave_Image_File.triggered.connect(self.save_image)
         self.ui.actionExit.triggered.connect(self.quit_fired)
@@ -859,11 +859,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         child.make_title()
         child.show()
 
-    def open(self):
-        fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
-        if not fname:
-            return
-
+    def open(self, fname):
         existing = self.find_mdi_child(fname)
         if existing:
             self.ui.mdiArea.setActiveSubWindow(existing)
@@ -875,6 +871,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             child.close()
 
+    def open_from_widget(self):
+        fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
+        if not fname:
+            return
+        self.open(fname)
+        
     def open_dataset_fullerene(self):
         dir_fullerene_folder = io.get_frozen_path() if io.is_frozen() else io.get_application_path()
         fullerene_folder = os.path.join(dir_fullerene_folder,

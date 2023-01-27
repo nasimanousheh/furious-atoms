@@ -99,6 +99,10 @@ def start_gui(app_folder=None, files=None):
     # win.showMinimized()
     # win.showNormal()
     splash.finish(win)
+    
+    if files:
+        for filename in files:
+            win.open(filename)
 
     return app.exec_()
 
@@ -113,16 +117,17 @@ def parse_arguments():
         usage()
         sys.exit(2)
 
-    # Todo, list all files to open
-    for args in args:
-        pass
+    #List all files to open
+    out = []
+    for arg in args:
+        out.append(arg)
 
     for opt, val in options:
         if opt == '-h':
             usage()
             sys.exit()
 
-    return
+    return out
 
 
 if __name__ == '__main__':
