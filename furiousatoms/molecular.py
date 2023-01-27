@@ -236,17 +236,19 @@ class ViewerMemoryManager:
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         # set all radii to 1
-        self.radii_spheres = np.ones((self.no_atoms))
+        self.radii_spheres = np.ones((self.no_atoms)) * 0.2 #FIXME sizing is buggy
         # but then switch to 0.2 for each type
         self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
         # create the sphere particles actor using primitives
-        vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
-        res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
-        big_verts, big_faces, big_colors, _ = res
-        self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+        # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
+        # big_verts, big_faces, big_colors, _ = res
+
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=colors, radii=self.radii_spheres)
+        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
 
 
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)

@@ -133,9 +133,6 @@ class Viewer3D(QtWidgets.QWidget):
 
 
     def load_structure(self, box_size, positions, bonds, atom_types):
-        # positions = np.array([[8, 0, 0], [0, 1, 0]])
-        bonds = np.array([[0, 1, 0]])
-        # bonds = np.array([[1, 0, 3]])
         self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, [])
 
         self.create_universe_connections()
