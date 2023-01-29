@@ -8,8 +8,11 @@ from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
+from furiousatoms.parsers.gromacs_parser import GROMACSParser
+from furiousatoms.parsers.lammps_parser import LAMMPSParser
 
 from furiousatoms.parsers.pdb_parser import PDBParser
+from furiousatoms.parsers.xyz_parser import XYZParser
 
 
 def is_frozen():
@@ -95,8 +98,15 @@ def load_files(fname, debug=False):
 
     #TODO remove MDAnalysis here
     
-    parser = PDBParser()
-    return parser.parse(fname)
+    #Choose parser based on file extension
+    if fname.endswith(".pdb"):
+        return PDBParser().parse(fname)
+    elif fname.endswith(".data") or fname.endswith(".dat") or fname.endswith(".lmp"):
+        return LAMMPSParser().parse(fname)
+    elif fname.endswith(".xyz"):
+        return XYZParser().parse(fname)
+    elif fname.endswith(".gro"):
+        return GROMACSParser().parse(fname)
 
     # load_file = MDAnalysis.Universe(fname, format=format_data)
     # if format_data is None:
