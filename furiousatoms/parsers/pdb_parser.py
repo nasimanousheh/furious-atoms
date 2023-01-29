@@ -1,26 +1,23 @@
-'''
-"ATOM  {serial:5d} {name:<4s}{altLoc:<1s}{resName:<4s}"
-            "{chainID:1s}{resSeq:4d}{iCode:1s}"
-            "   {pos[0]:8.3f}{pos[1]:8.3f}{pos[2]:8.3f}{occupancy:6.2f}"
-            "{tempFactor:6.2f}      {segID:<4s}{element:>2s}{charge:2s}\n"),
-'''
-import os
 import numpy as np
-import traceback
+from util import float_or_zero
 
-def float_or_zero(val):
-    try:
-        return float(val)
-    except ValueError:
-        return 0.0
+#TODO maybe make error handlers less rigid?
+#TODO atom types!
 
 class PDBParser:
     def parse(self, fname):
+        box_size = [0, 0, 0]
         positions = []
         bonds = []
         atom_types = []
-        with open(fname, "r") as f:
-            for line in f.read().split("\n"):
+        errors = "" #error messages to help user debug their file
+        with open(fname, "r") as fp:
+            lineId = 0
+            while True:
+                line = fp.readline()
+                if not line:
+                    break
+
                 if line.startswith("CONECT"): #Note the spelling. 
                     for i, j in ((12,16), (17,21), (22,26)): #indices of atom IDs to connect to within the string
                         try:
@@ -30,33 +27,34 @@ class PDBParser:
                             bond[1] = abs(otherId)
                             if bond[0] != bond[1]:
                                 bonds.append(bond)
-                        except (ValueError, IndexError):
+                        except ValueError:
                             pass
+                            # errors += "Refusing to connect a bond on line #%d.\n"%(lineId)
+                        except IndexError:
+                            if len(line) < 13:
+                                errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(lineId)
                 elif line.startswith("ATOM"):
                     try:
                         pos = np.zeros((3))
-                        # print(line[31:38])
-                        # print(line[39:46])
-                        # print(line[47:54])
                         pos[0] = float_or_zero(line[31:38])
                         pos[1] = float_or_zero(line[39:46])
                         pos[2] = float_or_zero(line[47:54])
                         positions.append(pos)
                     except:
-                        print("Failure processing line `%s`"%line)
-                        traceback.print_exc()
-                elif line.startswith("LINK"):
-                    # return NotImplementedError()
-                    pass
+                        errors += "Failure processing line #%d.\n"%(lineId)
                 elif line.startswith("REMARK"):
                     pass
+                elif line.startswith("CRYST1 "):
+                    if len(line) >= 33:
+                        box_size[0] = float_or_zero(line[7:15])
+                        box_size[1] = float_or_zero(line[16:24])
+                        box_size[2] = float_or_zero(line[25:33])
+                    else:
+                        errors += "Line #%d is too short. Three numbers are needed for the box size.\n"%(lineId)
                 else:
-                    #TODO throw custom exception
-                    print("Unable to process line `%s`"%line)
+                    errors += "Unable to process line #%d.\n"%(lineId)
+                lineId += 1
+        
+        print(errors) #TODO display popup
     
-        return np.array(positions), np.array(bonds), np.array(atom_types)
-
-
-if __name__ == "__main__":
-    parser = PDBParser
-    parser.parse(None, "C:\\Users\\Pete\\Desktop\\furious-atoms-exercises\\CB_18.pdb")
+        return box_size, np.array(positions), np.array(bonds), np.array(atom_types)

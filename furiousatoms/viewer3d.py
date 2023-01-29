@@ -100,12 +100,10 @@ class Viewer3D(QtWidgets.QWidget):
 
     @property
     def scene(self):
-        """The foo property."""
         return self._scene
 
     @property
     def showm(self):
-        """The foo property."""
         return self._showm
 
     def render(self):
@@ -126,10 +124,9 @@ class Viewer3D(QtWidgets.QWidget):
         # success = True
         # return success
 
-        box_size = [100, 200, 100]
-        positions, bonds, atom_types = io.load_files(fname)
+        box_size, positions, bonds, atom_types = io.load_files(fname)
         self.load_structure(box_size, positions, bonds, atom_types)
-        return True
+        return True #TODO should not always be true
 
 
     def load_structure(self, box_size, positions, bonds, atom_types):

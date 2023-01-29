@@ -8,6 +8,8 @@ import fury.primitive as fp
 
 table = mol.PTable()
 
+SPHERE_SIZE = 0.35
+
 #TODO remove this comment
 # class Atom:
 #     def __init__(self, element):
@@ -236,7 +238,7 @@ class ViewerMemoryManager:
             colors[self.atom_type == typ] = self.colors_unique_types[i]
 
         # set all radii to 1
-        self.radii_spheres = np.ones((self.no_atoms)) * 0.2 #FIXME sizing is buggy
+        self.radii_spheres = np.ones((self.no_atoms)) * SPHERE_SIZE
         # but then switch to 0.2 for each type
         self.radii_unique_types = 0.4 + np.zeros(len(self.unique_types))
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
@@ -283,9 +285,20 @@ class ViewerMemoryManager:
     def generate_bond_actor(self):
         # bonds_indices = self.universe.bonds.to_indices()
         bonds_indices = self.bonds
-        first_pos_bond = self.pos[(bonds_indices[:, 0])]
-        second_pos_bond = self.pos[(bonds_indices[:, 1])]
-        bonds = np.hstack((first_pos_bond, second_pos_bond))
+
+        #For all bonds, match first atom ID in bond to atom's X coord (and match second atom to Y coord)
+        first_pos_bonds = []
+        second_pos_bonds = []
+        no_atoms = len(self.pos)
+        bondCount = 0
+        for bondStart, bondEnd in bonds_indices:
+            if bondStart < no_atoms and bondEnd < no_atoms: #exclude out-of-bounds bond indices
+                first_pos_bonds.append(self.pos[bondStart])
+                second_pos_bonds.append(self.pos[bondEnd])
+                bondCount += 1
+        self.no_bonds = bondCount
+        bonds = np.hstack((first_pos_bonds, second_pos_bonds))
+
         self._bonds = bonds.reshape(self.no_bonds, 2, 3)
         self._bonds_2 = np.zeros((self.no_bonds*2, 2, 3))
         for i in range(self.no_bonds):
