@@ -12,40 +12,24 @@ class LAMMPSParser:
 
     def parse(self, fname):
         def parseAtom(line):
+            '''
+            Atom lines come in many styles, but we assume the XYZ coordinates are the last 3 
+            values as per the 'atomic' and 'full' styles. 
+            '''
             try:
                 pos = np.zeros((3))
-                #TODO remove
-                # #Since some files have more spacing than necessary, search for 
-                # #the fifth non-blank `word` (number) and record its index in `wordsRead`.
-                # wordsRead = 0
-                # words = line.split()
-                # for word in words:
-                #     if wordsRead == 4:
-                #         break
-                #     if len(word) > 0:
-                #         wordsRead += 1
-                # pos[0] = float_or_zero(words[wordsRead])
-                # pos[1] = float_or_zero(words[wordsRead + 1])
-                # pos[2] = float_or_zero(words[wordsRead + 2])
-
                 words = line.split()
-                if len(words) >= 7:
+                if len(words) >= 7: #'Full' style
                     pos[0] = float_or_zero(words[4])
                     pos[1] = float_or_zero(words[5])
                     pos[2] = float_or_zero(words[6])
-                    self.positions.append(pos)
-                elif len(words) == 6: #If element is absent
-                    pos[0] = float_or_zero(words[3])
-                    pos[1] = float_or_zero(words[4])
-                    pos[2] = float_or_zero(words[5])
-                    self.positions.append(pos)
-                elif len(words) == 5: 
+                elif len(words) >= 5: #'Atomic' style
                     pos[0] = float_or_zero(words[2])
                     pos[1] = float_or_zero(words[3])
                     pos[2] = float_or_zero(words[4])
-                    self.positions.append(pos)
                 else:
                     raise IndexError("Line too short")
+                self.positions.append(pos)
             except IndexError:
                 self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
             except:
@@ -82,22 +66,29 @@ class LAMMPSParser:
                 header = line.strip().lower()
                 if len(header) == 0:
                     pass
-                elif header.startswith("masses") or header.startswith("atoms"):
+                elif header.startswith("masses"):
+                    parserMethod = None
+                elif header.startswith("atoms"):
                     parserMethod = parseAtom
                 elif header.startswith("bonds"):
                     parserMethod = parseBond
-                elif header.startswith("angles"):
-                    parserMethod = None #TODO: Implement Angles
-                elif header.startswith("dihedrals"):
-                    parserMethod = None #TODO: Implement Dihedrals
+                elif len(header.split()) == 1:
+                    #For non-implemented headers like Angles and Dihedrals
+                    parserMethod = None
                 
                 #Perform the parse
-                elif len(line.strip()) > 0 and parserMethod != None:
-                    parserMethod(line)
-                else:
-                    self.errors += "Unable to process line #%d.\n"%(self.lineId)
+                elif len(header.strip()) > 0:
+                    if parserMethod != None:
+                        parserMethod(line)
+                    else:
+                        self.errors += "Unable to process line #%d.\n"%(self.lineId)
                 self.lineId += 1
         
         print(self.errors) #TODO display popup
     
         return self.box_size, np.array(self.positions), np.array(self.bonds), np.array(self.atom_types)
+
+#TODO remove
+if __name__ == "__main__":
+    parser = LAMMPSParser()
+    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.data")
