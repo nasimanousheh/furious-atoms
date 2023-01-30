@@ -10,7 +10,6 @@ import MDAnalysis
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
 from furiousatoms.parsers.gromacs_parser import GROMACSParser
 from furiousatoms.parsers.lammps_parser import LAMMPSParser
-
 from furiousatoms.parsers.pdb_parser import PDBParser
 from furiousatoms.parsers.xyz_parser import XYZParser
 
