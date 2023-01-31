@@ -21,7 +21,7 @@ class PDBParser(BaseParser):
                     errors += "Refusing to connect a bond on line #%d.\n"%(self.lineId)
                 except IndexError:
                     if len(line) < 13:
-                        self.errorShortLine(line)
+                        self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
         elif line.startswith("ATOM"):
             try:
                 pos = np.zeros((3))
