@@ -2,8 +2,6 @@ import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from util import float_or_zero
 
-#TODO: Refactor to use iterator pattern for the words
-
 class GROMACSParser(BaseParser):
     def __init__(self) -> None:
         super().__init__()
@@ -30,7 +28,6 @@ class GROMACSParser(BaseParser):
             #search for non-blank words only.
             self.nextWordIndex = 0
             self.words = line.split()
-            pos = np.zeros((3))
             
             #First (0th) word is residue number
             self.nextWord() #skip the word
@@ -40,6 +37,7 @@ class GROMACSParser(BaseParser):
             self.nextWord()
             
             #Words #4-#6 form the XYZ position.
+            pos = np.zeros((3))
             pos[0] = float_or_zero(self.nextWord())
             pos[1] = float_or_zero(self.nextWord())
             pos[2] = float_or_zero(self.nextWord())
