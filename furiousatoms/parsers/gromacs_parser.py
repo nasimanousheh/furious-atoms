@@ -8,6 +8,7 @@ class GROMACSParser(BaseParser):
     def __init__(self) -> None:
         super().__init__()
         self.numAtoms = 2 ** 31 #default is near max int
+        self.nextWordIndex = 0
 
     def parseAtomCount(self, line):
             try:
@@ -16,36 +17,37 @@ class GROMACSParser(BaseParser):
                 #Atom count is not truly necessary, but tell the user anyway.
                 self.errors += "Line #2 must contain the number of atoms as per GROMACS format."
 
+    def nextWord(self):
+        for i in range(self.nextWordIndex, len(self.words)):
+            if len(self.words[i]) > 0:
+                self.nextWordIndex += 1
+                return self.words[i]
+        raise EOFError("No more words remain for the current line")
+
     def parseAtom(self, line):
-        #Since GROMACS supports arbitrary decimal precision, 
-        #search for non-blank words only.
-        wordsRead = 0
-        words = line.split()
-        pos = np.zeros((3))
-        for word in words:
-            if len(word) > 0:
-                wordsRead += 1
+        try:
+            #Since GROMACS supports arbitrary decimal precision, 
+            #search for non-blank words only.
+            self.nextWordIndex = 0
+            self.words = line.split()
+            pos = np.zeros((3))
             
             #First (0th) word is residue number
-            if wordsRead == 1: 
-                pass
+            self.nextWord() #skip the word
             #Residue name
-            elif wordsRead == 2: 
-                pass
+            self.nextWord()
             #Atom name
-            elif wordsRead == 3: 
-                pass
-            #Word #4 is X, word #5 is Y, and word #6 is Z => store these as a position.
-            elif wordsRead >= 4 and wordsRead <= 6: #Position
-                k = wordsRead - 4
-                pos[k] = float_or_zero(words[wordsRead - 1])
-                if wordsRead == 6: #all 3 coords read
-                    self.positions.append(pos)
-            #Velocity (in nm/ps (or km/s), x y z in 3 columns, each 8 positions with 4 decimal places
-            elif wordsRead >= 7 and wordsRead <= 9: 
-                pass
-            else:
-                continue
+            self.nextWord()
+            
+            #Words #4-#6 form the XYZ position.
+            pos[0] = float_or_zero(self.nextWord())
+            pos[1] = float_or_zero(self.nextWord())
+            pos[2] = float_or_zero(self.nextWord())
+            self.positions.append(pos)
+            
+            #Remaining words #7-9 form the velocity, but we skip these.
+        except:
+            self.errors += "Unable to parse atom on line #%d"%(self.lineId)
 
     def parseBoxSize(self, line):
         wordsRead = 0
@@ -79,4 +81,4 @@ class GROMACSParser(BaseParser):
 #TODO remove
 if __name__ == "__main__":
     parser = GROMACSParser()
-    parser.parse("C:\\Users\\Pete\\Desktop\\furious-atoms-exercises\\one.gro")
+    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.gro")

@@ -39,9 +39,3 @@ class BaseParser:
     @abstractmethod
     def parseLine(self, fname) -> Tuple[list, np.array, np.array, np.array]:
         pass
-
-    def errorBond(self, line):
-        "Refusing to connect a bond on line #%d.\n"%(self.lineId)
-
-    def errorShortLine(self, line):
-        self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
