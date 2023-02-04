@@ -14,10 +14,12 @@ class LAMMPSParser(BaseParser):
             pos = np.zeros((3))
             words = line.split()
             if len(words) >= 7: #'Full' style
+                self.atom_types.append(words[2])
                 pos[0] = float_or_zero(words[4])
                 pos[1] = float_or_zero(words[5])
                 pos[2] = float_or_zero(words[6])
             elif len(words) >= 5: #'Atomic' style
+                self.atom_types.append(words[1])
                 pos[0] = float_or_zero(words[2])
                 pos[1] = float_or_zero(words[3])
                 pos[2] = float_or_zero(words[4])

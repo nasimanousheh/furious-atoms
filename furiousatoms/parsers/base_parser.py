@@ -30,7 +30,7 @@ class BaseParser:
                 if not line:
                     break
                 self.parseLine(line)
-            self.lineId += 1
+                self.lineId += 1
 
         print(self.errors) #TODO display popup
 

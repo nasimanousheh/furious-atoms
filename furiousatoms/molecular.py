@@ -10,22 +10,6 @@ table = mol.PTable()
 
 SPHERE_SIZE = 0.35
 
-#TODO remove this comment
-# class Atom:
-#     def __init__(self, element):
-#         """
-#         :param str element: an abbreviation of the element (e.g. C or Si)
-#         """
-#         self.element = element
-
-# class Structure:
-#     def __init__(self):
-#         self.bonds = {} #adjacency list graph
-#         self.atoms = []
-    
-#     def addBond():
-#         # if 
-#         pass
 
 # TODO: I have to replace this class with the ViewerMemoryManager class
 # that does not depend on universe (md analysis).
@@ -55,6 +39,7 @@ class UniverseManager:
         # self._pos = self.universe.trajectory[0].positions.copy().astype(float)
         # if self.n_frames > 1:
         #     pos_R = self.universe.trajectory[self.cnt].positions.copy().astype('f8')
+        #FIXME transform_Rtos is necessary for GROMACS, but it breaks LAMMPS
         #     self._pos = MDAnalysis.lib.distances.transform_RtoS(pos_R, self.box, backend='serial')
         # else:
         #     self._pos = self.universe.trajectory[0].positions.copy().astype(float)
@@ -230,12 +215,15 @@ class ViewerMemoryManager:
         self.no_bonds = bonds.shape[0]
         self.have_bonds = self.no_bonds > 0
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
-        colors = np.ones((self.no_atoms, 4))
+
+        #Set colors
+        self.colors = np.ones((self.no_atoms, 4))
         self.unique_types = np.unique(self.atom_types)
         self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
-        self.colors_unique_types[:, 3] = 1
-        for i, typ in enumerate(self.unique_types):
-            colors[self.atom_type == typ] = self.colors_unique_types[i]
+        self.colors_unique_types[:, 3] = 1 #set opacity to 1 
+        for i, typ in enumerate(self.atom_types):
+            indexOfColor = np.where(self.unique_types == typ)
+            self.colors[i] = self.colors_unique_types[indexOfColor]
 
         # set all radii to 1
         self.radii_spheres = np.ones((self.no_atoms)) * SPHERE_SIZE
@@ -249,7 +237,7 @@ class ViewerMemoryManager:
         # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
         # big_verts, big_faces, big_colors, _ = res
 
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=colors, radii=self.radii_spheres)
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
 
 
@@ -262,20 +250,36 @@ class ViewerMemoryManager:
         self.sec_particle = np.int(self.no_vertices_all_particles / self.no_atoms)
         self.vcolors_particle = utils.colors_from_actor(self.sphere_actor, 'colors')
         self.colors_backup_particles = self.vcolors_particle.copy()
-        # TODO: check if this is truly used
-        self.set_value_radius = 0
+
+        self.deleted_particles = np.zeros(self.no_atoms, dtype=np.bool)
+        self.deleted_bonds = np.zeros(self.no_bonds, dtype=np.bool)
+
         # Animation Player
         self.cnt = 0
-        self.selected_value_radius = 0
+        # self.selected_value_radius = 0
+        self.roughness = 0.01
+        self.metallic = 0.01
+        self.anisotropic = 0.01
+        self.opacity = 1.0
+        self.selected_value_radius = 0.01
+        self.anisotropic_rot = 0.01
+        self.anisotropic_X = 0.01
+        self.anisotropic_Y = 0.01
+        self.anisotropic_Z = 0.01
+        self.coat_rough = 0.01
+        self.coat_strength = 0.01
+        self.pbr_params_atom = None
+        self.pbr_params_bond = None
 
 
     @property
     def n_frames(self):
         return 1
 
+    #TODO rename to atom_types
     @property
     def atom_type(self):
-        return ['C']
+        return self.atom_types
 
     def get_bonds(self):
         if not self.have_bonds:

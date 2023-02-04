@@ -25,7 +25,7 @@ class XYZParser(BaseParser):
                 self.words = line.split()
                 
                 #Element symbol or atomic number
-                self.nextWord() #skip the word
+                self.atom_types.append(self.nextWord())
 
                 #Parse XYZ position
                 pos = np.zeros((3))
