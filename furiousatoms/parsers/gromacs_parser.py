@@ -34,7 +34,7 @@ class GROMACSParser(BaseParser):
             #Residue name
             self.nextWord()
             #Atom name
-            self.nextWord()
+            self.atom_types.append(self.nextWord())
             
             #Words #4-#6 form the XYZ position.
             pos = np.zeros((3))

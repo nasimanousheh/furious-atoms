@@ -117,6 +117,7 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
+        #TODO remove MDAnalysis here
         # universe, no_bonds = io.load_files(fname)
         # if not universe:
         #     return success
@@ -125,18 +126,26 @@ class Viewer3D(QtWidgets.QWidget):
         # return success
 
         box_size, positions, bonds, atom_types = io.load_files(fname)
+        # atom_types = ['C'] * len(positions)
+        # atom_types[3] = 'N'
+        # atom_types[4] = 'N'
+        # atom_types[5] = 'N'
+        # atom_types[6] = 'N'
+        # atom_types[11] = 'N'
+        # atom_types[12] = 'N'
+        # atom_types[13] = 'N'
         self.load_structure(box_size, positions, bonds, atom_types)
         return True #TODO should not always be true
 
 
     def load_structure(self, box_size, positions, bonds, atom_types):
-        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, [])
+        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
 
         self.create_universe_connections()
         self.display_universe()
         self.setWindowTitle(self.current_file)
 
-    #TODO: Remove
+    #TODO remove MDAnalysis here
     def load_universe(self, universe, no_bonds=0):
         self.universe_manager = UniverseManager(universe, no_bonds)
         self.create_universe_connections()

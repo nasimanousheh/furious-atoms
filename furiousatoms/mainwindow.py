@@ -234,7 +234,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
-                set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                set_value_radius = SM.radii_spheres[SM.atom_type.index(atom_typ)]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
 
     def change_slice_opacity(self, opacity_degree):
@@ -459,7 +459,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.no_vertices_all_particles = vertices.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         for atom_typ in SM.unique_types:
-            selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+            selected_value_radius = SM.radii_spheres[SM.atom_type.index(atom_typ)]
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             all_vertices_radii = all_vertices_radii[:, None]
             selected_atom_mask = SM.atom_type == atom_typ
@@ -1038,10 +1038,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     for item in items:
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
-                    SM.colors[(SM.atom_type == atom_typ) & (SM.deleted_particles == False)] = SM.colors_unique_types[i]
+                    # SM.colors[(SM.atom_type == atom_typ) & (SM.deleted_particles == False)] = SM.colors_unique_types[i]
+                    for row in range(0, len(SM.colors)):
+                        if SM.atom_type[row] == atom_typ:
+                            if not SM.deleted_particles[row]:
+                                SM.colors[row] = SM.colors_unique_types[i]
                     exclude = []
                     if SM.no_bonds > 0:
-                        bonds_indices = SM.universe.bonds.to_indices()
+                        bonds_indices = SM.bonds
                         for b in range(bonds_indices.shape[0]):
                             if SM.deleted_bonds[b]:
                                 exclude.append(2 * b)
@@ -1147,12 +1151,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
-            set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            set_value_radius = SM.radii_spheres[SM.atom_type.index(typ)]
             self.ui.SpinBox_atom_radius.setValue((set_value_radius))
-            r = (SM.colors[SM.atom_type == typ][0][0])*255
-            g = (SM.colors[SM.atom_type == typ][0][1])*255
-            b = (SM.colors[SM.atom_type == typ][0][2])*255
-            a = (SM.colors[SM.atom_type == typ][0][3])*255
+            atomColor = SM.colors[SM.atom_type.index(typ)]
+            r = (atomColor[0])*255
+            g = (atomColor[1])*255
+            b = (atomColor[2])*255
+            a = (atomColor[3])*255
+            #Add new atom type list item
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
             cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
 

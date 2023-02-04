@@ -2,9 +2,6 @@ import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from util import float_or_zero
 
-#TODO maybe make error handlers less rigid?
-#TODO atom types!
-
 class PDBParser(BaseParser):
     def parseLine(self, line):
 
@@ -18,12 +15,14 @@ class PDBParser(BaseParser):
                     if bond[0] != bond[1]:
                         self.bonds.append(bond)
                 except ValueError:
-                    errors += "Refusing to connect a bond on line #%d.\n"%(self.lineId)
+                    self.errors += "Refusing to connect a bond on line #%d.\n"%(self.lineId)
                 except IndexError:
                     if len(line) < 13:
                         self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
         elif line.startswith("ATOM"):
             try:
+                self.atom_types.append(line[13:16])
+
                 pos = np.zeros((3))
                 pos[0] = float_or_zero(line[31:38])
                 pos[1] = float_or_zero(line[39:46])
