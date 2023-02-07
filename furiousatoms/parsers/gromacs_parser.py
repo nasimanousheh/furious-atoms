@@ -1,6 +1,6 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
-from util import float_or_zero
+from furiousatoms.parsers.parser_util import float_or_zero
 
 class GROMACSParser(BaseParser):
     def __init__(self) -> None:
@@ -75,8 +75,3 @@ class GROMACSParser(BaseParser):
         else:
             self.errors += "Unable to process line #%d.\n"%(self.lineId)
         self.lineId += 1
-
-#TODO remove
-if __name__ == "__main__":
-    parser = GROMACSParser()
-    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.gro")
