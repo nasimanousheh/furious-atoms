@@ -1,8 +1,8 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
-from util import float_or_zero
+from furiousatoms.parsers.parser_util import float_or_zero
 
-#TODO implement box size, atom types
+#TODO implement box size
 
 class LAMMPSParser(BaseParser):
     def parseAtom(self, line):

@@ -1,6 +1,6 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
-from util import float_or_zero
+from furiousatoms.parsers.parser_util import float_or_zero
 
 class XYZParser(BaseParser):
     def __init__(self) -> None:
@@ -18,6 +18,8 @@ class XYZParser(BaseParser):
     def parseLine(self, line):
         #Ignore 0th & 1st lines
         if len(line.strip()) > 0 and self.lineId >= 2:
+            atomType = None
+            pos = pos = np.zeros((3))
             try:
                 #Since XYZ supports arbitrary decimal precision, 
                 #search for non-blank words only.
@@ -25,20 +27,22 @@ class XYZParser(BaseParser):
                 self.words = line.split()
                 
                 #Element symbol or atomic number
-                self.atom_types.append(self.nextWord())
+                atomType = self.nextWord()
 
                 #Parse XYZ position
-                pos = np.zeros((3))
                 pos[0] = float_or_zero(self.nextWord())
                 pos[1] = float_or_zero(self.nextWord())
                 pos[2] = float_or_zero(self.nextWord())
-                self.positions.append(pos)
             except:
                 self.errors += "Unable to parse atom on line #%d"%(self.lineId)
+            else:
+                self.atom_types.append(atomType)
+                self.positions.append(pos)
 
         self.lineId += 1
 
 #TODO remove
 if __name__ == "__main__":
     parser = XYZParser()
-    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.xyz")
+    out = parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.xyz")
+    print("Done")
