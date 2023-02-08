@@ -62,6 +62,7 @@ setup(
             path.join('languages', '*'),
             path.join('resources', '*'),
             path.join('skybox0', '*'),
+            path.join('graphyne_dataset', '*'),
         ]
     },
     install_requires=requirements,
