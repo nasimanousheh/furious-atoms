@@ -8,6 +8,7 @@ from PySide2 import QtWidgets
 from furiousatoms.sharedmem import SharedMemory
 from furiousatoms.periodic_table import Ui_periodic_cation
 from furiousatoms.periodic_table import Ui_periodic_anion
+from PySide2.QtGui import QIcon
 ShM= SharedMemory()
 class Ui_electrolyte(QtWidgets.QMainWindow):
     """ Ui_electrolyte class creates a widget for building electrolyte
@@ -21,6 +22,7 @@ class Ui_electrolyte(QtWidgets.QMainWindow):
         self.setLayout(self.v_layout)
         self.resize(631, 380)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
