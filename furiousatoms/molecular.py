@@ -71,7 +71,7 @@ class UniverseManager:
 
 ########################################################################################################
 # sphere actor
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres, phi=3, theta=6, use_primitive=False)
 ########################################################################################################
 # repeat_primitive:
         # vertices, faces = fp.prim_box()
@@ -82,6 +82,13 @@ class UniverseManager:
 # sdf actor:
         # self.dirs = np.ones((self.no_atoms, 3))
         # self.sphere_actor = actor.sdf(centers=self.pos, directions=self.dirs, colors=self.colors, primitives= 'sphere',scales=self.radii_spheres)
+########################################################################################################
+
+        # create the sphere particles actor using primitives
+        # vertices, faces = primitive.prim_sphere(name='repulsion724', gen_faces=False)
+        # res = primitive.repeat_primitive(vertices, faces, centers=self.pos, colors=colors, scales=self.radii_spheres)#, dtype='uint8')
+        # big_verts, big_faces, big_colors, _ = res
+        # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
 ########################################################################################################
 
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
@@ -100,7 +107,7 @@ class UniverseManager:
         self.enable_timer = True
         self.cnt = 0
         self.roughness = 0.01
-        self.metallic = 0.01
+        self.metallic = 0.5
         self.anisotropic = 0.01
         self.opacity = 1.0
         self.selected_value_radius = 0.01
@@ -112,6 +119,7 @@ class UniverseManager:
         self.coat_strength = 0.01
         self.pbr_params_atom = None
         self.pbr_params_bond = None
+        self.particle_resolution = "Low"
 
     @property
     def no_atoms(self):
@@ -173,7 +181,7 @@ class UniverseManager:
             self.bond_colors_2[i * 4 + 3] = self.colors[bonds_indices[i][1]]
 
         self.line_thickness = 0.2
-        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness,
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness, tube_sides=2,
                                       lod=False, replace_strips=True)
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
         self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
@@ -258,7 +266,7 @@ class ViewerMemoryManager:
         self.cnt = 0
         # self.selected_value_radius = 0
         self.roughness = 0.01
-        self.metallic = 0.01
+        self.metallic = 0.5
         self.anisotropic = 0.01
         self.opacity = 1.0
         self.selected_value_radius = 0.01
@@ -270,6 +278,7 @@ class ViewerMemoryManager:
         self.coat_strength = 0.01
         self.pbr_params_atom = None
         self.pbr_params_bond = None
+        self.particle_resolution = "Low"
 
 
     @property
@@ -315,7 +324,8 @@ class ViewerMemoryManager:
 
         self.bond_colors_2 = (0, 0, 0., 1)
         self.line_thickness = 0.2
-        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness)
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness, tube_sides=2,
+                                      lod=False, replace_strips=True)
         self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
         self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
