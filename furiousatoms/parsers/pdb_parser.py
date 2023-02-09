@@ -21,7 +21,7 @@ class PDBParser(BaseParser):
                         self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
         elif line.startswith("ATOM"):
             try:
-                self.atom_types.append(line[13:16])
+                self.atom_types.append(line[13:15])
 
                 pos = np.zeros((3))
                 pos[0] = float_or_zero(line[31:38])

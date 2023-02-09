@@ -62,6 +62,8 @@ setup(
             path.join('languages', '*'),
             path.join('resources', '*'),
             path.join('skybox0', '*'),
+            path.join('parsers', '*'),
+            path.join('savers', '*'),
         ]
     },
     install_requires=requirements,

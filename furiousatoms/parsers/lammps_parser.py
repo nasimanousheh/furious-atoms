@@ -2,7 +2,6 @@ import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero
 
-#TODO implement box size
 
 class LAMMPSParser(BaseParser):
     def parseAtom(self, line):
@@ -50,6 +49,31 @@ class LAMMPSParser(BaseParser):
             else:
                 self.errors += "Could not read a bond from line #%d since it is not well-formatted. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
 
+    def parseBoxSize(self, line):
+        '''
+        A box size dimension will look like this:
+        ` -2.365000 7.095000  xlo xhi` 
+        This function checks what label is at the end of the line and extracts the hi dimension.
+        '''
+        try:
+            words = line.split()
+            trimmed = line.strip()
+            if len(words) >= 4: 
+                #Always parse the "hi" dimension
+                if trimmed.endswith("xlo xhi"):
+                    self.box_size[0] = float_or_zero(words[1])
+                elif trimmed.endswith("ylo yhi"):
+                    self.box_size[1] = float_or_zero(words[1])
+                elif trimmed.endswith("zlo zhi"):
+                    self.box_size[2] = float_or_zero(words[1])
+                else:
+                    raise ValueError("Invalid format")
+            else:
+                self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
+        except:
+            self.errors += "Failure processing line #%d.\n"%(self.lineId)
+
+
     def parseLine(self, line):
 
         #Choose how to parse subsequent lines
@@ -62,6 +86,9 @@ class LAMMPSParser(BaseParser):
             self.parserMethod = self.parseAtom
         elif header.startswith("bonds"):
             self.parserMethod = self.parseBond
+        elif header.endswith("hi") and "lo" in header:
+            #Special case: box size doesn't use a header
+            self.parseBoxSize(line)
         elif len(header.split()) == 1:
             #For non-implemented headers like Angles and Dihedrals
             self.parserMethod = None
@@ -72,9 +99,11 @@ class LAMMPSParser(BaseParser):
                 self.parserMethod(line)
             else:
                 self.errors += "Unable to process line #%d.\n"%(self.lineId)
+                print(line)
         self.lineId += 1
         
 #TODO remove
 if __name__ == "__main__":
     parser = LAMMPSParser()
-    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.data")
+    out = parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.data")
+    print("Done")

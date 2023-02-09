@@ -1,5 +1,5 @@
 import numpy as np
-from furiousatoms.parsers.xyz_parser import XYZParser
+from furiousatoms.parsers.xyz_parser import XYZParser #TODO remove
 
 HEADER = "Created by FURIOUS ATOMS. By default the box dimensions are 90x90x90 cubic angstrom\n"
 
