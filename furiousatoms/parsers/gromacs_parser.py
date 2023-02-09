@@ -23,6 +23,8 @@ class GROMACSParser(BaseParser):
         raise EOFError("No more words remain for the current line")
 
     def parseAtom(self, line):
+        atomType = None
+        pos = np.zeros((3))
         try:
             #Since GROMACS supports arbitrary decimal precision, 
             #search for non-blank words only.
@@ -31,21 +33,22 @@ class GROMACSParser(BaseParser):
             
             #First (0th) word is residue number
             self.nextWord() #skip the word
-            #Residue name
+            #Atom name/abbreviation
+            atomType = self.nextWord()
+            #Atom ID (skipped)
             self.nextWord()
-            #Atom name
-            self.atom_types.append(self.nextWord())
             
             #Words #4-#6 form the XYZ position.
-            pos = np.zeros((3))
             pos[0] = float_or_zero(self.nextWord())
             pos[1] = float_or_zero(self.nextWord())
             pos[2] = float_or_zero(self.nextWord())
-            self.positions.append(pos)
             
             #Remaining words #7-9 form the velocity, but we skip these.
         except:
             self.errors += "Unable to parse atom on line #%d"%(self.lineId)
+        else:
+            self.atom_types.append(atomType)
+            self.positions.append(pos)
 
     def parseBoxSize(self, line):
         wordsRead = 0
@@ -64,9 +67,9 @@ class GROMACSParser(BaseParser):
         #Choose how to parse the current line
         if self.lineId == 1:
             self.parserMethod = self.parseAtomCount
-        elif self.lineId == self.numAtoms + 2: #"final" line
+        elif len(self.positions) == self.numAtoms: #"final" line: all atoms have been read
             self.parserMethod = self.parseBoxSize
-        else:
+        elif self.lineId != 0: #line 0 is header/comment; all other lines are atoms
             self.parserMethod = self.parseAtom
         
         #Perform the parse
@@ -74,4 +77,3 @@ class GROMACSParser(BaseParser):
             self.parserMethod(line)
         else:
             self.errors += "Unable to process line #%d.\n"%(self.lineId)
-        self.lineId += 1
