@@ -6,6 +6,7 @@ from fury import window, utils
 from PySide2 import QtWidgets
 from furiousatoms.structure import bbox
 import MDAnalysis
+from PySide2.QtGui import QIcon
 
 # SM = SharedMemory()
 """
@@ -23,6 +24,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         self.setLayout(self.v_layout)
         self.resize(280, 202)
         self.scene = window.Scene()
+        self.setWindowIcon(QIcon(io.get_resources_file("splash.png")))
         self.showm = window.ShowManager(scene=self.scene, order_transparent=True)
         self.init_settings()
         self.create_connections()
