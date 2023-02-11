@@ -222,7 +222,6 @@ class ViewerMemoryManager:
         self.atom_types = atom_types
         self.no_bonds = bonds.shape[0]
         self.have_bonds = self.no_bonds > 0
-        self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
 
         #Set colors
         self.colors = np.ones((self.no_atoms, 4))
@@ -247,6 +246,8 @@ class ViewerMemoryManager:
 
         self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
         # self.sphere_actor = utils.get_actor_from_primitive(big_verts, big_faces, big_colors)
+
+        self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
 
 
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
@@ -295,25 +296,58 @@ class ViewerMemoryManager:
             return 0
         return self._bonds
 
+    # def generate_bond_actor(self):
+    #     # bonds_indices = self.universe.bonds.to_indices()
+    #     bonds_indices = self.bonds
+
+    #     #For all bonds, match first atom ID in bond to atom's X coord (and match second atom to Y coord)
+    #     first_pos_bonds = []
+    #     second_pos_bonds = []
+    #     no_atoms = len(self.pos)
+    #     bondCount = 0
+    #     for bondStart, bondEnd in bonds_indices:
+    #         if bondStart < no_atoms and bondEnd < no_atoms: #exclude out-of-bounds bond indices
+    #             first_pos_bonds.append(self.pos[bondStart])
+    #             second_pos_bonds.append(self.pos[bondEnd])
+    #             bondCount += 1
+    #     self.no_bonds = bondCount
+    #     bonds = np.hstack((first_pos_bonds, second_pos_bonds))
+
+    #     self._bonds = bonds.reshape(self.no_bonds, 2, 3)
+    #     self._bonds_2 = np.zeros((self.no_bonds*2, 2, 3))
+    #     for i in range(self.no_bonds):
+    #         p1, p2 = self._bonds[i]
+    #         phalf = 0.5 * (p1 + p2)
+    #         self._bonds_2[i * 2][0] = p1
+    #         self._bonds_2[i * 2][1] = phalf
+    #         self._bonds_2[i * 2 + 1][0] = phalf
+    #         self._bonds_2[i * 2 + 1][1] = p2
+
+    #     self.bond_colors_2 = (0, 0, 0., 1)
+    #     self.line_thickness = 0.2
+    #     bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness, tube_sides=2,
+    #                                   lod=False, replace_strips=True)
+    #     self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
+    #     self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
+    #     self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
+    #     self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
+    #     self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
+    #     #TODO UNUSED
+    #     # self.unique_types_bond = np.unique(self.bond_types)
+    #     return bond_actor
+
     def generate_bond_actor(self):
         # bonds_indices = self.universe.bonds.to_indices()
         bonds_indices = self.bonds
-
-        #For all bonds, match first atom ID in bond to atom's X coord (and match second atom to Y coord)
-        first_pos_bonds = []
-        second_pos_bonds = []
-        no_atoms = len(self.pos)
-        bondCount = 0
-        for bondStart, bondEnd in bonds_indices:
-            if bondStart < no_atoms and bondEnd < no_atoms: #exclude out-of-bounds bond indices
-                first_pos_bonds.append(self.pos[bondStart])
-                second_pos_bonds.append(self.pos[bondEnd])
-                bondCount += 1
-        self.no_bonds = bondCount
-        bonds = np.hstack((first_pos_bonds, second_pos_bonds))
-
+        first_pos_bond = self.pos[(bonds_indices[:, 0])]
+        second_pos_bond = self.pos[(bonds_indices[:, 1])]
+        bonds = np.hstack((first_pos_bond, second_pos_bond))
         self._bonds = bonds.reshape(self.no_bonds, 2, 3)
         self._bonds_2 = np.zeros((self.no_bonds*2, 2, 3))
+        self.bond_colors_2 = np.zeros(((self.no_bonds*2*2, 4)))
+        # self.unique_types = np.unique(self.universe.atoms.types)
+        self.unique_types = np.unique(self.atom_types)
+
         for i in range(self.no_bonds):
             p1, p2 = self._bonds[i]
             phalf = 0.5 * (p1 + p2)
@@ -321,18 +355,21 @@ class ViewerMemoryManager:
             self._bonds_2[i * 2][1] = phalf
             self._bonds_2[i * 2 + 1][0] = phalf
             self._bonds_2[i * 2 + 1][1] = p2
+            self.bond_colors_2[i * 4] = self.colors[bonds_indices[i][0]]
+            self.bond_colors_2[i * 4 + 1] = self.colors[bonds_indices[i][0]]
+            self.bond_colors_2[i * 4 + 2] = self.colors[bonds_indices[i][1]]
+            self.bond_colors_2[i * 4 + 3] = self.colors[bonds_indices[i][1]]
 
-        self.bond_colors_2 = (0, 0, 0., 1)
         self.line_thickness = 0.2
-        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness, tube_sides=2,
+        bond_actor = actor.streamtube(self._bonds_2, self.bond_colors_2, linewidth=self.line_thickness, tube_sides=4,
                                       lod=False, replace_strips=True)
-        self.colors_backup_bond = utils.colors_from_actor(bond_actor, 'colors').copy()
         self.all_vertices_bonds = utils.vertices_from_actor(bond_actor)
-        self.no_vertices_per_bond = len(self.all_vertices_bonds) / self.no_bonds
+        self.no_vertices_per_bond = len(self.all_vertices_bonds) / (2 * self.no_bonds)
         self.no_vertices_all_bonds = self.all_vertices_bonds.shape[0]
-        self.sec_bond = np.int(self.no_vertices_all_bonds / self.no_bonds)
-        #TODO UNUSED
-        # self.unique_types_bond = np.unique(self.bond_types)
+        self.sec_bond = np.int(self.no_vertices_all_bonds / (2 * self.no_bonds))
+        # self.unique_types_bond = np.unique(self.universe.bonds.types) #TODO?
+        self.vcolors_bond = utils.colors_from_actor(bond_actor, 'colors')
+        self.colors_backup_bond = self.vcolors_bond.copy()
         return bond_actor
 
     def actors(self):

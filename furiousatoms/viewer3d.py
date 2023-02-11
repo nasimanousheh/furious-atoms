@@ -141,7 +141,8 @@ class Viewer3D(QtWidgets.QWidget):
     def load_structure(self, box_size, positions, bonds, atom_types):
         self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
 
-        self.create_universe_connections()
+        self.particles_connect_callbacks()
+        self.bonds_connect_callbacks()
         self.display_universe()
         self.setWindowTitle(self.current_file)
 
