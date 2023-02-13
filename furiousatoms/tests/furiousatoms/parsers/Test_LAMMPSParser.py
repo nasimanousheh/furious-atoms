@@ -21,7 +21,8 @@ def test_parseAtom(newLAMMPSParser):
     assert parser.positions[0][2] == 3.625000
 
     assert len(parser.atom_types) == 1
-    assert parser.atom_types[0] == 'N' #FIXME
+    #fall back to number if element symbol is unknown
+    assert parser.atom_types[0] == '3' 
 
 def test_parseBond(newLAMMPSParser):
     parser = newLAMMPSParser
@@ -61,11 +62,10 @@ def test_parseLine_parserMethod(newLAMMPSParser):
     parser.parseLine(LINE)
     assert parser.parserMethod == None #Note: NOT parseBoxSize
 
-    #TODO test parseMass
-    # parser.lineId = 1
-    # LINE = " Masses"
-    # parser.parseLine(LINE)
-    # assert parser.parserMethod == parser.parseMass
+    parser.lineId = 77
+    LINE = " Masses"
+    parser.parseLine(LINE)
+    assert parser.parserMethod == parser.parseMass
 
     parser.lineId = 42
     LINE = " Atoms # full"
