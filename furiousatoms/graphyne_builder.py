@@ -6,6 +6,7 @@ from furiousatoms.io import  load_files
 import MDAnalysis as mda
 from PySide2.QtGui import QIcon
 import os
+from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN
 
 
 thre = 1e-10
@@ -73,33 +74,37 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         graphyne_type = self.graphyne.comboBox_graphyne.currentText()
         dir_Graphyne_folder = io.get_frozen_path() if io.is_frozen() else io.get_application_path()
         Graphyne_folder = os.path.join(dir_Graphyne_folder, 'graphyne_dataset')
+        universe_all = None
         if graphyne_type =="graphyne_12_12_12":
             fname= os.path.join(Graphyne_folder, 'betaGraphyne_unitcell.pdb')
-            structure_info = self.beta_graphyne_builder(fname, edge_length_x, edge_length_y)
-            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
-        if graphyne_type =="graphyne-1":
+            # structure_info = self.beta_graphyne_builder(fname, edge_length_x, edge_length_y)
+            # universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        elif graphyne_type =="graphyne-1":
             fname=os.path.join(Graphyne_folder, 'gammaGraphyne_unitcell.pdb')
-            structure_info = self.gamma_graphyne_builder(fname, edge_length_x, edge_length_y)
-            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
-        if graphyne_type =="graphyne-2":
+            # structure_info = self.gamma_graphyne_builder(fname, edge_length_x, edge_length_y)
+            # universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        elif graphyne_type =="graphyne-2":
             fname=os.path.join(Graphyne_folder, 'graphdiyne_unitcell.pdb')
-            structure_info = self.graphyne_2_builder(fname, edge_length_x, edge_length_y)
-            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
-        if graphyne_type =="graphyne_6_6_12":
+            # structure_info = self.graphyne_2_builder(fname, edge_length_x, edge_length_y)
+            # universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        elif graphyne_type =="graphyne_6_6_12":
             fname=os.path.join(Graphyne_folder, '6-6-12-graphyne_unitcell.pdb')
-            structure_info = self.graphyne_6_6_12_builder(fname, edge_length_x, edge_length_y)
-            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
-        if graphyne_type =="twin Graphene":
+            # structure_info = self.graphyne_6_6_12_builder(fname, edge_length_x, edge_length_y)
+            # universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        elif graphyne_type =="twin Graphene":
             fname=os.path.join(Graphyne_folder, 'twinGraphene_unitcell.pdb')
             sheet_separation = sheet_separation + 2.034
-            structure_info = self.twin_graphene_builder(fname, edge_length_x, edge_length_y)
-            universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+            # structure_info = self.twin_graphene_builder(fname, edge_length_x, edge_length_y)
+            # universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+        else:
+            raise ValueError("Illegal graphyne_type `" + graphyne_type + "`")
 
-        cog = universe_all.atoms.center_of_geometry()
-        universe_all.atoms.positions -= cog
+        structure_info = load_files(fname)
+        universe_all = self.extend_the_sheets(structure_info, num_sheets, sheet_separation)
+
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(universe_all)
+        window.load_structure(*universe_all)
         window.show()
 
     def beta_graphyne_builder(self, fname, edge_length_x, edge_length_y):
@@ -153,53 +158,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         return new_universe
 
     def gamma_graphyne_builder(self, fname, edge_length_x, edge_length_y):
-        load_file,_ = load_files(fname)
-        load_file.bonds.to_indices()
-        pos = load_file.atoms.positions
-        pos = pos.astype('float64')
-        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
-        print(max(pos[:, 0]) - min(pos[:, 0]))
-        nx = load_file.dimensions [3]
-        ny= load_file.dimensions [4]
-        nz= load_file.dimensions [5]
-        load_file.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, nx, ny, nz]
-        box = load_file.dimensions[:3]
-        copied = []
-        i = 0
-        num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
-        num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
-        for x in range(num_unitcell_in_lx):
-            i = 0
-            for y in range(num_unitcell_in_ly):
-                u_ = load_file.copy()
-                move_by = box*(x-i, y, 1)
-                u_.atoms.translate(move_by)
-                copied.append(u_.atoms)
-                i = i+(0.5)
-
-
-        new_universe = mda.Merge(*copied)
-        b = 0
-        c = 0
-        num_atoms_in_y_direction = 12 * num_unitcell_in_ly
-
-        num_bonds_connect = (num_unitcell_in_lx-1)
-
-        for b in range(num_unitcell_in_ly):
-            b = c *12
-            for i in range(num_bonds_connect):
-                added_bonds = np.array([[(num_atoms_in_y_direction*i)+8+b, (num_atoms_in_y_direction*(i+1))+7+b]])
-                if c < num_unitcell_in_ly-1:
-                    added_bonds_2 = np.array([[(num_atoms_in_y_direction*i)+3+b, (num_atoms_in_y_direction*i)+b+(13+num_atoms_in_y_direction)]])
-                    new_universe.add_bonds(added_bonds_2)
-                new_universe.add_bonds(added_bonds)
-            for j in range(num_unitcell_in_lx):
-                if c < num_unitcell_in_ly-1:
-                    added_bonds_1 = np.array([[(num_atoms_in_y_direction*j)+2+b, (num_atoms_in_y_direction*j)+b+12]])
-                    new_universe.add_bonds(added_bonds_1)
-            c = c + 1
-        return new_universe
+        return load_files(fname)
 
     def graphyne_2_builder(self, fname, edge_length_x, edge_length_y):
         load_file,_ = load_files(fname)
@@ -341,29 +300,42 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         return new_universe
 
     def extend_the_sheets(self, structure_info, num_sheets, sheet_separation):
-        try:
-            box_lx = float(self.graphyne.SpinBox_lx.text())
-            box_ly = float(self.graphyne.SpinBox_ly.text())
-            box_lz = float(self.graphyne.SpinBox_lz.text())
-        except:
-            box_lx = box_ly = box_lz = 0
+        box_size, positions, bonds, atom_types = structure_info
+        if num_sheets > 1:            
+            #Increase size of positions array
+            ATOM_COUNT = len(positions)
+            new_positions = np.zeros(shape=(ATOM_COUNT * num_sheets, POSITION_ARR_LEN))
+            new_positions[:ATOM_COUNT] = positions #copy old data
+            positions = new_positions
+            #Copy positions and make each sheet translated by sheet_separation
+            for i in range(1, num_sheets):
+                for j in range(ATOM_COUNT):
+                    atom = positions[j]
+                    for k in range(0, POSITION_ARR_LEN):
+                        positions[i*ATOM_COUNT + j][k] = atom[k]
+                    positions[i*ATOM_COUNT + j][2] -= sheet_separation * i
 
-        copied = []
-        structure_info.dimensions = [sheet_separation, sheet_separation, sheet_separation, 90, 90, 90]
-        box_sep = structure_info.dimensions[:3]
-        for x in range(1):
-            for y in range(1):
-                for z in range(num_sheets):
-                    u_ = structure_info.copy()
-                    move_by = box_sep*(x, y, z)
-                    u_.atoms.translate(move_by)
-                    copied.append(u_.atoms)
+            #Copy atom types
+            new_atom_types = np.zeros(shape=(ATOM_COUNT * num_sheets), dtype=type(atom_types[0]))
+            new_atom_types[:ATOM_COUNT] = atom_types #copy old data
+            atom_types = new_atom_types
+            for i in range(1, num_sheets):
+                for j in range(ATOM_COUNT):
+                    atom_types[i*ATOM_COUNT + j] = atom_types[j]
 
-            extended_universe = mda.Merge(*copied)
-            extended_universe.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
-            cog = extended_universe.atoms.center_of_geometry()
-            extended_universe.atoms.positions -= cog
-            return extended_universe
+            #Copy bonds
+            BOND_COUNT = len(bonds)
+            new_bonds = np.zeros(shape=(BOND_COUNT * num_sheets, BOND_ARR_LEN), dtype='int')
+            new_bonds[:BOND_COUNT] = bonds #copy old data
+            bonds = new_bonds
+            for i in range(1, num_sheets):
+                for j in range(BOND_COUNT):
+                    for k in range(0, BOND_ARR_LEN):
+                        #Add ATOM_COUNT to change the atom IDs
+                        bonds[i*BOND_COUNT + j][k] = bonds[j][k] + (ATOM_COUNT * i)
 
-
-
+        #Center atoms inside box
+        for k in range(0, POSITION_ARR_LEN):
+            positions[:,k] -= positions[:,k].mean()
+        
+        return box_size, positions, bonds, atom_types
