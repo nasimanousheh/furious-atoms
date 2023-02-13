@@ -23,7 +23,6 @@ def test_nextWord(newXYZParser):
 def test_parseLine(newXYZParser):
     parser = newXYZParser
     LINE = "       C    -0.67848    0.00000   -0.61531"
-    parser.lineId = 42
 
     parser.parseLine(LINE)
 
@@ -34,8 +33,6 @@ def test_parseLine(newXYZParser):
     assert parser.positions[0][0] == -0.67848
     assert parser.positions[0][1] ==  0.00000
     assert parser.positions[0][2] == -0.61531
-
-    assert parser.lineId == 42 + 1
 
 
 def test_parse(newXYZParser):

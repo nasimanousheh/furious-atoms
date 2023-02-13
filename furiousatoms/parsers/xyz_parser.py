@@ -10,7 +10,7 @@ class XYZParser(BaseParser):
     def nextWord(self):
         for i in range(self.nextWordIndex, len(self.words)):
             if len(self.words[i]) > 0:
-                self.nextWordIndex += 1
+                self.nextWordIndex = i + 1
                 return self.words[i]
         raise EOFError("No more words remain for the current line")
 
@@ -38,11 +38,3 @@ class XYZParser(BaseParser):
             else:
                 self.atom_types.append(atomType)
                 self.positions.append(pos)
-
-        self.lineId += 1
-
-#TODO remove
-if __name__ == "__main__":
-    parser = XYZParser()
-    out = parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.xyz")
-    print("Done")
