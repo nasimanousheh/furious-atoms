@@ -81,21 +81,19 @@ def load_ui_widget(uifilename, cls_to_register=None, parent=None):
 
 
 def load_files(fname, debug=False):
-    load_file_export = open(fname, 'r')
-    lines = load_file_export.readlines()
-    no_lines = len(lines)
+    # load_file_export = open(fname, 'r')
+    # lines = load_file_export.readlines()
+    # no_lines = len(lines)
     # frames_cnt = 0
-    format_data = None
-    no_bonds = 0
-    bonds = 0
-    for i in range(no_lines):
-        line = lines[i]
-        if 'item: number of atoms'.upper() in line:
-            format_data = 'LAMMPSDUMP'
-            break
-        i += 1
-
-    #TODO remove MDAnalysis here
+    # format_data = None
+    # no_bonds = 0
+    # bonds = 0
+    # for i in range(no_lines):
+    #     line = lines[i]
+    #     if 'item: number of atoms'.upper() in line:
+    #         format_data = 'LAMMPSDUMP'
+    #         break
+    #     i += 1
     
     #Choose parser based on file extension
     if fname.endswith(".pdb"):
@@ -106,16 +104,6 @@ def load_files(fname, debug=False):
         return XYZParser().parse(fname)
     elif fname.endswith(".gro"):
         return GROMACSParser().parse(fname)
-
-    # load_file = MDAnalysis.Universe(fname, format=format_data)
-    # if format_data is None:
-    #     load_file = MDAnalysis.Universe(fname)
-    #     try:
-    #         bonds = load_file.bonds.to_indices()
-    #         no_bonds = len(load_file.bonds)
-    #     except MDAnalysis.exceptions.NoDataError:
-    #         no_bonds = 0
-    # return load_file, no_bonds
 
 
 def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):

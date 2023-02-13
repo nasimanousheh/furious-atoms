@@ -6,7 +6,7 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.molecular import UniverseManager, ViewerMemoryManager
+from furiousatoms.molecular import ViewerMemoryManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, ui, primitive, material
@@ -117,23 +117,7 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
-        #TODO remove MDAnalysis here
-        # universe, no_bonds = io.load_files(fname)
-        # if not universe:
-        #     return success
-        # self.load_universe(universe, no_bonds)
-        # success = True
-        # return success
-
         box_size, positions, bonds, atom_types = io.load_files(fname)
-        # atom_types = ['C'] * len(positions)
-        # atom_types[3] = 'N'
-        # atom_types[4] = 'N'
-        # atom_types[5] = 'N'
-        # atom_types[6] = 'N'
-        # atom_types[11] = 'N'
-        # atom_types[12] = 'N'
-        # atom_types[13] = 'N'
         self.load_structure(box_size, positions, bonds, atom_types)
         return True #TODO should not always be true
 
@@ -147,12 +131,12 @@ class Viewer3D(QtWidgets.QWidget):
         self.setWindowTitle(self.current_file)
 
     #TODO remove MDAnalysis here
-    def load_universe(self, universe, no_bonds=0):
-        self.universe_manager = UniverseManager(universe, no_bonds)
-        self.particles_connect_callbacks()
-        self.bonds_connect_callbacks()
-        self.display_universe()
-        self.setWindowTitle(self.current_file)
+    # def load_universe(self, universe, no_bonds=0):
+    #     self.universe_manager = UniverseManager(universe, no_bonds)
+    #     self.particles_connect_callbacks()
+    #     self.bonds_connect_callbacks()
+    #     self.display_universe()
+    #     self.setWindowTitle(self.current_file)
 
     def particles_connect_callbacks(self):
         self.universe_manager.sphere_actor.AddObserver(
