@@ -1,9 +1,27 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero
+from furiousatoms.element_lookup import lookup_element_by_mass
 
 
 class LAMMPSParser(BaseParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.elemInfoDict = {}
+    
+    def parseMass(self, line):
+        words = line.split(" ")
+        key = words[0]
+        mass = float(words[1])
+        self.elemInfoDict[key] = lookup_element_by_mass(mass)
+    
+    def getAtomType(self, typeKey: int):
+        #Assume element symbol has already been read in by parseMass(...).
+        #If not, return typeKey.
+        if typeKey in self.elemInfoDict:
+            return self.elemInfoDict[typeKey]['symbol']
+        return typeKey
+
     def parseAtom(self, line):
         '''
         Atom lines come in many styles, but we assume the XYZ coordinates are the last 3 
@@ -11,19 +29,21 @@ class LAMMPSParser(BaseParser):
         '''
         try:
             pos = np.zeros((3))
+            typ = ''
             words = line.split()
             if len(words) >= 7: #'Full' style
-                self.atom_types.append(words[2])
+                typ = self.getAtomType(words[2])
                 pos[0] = float_or_zero(words[4])
                 pos[1] = float_or_zero(words[5])
                 pos[2] = float_or_zero(words[6])
             elif len(words) >= 5: #'Atomic' style
-                self.atom_types.append(words[1])
+                typ = self.getAtomType(words[1])
                 pos[0] = float_or_zero(words[2])
                 pos[1] = float_or_zero(words[3])
                 pos[2] = float_or_zero(words[4])
             else:
                 raise IndexError("Line too short")
+            self.atom_types.append(typ)
             self.positions.append(pos)
         except IndexError:
             self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
@@ -73,15 +93,17 @@ class LAMMPSParser(BaseParser):
         except:
             self.errors += "Failure processing line #%d.\n"%(self.lineId)
 
+    def skipLine(self, line):
+        pass
 
     def parseLine(self, line):
-
         #Choose how to parse subsequent lines
-        header = line.strip().lower()
+        line = line.strip()
+        header = line.lower()
         if len(header) == 0:
             pass
         elif header.startswith("masses"):
-            self.parserMethod = None
+            self.parserMethod = self.parseMass
         elif header.startswith("atoms"):
             self.parserMethod = self.parseAtom
         elif header.startswith("bonds"):
@@ -89,9 +111,11 @@ class LAMMPSParser(BaseParser):
         elif header.endswith("hi") and "lo" in header:
             #Special case: box size doesn't use a header
             self.parseBoxSize(line)
+        elif "coeffs" in header:
+            self.parserMethod = self.skipLine
         elif len(header.split()) == 1:
             #For non-implemented headers like Angles and Dihedrals
-            self.parserMethod = None
+            self.parserMethod = self.skipLine
         
         #Perform the parse
         elif len(header.strip()) > 0:
@@ -99,11 +123,4 @@ class LAMMPSParser(BaseParser):
                 self.parserMethod(line)
             else:
                 self.errors += "Unable to process line #%d.\n"%(self.lineId)
-                print(line)
         self.lineId += 1
-        
-#TODO remove
-if __name__ == "__main__":
-    parser = LAMMPSParser()
-    out = parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.data")
-    print("Done")

@@ -22,6 +22,7 @@ def test_nextWord(newXYZParser):
 
 def test_parseLine(newXYZParser):
     parser = newXYZParser
+    parser.lineId = 33
     LINE = "       C    -0.67848    0.00000   -0.61531"
 
     parser.parseLine(LINE)
