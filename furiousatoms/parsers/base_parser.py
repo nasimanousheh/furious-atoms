@@ -34,6 +34,9 @@ class BaseParser:
 
         print(self.errors) #TODO display popup
 
+        for i in range(len(self.box_size)):
+            self.box_size[i] = abs(self.box_size[i])
+
         return self.box_size, np.array(self.positions), np.array(self.bonds), np.array(self.atom_types)
     
     @abstractmethod

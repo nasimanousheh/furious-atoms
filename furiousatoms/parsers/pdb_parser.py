@@ -21,7 +21,7 @@ class PDBParser(BaseParser):
                         self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
         elif line.startswith("ATOM"):
             try:
-                self.atom_types.append(line[13:15])
+                self.atom_types.append(line[13:15].strip())
 
                 pos = np.zeros((3))
                 pos[0] = float_or_zero(line[31:38])
@@ -41,8 +41,3 @@ class PDBParser(BaseParser):
                 self.errors += "Line #%d is too short. Three numbers are needed for the box size.\n"%(self.lineId)
         else:
             self.errors += "Unable to process line #%d.\n"%(self.lineId)
-        
-#TODO remove
-if __name__ == "__main__":
-    parser = PDBParser()
-    parser.parse("C:\\Users\\Pete\\Desktop\\\Example_with_less_atoms\\graphdiyne_unitcell.pdb")

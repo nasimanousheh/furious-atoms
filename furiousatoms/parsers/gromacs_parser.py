@@ -9,20 +9,22 @@ class GROMACSParser(BaseParser):
         self.nextWordIndex = 0
 
     def parseAtomCount(self, line):
-            try:
-                self.numAtoms = int(line)
-            except:
-                #Atom count is not truly necessary, but tell the user anyway.
-                self.errors += "Line #2 must contain the number of atoms as per GROMACS format."
+        try:
+            self.numAtoms = int(line)
+        except:
+            self.errors += "Line #2 must contain the number of atoms as per GROMACS format."
 
     def nextWord(self):
         for i in range(self.nextWordIndex, len(self.words)):
             if len(self.words[i]) > 0:
-                self.nextWordIndex += 1
+                self.nextWordIndex = i + 1
                 return self.words[i]
         raise EOFError("No more words remain for the current line")
 
     def parseAtom(self, line):
+        '''
+        Extract the atom position and atom type of one line
+        '''
         atomType = None
         pos = np.zeros((3))
         try:
