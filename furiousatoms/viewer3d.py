@@ -2,20 +2,17 @@ import os
 import numpy as np
 from furiousatoms.io import create_universe
 from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from furiousatoms.molecular import ViewerMemoryManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
-from fury import window, actor, utils, pick, ui, primitive, material
+from fury import window, actor, utils, pick, material
 from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
                         tangents_from_direction_of_anisotropy, update_polydata_normals)
-from fury.lib import numpy_support
 
 
 def sky_box_effect_atom(scene, actor, universem):
@@ -110,7 +107,6 @@ class Viewer3D(QtWidgets.QWidget):
         self._qvtkwidget.GetRenderWindow().Render()
 
     def load_file(self, fname):
-        success = False
         self.current_file = os.path.basename(fname)
         self.current_filepath = os.path.abspath(fname)
         self.current_filedir = os.path.dirname(self.current_filepath)
@@ -119,8 +115,9 @@ class Viewer3D(QtWidgets.QWidget):
 
         box_size, positions, bonds, atom_types = io.load_files(fname)
         self.load_structure(box_size, positions, bonds, atom_types)
-        return True #TODO should not always be true
-
+        if len(positions) > 0 and len(positions) == len(atom_types):
+            return True
+        return False
 
     def load_structure(self, box_size, positions, bonds, atom_types):
         self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
@@ -129,14 +126,6 @@ class Viewer3D(QtWidgets.QWidget):
         self.bonds_connect_callbacks()
         self.display_universe()
         self.setWindowTitle(self.current_file)
-
-    #TODO remove MDAnalysis here
-    # def load_universe(self, universe, no_bonds=0):
-    #     self.universe_manager = UniverseManager(universe, no_bonds)
-    #     self.particles_connect_callbacks()
-    #     self.bonds_connect_callbacks()
-    #     self.display_universe()
-    #     self.setWindowTitle(self.current_file)
 
     def particles_connect_callbacks(self):
         self.universe_manager.sphere_actor.AddObserver(
@@ -217,7 +206,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_pos = np.delete(final_pos, SM.object_indices_particles, axis=0)
         final_pos_index = np.delete(final_pos_index,
                                     SM.object_indices_particles)
-        final_atom_types = SM.atom_type.copy()
+        final_atom_types = SM.atom_types.copy()
         final_atom_types = np.delete(final_atom_types,
                                     SM.object_indices_particles)
         try:
@@ -267,7 +256,7 @@ class Viewer3D(QtWidgets.QWidget):
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
-        final_atom_types = SM.atom_type.copy()
+        final_atom_types = SM.atom_types.copy()
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)

@@ -22,7 +22,7 @@ class BaseParser:
             - a 1x3 list indicating the box size
             - an array of 1x3 position arrays
             - an array of 1x2 bonds (each value is an atom index in the position array)
-            - an array of atom types <-- TODO elaborate
+            - an string array of atom types as element symbols. Length should match position array.
         '''
         with open(fname, "r") as fp:
             while True:
