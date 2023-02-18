@@ -82,7 +82,7 @@ class ViewerMemoryManager:
         return 1
 
     @property
-    def atom_types(self):
+    def atom_type(self):
         return self.atom_types
 
     def get_bonds(self):

@@ -10,7 +10,7 @@ class LAMMPSParser(BaseParser):
         self.elemInfoDict = {}
     
     def parseMass(self, line):
-        words = line.split(" ")
+        words = line.split()
         key = words[0]
         mass = float(words[1])
         self.elemInfoDict[key] = lookup_element_by_mass(mass)

@@ -211,6 +211,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         load_file.bonds.to_indices()
         pos = load_file.atoms.positions
         pos = pos.astype('float64')
+        #TODO make unit_cell_lx/y more precise--use exact units 
         unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.23
         unit_cell_ly = np.linalg.norm(pos[10]-pos[17]) + 1.4
         box_lx = load_file.dimensions [3]
