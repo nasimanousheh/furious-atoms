@@ -1,5 +1,6 @@
 import unittest
 import pytest
+import os
 
 from furiousatoms.parsers.pdb_parser import PDBParser
 
@@ -55,31 +56,31 @@ def test_parseLine_atomTypes(newPDBParser):
 
 def test_parse(newPDBParser):
     parser = newPDBParser
-    FNAME = "./examples/WaterProtein/water_protein.pdb"
+    FPATH = os.path.join('furiousatoms','tests','test_data','CB_18','CB_18.pdb')
     
-    parser.parse(FNAME)
+    parser.parse(FPATH)
 
-    assert parser.box_size == [30.0, 30.0, 22.52]
+    assert parser.box_size == [90.0, 90.0, 90.0]
 
-    assert len(parser.positions) == 1800
-    assert list(parser.positions[0]) == [17.047, 14.099, 3.625]
-    assert list(parser.positions[1]) == [16.967, 12.784, 4.338]
-    assert list(parser.positions[85]) == [5.929, 6.358, 5.055]
-    assert list(parser.positions[1799]) == [12.951, 13.245, -2.112]
+    assert len(parser.positions) == 18
+    assert list(parser.positions[0]) == [-5.460, -0.000, 0.000]
+    assert list(parser.positions[1]) == [-3.900, -0.000, 0.000]
+    assert list(parser.positions[3]) == [-1.560, -1.351, 0.000]
+    assert list(parser.positions[17]) == [5.460, -0.000, 0.000]
 
-    assert len(parser.bonds) == 1970
-    assert parser.bonds[0][0] == 19
-    assert parser.bonds[0][1] == 281
-    assert parser.bonds[96][0] == 394
-    assert parser.bonds[96][1] == 393
-    assert parser.bonds[1969][0] == 1799
-    assert parser.bonds[1969][1] == 1797
+    assert len(parser.bonds) == 42
+    assert parser.bonds[0][0] == 0
+    assert parser.bonds[0][1] == 1
+    assert parser.bonds[25][0] == 10
+    assert parser.bonds[25][1] == 9
+    assert parser.bonds[41][0] == 17
+    assert parser.bonds[41][1] == 16
 
-    assert len(parser.atom_types) == 1800
-    assert parser.atom_types[0] == 'N'
-    assert parser.atom_types[1] == 'C'
-    assert parser.atom_types[42] == 'O'
-    assert parser.atom_types[1799] == 'H'
+    assert len(parser.atom_types) == 18
+    assert parser.atom_types[0] == 'C'
+    assert parser.atom_types[1] == 'B'
+    assert parser.atom_types[12] == 'C'
+    assert parser.atom_types[17] == 'B'
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import unittest
 import pytest
+import os
 
 from furiousatoms.parsers.xyz_parser import XYZParser
 
@@ -38,25 +39,25 @@ def test_parseLine(newXYZParser):
 
 def test_parse(newXYZParser):
     parser = newXYZParser
-    FNAME = "./examples/WaterProtein/water_protein.xyz"
+    FPATH = os.path.join('furiousatoms','tests','test_data','CB_18','CB_18.xyz')
     
-    parser.parse(FNAME)
+    parser.parse(FPATH)
 
     assert parser.box_size == [0, 0, 0]
 
-    assert len(parser.positions) == 1800
-    assert list(parser.positions[0]) == [17.047001, 14.099, 3.625]
-    assert list(parser.positions[1]) == [16.966999, 12.784, 4.338]
-    assert list(parser.positions[85]) == [5.929, 6.358, 5.055]
-    assert list(parser.positions[1799]) == [12.951, 13.245, -2.112]
+    assert len(parser.positions) == 18
+    assert list(parser.positions[0]) == [-5.46, -0.0, 0.0]
+    assert list(parser.positions[1]) == [-3.9, -0.0, 0.0]
+    assert list(parser.positions[13]) == [0.78, 2.702, 0.0]
+    assert list(parser.positions[17]) == [5.46, -0.0, 0.0]
 
     assert len(parser.bonds) == 0
 
-    assert len(parser.atom_types) == 1800
-    assert parser.atom_types[0] == 'N'
-    assert parser.atom_types[1] == 'C'
-    assert parser.atom_types[42] == 'O'
-    assert parser.atom_types[1799] == 'H'
+    assert len(parser.atom_types) == 18
+    assert parser.atom_types[0] == 'C'
+    assert parser.atom_types[1] == 'B'
+    assert parser.atom_types[13] == 'B'
+    assert parser.atom_types[17] == 'B'
 
 
 if __name__ == '__main__':

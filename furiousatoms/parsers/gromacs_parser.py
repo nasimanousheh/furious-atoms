@@ -12,7 +12,7 @@ class GROMACSParser(BaseParser):
         try:
             self.numAtoms = int(line)
         except:
-            self.errors += "Line #2 must contain the number of atoms as per GROMACS format."
+            self.errors += "Line #2 must contain the number of atoms as per GROMACS format.\n"
 
     def nextWord(self):
         for i in range(self.nextWordIndex, len(self.words)):
@@ -47,7 +47,7 @@ class GROMACSParser(BaseParser):
             
             #Remaining words #7-9 form the velocity, but we skip these.
         except:
-            self.errors += "Unable to parse atom on line #%d"%(self.lineId)
+            self.errors += "Unable to parse atom on line #%d\n"%(self.lineId)
         else:
             self.atom_types.append(atomType)
             self.positions.append(pos)
@@ -63,7 +63,7 @@ class GROMACSParser(BaseParser):
             if wordsRead >= 1 and wordsRead <= 3: 
                 self.box_size[wordsRead - 1] = float_or_zero(word)
         if wordsRead < 3:
-            self.errors += "At least 3 dimensions are needed for the box size on line #%d."%(self.lineId)
+            self.errors += "At least 3 dimensions are needed for the box size on line #%d.\n"%(self.lineId)
 
     def parseLine(self, line):
         #Choose how to parse the current line

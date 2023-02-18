@@ -206,7 +206,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_pos = np.delete(final_pos, SM.object_indices_particles, axis=0)
         final_pos_index = np.delete(final_pos_index,
                                     SM.object_indices_particles)
-        final_atom_types = SM.atom_types.copy()
+        final_atom_types = SM.atom_type.copy()
         final_atom_types = np.delete(final_atom_types,
                                     SM.object_indices_particles)
         try:
@@ -256,7 +256,7 @@ class Viewer3D(QtWidgets.QWidget):
         SM.object_indices_particles = np.asarray(SM.object_indices_particles)
         final_pos = SM.pos.copy()
         final_pos_index = np.arange(final_pos.shape[0])
-        final_atom_types = SM.atom_types.copy()
+        final_atom_types = SM.atom_type.copy()
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)

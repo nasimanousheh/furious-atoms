@@ -1,5 +1,6 @@
 import unittest
 import pytest
+import os
 
 from furiousatoms.parsers.lammps_parser import LAMMPSParser
 
@@ -79,33 +80,33 @@ def test_parseLine_parserMethod(newLAMMPSParser):
 
 def test_parse(newLAMMPSParser):
     parser = newLAMMPSParser
-    FNAME = "./examples/WaterProtein/water_protein.data"
+    FPATH = os.path.join('furiousatoms','tests','test_data','CB_18','CB_18.data')
     
-    parser.parse(FNAME)
+    parser.parse(FPATH)
 
     assert parser.box_size == [21.349, 19.9325, 16.639]
 
-    assert len(parser.positions) == 1800
-    assert list(parser.positions[0]) == [17.047001, 14.099, 3.625]
-    assert list(parser.positions[1]) == [16.966999, 12.784, 4.338]
-    assert list(parser.positions[1625]) == [9.849, 3.939, 0.99]
-    assert list(parser.positions[1799]) == [12.951, 13.245, -2.112]
+    assert len(parser.positions) == 18
+    assert list(parser.positions[0]) == [-5.460000038146973, -2.6490953430879927e-08, 0.0]
+    assert list(parser.positions[1]) == [-3.8999998569488525, -2.6490953430879927e-08, 0.0]
+    assert list(parser.positions[14]) == [1.5599998235702515, 1.3509995937347412, 0.0]
+    assert list(parser.positions[17]) == [5.460000038146973, -2.6490953430879927e-08, 0.0]
 
-    assert len(parser.bonds) == 1403
+    assert len(parser.bonds) == 21
     assert parser.bonds[0][0] == 0
     assert parser.bonds[0][1] == 1
     assert parser.bonds[1][0] == 1
     assert parser.bonds[1][1] == 2
-    assert parser.bonds[783][0] == 870
-    assert parser.bonds[783][1] == 872
-    assert parser.bonds[1402][0] == 1797
-    assert parser.bonds[1402][1] == 1799
+    assert parser.bonds[9][0] == 7
+    assert parser.bonds[9][1] == 8
+    assert parser.bonds[20][0] == 16
+    assert parser.bonds[20][1] == 17
 
-    assert len(parser.atom_types) == 1800
-    assert parser.atom_types[0] == 'N'
-    assert parser.atom_types[1] == 'C'
-    assert parser.atom_types[42] == 'O'
-    assert parser.atom_types[1799] == 'H'
+    assert len(parser.atom_types) == 18
+    assert parser.atom_types[0] == 'C'
+    assert parser.atom_types[1] == 'B'
+    assert parser.atom_types[14] == 'C'
+    assert parser.atom_types[17] == 'B'
 
 
 if __name__ == '__main__':

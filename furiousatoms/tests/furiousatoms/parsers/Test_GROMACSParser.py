@@ -1,5 +1,6 @@
 import unittest
 import pytest
+import os
 
 from furiousatoms.parsers.gromacs_parser import GROMACSParser
 
@@ -69,28 +70,27 @@ def test_parseBoxSize(newGROMACSParser):
     assert len(parser.bonds) == 0
     assert len(parser.atom_types) == 0
 
-#TODO Test GROMACS parse after transform RtoS bug is fixed
-# def test_parse(newGROMACSParser):
-#     parser = newGROMACSParser
-#     FNAME = "./examples/WaterProtein/water_protein.gro"
+def test_parse(newGROMACSParser):
+    parser = newGROMACSParser
+    FPATH = os.path.join('furiousatoms','tests','test_data','CB_18','CB_18.gro')
     
-#     parser.parse(FNAME)
+    parser.parse(FPATH)
 
-#     assert parser.box_size == [3.0, 3.0, 2.252]
+    assert parser.box_size == [9.0, 9.0, 9.0]
 
-#     assert len(parser.positions) == 1800
-#     assert list(parser.positions[0]) == [17.047001, 14.099, 3.625]
-#     assert list(parser.positions[1]) == [16.966999, 12.784, 4.338]
-#     assert list(parser.positions[85]) == [5.929, 6.358, 5.055]
-#     assert list(parser.positions[1799]) == [12.951, 13.245, -2.112]
+    assert len(parser.positions) == 18
+    assert list(parser.positions[0]) == [-0.546, -0.000, 0.000]
+    assert list(parser.positions[1]) == [-0.390, -0.000, 0.000]
+    assert list(parser.positions[15]) == [0.312, 0.135, 0.000]
+    assert list(parser.positions[17]) == [0.546, -0.000, 0.000]
 
-#     assert len(parser.bonds) == 0
+    assert len(parser.bonds) == 0
 
-#     assert len(parser.atom_types) == 1800
-#     assert parser.atom_types[0] == 'N'
-#     assert parser.atom_types[1] == 'C'
-#     assert parser.atom_types[42] == 'O'
-#     assert parser.atom_types[1799] == 'H'
+    assert len(parser.atom_types) == 18
+    assert parser.atom_types[0] == 'C'
+    assert parser.atom_types[1] == 'B'
+    assert parser.atom_types[6] == 'C'
+    assert parser.atom_types[17] == 'B'
 
 
 if __name__ == '__main__':
