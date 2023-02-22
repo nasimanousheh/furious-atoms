@@ -1,12 +1,17 @@
 # Standard package
 import os
 import sys
+import warnings
 
 import furiousatoms
 from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
+from furiousatoms.parsers.gromacs_parser import GROMACSParser
+from furiousatoms.parsers.lammps_parser import LAMMPSParser
+from furiousatoms.parsers.pdb_parser import PDBParser
+from furiousatoms.parsers.xyz_parser import XYZParser
 
 
 def is_frozen():
@@ -76,29 +81,29 @@ def load_ui_widget(uifilename, cls_to_register=None, parent=None):
 
 
 def load_files(fname, debug=False):
-    load_file_export = open(fname, 'r')
-    lines = load_file_export.readlines()
-    no_lines = len(lines)
-    frames_cnt = 0
-    format_data = None
-    no_bonds = 0
-    bonds = 0
-    for i in range(no_lines):
-        line = lines[i]
-        if 'item: number of atoms'.upper() in line:
-            format_data = 'LAMMPSDUMP'
-            break
-        i += 1
-
-    load_file = MDAnalysis.Universe(fname, format=format_data)
-    if format_data is None:
-        load_file = MDAnalysis.Universe(fname)
-        try:
-            bonds = load_file.bonds.to_indices()
-            no_bonds = len(load_file.bonds)
-        except MDAnalysis.exceptions.NoDataError:
-            no_bonds = 0
-    return load_file, no_bonds
+    # load_file_export = open(fname, 'r')
+    # lines = load_file_export.readlines()
+    # no_lines = len(lines)
+    # frames_cnt = 0
+    # format_data = None
+    # no_bonds = 0
+    # bonds = 0
+    # for i in range(no_lines):
+    #     line = lines[i]
+    #     if 'item: number of atoms'.upper() in line:
+    #         format_data = 'LAMMPSDUMP'
+    #         break
+    #     i += 1
+    
+    #Choose parser based on file extension
+    if fname.endswith(".pdb"):
+        return PDBParser().parse(fname)
+    elif fname.endswith(".data") or fname.endswith(".dat") or fname.endswith(".lmp"):
+        return LAMMPSParser().parse(fname)
+    elif fname.endswith(".xyz"):
+        return XYZParser().parse(fname)
+    elif fname.endswith(".gro"):
+        return GROMACSParser().parse(fname)
 
 
 def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):

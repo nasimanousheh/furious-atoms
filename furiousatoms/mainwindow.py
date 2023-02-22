@@ -69,7 +69,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def create_connections(self):
         # File menu actions
         self.ui.actionNew_file.triggered.connect(self.new_window)
-        self.ui.actionLoad_file.triggered.connect(self.open)
+        self.ui.actionLoad_file.triggered.connect(self.open_from_widget)
         self.ui.actionSave_file.triggered.connect(self.save)
         self.ui.actionSave_Image_File.triggered.connect(self.save_image)
         self.ui.actionExit.triggered.connect(self.quit_fired)
@@ -864,11 +864,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         child.make_title()
         child.show()
 
-    def open(self):
-        fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
-        if not fname:
-            return
-
+    def open(self, fname):
         existing = self.find_mdi_child(fname)
         if existing:
             self.ui.mdiArea.setActiveSubWindow(existing)
@@ -880,6 +876,12 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         else:
             child.close()
 
+    def open_from_widget(self):
+        fname, _ = QtWidgets.QFileDialog.getOpenFileName(self, self.tr('Load'))
+        if not fname:
+            return
+        self.open(fname)
+        
     def open_dataset_fullerene(self):
         dir_fullerene_folder = io.get_frozen_path() if io.is_frozen() else io.get_application_path()
         fullerene_folder = os.path.join(dir_fullerene_folder,
@@ -1041,10 +1043,14 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     for item in items:
                         item.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
                     SM.colors_unique_types[i] = np.array([r/255, g/255, b/255, a/255], dtype='f8')
-                    SM.colors[(SM.atom_type == atom_typ) & (SM.deleted_particles == False)] = SM.colors_unique_types[i]
+                    # SM.colors[(SM.atom_type == atom_typ) & (SM.deleted_particles == False)] = SM.colors_unique_types[i]
+                    for row in range(0, len(SM.colors)):
+                        if SM.atom_type[row] == atom_typ:
+                            if not SM.deleted_particles[row]:
+                                SM.colors[row] = SM.colors_unique_types[i]
                     exclude = []
                     if SM.no_bonds > 0:
-                        bonds_indices = SM.universe.bonds.to_indices()
+                        bonds_indices = SM.bonds
                         for b in range(bonds_indices.shape[0]):
                             if SM.deleted_bonds[b]:
                                 exclude.append(2 * b)
@@ -1187,15 +1193,9 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.button_animation.setChecked(SM.n_frames > 1)
         if SM.no_atoms > 0:
             self.ui.Box_particles.stateChanged.connect(self.check_particles)
-            if SM.universe_save:
-                self.ui.Edit_num_of_particles.setText(str(SM.universe_save.atoms.positions.shape[0]))
-                self.ui.Edit_num_of_particle_types.setText(str(len(np.unique(SM.universe_save.atoms.types))))
-                self.ui.Edit_num_of_bonds.setText(str(len(SM.universe_save.bonds)))
-
-            else:
-                self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
-                self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
-                self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
+            self.ui.Edit_num_of_particles.setText(str(SM.no_atoms))
+            self.ui.Edit_num_of_particle_types.setText(str(len(SM.unique_types)))
+            self.ui.Edit_num_of_bonds.setText(str(SM.no_bonds))
         if SM.box_lx > 0 or SM.box_ly > 0 or SM.box_lz > 0:
             self.ui.Box_simulationcell.stateChanged.connect(self.check_simulationcell)
         if SM.no_bonds > 0:
