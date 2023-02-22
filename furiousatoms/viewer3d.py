@@ -2,20 +2,17 @@ import os
 import numpy as np
 from furiousatoms.io import create_universe
 from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.molecular import UniverseManager
+from furiousatoms.molecular import ViewerMemoryManager
 from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
-from fury import window, actor, utils, pick, ui, primitive, material
+from fury import window, actor, utils, pick, material
 from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
                         tangents_from_direction_of_anisotropy, update_polydata_normals)
-from fury.lib import numpy_support
 
 
 def sky_box_effect_atom(scene, actor, universem):
@@ -100,34 +97,31 @@ class Viewer3D(QtWidgets.QWidget):
 
     @property
     def scene(self):
-        """The foo property."""
         return self._scene
 
     @property
     def showm(self):
-        """The foo property."""
         return self._showm
 
     def render(self):
         self._qvtkwidget.GetRenderWindow().Render()
 
     def load_file(self, fname):
-        success = False
         self.current_file = os.path.basename(fname)
         self.current_filepath = os.path.abspath(fname)
         self.current_filedir = os.path.dirname(self.current_filepath)
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
-        universe, no_bonds = io.load_files(fname)
-        if not universe:
-            return success
-        self.load_universe(universe, no_bonds)
-        success = True
-        return success
+        box_size, positions, bonds, atom_types = io.load_files(fname)
+        self.load_structure(box_size, positions, bonds, atom_types)
+        if len(positions) > 0 and len(positions) == len(atom_types):
+            return True
+        return False
 
-    def load_universe(self, universe, no_bonds=0):
-        self.universe_manager = UniverseManager(universe, no_bonds)
+    def load_structure(self, box_size, positions, bonds, atom_types):
+        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
+
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()
         self.display_universe()
