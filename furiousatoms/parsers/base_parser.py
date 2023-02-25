@@ -32,7 +32,7 @@ class BaseParser:
                 self.parseLine(line)
                 self.lineId += 1
 
-        print(self.errors) #TODO display popup
+        # print(self.errors) #TODO display popup
 
         for i in range(len(self.box_size)):
             self.box_size[i] = abs(self.box_size[i])
