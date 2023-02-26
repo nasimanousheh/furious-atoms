@@ -7,22 +7,11 @@ import MDAnalysis as mda
 from PySide2.QtGui import QIcon
 import os
 from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN
+from furiousatoms.builders.builder_util import copy_bonds
 
 
 thre = 1e-10
 vacuum = 4
-
-def copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT):
-    copied_bonds = np.zeros(shape=(len(bonds) * num_unitcell_in_lx * num_unitcell_in_ly, 2),
-            dtype=int)
-    bondIndex = 0
-    for u in range(num_unitcell_in_lx * num_unitcell_in_ly):
-        for bond in bonds:
-            offset = u * UNIT_ATOM_COUNT
-            for i in range(0, 2):
-                copied_bonds[bondIndex][i] = bond[i] + offset
-            bondIndex += 1
-    return copied_bonds
 
 class Ui_graphyne(QtWidgets.QMainWindow):
     """ Ui_graphyne class creates a widget for building multple-walls nanotube (graphyne)
