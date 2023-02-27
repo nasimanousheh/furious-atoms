@@ -4,8 +4,8 @@ from furiousatoms.io import create_universe
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.molecular import ViewerMemoryManager
-from furiousatoms.fullerenes_builder import load_CC1_file
+from furiousatoms.molecular import MolecularStructure, ViewerMemoryManager
+from furiousatoms.builders.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, material
 from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
@@ -114,13 +114,19 @@ class Viewer3D(QtWidgets.QWidget):
         self.is_untitled = False
 
         box_size, positions, bonds, atom_types = io.load_files(fname)
-        self.load_structure(box_size, positions, bonds, atom_types)
+        structure = io.load_files(fname)
+        self.load_structure(structure)
         if len(positions) > 0 and len(positions) == len(atom_types):
             return True
         return False
 
-    def load_structure(self, box_size, positions, bonds, atom_types):
-        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
+    def load_structure(self, molecular_structure: MolecularStructure):
+        self.universe_manager = ViewerMemoryManager(
+                molecular_structure.box_size,
+                molecular_structure.pos,
+                molecular_structure.bonds,
+                molecular_structure.atom_types
+        )
 
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()

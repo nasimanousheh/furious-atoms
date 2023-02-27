@@ -10,6 +10,20 @@ SPHERE_SIZE = 0.35
 POSITION_ARR_LEN = 3
 BOND_ARR_LEN = 2
 
+class MolecularStructure:
+    def __init__(self):
+        self.box_size = [0, 0, 0]
+        self.pos = np.empty()
+        self.bonds = np.empty()
+        self.atom_types = np.empty()
+        
+    def __init__(self, box_size, pos, bonds, atom_types):
+        self.box_size = box_size
+        self.pos = pos
+        self.bonds = bonds
+        self.atom_types = atom_types
+
+
 class ViewerMemoryManager:
 
     def __init__(self, box, pos, bonds, atom_types):

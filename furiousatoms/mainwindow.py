@@ -25,17 +25,17 @@ from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.viewer_vtk import ViewerVTK
-from furiousatoms.SWNT_builder import  Ui_SWNT
+from furiousatoms.builders.SWNT_builder import  Ui_SWNT
 from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
-from furiousatoms.graphene_builder import  Ui_graphene
-from furiousatoms.graphyne_builder import  Ui_graphyne
-from furiousatoms.box_builder import  Ui_box
-from furiousatoms.solution_builder import  Ui_solution
-from furiousatoms.MWNT_builder import  Ui_MWNT
-from furiousatoms.Nanorope_builder import  Ui_NanoRope
+from furiousatoms.builders.graphene_builder import  Ui_graphene
+from furiousatoms.builders.graphyne_builder import  Ui_graphyne
+from furiousatoms.builders.box_builder import  Ui_box
+from furiousatoms.builders.solution_builder import  Ui_solution
+from furiousatoms.builders.MWNT_builder import  Ui_MWNT
+from furiousatoms.builders.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.structure import bbox
-from furiousatoms.electrolyte_builder import Ui_electrolyte
-from furiousatoms.fullerenes_builder import load_CC1_file
+from furiousatoms.builders.electrolyte_builder import Ui_electrolyte
+from furiousatoms.builders.fullerenes_builder import load_CC1_file
 from fury.utils import (get_actor_from_primitive, normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)

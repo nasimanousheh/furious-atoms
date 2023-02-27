@@ -6,7 +6,7 @@ from furiousatoms.io import  load_files
 import MDAnalysis as mda
 from PySide2.QtGui import QIcon
 import os
-from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN
+from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN, MolecularStructure
 from furiousatoms.builders.builder_util import copy_bonds
 
 
@@ -69,7 +69,7 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_structure(*graphyne)
+        window.load_structure(graphyne)
         window.show()
 
         
@@ -116,15 +116,14 @@ class Ui_graphyne(QtWidgets.QMainWindow):
 
 
 
-    def beta_graphyne_builder(self, structure_info, edge_length_x, edge_length_y):
-        box_size, pos, bonds, atom_types = structure_info
-        unit_cell_lx = np.linalg.norm(pos[4]-pos[11]) + 1.4
+    def beta_graphyne_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
+        unit_cell_lx = np.linalg.norm(s.pos[4] - s.pos[11]) + 1.4
         unit_cell_ly = 9.485-1.285
         box = np.array([unit_cell_lx, unit_cell_ly, 0])
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         
-        UNIT_ATOM_COUNT = len(pos)
+        UNIT_ATOM_COUNT = len(s.pos)
         NEW_ATOM_COUNT = UNIT_ATOM_COUNT * num_unitcell_in_lx * num_unitcell_in_ly
         copied_pos = np.zeros(shape=(NEW_ATOM_COUNT, 3))
         copied_atom_types = np.zeros(shape=(NEW_ATOM_COUNT), dtype=str)
@@ -136,17 +135,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             i = 0
             for y in range(num_unitcell_in_ly):
                 move_by = box*(x-i, y, 1)
-                for j, atom in enumerate(pos): #j is an index in pos whereas atomId is an index in copied_pos
+                for j, atom in enumerate(s.pos): #j is an index in pos whereas atomId is an index in copied_pos
                     for k in range(0, 3):
                         copied_pos[atomId][k] = atom[k] + move_by[k]
-                    copied_atom_types[atomId] = atom_types[j]
+                    copied_atom_types[atomId] = s.atom_types[j]
                     atomId += 1
                 i = i-(0.5)
 
-        pos = copied_pos
-        atom_types = copied_atom_types
+        s.pos = copied_pos
+        s.atom_types = copied_atom_types
         
-        bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(s.bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
 
         b = 0
         c = 0
@@ -171,18 +170,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     new_bonds.append(added_bonds_4)
             c = c + 1
         for bond in new_bonds:
-            bonds = np.vstack((bonds, np.reshape(bond, (-1, 2)) ))
+            s.bonds = np.vstack((s.bonds, np.reshape(bond, (-1, 2)) ))
 
-        return box_size, pos, bonds, atom_types
+        return s
     
-    def gamma_graphyne_builder(self, structure_info, edge_length_x, edge_length_y):
-        box_size, pos, bonds, atom_types = structure_info
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.4
-        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.458509564
+    def gamma_graphyne_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
+        unit_cell_lx = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 1.4
+        unit_cell_ly = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 0.458509564
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
 
-        UNIT_ATOM_COUNT = len(pos)
+        UNIT_ATOM_COUNT = len(s.pos)
         NEW_ATOM_COUNT = UNIT_ATOM_COUNT * num_unitcell_in_lx * num_unitcell_in_ly
         copied_pos = np.zeros(shape=(NEW_ATOM_COUNT, 3))
         copied_atom_types = np.zeros(shape=(NEW_ATOM_COUNT), dtype=str)
@@ -194,17 +192,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             i = 0
             for y in range(num_unitcell_in_ly):
                 move_by = box*(x-i, y, 1)
-                for j, atom in enumerate(pos): #j is an index in pos whereas atomId is an index in copied_pos
+                for j, atom in enumerate(s.pos): #j is an index in pos whereas atomId is an index in copied_pos
                     for k in range(0, 3):
                         copied_pos[atomId][k] = atom[k] + move_by[k]
-                    copied_atom_types[atomId] = atom_types[j]
+                    copied_atom_types[atomId] = s.atom_types[j]
                     atomId += 1
                 i = i+(0.5)
 
-        pos = copied_pos
-        atom_types = copied_atom_types
+        s.pos = copied_pos
+        s.atom_types = copied_atom_types
         
-        bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(s.bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
 
         b = 0
         c = 0
@@ -225,19 +223,18 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     new_bonds.append(added_bonds_1)
             c = c + 1
         for bond in new_bonds:
-            bonds = np.vstack((bonds, np.reshape(bond, (-1, 2)) ))
+            s.bonds = np.vstack((s.bonds, np.reshape(bond, (-1, 2)) ))
 
-        return box_size, pos, bonds, atom_types
+        return s
 
-    def graphyne_2_builder(self, structure_info, edge_length_x, edge_length_y):
-        box_size, pos, bonds, atom_types = structure_info
-        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) -0.2
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.42
+    def graphyne_2_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
+        unit_cell_ly = max(s.pos[:, 0]) - min(s.pos[:, 0]) -0.2
+        unit_cell_lx = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 1.42
         box = np.array([unit_cell_lx, unit_cell_ly, 0])
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         
-        UNIT_ATOM_COUNT = len(pos)
+        UNIT_ATOM_COUNT = len(s.pos)
         NEW_ATOM_COUNT = UNIT_ATOM_COUNT * num_unitcell_in_lx * num_unitcell_in_ly
         copied_pos = np.zeros(shape=(NEW_ATOM_COUNT, 3))
         copied_atom_types = np.zeros(shape=(NEW_ATOM_COUNT), dtype=str)
@@ -256,10 +253,10 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     atomId += 1
                 i = i+(0.5)
 
-        pos = copied_pos
-        atom_types = copied_atom_types
+        s.pos = copied_pos
+        s.atom_types = copied_atom_types
         
-        bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
 
         b = 0
         c = 0
@@ -280,19 +277,18 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     new_bonds.append(added_bonds_1)
             c = c + 1
         for bond in new_bonds:
-            bonds = np.vstack((bonds, np.reshape(bond, (-1, 2)) ))
+            s.bonds = np.vstack((s.bonds, np.reshape(bond, (-1, 2)) ))
 
-        return box_size, pos, bonds, atom_types
+        return s
 
-    def graphyne_6_6_12_builder(self, structure_info, edge_length_x, edge_length_y):
-        box_size, pos, bonds, atom_types = structure_info
+    def graphyne_6_6_12_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
         #TODO make unit_cell_lx/y more precise--use exact units 
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.23
-        unit_cell_ly = np.linalg.norm(pos[10]-pos[17]) + 1.4
+        unit_cell_lx = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 1.23
+        unit_cell_ly = np.linalg.norm(s.pos[10]-s.pos[17]) + 1.4
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
 
-        UNIT_ATOM_COUNT = len(pos)
+        UNIT_ATOM_COUNT = len(s.pos)
         NEW_ATOM_COUNT = UNIT_ATOM_COUNT * num_unitcell_in_lx * num_unitcell_in_ly
         copied_pos = np.zeros(shape=(NEW_ATOM_COUNT, 3))
         copied_atom_types = np.zeros(shape=(NEW_ATOM_COUNT), dtype=str)
@@ -304,17 +300,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             i = 0
             for y in range(num_unitcell_in_ly):
                 move_by = box*(x, y, 1)
-                for j, atom in enumerate(pos): #j is an index in pos whereas atomId is an index in copied_pos
+                for j, atom in enumerate(s.pos): #j is an index in pos whereas atomId is an index in copied_pos
                     for k in range(0, 3):
                         copied_pos[atomId][k] = atom[k] + move_by[k]
-                    copied_atom_types[atomId] = atom_types[j]
+                    copied_atom_types[atomId] = s.atom_types[j]
                     atomId += 1
                 i = i+(0.5)
 
-        pos = copied_pos
-        atom_types = copied_atom_types
+        s.pos = copied_pos
+        s.atom_types = copied_atom_types
 
-        bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(s.bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
         
         b = 0
         c = 0
@@ -341,18 +337,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     new_bonds.append(added_bonds_5)
             c = c + 1
         for bond in new_bonds:
-            bonds = np.vstack((bonds, np.reshape(bond, (-1, 2)) ))
+            s.bonds = np.vstack((s.bonds, np.reshape(bond, (-1, 2)) ))
 
-        return box_size, pos, bonds, atom_types
+        return s
 
-    def twin_graphene_builder(self, structure_info, edge_length_x, edge_length_y):
-        box_size, pos, bonds, atom_types = structure_info
-        unit_cell_lx = max(pos[:, 0]) - min(pos[:, 0]) + 1.421
-        unit_cell_ly = max(pos[:, 0]) - min(pos[:, 0]) + 0.53
+    def twin_graphene_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
+        unit_cell_lx = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 1.421
+        unit_cell_ly = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 0.53
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         
-        UNIT_ATOM_COUNT = len(pos)
+        UNIT_ATOM_COUNT = len(s.pos)
         NEW_ATOM_COUNT = UNIT_ATOM_COUNT * num_unitcell_in_lx * num_unitcell_in_ly
         copied_pos = np.zeros(shape=(NEW_ATOM_COUNT, 3))
         copied_atom_types = np.zeros(shape=(NEW_ATOM_COUNT), dtype=str)
@@ -364,17 +359,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             i = 0
             for y in range(num_unitcell_in_ly):
                 move_by = box*(x-i, y, 1)
-                for j, atom in enumerate(pos): #j is an index in pos whereas atomId is an index in copied_pos
+                for j, atom in enumerate(s.pos): #j is an index in pos whereas atomId is an index in copied_pos
                     for k in range(0, 3):
                         copied_pos[atomId][k] = atom[k] + move_by[k]
-                    copied_atom_types[atomId] = atom_types[j]
+                    copied_atom_types[atomId] = s.atom_types[j]
                     atomId += 1
                 i = i+(0.5)
                 
-        pos = copied_pos
-        atom_types = copied_atom_types
+        s.pos = copied_pos
+        s.atom_types = copied_atom_types
         
-        bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(s.bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
         
         b = 0
         c = 0
@@ -396,23 +391,23 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     new_bonds.append(added_bonds_1)
             c = c + 1
         for bond in new_bonds:
-            bonds = np.vstack((bonds, np.reshape(bond, (-1, 2)) ))
+            s.bonds = np.vstack((s.bonds, np.reshape(bond, (-1, 2)) ))
             
-        return box_size, pos, bonds, atom_types
+        return s
 
     def extend_the_sheets(self, structure_info, num_sheets, sheet_separation):
-        box_size, positions, bonds, atom_types = structure_info
+        s = structure_info
         if num_sheets > 1:
-            ATOM_COUNT = len(positions)
+            ATOM_COUNT = len(s.pos)
             new_positions = np.zeros(shape=(ATOM_COUNT * num_sheets, POSITION_ARR_LEN))
-            new_positions[:ATOM_COUNT] = positions #copy old data
-            positions = new_positions
+            new_positions[:ATOM_COUNT] = s.pos #copy old data
+            s.pos = new_positions
             for i in range(1, num_sheets):
                 for j in range(ATOM_COUNT):
-                    atom = positions[j]
+                    atom = s.pos[j]
                     for k in range(0, POSITION_ARR_LEN):
-                        positions[i*ATOM_COUNT + j][k] = atom[k]
-                    positions[i*ATOM_COUNT + j][2] -= sheet_separation * i
+                        s.pos[i*ATOM_COUNT + j][k] = atom[k]
+                    s.pos[i*ATOM_COUNT + j][2] -= sheet_separation * i
 
             new_atom_types = np.zeros(shape=(ATOM_COUNT * num_sheets), dtype=type(atom_types[0]))
             new_atom_types[:ATOM_COUNT] = atom_types
@@ -421,18 +416,18 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                 for j in range(ATOM_COUNT):
                     atom_types[i*ATOM_COUNT + j] = atom_types[j]
 
-            BOND_COUNT = len(bonds)
+            BOND_COUNT = len(s.bonds)
             new_bonds = np.zeros(shape=(BOND_COUNT * num_sheets, BOND_ARR_LEN), dtype='int')
-            new_bonds[:BOND_COUNT] = bonds
-            bonds = new_bonds
+            new_bonds[:BOND_COUNT] = s.bonds
+            s.bonds = new_bonds
             for i in range(1, num_sheets):
                 for j in range(BOND_COUNT):
                     for k in range(0, BOND_ARR_LEN):
                         #Make the bonds point to the new sheet's atoms
-                        bonds[i*BOND_COUNT + j][k] = bonds[j][k] + (ATOM_COUNT * i)
+                        s.bonds[i*BOND_COUNT + j][k] = s.bonds[j][k] + (ATOM_COUNT * i)
 
         #Center atoms inside box
         for k in range(0, POSITION_ARR_LEN):
-            positions[:,k] -= positions[:,k].mean()
+            s.pos[:,k] -= s.pos[:,k].mean()
         
-        return box_size, positions, bonds, atom_types
+        return s
