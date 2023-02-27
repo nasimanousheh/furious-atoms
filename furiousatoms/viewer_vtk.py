@@ -6,7 +6,7 @@ from PySide2 import QtGui
 from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.fullerenes_builder import load_CC1_file
+from furiousatoms.builders.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, ui, primitive, material
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
