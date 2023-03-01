@@ -246,17 +246,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
             i = 0
             for y in range(num_unitcell_in_ly):
                 move_by = box*(x-i, y, 1)
-                for j, atom in enumerate(pos): #j is an index in pos whereas atomId is an index in copied_pos
+                for j, atom in enumerate(s.pos): #j is an index in pos whereas atomId is an index in copied_pos
                     for k in range(0, 3):
                         copied_pos[atomId][k] = atom[k] + move_by[k]
-                    copied_atom_types[atomId] = atom_types[j]
+                    copied_atom_types[atomId] = s.atom_types[j]
                     atomId += 1
                 i = i+(0.5)
 
         s.pos = copied_pos
         s.atom_types = copied_atom_types
         
-        s.bonds = copy_bonds(bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
+        s.bonds = copy_bonds(s.bonds, num_unitcell_in_lx, num_unitcell_in_ly, UNIT_ATOM_COUNT)
 
         b = 0
         c = 0

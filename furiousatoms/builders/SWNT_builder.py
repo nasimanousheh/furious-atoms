@@ -7,8 +7,9 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-from furiousatoms.io import create_universe, merged_universe_with_H
 from PySide2.QtGui import QIcon
+
+from furiousatoms.molecular import MolecularStructure
 
 thre = 1e-10
 vacuum = 4
@@ -159,7 +160,7 @@ class Ui_SWNT(QtWidgets.QMainWindow):
         structure_info = SWNT_builder(H_termination_SWNT, value_n_SWNT, value_m_SWNT, repeat_units_SWNT, length=None, bond_length=bond_length_SWNT, species=(SWNT_type_1, SWNT_type_2), centered=True)
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(structure_info)
+        window.load_structure(structure_info)
         window.show()
     def initial_box_dim(self):
         global box_lx, box_ly, box_lz
@@ -181,8 +182,6 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     dR = 3*d if (n-m) % (3*d) == 0 else d
     t1 = (2*m+n)//dR
     t2 = -(2*n+m)//dR
-    # a1 = np.array((np.sqrt(3)*bond_length,0,0))
-    # a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2,0))
     a1 = np.array((np.sqrt(3)*bond_length, 0))
     a2 = np.array((np.sqrt(3)/2*bond_length, -3*bond_length/2))
     Ch = n*a1+m*a2
@@ -225,7 +224,10 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
         box_lx or box_ly or box_lz
     except NameError:
         box_lx = box_ly = box_lz = 0.0
-    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, box_lx, box_ly, box_lz)
+    box_size = [box_lx, box_ly, box_lz]
+    atom_types_swnt = np.array(atom_types_swnt)
+    univ_swnt = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt)
+    univ_swnt.center()
 
     # If the user chooses "None", only SWNT structure without hydrogens will be returned:
     if H_termination_SWNT == 'None':
@@ -315,7 +317,9 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                     one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
                     num_hydrogen = num_hydrogen + 1
         one_end_atom_types_H = list(['H']*num_hydrogen)
-        merged_swnt_one_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H, box_lx, box_ly, box_lz)
+        merged_swnt_one_end_H = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
+                .merge(MolecularStructure(box_size, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H)) \
+                .center()
         # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
         if H_termination_SWNT == 'One end' and bendFactor==1:
             return merged_swnt_one_end_H
@@ -390,7 +394,9 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                 num_hydrogen = num_hydrogen + 1
         # If the user chooses "Both ends", SWNT structure with both ends hydrogenated will be returned:
         two_end_atom_types_H = list(['H']*num_hydrogen)
-        merged_swnt_two_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H, box_lx, box_ly, box_lz)
+        merged_swnt_two_end_H = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
+                .merge(MolecularStructure(box_size, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H)) \
+                .center()
 
         if H_termination_SWNT == 'Both ends' and bendFactor==1:
             return merged_swnt_two_end_H
@@ -470,7 +476,9 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                     bonds_hydrogen.extend([(x, num_atoms_swnt + num_hydrogen)])
                     num_hydrogen = num_hydrogen + 1
             atom_types_Hydrogen = list(['H']*num_hydrogen)
-            merged_swnt_hydrogen = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen, box_lx, box_ly, box_lz)
+            merged_swnt_hydrogen = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
+                .merge(MolecularStructure(box_size, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen)) \
+                .center()
             # If the user chooses "All", hydrogenated swnt structure will be returned:
             return merged_swnt_hydrogen
                 # return univ _swnt

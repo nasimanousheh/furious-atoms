@@ -14,14 +14,69 @@ class MolecularStructure:
     def __init__(self):
         self.box_size = [0, 0, 0]
         self.pos = np.empty()
-        self.bonds = np.empty()
-        self.atom_types = np.empty()
+        self.bonds = np.empty(dtype=int)
+        self.atom_types = np.empty(dtype=str)
         
-    def __init__(self, box_size, pos, bonds, atom_types):
+    def __init__(self, box_size: list, pos: np.array, bonds: np.array, atom_types: np.array):
+        '''
+        `box_size`: a 1x3 list with X, Y, and Z numerical dimensions. 
+        `pos`: a Nx3 array with XYZ float positions of each atom.
+        `bonds`: a Nx2 array where each row is a pair of integer atom IDs. 
+            Each ID corresponds to a row in `pos`.
+        `atom_types`: a Nx1 array of strings representing element symbols. 
+            The length must match with `pos`.
+        '''
         self.box_size = box_size
         self.pos = pos
         self.bonds = bonds
         self.atom_types = atom_types
+
+    def merge(s1, s2, offset_bonds=False):
+        '''
+        Merge a MolecularStructure with another, combining the positions, bonds, and atom_types.
+        Only s1's box_size will be kept. Neither s1 nor s1 will be modified. 
+        `offset_bonds`: If set to True, bond IDs will be corrected so that the two structures
+            will not connect.
+        '''
+        pos_merged = np.zeros(shape=(len(s1.pos) + len(s2.pos), 3))
+        i = 0
+        for position in s1.pos:
+            for j in range(3):
+                pos_merged[i][j] = position[j]
+            i += 1
+        for position in s2.pos:
+            for j in range(3):
+                pos_merged[i][j] = position[j]
+            i += 1
+
+        offset = s1.pos.shape[0] if offset_bonds else 0
+        bonds_merged = np.zeros(shape=(len(s1.bonds) + len(s2.bonds), 2), dtype=int)
+        i = 0
+        for bond in s1.bonds:
+            for j in range(2):
+                bonds_merged[i][j] = bond[j]
+            i += 1
+        for bond in s2.bonds:
+            for j in range(2):
+                bonds_merged[i][j] = bond[j] + offset
+            i += 1
+
+        types_merged = np.zeros(shape=(len(s1.atom_types) + len(s2.atom_types)), dtype=str)
+        i = 0
+        for typ in s1.atom_types:
+            types_merged[i] = typ
+            i += 1
+        for typ in s2.atom_types:
+            types_merged[i] = typ
+            i += 1
+
+        return MolecularStructure(s2.box_size, pos_merged, bonds_merged, types_merged)
+
+    def center(self):
+        for k in range(3):
+            correction = (self.pos[:,k].max() + self.pos[:,k].min()) / 2
+            self.pos[:, k] -= correction
+        return self
 
 
 class ViewerMemoryManager:
@@ -105,7 +160,6 @@ class ViewerMemoryManager:
         return self._bonds
 
     def generate_bond_actor(self):
-        # bonds_indices = self.universe.bonds.to_indices()
         bonds_indices = self.bonds
         first_pos_bond = self.pos[(bonds_indices[:, 0])]
         second_pos_bond = self.pos[(bonds_indices[:, 1])]
