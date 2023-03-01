@@ -234,7 +234,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
-                set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                type_index = utils.np_lookup(SM.atom_type, atom_typ)
+                set_value_radius = SM.radii_spheres[type_index]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
 
     def change_slice_opacity(self, opacity_degree):
@@ -460,7 +461,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.no_vertices_all_particles = vertices.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         for atom_typ in SM.unique_types:
-            selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+            type_index = utils.np_lookup(SM.atom_type, atom_typ)
+            selected_value_radius = SM.radii_spheres[type_index]
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             all_vertices_radii = all_vertices_radii[:, None]
             selected_atom_mask = SM.atom_type == atom_typ
@@ -1129,6 +1131,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         SM = self.get_SM_active_window()
+        if not SM:
+            return
         self.ui.Box_Axis.setChecked(True)
         self.ui.Box_Axis.stateChanged.connect(self.check_axis)
         try:
@@ -1153,16 +1157,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         active_window.render()
         self.ui.treeWidget.clear()
-        print("metallic: ", SM.metallic)
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
-            set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            type_index = utils.np_lookup(SM.atom_type, typ)
+            set_value_radius = SM.radii_spheres[type_index]
             self.ui.SpinBox_atom_radius.setValue((set_value_radius))
-            r = (SM.colors[SM.atom_type == typ][0][0])*255
-            g = (SM.colors[SM.atom_type == typ][0][1])*255
-            b = (SM.colors[SM.atom_type == typ][0][2])*255
-            a = (SM.colors[SM.atom_type == typ][0][3])*255
+            r = (SM.colors[type_index][0])*255
+            g = (SM.colors[type_index][1])*255
+            b = (SM.colors[type_index][2])*255
+            a = (SM.colors[type_index][3])*255
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
             cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
 

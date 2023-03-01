@@ -1,6 +1,4 @@
-from furiousatoms.io import create_universe, merged_universe_with_H
 import numpy as np
-from numpy.linalg import norm
 from math import gcd
 from itertools import product
 from furiousatoms.geomlib import Atom, Molecule
@@ -9,9 +7,9 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-from fury import window, utils
-from furiousatoms.structure import bbox
+from fury import window
 from PySide2.QtGui import QIcon
+from furiousatoms.molecular import MolecularStructure
 
 
 thre = 1e-10
@@ -180,46 +178,38 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
         NanoRope_type_1 = self.NanoRope.comboBox_type1_NanoRope.currentText()
         NanoRope_type_2 = self.NanoRope.comboBox_type2_NanoRope.currentText()
         # bendFactor = float(self.NanoRope.doubleSpinBox_bend_factor.text())
-        universe = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True)
-        universe_all = universe.copy()
-        list_universe = []
-        import MDAnalysis as mda
+        original_structure = SWNT_builder(H_termination_SWNT, value_n_NanoRope, value_m_NanoRope, repeat_units_NanoRope, length=None, bond_length=bond_length_NanoRope, species=(NanoRope_type_1, NanoRope_type_2), centered=True)
+        entire_structure = MolecularStructure.create_empty()
         distance_between_tubes = 0
         for i in range(number_tubes):
             if i == 0:
-                pos = universe_all.atoms.positions
+                pos = original_structure.pos
             else:
                 if (i > 0 and i <=6):
                     distance_between_tubes = diameter_SWNT + nanotube_separation
                     shifted_tube_i = np.array([np.cos(np.radians(60*i)) * distance_between_tubes, np.sin(np.radians(60*i))* distance_between_tubes, 0.0])
-                    pos = universe_all.atoms.positions + shifted_tube_i
+                    pos = original_structure.pos + shifted_tube_i
 
                 if (i > 6 and i <= 19):
                     distance_between_tubes = 2 * (diameter_SWNT + nanotube_separation)
                     shifted_tube_i = np.array([np.cos(np.radians(30*i)) * distance_between_tubes, np.sin(np.radians(30*i))* distance_between_tubes, 0.0])
-                    pos = universe_all.atoms.positions + shifted_tube_i
+                    pos = original_structure.pos + shifted_tube_i
 
                 if (i > 19 and i <= 38):
                     distance_between_tubes = 3 * (diameter_SWNT + nanotube_separation)
                     shifted_tube_i = np.array([np.cos(np.radians(20*i)) * distance_between_tubes, np.sin(np.radians(20*i))* distance_between_tubes, 0.0])
-                    pos = universe_all.atoms.positions + shifted_tube_i
+                    pos = original_structure.pos + shifted_tube_i
 
-            num_atoms_1 = universe_all.atoms.positions.shape[0]
-            universe_1 = mda.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
-            universe_1.atoms.positions = pos
-            n_residues = 1
-            atom_types_list_1 = list(universe_all.atoms.types)
-            universe_1.add_TopologyAttr('name', atom_types_list_1)
-            universe_1.add_TopologyAttr('type', atom_types_list_1)
-            universe_1.add_TopologyAttr('resname', ['MOL']*n_residues)
-            universe_1.add_bonds(universe_all.bonds.indices)
+            structure_1 = MolecularStructure.create_empty()
+            structure_1.pos = pos
+            structure_1.atom_types = np.copy(original_structure.atom_types)
+            structure_1.bonds = np.copy(original_structure.bonds)
 
-            list_universe.append(universe_1.atoms)
-        universe_tot = mda.Merge(*list_universe)
-        universe_tot.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
+            entire_structure = entire_structure.merge(structure_1, offset_bonds=True)
+        entire_structure.center()
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(universe_tot)
+        window.load_structure(entire_structure)
         window.show()
 
 """
@@ -277,7 +267,8 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
         box_lx or box_ly or box_lz
     except NameError:
         box_lx = box_ly = box_lz = 0.0
-    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, box_lx, box_ly, box_lz)
+    box_size = [box_lx, box_ly, box_lz]
+    univ_swnt = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt)
 
     # If the user chooses "None", only SWNT structure without hydrogens will be returned:
     if H_termination_SWNT == 'None':
@@ -369,7 +360,8 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                 one_end_bonds_H.extend([(x, num_atoms_swnt + num_hydrogen)])
                 num_hydrogen = num_hydrogen + 1
     one_end_atom_types_H = list(['H']*num_hydrogen)
-    merged_swnt_one_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H, box_lx, box_ly, box_lz)
+    merged_swnt_one_end_H = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
+            .merge(MolecularStructure(box_size, pos_one_end_H, one_end_bonds_H, one_end_atom_types_H))
 
     # If the user chooses "One end", only SWNT structure with one end hydrogenated will be returned:
     if H_termination_SWNT == 'One end':
@@ -448,7 +440,8 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
             num_hydrogen = num_hydrogen + 1
     # If the user chooses "Both ends", SWNT structure with both ends hydrogenated will be returned:
     two_end_atom_types_H = list(['H']*num_hydrogen)
-    merged_swnt_two_end_H = merged_universe_with_H(coord_array_swnt, all_bonds_swnt, atom_types_swnt, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H, box_lx, box_ly, box_lz)
+    merged_swnt_two_end_H = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
+            .merge(MolecularStructure(box_size, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H))
 
     if H_termination_SWNT == 'Both ends':
         return merged_swnt_two_end_H
