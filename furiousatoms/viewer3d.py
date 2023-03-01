@@ -148,10 +148,10 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
         un = load_CC1_file(fname)
-        universe, no_bonds = io.load_files(un)
-        if not universe:
+        structure = io.load_files(un)
+        if not structure:
             return success
-        self.load_universe(universe, no_bonds)
+        self.load_structure(structure)
         success = True
         return success
 

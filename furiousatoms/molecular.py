@@ -112,7 +112,7 @@ class ViewerMemoryManager:
         self.selected_particle = np.zeros(self.no_atoms, dtype=np.bool)
         self.selected_bond = np.zeros(self.no_bonds, dtype=np.bool)
 
-        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres)
+        self.sphere_actor = actor.sphere(centers=self.pos, colors=self.colors, radii=self.radii_spheres, phi=3, theta=6, use_primitive=False)
         self.bond_actor = self.generate_bond_actor() if self.have_bonds else None
 
         self.all_vertices_particles = utils.vertices_from_actor(self.sphere_actor)
