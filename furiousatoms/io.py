@@ -8,6 +8,7 @@ from PySide2 import QtCore, QtUiTools
 import MDAnalysis
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
+from furiousatoms.molecular import MolecularStructure
 from furiousatoms.parsers.gromacs_parser import GROMACSParser
 from furiousatoms.parsers.lammps_parser import LAMMPSParser
 from furiousatoms.parsers.pdb_parser import PDBParser
@@ -80,23 +81,9 @@ def load_ui_widget(uifilename, cls_to_register=None, parent=None):
     return ui
 
 
-def load_files(fname, debug=False):
-    # load_file_export = open(fname, 'r')
-    # lines = load_file_export.readlines()
-    # no_lines = len(lines)
-    # frames_cnt = 0
-    # format_data = None
-    # no_bonds = 0
-    # bonds = 0
-    # for i in range(no_lines):
-    #     line = lines[i]
-    #     if 'item: number of atoms'.upper() in line:
-    #         format_data = 'LAMMPSDUMP'
-    #         break
-    #     i += 1
-    
+def load_files(fname):
     #Choose parser based on file extension
-    if fname.endswith(".pdb"):
+    if fname.endswith(".pdb") or fname.endswith(".cc1"):
         return PDBParser().parse(fname)
     elif fname.endswith(".data") or fname.endswith(".dat") or fname.endswith(".lmp"):
         return LAMMPSParser().parse(fname)
@@ -104,6 +91,14 @@ def load_files(fname, debug=False):
         return XYZParser().parse(fname)
     elif fname.endswith(".gro"):
         return GROMACSParser().parse(fname)
+    
+    #Default: try lots of parsers and guess the format
+    bestStructure = MolecularStructure.create_empty()
+    for parser in (PDBParser(), LAMMPSParser(), XYZParser(), GROMACSParser()):
+        structure = parser.parse(fname)
+        if len(structure.bonds) > len(bestStructure.bonds) or 0 == len(bestStructure.pos):
+            bestStructure = structure
+    return bestStructure
 
 
 def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):
