@@ -113,10 +113,9 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
-        box_size, positions, bonds, atom_types = io.load_files(fname)
         structure = io.load_files(fname)
         self.load_structure(structure)
-        if len(positions) > 0 and len(positions) == len(atom_types):
+        if len(structure.pos) > 0 and len(structure.pos) == len(structure.atom_types):
             return True
         return False
 

@@ -10,13 +10,7 @@ SPHERE_SIZE = 0.35
 POSITION_ARR_LEN = 3
 BOND_ARR_LEN = 2
 
-class MolecularStructure:
-    def __init__(self):
-        self.box_size = [0, 0, 0]
-        self.pos = np.empty()
-        self.bonds = np.empty(dtype=int)
-        self.atom_types = np.empty(dtype=str)
-        
+class MolecularStructure:        
     def __init__(self, box_size: list, pos: np.array, bonds: np.array, atom_types: np.array):
         '''
         `box_size`: a 1x3 list with X, Y, and Z numerical dimensions. 
@@ -30,6 +24,13 @@ class MolecularStructure:
         self.pos = pos
         self.bonds = bonds
         self.atom_types = atom_types
+
+    def create_empty():
+        box_size = [0, 0, 0]
+        pos = np.empty(shape=(0, 3))
+        bonds = np.empty(shape=(0, 2), dtype=int)
+        atom_types = np.empty(shape=(0), dtype=str)
+        return MolecularStructure(box_size, pos, bonds, atom_types)
 
     def merge(s1, s2, offset_bonds=False):
         '''
