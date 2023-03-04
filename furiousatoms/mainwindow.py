@@ -1,5 +1,4 @@
 # Standard package
-from json import load
 import os
 import fnmatch
 
@@ -11,16 +10,12 @@ disable_warnings()
 
 # 3rd Party package
 import numpy as np
-from fury import window, actor, utils, pick, ui, primitive, material
+from fury import actor, utils
 from PySide2 import QtCore
 from PySide2 import QtGui
-from PySide2.QtGui import QActionEvent, QIcon
+from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from PySide2.QtCore import QTimer
-import MDAnalysis
-from numpy.linalg import norm
-import sys
-import furiousatoms.forms.icons
 from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
@@ -35,8 +30,7 @@ from furiousatoms.builders.MWNT_builder import  Ui_MWNT
 from furiousatoms.builders.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.structure import bbox
 from furiousatoms.builders.electrolyte_builder import Ui_electrolyte
-from furiousatoms.builders.fullerenes_builder import load_CC1_file
-from fury.utils import (get_actor_from_primitive, normals_from_actor,
+from fury.utils import (normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)
 
@@ -936,34 +930,37 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         file_name = os.path.basename(fname)
         ext_file = os.path.splitext(file_name)[1]
-        from furiousatoms.pdb2lmp import save_PDB2LMP
+        # from furiousatoms.pdb2lmp import save_PDB2LMP
         if ext_file =='.data':
-            if SM.universe_save is None:
-                save_PDB2LMP(SM, fname, SM.universe)
-            else:
-                save_PDB2LMP(SM, fname, SM.universe_save)
+            #TODO replace with new saving code
+            pass
+            # if SM.universe_save is None:
+            #     save_PDB2LMP(SM, fname, SM.universe)
+            # else:
+            #     save_PDB2LMP(SM, fname, SM.universe_save)
         else:
-            if SM.universe_save is None:
-                num_atoms = SM.pos.shape[0]
-                universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
-                universe.atoms.positions = SM.pos
-                n_residues = 1
-                atom_types_list = list(SM.atom_type)
-                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-                    universe.dimensions = [90, 90, 90, 90, 90, 90]
-                else:
-                    universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
-                universe.add_TopologyAttr('name', atom_types_list)
-                universe.add_TopologyAttr('type', atom_types_list)
-                universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-                universe.add_TopologyAttr('masses')
-                try:
-                    universe.add_bonds(SM.universe.bonds.to_indices())
-                except:
-                    pass
-                universe.atoms.write(fname)
-            else:
-                SM.universe_save.atoms.write(fname)
+            #TODO replace with new saving code
+            # if SM.universe_save is None:
+            #     num_atoms = SM.pos.shape[0]
+            #     universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
+            #     universe.atoms.positions = SM.pos
+            #     n_residues = 1
+            #     atom_types_list = list(SM.atom_type)
+            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+            #         universe.dimensions = [90, 90, 90, 90, 90, 90]
+            #     else:
+            #         universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
+            #     universe.add_TopologyAttr('name', atom_types_list)
+            #     universe.add_TopologyAttr('type', atom_types_list)
+            #     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
+            #     universe.add_TopologyAttr('masses')
+            #     try:
+            #         universe.add_bonds(SM.universe.bonds.to_indices())
+            #     except:
+            #         pass
+            #     universe.atoms.write(fname)
+            # else:
+            #     SM.universe_save.atoms.write(fname)
 
             with open(fname, 'r+') as fp:
                 lines = fp.readlines()

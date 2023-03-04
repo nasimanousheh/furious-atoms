@@ -85,9 +85,11 @@ class ViewerMemoryManager:
     def __init__(self, box, pos, bonds, atom_types):
         """
         """
+        self.universe = self
         self.box_lx, self.box_ly, self.box_lz = box
+        self.box_color = (0, 0, 0)
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
-                                  colors=(0, 0, 0), linewidth=1, fake_tube=True)
+                                  colors=self.box_color, linewidth=1, fake_tube=True)
 
         self.pos = pos
         self.no_atoms = pos.shape[0]
