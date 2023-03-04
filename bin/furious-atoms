@@ -2,7 +2,7 @@
 import sys
 import os
 import getopt
-import time
+# import time
 
 # 3rd party package
 import PySide2
@@ -15,8 +15,11 @@ from fury.window import enable_stereo
 # Local package
 import furiousatoms
 from furiousatoms import io
+from furiousatoms.builders.SWNT_builder import SWNT_builder
 from furiousatoms.constants import APP_NAME
 from furiousatoms.mainwindow import FuriousAtomsApp
+
+from furiousatoms.builders.graphyne_builder import Ui_graphyne #TEMP
 
 
 _dirname = os.path.dirname(PySide2.__file__)
@@ -88,7 +91,7 @@ def start_gui(app_folder=None, files=None):
     app.processEvents()
     splash.showMessage("Furious Atoms loading...",
                        QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
-    time.sleep(2)
+    # time.sleep(2)
     # Init interface
     win = FuriousAtomsApp(app_path=app_folder)
     # win.setWindowTitle("{0} version {1}".format(APP_NAME,
@@ -103,6 +106,26 @@ def start_gui(app_folder=None, files=None):
     if files:
         for filename in files:
             win.open(filename)
+
+    #TEMP
+    # bldr = Ui_graphyne()
+    # graphyne = bldr.build_graphyne(edge_length_x=40.0, edge_length_y=40.0, graphyne_type="graphyne_12_12_12")
+    # window = win.create_mdi_child()
+    # window.make_title()
+    # window.load_structure(graphyne)
+    # window.show()
+
+    # structure = SWNT_builder(H_termination_SWNT='Both ends', n=30, m=10, N=10, length=10, bond_length=1.421, species=('C', 'C'), centered=False)
+    # window = win.create_mdi_child()
+    # window.make_title()
+    # window.load_structure(structure)
+    # window.show()
+
+    # structure = MWNT_builder(H_termination_SWNT='Both ends', n=30, m=10, N=10, length=10, bond_length=1.421, species=('C', 'C'), centered=False)
+    # window = win.create_mdi_child()
+    # window.make_title()
+    # window.load_structure(structure)
+    # window.show()
 
     return app.exec_()
 
