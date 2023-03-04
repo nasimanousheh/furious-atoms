@@ -3,7 +3,6 @@ from furiousatoms import io
 from fury import window
 from PySide2 import QtWidgets
 from furiousatoms.io import  load_files
-import MDAnalysis as mda
 from PySide2.QtGui import QIcon
 import os
 from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN, MolecularStructure

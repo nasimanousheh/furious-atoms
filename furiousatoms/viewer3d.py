@@ -1,6 +1,5 @@
 import os
 import numpy as np
-from furiousatoms.io import create_universe
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
@@ -247,7 +246,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.selected_particle[SM.object_indices_particles] = False
         SM.deleted_particles[SM.object_indices_particles] = True
-        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
+        SM.universe_save = MolecularStructure([SM.box_lx, SM.box_ly, SM.box_lz], final_pos, final_bonds, final_atom_types)
         return SM.universe_save
 
     def delete_bonds(self):
@@ -299,7 +298,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.selected_bond[object_indices_bonds] = False
         SM.deleted_bonds[object_indices_bonds] = True
-        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
+        SM.universe_save = MolecularStructure([SM.box_lx, SM.box_ly, SM.box_lz], final_pos, final_bonds, final_atom_types)
         return SM.universe_save
 
     def left_button_press_particle_callback(self, obj, event):
