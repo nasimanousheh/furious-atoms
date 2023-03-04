@@ -7,9 +7,9 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-from furiousatoms.io import merged_universe_with_H, create_universe
-import MDAnalysis as mda
 from PySide2.QtGui import QIcon
+from furiousatoms.molecular import MolecularStructure
+from furiousatoms.builders.builder_util import copy_bonds
 
 
 """
@@ -157,12 +157,13 @@ class Ui_graphene(QtWidgets.QMainWindow):
         edge_length_y = float(self.graphene.doubleSpinBox_unitcell_along_y.text())
         structure_info = graphene_builder(H_termination_graphene, value_n_graphene, value_m_graphene, repeat_units_graphene, length=None, bond_length_graphene=bond_length_graphene,
                                             species=(graphene_type_1, graphene_type_2), diamond_sheet=graphene_shape, edge_length_x=edge_length_x, edge_length_y=edge_length_y, edge_shape=edge_shape)
+        structure_info.center()
         if num_sheets > 1:
             structure_info = extend_the_sheets(structure_info, num_sheets, sheet_separation)
 
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(structure_info)
+        window.load_structure(structure_info)
         window.show()
 
     def initial_box_dim(self):
@@ -173,109 +174,102 @@ class Ui_graphene(QtWidgets.QMainWindow):
         return
 
 def extend_the_sheets(structure_info, num_sheets, sheet_separation):
-    copied = []
-    structure_info.dimensions = [sheet_separation, sheet_separation, sheet_separation, 90, 90, 90]
-    box = structure_info.dimensions[:3]
-    for x in range(1):
-        for y in range(1):
-            for z in range(num_sheets):
-                u_ = structure_info.copy()
-                move_by = box*(x, y, z)
-                u_.atoms.translate(move_by)
-                copied.append(u_.atoms)
+    entire_structure = MolecularStructure.create_empty()
+    box = np.array([sheet_separation, sheet_separation, sheet_separation])
 
-        extended_universe = mda.Merge(*copied)
-        extended_universe.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
-        cog = extended_universe.atoms.center_of_geometry()
-        extended_universe.atoms.positions -= cog
-        return extended_universe
+    for z in range(num_sheets):
+        move_by = box*(1, 1, z)
+        sub_structure = MolecularStructure.create_empty()
+        sub_structure.pos = np.copy(structure_info.pos) + move_by
+        sub_structure.bonds = np.copy(structure_info.bonds)
+        sub_structure.atom_types = np.copy(structure_info.atom_types)
+        entire_structure = entire_structure.merge(sub_structure, offset_bonds=True)
+    
+    entire_structure.box_size = structure_info.box_size
 
+    return entire_structure
 
 
 def graphen_armchair(primitive_unitcell, edge_length_x, edge_length_y, bond_length_graphene):
-    primitive_unitcell.bonds.to_indices()
-    pos = primitive_unitcell.atoms.positions
+    pos = primitive_unitcell.pos
     pos = pos.astype('float64')
     unit_cell_ly = np.linalg.norm(pos[2]-pos[3]) + bond_length_graphene
     unit_cell_lx = np.linalg.norm(pos[2]+pos[3]) * 2
-    primitive_unitcell.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, 90, 90, 90]
-    box = primitive_unitcell.dimensions[:3]
-    copied = []
-    b = 0
-    i = 0
+    box = np.array([unit_cell_lx, unit_cell_ly, unit_cell_lx])
+    entire_structure = MolecularStructure.create_empty()
     num_unitcell_in_lx = int(np.ceil(edge_length_x/unit_cell_lx))
     num_unitcell_in_ly = int(np.ceil(edge_length_y/unit_cell_ly))
     for x in range(num_unitcell_in_lx):
-        i = 0
         for y in range(num_unitcell_in_ly):
-            u_ = primitive_unitcell.copy()
             move_by = box*(x, y, 1)
-            u_.atoms.translate(move_by)
-            copied.append(u_.atoms)
+            sub_structure = MolecularStructure.create_empty()
+            sub_structure.pos = np.copy(primitive_unitcell.pos) + move_by
+            sub_structure.atom_types = np.copy(primitive_unitcell.atom_types)
+            entire_structure = entire_structure.merge(sub_structure)
 
-    new_universe = mda.Merge(*copied)
     b = 0
     c = 0
     num_atoms_in_y_direction = 4 * num_unitcell_in_ly
     num_bonds_connect = (num_unitcell_in_lx-1)
+    entire_structure.bonds = copy_bonds(primitive_unitcell.bonds, num_unitcell_in_lx, num_unitcell_in_ly, len(pos))
+    new_bonds = []
     for b in range(num_unitcell_in_ly):
         b = c *4
         for i in range(num_bonds_connect):
             added_bonds_1 = np.array([[num_atoms_in_y_direction*i+3+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b]])
             added_bonds_2 = np.array([[num_atoms_in_y_direction*i+2+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b+1]])
-            new_universe.add_bonds(added_bonds_1)
-            new_universe.add_bonds(added_bonds_2)
+            new_bonds.append(added_bonds_1)
+            new_bonds.append(added_bonds_2)
         for j in range(num_unitcell_in_lx):
             if c < num_unitcell_in_ly-1:
                 added_bonds_3 = np.array([[(num_atoms_in_y_direction*j)+3+b, (num_atoms_in_y_direction*j)+b+6]])
-                new_universe.add_bonds(added_bonds_3)
+                new_bonds.append(added_bonds_3)
         c = c + 1
-    cog = new_universe.atoms.center_of_geometry()
-    new_universe.atoms.positions -= cog
-    return new_universe
+    for bond in new_bonds:
+        entire_structure.bonds = np.vstack((entire_structure.bonds, np.reshape(bond, (-1, 2)) ))
+
+    return entire_structure
 
 
 def graphen_zigzag(primitive_unitcell, edge_length_x, edge_length_y, bond_length_graphene):
-    primitive_unitcell.bonds.to_indices()
-    pos = primitive_unitcell.atoms.positions
+    pos = primitive_unitcell.pos
     pos = pos.astype('float64')
     unit_cell_ly = np.linalg.norm(pos[0]+pos[3]) *2
     unit_cell_lx = np.linalg.norm(pos[0]-pos[3]) + bond_length_graphene
-    primitive_unitcell.dimensions = [unit_cell_lx, unit_cell_ly, unit_cell_lx, 90, 90, 90]
-    box = primitive_unitcell.dimensions[:3]
-    copied = []
-    b = 0
-    i = 0
+    box = np.array([unit_cell_lx, unit_cell_ly, unit_cell_lx])
+    entire_structure = MolecularStructure.create_empty()
     num_unitcell_in_lx = int(np.ceil(edge_length_x/unit_cell_lx))
     num_unitcell_in_ly = int(np.ceil(edge_length_y/unit_cell_ly))
     for x in range(num_unitcell_in_lx):
-        i = 0
         for y in range(num_unitcell_in_ly):
-            u_ = primitive_unitcell.copy()
             move_by = box*(x, y, 1)
-            u_.atoms.translate(move_by)
-            copied.append(u_.atoms)
+            sub_structure = MolecularStructure.create_empty()
+            sub_structure.pos = np.copy(primitive_unitcell.pos) + move_by
+            sub_structure.atom_types = np.copy(primitive_unitcell.atom_types)
+            entire_structure = entire_structure.merge(sub_structure)
 
-    new_universe = mda.Merge(*copied)
     b = 0
     c = 0
     num_atoms_in_y_direction = 4 * num_unitcell_in_ly
     num_bonds_connect = (num_unitcell_in_lx-1)
+    entire_structure.bonds = copy_bonds(primitive_unitcell.bonds, num_unitcell_in_lx, num_unitcell_in_ly, len(pos))
+    new_bonds = []
     for b in range(num_unitcell_in_ly):
         b = c *4
         for i in range(num_bonds_connect):
             added_bonds_1 = np.array([[num_atoms_in_y_direction*i+3+b, num_atoms_in_y_direction*i+num_atoms_in_y_direction+b]])
-            new_universe.add_bonds(added_bonds_1)
+            new_bonds.append(added_bonds_1)
         for j in range(num_unitcell_in_lx):
             if c < num_unitcell_in_ly-1:
                 added_bonds_2 = np.array([[(num_atoms_in_y_direction*j)+b, (num_atoms_in_y_direction*j)+b+5]])
                 added_bonds_3 = np.array([[(num_atoms_in_y_direction*j)+3+b, (num_atoms_in_y_direction*j)+b+6]])
-                new_universe.add_bonds(added_bonds_2)
-                new_universe.add_bonds(added_bonds_3)
+                new_bonds.append(added_bonds_2)
+                new_bonds.append(added_bonds_3)
         c = c + 1
-    cog = new_universe.atoms.center_of_geometry()
-    new_universe.atoms.positions -= cog
-    return new_universe
+    for bond in new_bonds:
+        entire_structure.bonds = np.vstack((entire_structure.bonds, np.reshape(bond, (-1, 2)) ))
+    
+    return entire_structure
 
 def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphene, species=('C', 'C'), diamond_sheet=True, edge_length_x=1, edge_length_y=1, edge_shape = 'armchair'):
     global box_lx, box_ly, box_lz
@@ -283,6 +277,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
         box_lx or box_ly or box_lz
     except NameError:
         box_lx = box_ly = box_lz = 0.0
+    box_size = [box_lx, box_ly, box_lz]
     bond_length_hydrogen = 1.0
     if diamond_sheet is True:
         d = gcd(n, m)
@@ -308,7 +303,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
         num_atoms_graphene = len(coord_array_graphene)
         assert coord_array_graphene.shape == (num_atoms_graphene, 3)
         all_bonds_graphene = np.array(fragments['bonds'])
-        univ_graphene = create_universe(coord_array_graphene, all_bonds_graphene, atom_types_graphene, box_lx, box_ly, box_lz)
+        univ_graphene = MolecularStructure(box_size, coord_array_graphene, all_bonds_graphene, atom_types_graphene)
     else:
         m = n = 1
         d = gcd(n, m)
@@ -335,7 +330,8 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
             primitive_num_atoms_graphene = len(primitive_coord_graphene)
             assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
             primitive_bonds_graphene = np.array([[1,0],[2,1],[3,0]])
-            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
+            primitive_graphene = MolecularStructure(box_size, primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene)
+            primitive_graphene.center()
             univ_graphene = graphen_armchair(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
 
         if edge_shape == 'zigzag':
@@ -360,14 +356,16 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
             primitive_num_atoms_graphene = len(primitive_coord_graphene)
             assert primitive_coord_graphene.shape == (primitive_num_atoms_graphene, 3)
             primitive_bonds_graphene = np.array([[1,0],[2,1],[2,3]])
-            primitive_graphene = create_universe(primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene, box_lx, box_ly, box_lz)
+            primitive_graphene = MolecularStructure(box_size, primitive_coord_graphene, primitive_bonds_graphene, primitive_atom_types_graphene)
+            primitive_graphene.center()
             univ_graphene = graphen_zigzag(primitive_graphene, edge_length_x, edge_length_y, bond_length_graphene)
 
-        all_bonds_graphene = univ_graphene.bonds.to_indices()
-        xyz = univ_graphene.atoms.positions
+        all_bonds_graphene = univ_graphene.bonds
+        xyz = univ_graphene.pos
         coord_array_graphene = xyz.astype('float64')
         num_atoms_graphene = len(coord_array_graphene)
-        atom_types_graphene = univ_graphene.atoms.types
+        atom_types_graphene = univ_graphene.atom_types
+        univ_graphene.box_size = box_size
 
     if H_termination_graphene == 'None':
         return univ_graphene
@@ -507,7 +505,9 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
             bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
     atom_types_Hydrogen = list(['H']*num_hydrogen)
-    merged_graphene_hydrogen = merged_universe_with_H(coord_array_graphene, all_bonds_graphene, atom_types_graphene, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen, box_lx, box_ly, box_lz)
+    box_size = [box_lx, box_ly, box_lz]
+    merged_graphene_hydrogen = MolecularStructure(box_size, coord_array_graphene, all_bonds_graphene, atom_types_graphene) \
+            .merge(MolecularStructure(box_size, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen))
     # If the user chooses "All", hydrogenated graphene structure will be returned:
     if H_termination_graphene == 'All':
         return merged_graphene_hydrogen

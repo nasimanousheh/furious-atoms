@@ -119,7 +119,6 @@ class Ui_graphyne(QtWidgets.QMainWindow):
     def beta_graphyne_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
         unit_cell_lx = np.linalg.norm(s.pos[4] - s.pos[11]) + 1.4
         unit_cell_ly = 9.485-1.285
-        box = np.array([unit_cell_lx, unit_cell_ly, 0])
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         
@@ -230,7 +229,6 @@ class Ui_graphyne(QtWidgets.QMainWindow):
     def graphyne_2_builder(self, s: MolecularStructure, edge_length_x, edge_length_y):
         unit_cell_ly = max(s.pos[:, 0]) - min(s.pos[:, 0]) -0.2
         unit_cell_lx = max(s.pos[:, 0]) - min(s.pos[:, 0]) + 1.42
-        box = np.array([unit_cell_lx, unit_cell_ly, 0])
         num_unitcell_in_lx = int(np.floor(edge_length_x/unit_cell_lx))
         num_unitcell_in_ly = int(np.floor(edge_length_y/unit_cell_ly))
         
