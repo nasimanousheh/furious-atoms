@@ -127,6 +127,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
+        self.ui.installEventFilter(self)
 
 
 
@@ -857,6 +858,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def new_window(self):
         child = self.create_mdi_child()
+        child.installEventFilter(self)
         child.make_title()
         child.show()
 
@@ -972,6 +974,21 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
 
+    
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.Close and self.window is obj:
+            self.window.removeEventFilter(self)
+        elif event.type() == QtCore.QEvent.ShortcutOverride or event.type() == QKeyEvent:
+            if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
+                self.delete_selection()
+        return super(FuriousAtomsApp, self).eventFilter(obj, event)
+
+    def delete_selection(self):
+        SM = self.get_SM_active_window()
+        if any(SM.selected_particle) == True:
+            self.delete_particles()
+        if any(SM.selected_bond) == True:
+            self.delete_bonds()
 
     def delete_particles(self):
         active_window = self.active_mdi_child()

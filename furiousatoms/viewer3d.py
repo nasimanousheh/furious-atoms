@@ -214,7 +214,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_atom_types = np.delete(final_atom_types,
                                     SM.object_indices_particles)
         try:
-            bonds_indices = SM.universe.bonds.to_indices()
+            bonds_indices = SM.bonds
             object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
             for object_index in SM.object_indices_particles:
                 object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
@@ -264,7 +264,6 @@ class Viewer3D(QtWidgets.QWidget):
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)
-        bonds_indices = SM.universe.bonds.to_indices()
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds * 2:
@@ -277,7 +276,7 @@ class Viewer3D(QtWidgets.QWidget):
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-        final_bonds = bonds_indices.copy()
+        final_bonds = np.copy(SM.bonds)
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
 
         if len(SM.object_indices_particles)> 0:
