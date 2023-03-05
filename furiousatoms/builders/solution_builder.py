@@ -58,7 +58,7 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         box_lx = float(self.solution.SpinBox_lx.text())
         box_ly = float(self.solution.SpinBox_ly.text())
         box_lz = float(self.solution.SpinBox_lz.text())
-        SM.box_size = [box_lx, box_ly, box_lz]
+        SM.box_lx, SM.box_ly, SM.box_lz = box_lx, box_ly, box_lz
 
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
@@ -128,8 +128,8 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         sol = MolecularStructure(box_size, coord_array, np.array(bonds, dtype=int), atom_types)
         sol.center()
 
-        original = MolecularStructure(SM.box_size, SM.pos, SM.bonds, SM.atom_types)
-        combined = original.merge(sol)
+        original = MolecularStructure([SM.box_lx, SM.box_ly, SM.box_lz], SM.pos, SM.bonds, SM.atom_types)
+        combined = original.merge(sol, offset_bonds=True)
         combined.box_size = box_size
 
         import tempfile

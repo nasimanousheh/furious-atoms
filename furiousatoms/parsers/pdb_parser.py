@@ -4,8 +4,8 @@ from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 
 class PDBParser(BaseParser):
     def parseLine(self, line):
-
-        if line.startswith("CONECT"): #Note the spelling. 
+        lineUpper = line.upper()
+        if lineUpper.startswith("CONECT"): #Note the spelling. 
             for i, j in ((12,16), (17,21), (22,26)): #indices of atom IDs to connect to within the string
                 try:
                     otherId = int(line[i:j]) - 1 #ID of atom to connect to
@@ -19,7 +19,7 @@ class PDBParser(BaseParser):
                 except IndexError:
                     if len(line) < 13:
                         self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
-        elif line.startswith("ATOM"):
+        elif lineUpper.startswith("ATOM") or lineUpper.startswith("HETATM"):
             try:
                 self.atom_types.append(line[13:15].strip())
 
@@ -30,9 +30,9 @@ class PDBParser(BaseParser):
                 self.positions.append(pos)
             except:
                 self.errors += "Failure processing line #%d.\n"%(self.lineId)
-        elif line.startswith("REMARK"):
+        elif lineUpper.startswith("REMARK"):
             pass
-        elif line.startswith("CRYST1 "):
+        elif lineUpper.startswith("CRYST1 "):
             if len(line) >= 33:
                 self.box_size[0] = float_or_zero(line[7:15])
                 self.box_size[1] = float_or_zero(line[16:24])

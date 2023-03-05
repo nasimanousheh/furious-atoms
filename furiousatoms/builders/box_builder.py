@@ -43,7 +43,7 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
         box_lx = float(self.box.SpinBox_lx.text())
         box_ly = float(self.box.SpinBox_ly.text())
         box_lz = float(self.box.SpinBox_lz.text())
-        SM.box_size = [box_lx, box_ly, box_lz]
+        SM.box_lx, SM.box_ly, SM.box_lz = box_lx, box_ly, box_lz
         if SM.bbox_actor:
             active_window.scene.rm(SM.bbox_actor)
         SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)

@@ -87,6 +87,7 @@ class ViewerMemoryManager:
         """
         self.universe = self
         self.box_lx, self.box_ly, self.box_lz = box
+        self.box_color_vtk = (1,1,1)
         self.box_color = (0, 0, 0)
         self.bbox_actor, _ = bbox(self.box_lx, self.box_ly, self.box_lz,
                                   colors=self.box_color, linewidth=1, fake_tube=True)
