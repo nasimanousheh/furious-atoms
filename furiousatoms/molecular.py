@@ -7,8 +7,8 @@ from fury import actor, molecular as mol
 table = mol.PTable()
 
 SPHERE_SIZE = 0.35
-POSITION_ARR_LEN = 3
-BOND_ARR_LEN = 2
+POS_DIM = 3
+BOND_DIM = 2
 
 class MolecularStructure:        
     def __init__(self, box_size: list, pos: np.array, bonds: np.array, atom_types: np.array):

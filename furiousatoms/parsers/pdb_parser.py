@@ -1,6 +1,6 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
-from furiousatoms.parsers.parser_util import float_or_zero
+from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 
 class PDBParser(BaseParser):
     def parseLine(self, line):
@@ -12,7 +12,7 @@ class PDBParser(BaseParser):
                     bond = np.zeros((2), dtype='int')
                     bond[0] = abs(int(line[7:11]) - 1) #ID of first atom
                     bond[1] = abs(otherId)
-                    if bond[0] != bond[1]:
+                    if bond[0] != bond[1] and not has_bond(self.bonds, bond):
                         self.bonds.append(bond)
                 except ValueError:
                     self.errors += "Refusing to connect a bond on line #%d.\n"%(self.lineId)
