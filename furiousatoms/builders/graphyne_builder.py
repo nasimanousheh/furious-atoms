@@ -5,7 +5,7 @@ from PySide2 import QtWidgets
 from furiousatoms.io import  load_files
 from PySide2.QtGui import QIcon
 import os
-from furiousatoms.molecular import POSITION_ARR_LEN, BOND_ARR_LEN, MolecularStructure
+from furiousatoms.molecular import POS_DIM, BOND_DIM, MolecularStructure
 from furiousatoms.builders.builder_util import copy_bonds
 
 
@@ -396,13 +396,13 @@ class Ui_graphyne(QtWidgets.QMainWindow):
         s = structure_info
         if num_sheets > 1:
             ATOM_COUNT = len(s.pos)
-            new_positions = np.zeros(shape=(ATOM_COUNT * num_sheets, POSITION_ARR_LEN))
+            new_positions = np.zeros(shape=(ATOM_COUNT * num_sheets, POS_DIM))
             new_positions[:ATOM_COUNT] = s.pos #copy old data
             s.pos = new_positions
             for i in range(1, num_sheets):
                 for j in range(ATOM_COUNT):
                     atom = s.pos[j]
-                    for k in range(0, POSITION_ARR_LEN):
+                    for k in range(0, POS_DIM):
                         s.pos[i*ATOM_COUNT + j][k] = atom[k]
                     s.pos[i*ATOM_COUNT + j][2] -= sheet_separation * i
 
@@ -414,17 +414,17 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                     atom_types[i*ATOM_COUNT + j] = atom_types[j]
 
             BOND_COUNT = len(s.bonds)
-            new_bonds = np.zeros(shape=(BOND_COUNT * num_sheets, BOND_ARR_LEN), dtype='int')
+            new_bonds = np.zeros(shape=(BOND_COUNT * num_sheets, BOND_DIM), dtype='int')
             new_bonds[:BOND_COUNT] = s.bonds
             s.bonds = new_bonds
             for i in range(1, num_sheets):
                 for j in range(BOND_COUNT):
-                    for k in range(0, BOND_ARR_LEN):
+                    for k in range(0, BOND_DIM):
                         #Make the bonds point to the new sheet's atoms
                         s.bonds[i*BOND_COUNT + j][k] = s.bonds[j][k] + (ATOM_COUNT * i)
 
         #Center atoms inside box
-        for k in range(0, POSITION_ARR_LEN):
+        for k in range(0, POS_DIM):
             s.pos[:,k] -= s.pos[:,k].mean()
         
         return s

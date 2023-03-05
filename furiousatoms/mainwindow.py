@@ -978,7 +978,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.Close and self.window is obj:
             self.window.removeEventFilter(self)
-        elif event.type() == QtCore.QEvent.ShortcutOverride or event.type() == QKeyEvent:
+        elif event.type() == QtCore.QEvent.ShortcutOverride:
             if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
                 self.delete_selection()
         return super(FuriousAtomsApp, self).eventFilter(obj, event)
