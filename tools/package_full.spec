@@ -6,7 +6,6 @@ from os.path import join as pjoin, dirname
 import vtk
 import numpy
 import scipy
-import MDAnalysis
 from fury.data import DATA_DIR
 import furiousatoms
 import sys
@@ -16,8 +15,6 @@ block_cipher = None
 VTK_PATH = dirname(vtk.__file__)
 NUMPY_PATH = pjoin(dirname(numpy.__file__), ".libs")
 SCIPY_PATH = pjoin(dirname(scipy.__file__), ".libs")
-MDA_PATH = MDAnalysis.__path__ + [pjoin(dirname(MDAnalysis.__file__), 'lib'),
-           pjoin(dirname(MDAnalysis.__file__), 'lib', 'format')]
 FA_PATH = pjoin(dirname(furiousatoms.__file__), os.pardir)
 
 FA_BIN = pjoin(FA_PATH, 'bin/furious-atoms')
@@ -42,15 +39,14 @@ optional_args = {}
 #    optional_args["icon"] = os.path.join(FA_PATH, 'furiousatoms','resources',
 #                                         'splash.png')
 a = Analysis([FA_BIN],
-             pathex=[VTK_PATH, NUMPY_PATH, SCIPY_PATH] + MDA_PATH,
+             pathex=[VTK_PATH, NUMPY_PATH, SCIPY_PATH],
              binaries=[],
              datas=added_files,
              hiddenimports=['PySide2', 'PySide2.QtXml', 'shiboken2', 'scipy._lib.messagestream',
                             'vtkmodules', 'vtkmodules.all', 'vtkmodules.qt.QVTKRenderWindowInteractor',
                             'vtkmodules.util', 'vtkmodules.util.numpy_support', 'vtkmodules.numpy_interface',
                             'vtkmodules.numpy_interface.dataset_adapter', 'vtkmodules.util.colors',
-                            'vtk', 'MDAnalysis', 'MDAnalysis.lib.formats.cython_util',
-                            'MDAnalysis.lib._transformations', 'netCDF4'],   # 'netcdftime', 'netCDF4_utils', 'cython',
+                            'vtk', 'netCDF4'],   # 'netcdftime', 'netCDF4_utils', 'cython',
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
