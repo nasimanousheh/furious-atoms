@@ -61,10 +61,16 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         box_lx = float(self.solution.SpinBox_lx.text())
         box_ly = float(self.solution.SpinBox_ly.text())
         box_lz = float(self.solution.SpinBox_lz.text())
-        SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
-        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
+        if SM.universe_save:
+            SM.universe_save.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+            SM.box_lx = SM.universe_save.trajectory.ts.dimensions[0]
+            SM.box_ly = SM.universe_save.trajectory.ts.dimensions[1]
+            SM.box_lz = SM.universe_save.trajectory.ts.dimensions[2]
+        else:
+            SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+            SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+            SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+            SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
 
     def solution_builder_callback(self):
         active_window = self.win.active_mdi_child()
@@ -72,10 +78,21 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         box_ly = float(self.solution.SpinBox_ly.text())
         box_lz = float(self.solution.SpinBox_lz.text())
         SM = active_window.universe_manager
-        SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
-        SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-        SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-        SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
+        if SM.universe_save:
+            SM.universe_save.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+            SM.box_lx = SM.universe_save.trajectory.ts.dimensions[0]
+            SM.box_ly = SM.universe_save.trajectory.ts.dimensions[1]
+            SM.box_lz = SM.universe_save.trajectory.ts.dimensions[2]
+        else:
+            SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+            SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+            SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+            SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
+
+        # SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
+        # SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
+        # SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
+        # SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
         water_diameter = 3.1655
         spacing_dia = 0.98
         try:
@@ -146,7 +163,10 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         for o in range(0, n_atoms, 3):
             bonds.extend([(o, o+1), (o, o+2)])
         sol.add_TopologyAttr('bonds', bonds)
-        combined = MDAnalysis.Merge(SM.universe.atoms, sol.atoms)
+        if SM.universe_save:
+            combined = MDAnalysis.Merge(SM.universe_save.atoms, sol.atoms)
+        else:
+            combined = MDAnalysis.Merge(SM.universe.atoms, sol.atoms)
         import tempfile
         dir_name = tempfile.mkdtemp(prefix='Furious_Atoms_')
         file_name = tempfile.mkstemp(suffix='.pdb', prefix='Solution', dir=dir_name)[1]
