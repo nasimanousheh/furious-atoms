@@ -1,6 +1,10 @@
 from abc import abstractmethod
 from typing import Tuple
 import numpy as np
+import warnings
+
+from furiousatoms.molecular import MolecularStructure
+from furiousatoms.parsers.parser_util import clean_bonds
 
 '''
 An abstract class which other file format-specific parsers can extend.
@@ -15,7 +19,7 @@ class BaseParser:
         self.lineId = 0 #index of line being processed
         self.parserMethod = None #optional; some parsers use this to switch between how they parse a line
 
-    def parse(self, fname) -> Tuple[list, np.array, np.array, np.array]:
+    def parse(self, fname) -> MolecularStructure:
         '''
         Given a file name, extract as much information as possible then return
         a tuple of the following:
@@ -32,12 +36,22 @@ class BaseParser:
                 self.parseLine(line)
                 self.lineId += 1
 
-        print(self.errors) #TODO display popup
+        # warnings.warn(self.errors) #TODO display popup
 
         for i in range(len(self.box_size)):
             self.box_size[i] = abs(self.box_size[i])
+        if len(self.positions) == 0:
+            warnings.warn("MolecularStructure is empty. No positions could be parsed.")
+            empty = MolecularStructure.create_empty()
+            empty.box_size = self.box_size
+            return empty
 
-        return self.box_size, np.array(self.positions), np.array(self.bonds), np.array(self.atom_types)
+        self.positions = np.array(self.positions)
+        self.bonds = np.array(self.bonds)
+        self.bonds = clean_bonds(self.bonds, len(self.positions))
+        self.atom_types = np.array(self.atom_types)
+
+        return MolecularStructure(self.box_size, self.positions, self.bonds, self.atom_types)
     
     @abstractmethod
     def parseLine(self, fname) -> Tuple[list, np.array, np.array, np.array]:

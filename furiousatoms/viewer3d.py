@@ -1,11 +1,10 @@
 import os
 import numpy as np
-from furiousatoms.io import create_universe
 from PySide2 import QtCore
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.molecular import ViewerMemoryManager
-from furiousatoms.fullerenes_builder import load_CC1_file
+from furiousatoms.molecular import MolecularStructure, ViewerMemoryManager
+from furiousatoms.builders.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, material
 from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
@@ -113,14 +112,19 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
 
-        box_size, positions, bonds, atom_types = io.load_files(fname)
-        self.load_structure(box_size, positions, bonds, atom_types)
-        if len(positions) > 0 and len(positions) == len(atom_types):
+        structure = io.load_files(fname)
+        self.load_structure(structure)
+        if len(structure.pos) > 0 and len(structure.pos) == len(structure.atom_types):
             return True
         return False
 
-    def load_structure(self, box_size, positions, bonds, atom_types):
-        self.universe_manager = ViewerMemoryManager(box_size, positions, bonds, atom_types)
+    def load_structure(self, molecular_structure: MolecularStructure):
+        self.universe_manager = ViewerMemoryManager(
+                molecular_structure.box_size,
+                molecular_structure.pos,
+                molecular_structure.bonds,
+                molecular_structure.atom_types
+        )
 
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()
@@ -143,10 +147,10 @@ class Viewer3D(QtWidgets.QWidget):
         self.current_extension = os.path.splitext(self.current_filepath)[1]
         self.is_untitled = False
         un = load_CC1_file(fname)
-        universe, no_bonds = io.load_files(un)
-        if not universe:
+        structure = io.load_files(un)
+        if not structure:
             return success
-        self.load_universe(universe, no_bonds)
+        self.load_structure(structure)
         success = True
         return success
 
@@ -210,7 +214,7 @@ class Viewer3D(QtWidgets.QWidget):
         final_atom_types = np.delete(final_atom_types,
                                     SM.object_indices_particles)
         try:
-            bonds_indices = SM.universe.bonds.to_indices()
+            bonds_indices = SM.bonds
             object_indices_bonds = np.where(SM.deleted_bonds == True)[0].tolist()
             for object_index in SM.object_indices_particles:
                 object_indices_bonds += np.where(bonds_indices[:, 1] == object_index)[0].tolist()
@@ -242,7 +246,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.selected_particle[SM.object_indices_particles] = False
         SM.deleted_particles[SM.object_indices_particles] = True
-        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
+        SM.universe_save = MolecularStructure([SM.box_lx, SM.box_ly, SM.box_lz], final_pos, final_bonds, final_atom_types)
         return SM.universe_save
 
     def delete_bonds(self):
@@ -260,7 +264,6 @@ class Viewer3D(QtWidgets.QWidget):
         object_indices_bonds = np.where(SM.selected_bond)[0].tolist()
         object_indices_bonds += np.where(SM.deleted_bonds == True)[0].tolist()
         object_indices_bonds = np.asarray(object_indices_bonds)
-        bonds_indices = SM.universe.bonds.to_indices()
         bond_color_add = np.array([255, 0, 0, 0], dtype='uint8')
         SM.vcolors_bond = utils.colors_from_actor(SM.bond_actor, 'colors')
         for object_index_bond in object_indices_bonds * 2:
@@ -273,7 +276,7 @@ class Viewer3D(QtWidgets.QWidget):
         utils.update_actor(SM.bond_actor)
         SM.bond_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         self.render()
-        final_bonds = bonds_indices.copy()
+        final_bonds = np.copy(SM.bonds)
         final_bonds = np.delete(final_bonds, object_indices_bonds, axis=0)
 
         if len(SM.object_indices_particles)> 0:
@@ -294,7 +297,7 @@ class Viewer3D(QtWidgets.QWidget):
 
         SM.selected_bond[object_indices_bonds] = False
         SM.deleted_bonds[object_indices_bonds] = True
-        SM.universe_save = create_universe(final_pos, final_bonds, final_atom_types, SM.box_lx, SM.box_ly, SM.box_lz)
+        SM.universe_save = MolecularStructure([SM.box_lx, SM.box_ly, SM.box_lz], final_pos, final_bonds, final_atom_types)
         return SM.universe_save
 
     def left_button_press_particle_callback(self, obj, event):

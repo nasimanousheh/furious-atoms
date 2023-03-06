@@ -1,5 +1,4 @@
 # Standard package
-from json import load
 import os
 import fnmatch
 
@@ -11,32 +10,27 @@ disable_warnings()
 
 # 3rd Party package
 import numpy as np
-from fury import window, actor, utils, pick, ui, primitive, material
+from fury import actor, utils
 from PySide2 import QtCore
 from PySide2 import QtGui
-from PySide2.QtGui import QActionEvent, QIcon
+from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from PySide2.QtCore import QTimer
-import MDAnalysis
-from numpy.linalg import norm
-import sys
-import furiousatoms.forms.icons
 from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.viewer_vtk import ViewerVTK
-from furiousatoms.SWNT_builder import  Ui_SWNT
+from furiousatoms.builders.SWNT_builder import  Ui_SWNT
 from furiousatoms.vtk_style import get_vtk_ribbon, get_vtk_ball_stick, get_vtk_stick, get_vtk_sphere
-from furiousatoms.graphene_builder import  Ui_graphene
-from furiousatoms.graphyne_builder import  Ui_graphyne
-from furiousatoms.box_builder import  Ui_box
-from furiousatoms.solution_builder import  Ui_solution
-from furiousatoms.MWNT_builder import  Ui_MWNT
-from furiousatoms.Nanorope_builder import  Ui_NanoRope
+from furiousatoms.builders.graphene_builder import  Ui_graphene
+from furiousatoms.builders.graphyne_builder import  Ui_graphyne
+from furiousatoms.builders.box_builder import  Ui_box
+from furiousatoms.builders.solution_builder import  Ui_solution
+from furiousatoms.builders.MWNT_builder import  Ui_MWNT
+from furiousatoms.builders.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.structure import bbox
-from furiousatoms.electrolyte_builder import Ui_electrolyte
-from furiousatoms.fullerenes_builder import load_CC1_file
-from fury.utils import (get_actor_from_primitive, normals_from_actor,
+from furiousatoms.builders.electrolyte_builder import Ui_electrolyte
+from fury.utils import (normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)
 
@@ -133,6 +127,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         self.ui.treeWidget.itemClicked.connect(self.show_radius_value)
         # General connections
         self.ui.mdiArea.subWindowActivated.connect(self.update_information_ui)
+        self.ui.installEventFilter(self)
 
 
 
@@ -234,7 +229,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
-                set_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+                type_index = utils.np_lookup(SM.atom_type, atom_typ)
+                set_value_radius = SM.radii_spheres[type_index]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
 
     def change_slice_opacity(self, opacity_degree):
@@ -460,7 +456,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.no_vertices_all_particles = vertices.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         for atom_typ in SM.unique_types:
-            selected_value_radius = SM.radii_spheres[SM.atom_type == atom_typ][0]
+            type_index = utils.np_lookup(SM.atom_type, atom_typ)
+            selected_value_radius = SM.radii_spheres[type_index]
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             all_vertices_radii = all_vertices_radii[:, None]
             selected_atom_mask = SM.atom_type == atom_typ
@@ -861,6 +858,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
     def new_window(self):
         child = self.create_mdi_child()
+        child.installEventFilter(self)
         child.make_title()
         child.show()
 
@@ -934,34 +932,37 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         file_name = os.path.basename(fname)
         ext_file = os.path.splitext(file_name)[1]
-        from furiousatoms.pdb2lmp import save_PDB2LMP
+        # from furiousatoms.pdb2lmp import save_PDB2LMP
         if ext_file =='.data':
-            if SM.universe_save is None:
-                save_PDB2LMP(SM, fname, SM.universe)
-            else:
-                save_PDB2LMP(SM, fname, SM.universe_save)
+            #TODO replace with new saving code
+            pass
+            # if SM.universe_save is None:
+            #     save_PDB2LMP(SM, fname, SM.universe)
+            # else:
+            #     save_PDB2LMP(SM, fname, SM.universe_save)
         else:
-            if SM.universe_save is None:
-                num_atoms = SM.pos.shape[0]
-                universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
-                universe.atoms.positions = SM.pos
-                n_residues = 1
-                atom_types_list = list(SM.atom_type)
-                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-                    universe.dimensions = [90, 90, 90, 90, 90, 90]
-                else:
-                    universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
-                universe.add_TopologyAttr('name', atom_types_list)
-                universe.add_TopologyAttr('type', atom_types_list)
-                universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-                universe.add_TopologyAttr('masses')
-                try:
-                    universe.add_bonds(SM.universe.bonds.to_indices())
-                except:
-                    pass
-                universe.atoms.write(fname)
-            else:
-                SM.universe_save.atoms.write(fname)
+            #TODO replace with new saving code
+            # if SM.universe_save is None:
+            #     num_atoms = SM.pos.shape[0]
+            #     universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
+            #     universe.atoms.positions = SM.pos
+            #     n_residues = 1
+            #     atom_types_list = list(SM.atom_type)
+            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
+            #         universe.dimensions = [90, 90, 90, 90, 90, 90]
+            #     else:
+            #         universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
+            #     universe.add_TopologyAttr('name', atom_types_list)
+            #     universe.add_TopologyAttr('type', atom_types_list)
+            #     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
+            #     universe.add_TopologyAttr('masses')
+            #     try:
+            #         universe.add_bonds(SM.universe.bonds.to_indices())
+            #     except:
+            #         pass
+            #     universe.atoms.write(fname)
+            # else:
+            #     SM.universe_save.atoms.write(fname)
 
             with open(fname, 'r+') as fp:
                 lines = fp.readlines()
@@ -973,6 +974,21 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
                     lines[0] = "Created by FURIOUS ATOMS.\n"
                 fp.writelines(lines[:])
 
+    
+    def eventFilter(self, obj, event):
+        if event.type() == QtCore.QEvent.Close and self.window is obj:
+            self.window.removeEventFilter(self)
+        elif event.type() == QtCore.QEvent.ShortcutOverride:
+            if event.key() == QtCore.Qt.Key_Delete or event.key() == QtCore.Qt.Key_Backspace:
+                self.delete_selection()
+        return super(FuriousAtomsApp, self).eventFilter(obj, event)
+
+    def delete_selection(self):
+        SM = self.get_SM_active_window()
+        if any(SM.selected_particle) == True:
+            self.delete_particles()
+        if any(SM.selected_bond) == True:
+            self.delete_bonds()
 
     def delete_particles(self):
         active_window = self.active_mdi_child()
@@ -1129,6 +1145,8 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         SM = self.get_SM_active_window()
+        if not SM:
+            return
         self.ui.Box_Axis.setChecked(True)
         self.ui.Box_Axis.stateChanged.connect(self.check_axis)
         try:
@@ -1153,16 +1171,16 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         active_window.render()
         self.ui.treeWidget.clear()
-        print("metallic: ", SM.metallic)
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
-            set_value_radius = SM.radii_spheres[SM.atom_type == typ][0]
+            type_index = utils.np_lookup(SM.atom_type, typ)
+            set_value_radius = SM.radii_spheres[type_index]
             self.ui.SpinBox_atom_radius.setValue((set_value_radius))
-            r = (SM.colors[SM.atom_type == typ][0][0])*255
-            g = (SM.colors[SM.atom_type == typ][0][1])*255
-            b = (SM.colors[SM.atom_type == typ][0][2])*255
-            a = (SM.colors[SM.atom_type == typ][0][3])*255
+            r = (SM.colors[type_index][0])*255
+            g = (SM.colors[type_index][1])*255
+            b = (SM.colors[type_index][2])*255
+            a = (SM.colors[type_index][3])*255
             cg = QtWidgets.QTreeWidgetItem(self.ui.treeWidget, [0, str(typ)])
             cg.setBackground(0,(QtGui.QBrush(QtGui.QColor(r, g, b, a))))
 

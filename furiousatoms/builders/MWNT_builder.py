@@ -1,4 +1,3 @@
-from furiousatoms.io import create_universe, merged_two_universes
 import numpy as np
 from numpy.linalg import norm
 from math import gcd
@@ -9,8 +8,8 @@ from furiousatoms import io
 import numpy as np
 from fury import window
 from PySide2 import QtWidgets
-import MDAnalysis as mda
 from PySide2.QtGui import QIcon
+from furiousatoms.molecular import MolecularStructure
 
 thre = 1e-10
 vacuum = 4
@@ -179,15 +178,16 @@ class Ui_MWNT(QtWidgets.QMainWindow):
         MWNT_type_1 = self.MWNT.comboBox_type1_MWNT.currentText()
         MWNT_type_2 = self.MWNT.comboBox_type2_MWNT.currentText()
 
-        list_universe = []
+        entire_structure = MolecularStructure.create_empty()
         for i in range(1, number_of_walls+1):
-            universe_all = MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i)
-            list_universe.append(universe_all.atoms)
-        universe_all = mda.Merge(*list_universe)
-        universe_all.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
+            entire_structure = entire_structure.merge(MWNT_builder(value_n_MWNT, value_m_MWNT, repeat_units_MWNT, a=bond_length_MWNT, species=(MWNT_type_1, MWNT_type_2), centered=True, wan = i),
+                                                      offset_bonds=True)
+        entire_structure.center()
+        entire_structure.box_size = [box_lx, box_ly, box_lz]
+
         window = self.win.create_mdi_child()
         window.make_title()
-        window.load_universe(universe_all)
+        window.load_structure(entire_structure)
         window.show()
 
 """
@@ -245,5 +245,6 @@ def MWNT_builder(n, m, N, a, species=('B', 'C'), centered=False, wan = 1):
     except NameError:
         box_lx = box_ly = box_lz = 0.0
 
-    univ_swnt = create_universe(coord_array_swnt, all_bonds_swnt, atom_types_swnt, box_lx, box_ly, box_lz)
+    box_size = [box_lx, box_ly, box_lz]
+    univ_swnt = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt)
     return univ_swnt

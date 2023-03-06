@@ -2,7 +2,6 @@
 import sys
 import os
 import getopt
-import time
 
 # 3rd party package
 import PySide2
@@ -88,7 +87,7 @@ def start_gui(app_folder=None, files=None):
     app.processEvents()
     splash.showMessage("Furious Atoms loading...",
                        QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
-    time.sleep(2)
+    # time.sleep(2)
     # Init interface
     win = FuriousAtomsApp(app_path=app_folder)
     # win.setWindowTitle("{0} version {1}".format(APP_NAME,

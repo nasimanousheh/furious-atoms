@@ -29,9 +29,6 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
 
     def create_connections(self):
         self.box.pushButton_build_box.clicked.connect(self.box_builder_callback)
-        # self.box.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
-        # self.box.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
-        # self.box.SpinBox_lz.valueChanged.connect(self.initial_box_dim)
         self.box.pushButton_build_box.clicked.connect(lambda:self.close())
 
 
@@ -43,19 +40,13 @@ class Ui_box(QtWidgets.QMainWindow): #QWidget
     def box_builder_callback(self):
         active_window = self.win.active_mdi_child()
         SM = active_window.universe_manager
-        SM.box_lx = float(self.box.SpinBox_lx.text())
-        SM.box_ly = float(self.box.SpinBox_ly.text())
-        SM.box_lz = float(self.box.SpinBox_lz.text())
-        SM.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
-        try:
-            SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-            SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-            SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
-        except TypeError:
-            SM.box_lx = SM.box_ly = SM.box_lz = 0
+        box_lx = float(self.box.SpinBox_lx.text())
+        box_ly = float(self.box.SpinBox_ly.text())
+        box_lz = float(self.box.SpinBox_lz.text())
+        SM.box_lx, SM.box_ly, SM.box_lz = box_lx, box_ly, box_lz
         if SM.bbox_actor:
             active_window.scene.rm(SM.bbox_actor)
-        SM.bbox_actor, _ = bbox(SM.box_lx, SM.box_ly, SM.box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
+        SM.bbox_actor, _ = bbox(box_lx, box_ly, box_lz, colors=SM.box_color, linewidth=2, fake_tube=True)
         active_window.scene.add(SM.bbox_actor)
         utils.update_actor(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()

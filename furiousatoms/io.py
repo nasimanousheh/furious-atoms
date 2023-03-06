@@ -1,13 +1,12 @@
 # Standard package
 import os
 import sys
-import warnings
 
 import furiousatoms
 from PySide2 import QtCore, QtUiTools
-import MDAnalysis
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
+from furiousatoms.molecular import MolecularStructure
 from furiousatoms.parsers.gromacs_parser import GROMACSParser
 from furiousatoms.parsers.lammps_parser import LAMMPSParser
 from furiousatoms.parsers.pdb_parser import PDBParser
@@ -80,23 +79,9 @@ def load_ui_widget(uifilename, cls_to_register=None, parent=None):
     return ui
 
 
-def load_files(fname, debug=False):
-    # load_file_export = open(fname, 'r')
-    # lines = load_file_export.readlines()
-    # no_lines = len(lines)
-    # frames_cnt = 0
-    # format_data = None
-    # no_bonds = 0
-    # bonds = 0
-    # for i in range(no_lines):
-    #     line = lines[i]
-    #     if 'item: number of atoms'.upper() in line:
-    #         format_data = 'LAMMPSDUMP'
-    #         break
-    #     i += 1
-    
+def load_files(fname):
     #Choose parser based on file extension
-    if fname.endswith(".pdb"):
+    if fname.endswith(".pdb") or fname.endswith(".cc1"):
         return PDBParser().parse(fname)
     elif fname.endswith(".data") or fname.endswith(".dat") or fname.endswith(".lmp"):
         return LAMMPSParser().parse(fname)
@@ -104,79 +89,15 @@ def load_files(fname, debug=False):
         return XYZParser().parse(fname)
     elif fname.endswith(".gro"):
         return GROMACSParser().parse(fname)
+    
+    #Default: try lots of parsers and guess the format
+    bestStructure = MolecularStructure.create_empty()
+    for parser in (PDBParser(), LAMMPSParser(), XYZParser(), GROMACSParser()):
+        structure = parser.parse(fname)
+        if len(structure.bonds) > len(bestStructure.bonds) or 0 == len(bestStructure.pos):
+            bestStructure = structure
+    return bestStructure
 
-
-def create_universe(pos, bonds, atom_types, box_lx, box_ly, box_lz):
-    num_atoms = pos.shape[0]
-    universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
-    universe.atoms.positions = pos
-    n_residues = 1
-    atom_types_list = list(atom_types)
-    universe.add_TopologyAttr('name', atom_types_list)
-    universe.add_TopologyAttr('type', atom_types_list)
-    universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-    universe.add_TopologyAttr('masses')
-    universe.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
-    try:
-        universe.add_bonds(bonds)
-    except:
-        pass
-    cog = universe.atoms.center_of_geometry()
-    universe.atoms.positions -= cog
-    return universe
-
-def merged_two_universes(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2, box_lx, box_ly, box_lz):
-    num_atoms_1 = pos_uni_1.shape[0]
-    universe_1 = MDAnalysis.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
-    universe_1.atoms.positions = pos_uni_1
-    n_residues = 1
-    atom_types_list_1 = list(atom_types_uni_1)
-    universe_1.add_TopologyAttr('name', atom_types_list_1)
-    universe_1.add_TopologyAttr('type', atom_types_list_1)
-    universe_1.add_TopologyAttr('resname', ['MOL']*n_residues)
-    universe_1.add_bonds(bonds_uni_1)
-    num_atoms_2 = pos_uni_2.shape[0]
-    universe_2 = MDAnalysis.Universe.empty(num_atoms_2, trajectory=True, n_residues=1)
-    universe_2.atoms.positions = pos_uni_2
-    universe_2.add_bonds(bonds_uni_2)
-    n_residues = 1
-    universe_2.add_TopologyAttr('name', atom_types_uni_2)
-    universe_2.add_TopologyAttr('type', atom_types_uni_2)
-    universe_2.add_TopologyAttr('resname', ['MOL']*n_residues)
-    merged_universes = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
-    merged_universes.trajectory.ts.dimensions = [box_lx, box_ly, box_lz, 90, 90, 90]
-    merged_universes.add_bonds(universe_1.bonds.indices)
-    return merged_universes
-
-def merged_universe_with_H(pos_uni_1, bonds_uni_1, atom_types_uni_1, pos_uni_2, bonds_uni_2, atom_types_uni_2, box_lx, box_ly, box_lz):
-    num_atoms_1 = pos_uni_1.shape[0]
-    universe_1 = MDAnalysis.Universe.empty(num_atoms_1, trajectory=True, n_residues=1)
-    universe_1.atoms.positions = pos_uni_1
-    n_residues = 1
-    atom_types_list_1 = list(atom_types_uni_1)
-    universe_1.add_TopologyAttr('name', atom_types_list_1)
-    universe_1.add_TopologyAttr('type', atom_types_list_1)
-    universe_1.add_TopologyAttr('resname', ['MOL']*n_residues)
-    universe_1.add_bonds(bonds_uni_1)
-    num_atoms_2 = pos_uni_2.shape[0]
-    universe_2 = MDAnalysis.Universe.empty(num_atoms_2, trajectory=True, n_residues=1)
-    universe_2.atoms.positions = pos_uni_2
-    # universe_2.add_bonds(bonds_uni_2)
-    n_residues = 1
-    universe_2.add_TopologyAttr('name', atom_types_uni_2)
-    universe_2.add_TopologyAttr('type', atom_types_uni_2)
-    universe_2.add_TopologyAttr('resname', ['MOL']*n_residues)
-    merged_universe_Hyd = MDAnalysis.Merge(universe_1.atoms, universe_2.atoms)
-    merged_universe_Hyd.add_bonds(bonds_uni_1)
-    merged_universe_Hyd.add_bonds(bonds_uni_2)
-    try:
-        box_lx or box_ly or box_lz
-    except NameError:
-        box_lx = box_ly = box_lz = 0.0
-    merged_universe_Hyd.trajectory.ts.dimensions = [box_lx, box_ly, box_lx, 90, 90, 90]
-    cog = merged_universe_Hyd.atoms.center_of_geometry()
-    merged_universe_Hyd.atoms.positions -= cog
-    return merged_universe_Hyd
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.
 
