@@ -1,19 +1,10 @@
-import os
-import numpy as np
-from furiousatoms.io import create_universe
 from PySide2 import QtCore
-from PySide2 import QtGui
-from PySide2.QtGui import QIcon
 from PySide2 import QtWidgets
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-from furiousatoms.fullerenes_builder import load_CC1_file
 from furiousatoms import io
-from fury import window, actor, utils, pick, ui, primitive, material
-from fury.data import fetch_viz_cubemaps, read_viz_cubemap
-from fury.io import load_cubemap_texture
+from fury import window, actor, material
 from fury.utils import (normals_from_actor, tangents_to_actor,
                         tangents_from_direction_of_anisotropy, update_polydata_normals)
-from fury.lib import numpy_support
 
 
 def sky_box_effect_atom(scene, actor, universem):

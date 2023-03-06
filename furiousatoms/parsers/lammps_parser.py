@@ -1,6 +1,6 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
-from furiousatoms.parsers.parser_util import float_or_zero
+from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 from furiousatoms.element_lookup import lookup_element_by_mass
 
 
@@ -60,7 +60,8 @@ class LAMMPSParser(BaseParser):
                 bond[1] = int(words[3]) - 1
                 if bond[0] < 0 or bond[1] < 0:
                     raise ValueError("Atom ID cannot be zero or negative.")
-                self.bonds.append(bond)
+                if bond[0] != bond[1] and not has_bond(self.bonds, bond):
+                    self.bonds.append(bond)
             else: 
                 raise IndexError("Line too short")
         except:
