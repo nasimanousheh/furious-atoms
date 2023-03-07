@@ -89,10 +89,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
             SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
             SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
 
-        # SM.universe.trajectory.ts.dimensions = [box_lx,box_ly,box_lz, 90, 90, 90]
-        # SM.box_lx = SM.universe.trajectory.ts.dimensions[0]
-        # SM.box_ly = SM.universe.trajectory.ts.dimensions[1]
-        # SM.box_lz = SM.universe.trajectory.ts.dimensions[2]
         water_diameter = 3.1655
         spacing_dia = 0.98
         try:
@@ -156,7 +152,6 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
 
         sol.atoms.positions = coord_array
         cog = sol.atoms.center_of_geometry()
-        print('Original solvent center of geometry: ', cog)
         sol.atoms.positions -= cog
         assert not hasattr(sol, 'bonds')
         bonds = []
@@ -172,11 +167,14 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         file_name = tempfile.mkstemp(suffix='.pdb', prefix='Solution', dir=dir_name)[1]
         combined.atoms.write(file_name)
         combined.universe.trajectory.ts.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
-        SM = active_window.universe_manager
         active_window.scene.rm(SM.bbox_actor)
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
-        active_window.load_universe(combined)
         active_window.render()
+        active_window.load_universe(combined)
+        if not active_window:
+            return
+        self.win.update_information_ui()
+        active_window.show()
         return combined
