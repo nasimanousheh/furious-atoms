@@ -143,6 +143,10 @@ class Ui_solution(QtWidgets.QMainWindow): #QWidget
         SM.bbox_actor.GetMapper().GetInput().GetPointData().GetArray('colors').Modified()
         active_window.scene.rm(SM.sphere_actor)
         active_window.scene.rm(SM.bond_actor)
-        active_window.load_structure(combined)
         active_window.render()
+        active_window.load_structure(combined)
+        if not active_window:
+            return
+        self.win.update_information_ui()
+        active_window.show()
         return combined
