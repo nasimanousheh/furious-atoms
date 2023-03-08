@@ -1,10 +1,11 @@
 import numpy as np
 from fury import utils, actor
+from fury.molecular import PTable
 
 from furiousatoms.structure import bbox
 from fury import actor, molecular as mol
 
-table = mol.PTable()
+periodic_table = PTable()
 
 SPHERE_SIZE = 0.35
 POS_DIM = 3
@@ -102,8 +103,13 @@ class ViewerMemoryManager:
         #Set colors
         self.colors = np.ones((self.no_atoms, 4))
         self.unique_types = np.unique(self.atom_types)
-        self.colors_unique_types = np.random.rand(len(self.unique_types), 4)
-        self.colors_unique_types[:, 3] = 1 #set opacity to 1 
+        self.colors_unique_types = np.ones((len(self.unique_types), 4))
+        periodic_table = PTable()
+        self.opacity = 1.0
+        for i, typ in enumerate(self.unique_types):
+            color = periodic_table.atom_color(periodic_table.atomic_number(typ))
+            color = np.hstack((color, self.opacity))
+            self.colors_unique_types[i] = color
         for i, typ in enumerate(self.atom_types):
             indexOfColor = np.where(self.unique_types == typ)
             self.colors[i] = self.colors_unique_types[indexOfColor]
@@ -137,7 +143,6 @@ class ViewerMemoryManager:
         self.roughness = 0.01
         self.metallic = 0.5
         self.anisotropic = 0.01
-        self.opacity = 1.0
         self.selected_value_radius = 0.01
         self.anisotropic_rot = 0.01
         self.anisotropic_X = 0.01
