@@ -91,12 +91,12 @@ def load_files(fname):
         return GROMACSParser().parse(fname)
     
     #Default: try lots of parsers and guess the format
-    bestStructure = MolecularStructure.create_empty()
+    best_structure  = MolecularStructure.create_empty()
     for parser in (PDBParser(), LAMMPSParser(), XYZParser(), GROMACSParser()):
         structure = parser.parse(fname)
-        if len(structure.bonds) > len(bestStructure.bonds) or 0 == len(bestStructure.pos):
-            bestStructure = structure
-    return bestStructure
+        if len(structure.bonds) > len(best_structure .bonds) or 0 == len(best_structure .pos):
+            best_structure  = structure
+    return best_structure 
 
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.

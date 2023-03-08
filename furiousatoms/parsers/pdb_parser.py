@@ -3,7 +3,7 @@ from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 
 class PDBParser(BaseParser):
-    def parseLine(self, line):
+    def parse_line(self, line):
         lineUpper = line.upper()
         if lineUpper.startswith("CONECT"): #Note the spelling. 
             for i, j in ((12,16), (17,21), (22,26)): #indices of atom IDs to connect to within the string
@@ -15,10 +15,10 @@ class PDBParser(BaseParser):
                     if bond[0] != bond[1] and not has_bond(self.bonds, bond):
                         self.bonds.append(bond)
                 except ValueError:
-                    self.errors += "Refusing to connect a bond on line #%d.\n"%(self.lineId)
+                    self.errors += "Refusing to connect a bond on line #%d.\n"%(self.line_id)
                 except IndexError:
                     if len(line) < 13:
-                        self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
+                        self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.line_id)
         elif lineUpper.startswith("ATOM") or lineUpper.startswith("HETATM"):
             try:
                 self.atom_types.append(line[13:15].strip())
@@ -29,7 +29,7 @@ class PDBParser(BaseParser):
                 pos[2] = float_or_zero(line[47:54])
                 self.positions.append(pos)
             except:
-                self.errors += "Failure processing line #%d.\n"%(self.lineId)
+                self.errors += "Failure processing line #%d.\n"%(self.line_id)
         elif lineUpper.startswith("REMARK"):
             pass
         elif lineUpper.startswith("CRYST1 "):
@@ -38,6 +38,6 @@ class PDBParser(BaseParser):
                 self.box_size[1] = float_or_zero(line[16:24])
                 self.box_size[2] = float_or_zero(line[25:33])
             else:
-                self.errors += "Line #%d is too short. Three numbers are needed for the box size.\n"%(self.lineId)
+                self.errors += "Line #%d is too short. Three numbers are needed for the box size.\n"%(self.line_id)
         else:
-            self.errors += "Unable to process line #%d.\n"%(self.lineId)
+            self.errors += "Unable to process line #%d.\n"%(self.line_id)

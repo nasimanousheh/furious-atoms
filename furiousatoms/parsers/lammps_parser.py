@@ -7,22 +7,22 @@ from furiousatoms.element_lookup import lookup_element_by_mass
 class LAMMPSParser(BaseParser):
     def __init__(self) -> None:
         super().__init__()
-        self.elemInfoDict = {}
+        self.elem_info_dict = {}
     
-    def parseMass(self, line):
+    def parse_mass(self, line):
         words = line.split()
         key = words[0]
         mass = float(words[1])
-        self.elemInfoDict[key] = lookup_element_by_mass(mass)
+        self.elem_info_dict[key] = lookup_element_by_mass(mass)
     
-    def getAtomType(self, typeKey: int):
-        #Assume element symbol has already been read in by parseMass(...).
+    def get_atom_type(self, typeKey: int):
+        #Assume element symbol has already been read in by parse_mass(...).
         #If not, return typeKey.
-        if typeKey in self.elemInfoDict:
-            return self.elemInfoDict[typeKey]['symbol']
+        if typeKey in self.elem_info_dict:
+            return self.elem_info_dict[typeKey]['symbol']
         return typeKey
 
-    def parseAtom(self, line):
+    def parse_atom(self, line):
         '''
         Atom lines come in many styles, but we assume the XYZ coordinates are the last 3 
         values as per the 'atomic' and 'full' styles. 
@@ -32,12 +32,12 @@ class LAMMPSParser(BaseParser):
             typ = ''
             words = line.split()
             if len(words) >= 7: #'Full' style
-                typ = self.getAtomType(words[2])
+                typ = self.get_atom_type(words[2])
                 pos[0] = float_or_zero(words[4])
                 pos[1] = float_or_zero(words[5])
                 pos[2] = float_or_zero(words[6])
             elif len(words) >= 5: #'Atomic' style
-                typ = self.getAtomType(words[1])
+                typ = self.get_atom_type(words[1])
                 pos[0] = float_or_zero(words[2])
                 pos[1] = float_or_zero(words[3])
                 pos[2] = float_or_zero(words[4])
@@ -46,11 +46,11 @@ class LAMMPSParser(BaseParser):
             self.atom_types.append(typ)
             self.positions.append(pos)
         except IndexError:
-            self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
+            self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.line_id)
         except:
-            self.errors += "Failure processing line #%d.\n"%(self.lineId)
+            self.errors += "Failure processing line #%d.\n"%(self.line_id)
     
-    def parseBond(self, line):
+    def parse_bond(self, line):
         words = line.split()
         try:
             if len(words) >= 4:
@@ -66,11 +66,11 @@ class LAMMPSParser(BaseParser):
                 raise IndexError("Line too short")
         except:
             if len(words) < 2:
-                self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.lineId)
+                self.errors += "Line #%d is too short. At least two atom IDs are needed for a bond.\n"%(self.line_id)
             else:
-                self.errors += "Could not read a bond from line #%d since it is not well-formatted. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
+                self.errors += "Could not read a bond from line #%d since it is not well-formatted. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.line_id)
 
-    def parseBoxSize(self, line):
+    def parse_box_size(self, line):
         '''
         A box size dimension will look like this:
         ` -2.365000 7.095000  xlo xhi` 
@@ -90,38 +90,38 @@ class LAMMPSParser(BaseParser):
                 else:
                     raise ValueError("Invalid format")
             else:
-                self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.lineId)
+                self.errors += "Line #%d is too short to read an atom's position. Please refer to a guide for LAMMPS format if you are unsure.\n"%(self.line_id)
         except:
-            self.errors += "Failure processing line #%d.\n"%(self.lineId)
+            self.errors += "Failure processing line #%d.\n"%(self.line_id)
 
-    def skipLine(self, line):
+    def skip_line(self, line):
         pass
 
-    def parseLine(self, line):
+    def parse_line(self, line):
         #Choose how to parse subsequent lines
         line = line.strip()
         header = line.lower()
         if len(header) == 0:
             pass
         elif header.startswith("masses"):
-            self.parserMethod = self.parseMass
+            self.parser_method = self.parse_mass
         elif header.startswith("atoms"):
-            self.parserMethod = self.parseAtom
+            self.parser_method = self.parse_atom
         elif header.startswith("bonds"):
-            self.parserMethod = self.parseBond
+            self.parser_method = self.parse_bond
         elif header.endswith("hi") and "lo" in header:
             #Special case: box size doesn't use a header
-            self.parseBoxSize(line)
+            self.parse_box_size(line)
         elif "coeffs" in header:
-            self.parserMethod = self.skipLine
+            self.parser_method = self.skip_line
         elif len(header.split()) == 1:
             #For non-implemented headers like Angles and Dihedrals
-            self.parserMethod = self.skipLine
+            self.parser_method = self.skip_line
         
         #Perform the parse
         elif len(header.strip()) > 0:
-            if self.parserMethod != None:
-                self.parserMethod(line)
+            if self.parser_method != None:
+                self.parser_method(line)
             else:
-                self.errors += "Unable to process line #%d.\n"%(self.lineId)
-        self.lineId += 1
+                self.errors += "Unable to process line #%d.\n"%(self.line_id)
+        self.line_id += 1

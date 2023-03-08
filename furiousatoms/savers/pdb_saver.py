@@ -1,5 +1,4 @@
 import numpy as np
-from furiousatoms.parsers.pdb_parser import PDBParser #TODO remove
 
 HEADER = "REMARK Created by FURIOUS ATOMS. By default the box dimensions are 90x90x90 cubic angstrom\n"
 
@@ -23,17 +22,17 @@ class PDBSaver():
     .. _TITLE: http://www.wwpdb.org/documentation/file-format-content/format33/sect2.html#TITLE
     '''
     
-    def writeAllLines(self, fname, boxSize: list, positions: np.array, bonds: np.array, atomTypes: np.array):
+    def write_all_lines(self, fname, box_size: list, positions: np.array, bonds: np.array, atom_types: np.array):
         with open(fname, 'w') as fp:
             fp.write(HEADER)
 
             #Write box size
             #FIXME: CRYST1 also needs alpha/beta/gamma (degrees), space group (string), and z (integer)
-            boxSizeFormat = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f}" + \
+            box_sizeFormat = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f}" + \
                    "{ang[0]:7.2f}{ang[1]:7.2f}{ang[2]:7.2f} " + \
                    "{spacegroup:<11s}{zvalue:4d}\n"
-            fp.write(boxSizeFormat.format(
-                box=boxSize, #size in angstroms
+            fp.write(box_sizeFormat.format(
+                box=box_size, #size in angstroms
                 ang=[0, 0, 0], #alpha/beta/gamma (degrees)
                 spacegroup="P",
                 zvalue=1
@@ -47,7 +46,7 @@ class PDBSaver():
                     "{tempFactor:6.2f}      {segID:<4s}{element:>2s}{charge:2s}\n"
                 fp.write(atomFormat.format(
                     serial=i,
-                    name=atomTypes[i],
+                    name=atom_types[i],
                     altLoc=" ",
                     resName=" MOL",
                     chainID=" ",
@@ -57,7 +56,7 @@ class PDBSaver():
                     occupancy=1.00,
                     tempFactor=0,
                     segID="    ",
-                    element=atomTypes[i],
+                    element=atom_types[i],
                     charge="  "
                 ))
 
@@ -76,21 +75,3 @@ class PDBSaver():
                 fp.write(bondFormat.format(atomId=atomId, conect=conect))
 
             fp.write("END\n")
-
-
-#TODO remove
-if __name__ == "__main__":
-    # INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\examples\\Graphdiyne\\graphdiyne_unitcell.pdb"
-    # OUTPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\examples\\graphdiyne_test.pdb"
-    INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms-exercises\\CB_18.pdb"
-    OUTPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\examples\\CB_18_test.pdb"
-    boxSize, positions, bonds, atomTypes = PDBParser().parse(INPUT_FNAME)
-    saver = PDBSaver()
-    saver.writeAllLines(OUTPUT_FNAME, boxSize, positions, bonds, atomTypes)
-
-    with open(OUTPUT_FNAME, 'r') as fp:
-        while True:
-            line = fp.readline()
-            if not line:
-                break
-            print(line, end='')
