@@ -18,10 +18,10 @@ def newXYZSaver():
         os.remove(OUT_FILE_PATH)
 
 
-def test_writeAllLines(newXYZSaver, boxSize, positions, bonds, atomTypes):
+def test_write_all_lines(newXYZSaver, box_size, positions, bonds, atom_types):
     saver = newXYZSaver
     
-    saver.writeAllLines(OUT_FILE_PATH, boxSize, positions, bonds, atomTypes)
+    saver.write_all_lines(OUT_FILE_PATH, box_size, positions, bonds, atom_types)
 
     with open(OUT_FILE_PATH, "r") as fp:
         assert fp.readline() == "4\n"

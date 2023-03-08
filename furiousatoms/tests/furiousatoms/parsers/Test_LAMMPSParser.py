@@ -10,11 +10,11 @@ def newLAMMPSParser():
     return parser
 
 
-def test_parseAtom(newLAMMPSParser):
+def test_parse_atom(newLAMMPSParser):
     parser = newLAMMPSParser
     LINE = "1 1 3 0.000000 17.047001 14.099000 3.625000 # N MOL"
 
-    parser.parseAtom(LINE)
+    parser.parse_atom(LINE)
 
     assert len(parser.positions) == 1
     assert parser.positions[0][0] == 17.047001
@@ -25,58 +25,58 @@ def test_parseAtom(newLAMMPSParser):
     #fall back to number if element symbol is unknown
     assert parser.atom_types[0] == '3' 
 
-def test_parseBond(newLAMMPSParser):
+def test_parse_bond(newLAMMPSParser):
     parser = newLAMMPSParser
     LINE = "791 1 880 882"
 
-    parser.parseBond(LINE)
+    parser.parse_bond(LINE)
 
     assert len(parser.bonds) == 1
     assert parser.bonds[0][0] == 879
     assert parser.bonds[0][1] == 881
 
-def test_parseBoxSize(newLAMMPSParser):
+def test_parse_box_size(newLAMMPSParser):
     parser = newLAMMPSParser
     LINE1 = " -8.651000 21.349000  xlo xhi"
     LINE2 = " -10.067500 19.932500  ylo yhi"
     LINE3 = " -5.881000 16.639000  zlo zhi"
 
-    parser.parseBoxSize(LINE1)
+    parser.parse_box_size(LINE1)
     assert parser.box_size == [21.349, 0, 0]
-    parser.parseBoxSize(LINE2)
+    parser.parse_box_size(LINE2)
     assert parser.box_size == [21.349, 19.9325, 0]
-    parser.parseBoxSize(LINE3)
+    parser.parse_box_size(LINE3)
     assert parser.box_size == [21.349, 19.9325, 16.639]
     
     assert len(parser.positions) == 0
     assert len(parser.bonds) == 0
     assert len(parser.atom_types) == 0
 
-def test_parseLine_parserMethod(newLAMMPSParser):
+def test_parse_line_parser_method(newLAMMPSParser):
     parser = newLAMMPSParser
     
-    parser.lineId = 0
-    assert parser.parserMethod == None #header of file
+    parser.line_id = 0
+    assert parser.parser_method == None #header of file
 
-    parser.lineId = 23
+    parser.line_id = 23
     LINE = " -10.067500 19.932500  ylo yhi"
-    parser.parseLine(LINE)
-    assert parser.parserMethod == None #Note: NOT parseBoxSize
+    parser.parse_line(LINE)
+    assert parser.parser_method == None #Note: NOT parse_box_size
 
-    parser.lineId = 77
+    parser.line_id = 77
     LINE = " Masses"
-    parser.parseLine(LINE)
-    assert parser.parserMethod == parser.parseMass
+    parser.parse_line(LINE)
+    assert parser.parser_method == parser.parse_mass
 
-    parser.lineId = 42
+    parser.line_id = 42
     LINE = " Atoms # full"
-    parser.parseLine(LINE)
-    assert parser.parserMethod == parser.parseAtom
+    parser.parse_line(LINE)
+    assert parser.parser_method == parser.parse_atom
 
-    parser.lineId = 86
+    parser.line_id = 86
     LINE = "Bonds"
-    parser.parseLine(LINE)
-    assert parser.parserMethod == parser.parseBond
+    parser.parse_line(LINE)
+    assert parser.parser_method == parser.parse_bond
 
 def test_parse(newLAMMPSParser):
     parser = newLAMMPSParser
