@@ -296,7 +296,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
                 pts.append((sp, pt))
 
         xyz = [v for _, v in pts]
-        atom_types_graphene = [v for v, _ in pts]
+        atom_types_graphene = np.array([v for v, _ in pts])
         m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
         fragments = m.to_json(scale =1.3)
         coord_array_graphene = np.array(xyz)
@@ -323,7 +323,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
                     pts.append((sp, pt))
             pts = pts[1:5]
             xyz = [v for _, v in pts]
-            primitive_atom_types_graphene = [v for v, _ in pts]
+            primitive_atom_types_graphene = np.array([v for v, _ in pts])
             m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
             fragments = m.to_json(scale =1)
             primitive_coord_graphene = np.array(xyz)
@@ -349,7 +349,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
             del pts[3]
             del pts[3]
             xyz = [v for _, v in pts]
-            primitive_atom_types_graphene = [v for v, _ in pts]
+            primitive_atom_types_graphene = np.array([v for v, _ in pts])
             m = Molecule([Atom(sp, r) for (sp, _), r in zip(pts, xyz)])
             fragments = m.to_json(scale =1)
             primitive_coord_graphene = np.array(xyz)
@@ -504,7 +504,7 @@ def graphene_builder(H_termination_graphene, n, m, N, length, bond_length_graphe
         if len(indices_of_a[0]) == 2:
             bonds_hydrogen.extend([(x, num_atoms_graphene + num_hydrogen)])
             num_hydrogen = num_hydrogen + 1
-    atom_types_Hydrogen = list(['H']*num_hydrogen)
+    atom_types_Hydrogen = np.array(['H']*num_hydrogen)
     box_size = [box_lx, box_ly, box_lz]
     merged_graphene_hydrogen = MolecularStructure(box_size, coord_array_graphene, all_bonds_graphene, atom_types_graphene) \
             .merge(MolecularStructure(box_size, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen))
