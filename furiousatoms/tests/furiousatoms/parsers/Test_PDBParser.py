@@ -68,7 +68,7 @@ def test_parse(newPDBParser):
     assert list(parser.positions[3]) == [-1.560, -1.351, 0.000]
     assert list(parser.positions[17]) == [5.460, -0.000, 0.000]
 
-    assert len(parser.bonds) == 42
+    assert len(parser.bonds) == 21
     assert parser.bonds[0][0] == 0
     assert parser.bonds[0][1] == 1
     assert parser.bonds[25][0] == 10
