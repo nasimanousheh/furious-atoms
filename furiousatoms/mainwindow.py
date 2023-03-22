@@ -18,6 +18,7 @@ from PySide2 import QtWidgets
 from PySide2.QtCore import QTimer
 from fury.io import save_image
 from fury.lib import (RenderLargeImage, numpy_support)
+from furiousatoms.io import save_file
 from furiousatoms.viewer3d import Viewer3D, sky_box_effect_atom, sky_box_effect_bond
 from furiousatoms.viewer_vtk import ViewerVTK
 from furiousatoms.builders.SWNT_builder import  Ui_SWNT
@@ -869,6 +870,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
 
         child = self.create_mdi_child()
+        child.file_path = fname
         if child.load_file(fname):
             child.show()
         else:
@@ -927,53 +929,20 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         if not active_window:
             return
         SM = self.get_SM_active_window()
-        fname, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
-        if not fname:
-            return
-        file_name = os.path.basename(fname)
-        ext_file = os.path.splitext(file_name)[1]
-        # from furiousatoms.pdb2lmp import save_PDB2LMP
-        if ext_file =='.data':
-            #TODO replace with new saving code
-            pass
-            # if SM.universe_save is None:
-            #     save_PDB2LMP(SM, fname, SM.universe)
-            # else:
-            #     save_PDB2LMP(SM, fname, SM.universe_save)
+
+        old_path = active_window.file_path
+        if os.path.exists(old_path):
+            old_file_name = os.path.basename(old_path)
+            file_extension = os.path.splitext(old_file_name)[1]
+
+            new_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter='*%s'%(file_extension))
+            if not new_path:
+                return
+            save_file(new_path, old_path, SM.structure_to_save, SM.deleted_particles, SM.deleted_bonds)
         else:
-            #TODO replace with new saving code
-            # if SM.universe_save is None:
-            #     num_atoms = SM.pos.shape[0]
-            #     universe = MDAnalysis.Universe.empty(num_atoms, trajectory=True, n_residues=1)
-            #     universe.atoms.positions = SM.pos
-            #     n_residues = 1
-            #     atom_types_list = list(SM.atom_type)
-            #     if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-            #         universe.dimensions = [90, 90, 90, 90, 90, 90]
-            #     else:
-            #         universe.dimensions = [SM.box_lx, SM.box_ly, SM.box_lz, 90, 90, 90]
-            #     universe.add_TopologyAttr('name', atom_types_list)
-            #     universe.add_TopologyAttr('type', atom_types_list)
-            #     universe.add_TopologyAttr('resname', ['MOL']*n_residues)
-            #     universe.add_TopologyAttr('masses')
-            #     try:
-            #         universe.add_bonds(SM.universe.bonds.to_indices())
-            #     except:
-            #         pass
-            #     universe.atoms.write(fname)
-            # else:
-            #     SM.universe_save.atoms.write(fname)
-
-            with open(fname, 'r+') as fp:
-                lines = fp.readlines()
-                fp.seek(0)
-                fp.truncate()
-                if ((SM.box_lx==0) or (SM.box_ly==0) or (SM.box_lz==0)):
-                    lines[0] = "Created by FURIOUS ATOMS. By default the box dimensions are 90x90x90 cubic angstrom \n"
-                else:
-                    lines[0] = "Created by FURIOUS ATOMS.\n"
-                fp.writelines(lines[:])
-
+            pass
+            # new_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
+            #TODO if old file was deleted after being loaded in, write the structure using default fields.
     
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.Close and self.window is obj:

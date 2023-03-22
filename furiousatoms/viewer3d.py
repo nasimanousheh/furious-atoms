@@ -125,6 +125,7 @@ class Viewer3D(QtWidgets.QWidget):
                 molecular_structure.bonds,
                 molecular_structure.atom_types
         )
+        self.universe_manager.structure_to_save = molecular_structure
 
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()
