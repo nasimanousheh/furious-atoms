@@ -2,6 +2,7 @@ import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 from furiousatoms.element_lookup import lookup_element_by_mass
+from warnings import warn
 
 
 class LAMMPSParser(BaseParser):
@@ -10,10 +11,13 @@ class LAMMPSParser(BaseParser):
         self.elem_info_dict = {}
     
     def parse_mass(self, line):
-        words = line.split()
-        key = words[0]
-        mass = float(words[1])
-        self.elem_info_dict[key] = lookup_element_by_mass(mass)
+        try:
+            words = line.split()
+            key = words[0]
+            mass = float(words[1])
+            self.elem_info_dict[key] = lookup_element_by_mass(mass)
+        except:
+            warn("parse_mass failed on line `%s`"%(line))
     
     def get_atom_type(self, typeKey: int):
         #Assume element symbol has already been read in by parse_mass(...).
