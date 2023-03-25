@@ -4,12 +4,7 @@ from furiousatoms.parsers.parser_util import float_or_zero
 from furiousatoms.savers.base_saver import BaseSaver
 import numpy as np
 
-#TODO remove after commit
-# ATOM_FORMAT = "ATOM  {serial:5d} {name:<4s}{altLoc:<1s}{resName:<4s}" + \
-#     "{chainID:1s}{resSeq:4d}{iCode:1s}" + \
-#     "   {pos[0]:8.3f}{pos[1]:8.3f}{pos[2]:8.3f}{occupancy:6.2f}" + \
-#     "{tempFactor:6.2f}      {segID:<4s}{element:>2s}{charge:2s}\n"
-ATOM_FORMAT = "{label:<6s}{serial:5d} {name:<4s}{altLoc:<1s}{resName:<4s}" + \
+ATOM_FORMAT = "{label:<6s}{serial:5d}  {name:<4s}{altLoc:1s}{resName:<3s}" + \
     "{chainID:1s}{resSeq:>4s}{iCode:1s}" + \
     "   {pos[0]:8.3f}{pos[1]:8.3f}{pos[2]:8.3f}{occupancy:6.2f}" + \
     "{tempFactor:6.2f}      {segID:<4s}{element:>2s}{charge:2s}\n"
@@ -46,7 +41,7 @@ class PDBSaver(BaseSaver):
     .. _TITLE: http://www.wwpdb.org/documentation/file-format-content/format33/sect2.html#TITLE
     '''
     
-    def save_to_file(self, new_fname, old_fname, structure: MolecularStructure):
+    def _save_to_file(self, new_fp, old_fp, structure: MolecularStructure):
         '''
         Write all data to a file using the format specified in 
         http://www.bmsc.washington.edu/CrystaLinks/man/pdb/
@@ -56,61 +51,59 @@ class PDBSaver(BaseSaver):
         '''
         self.saved_atom_ids = np.zeros(shape=(len(structure.pos)))
         self.atom_serial = 1
-        with open(new_fname, 'w') as new_fp:
-            with open(old_fname, 'r') as old_fp:
-                header = old_fp.readline()
-                new_fp.write(header)
-                
-                while True:
-                    old_line = old_fp.readline()
-                    if not old_line:
-                        break
-                    line_upper = old_line.upper()
-                    length = len(old_line)
-                    if line_upper.startswith("CONECT"):
-                        pass
-                    elif line_upper.startswith("ATOM") or line_upper.startswith("HETATM"):
-                        if length >= 54: #does it contain position?
-                            atom_id = int(old_line[7:11]) - 1
-                            self.saved_atom_ids[atom_id - 1] = 1
+        header = old_fp.readline()
+        new_fp.write(header)
+        
+        while True:
+            old_line = old_fp.readline()
+            if not old_line:
+                break
+            line_upper = old_line.upper()
+            length = len(old_line)
+            if line_upper.startswith("CONECT"):
+                pass
+            elif line_upper.startswith("ATOM") or line_upper.startswith("HETATM"):
+                if length >= 54: #does it contain position?
+                    atom_id = int(old_line[7:11]) - 1
+                    self.saved_atom_ids[atom_id - 1] = 1
 
-                            #Save each field so that we can use them to "guess" 
-                            # fields for newly-added atoms later.
-                            self.last_label = old_line[:6]
-                            self.last_altLoc = old_line[17]
-                            self.last_resName = old_line[18:20]
-                            self.last_chainID = old_line[21:22]
-                            self.last_resSeq = old_line[23:26]
-                            self.last_iCode = old_line[27]
-                            #Below fields may not be present
-                            self.last_occupancy = float_or_zero(old_line[55:60]) if length >= 60 else DEFAULT_OCCUPANCY
-                            self.last_tempFactor = float_or_zero(old_line[61:66]) if length >= 66 else DEFAULT_TEMP_FACTOR
-                            self.last_segID = old_line[73:76] if length >= 76 else DEFAULT_SEG_ID
-                            self.last_charge = old_line[79:80] if length >= 80 else DEFAULT_CHARGE
-                            
-                            self._write_atom(new_fp, structure, atom_id)
-                    elif line_upper.startswith("CRYST1"):
-                        #Write box size in angstroms but keep rest of old line
-                        box_size_format = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f} "
-                        new_fp.write(box_size_format.format(
-                            box=structure.box_size,
-                        ))
-                        if len(old_line) > 34:
-                            new_fp.write(old_line[34:])
-                        else:
-                            new_fp.write('\n')
-                    elif not line_upper.startswith("END"): #keep REMARKs and other lines
-                        new_fp.write(old_line)
+                    #Save each field so that we can use them to "guess" 
+                    # fields for newly-added atoms later.
+                    self.last_label = old_line[:6]
+                    self.last_altLoc = old_line[17]
+                    self.last_resName = old_line[18:20]
+                    self.last_chainID = old_line[21:22]
+                    self.last_resSeq = old_line[23:26]
+                    self.last_iCode = old_line[27]
+                    #Below fields may not be present
+                    self.last_occupancy = float_or_zero(old_line[55:60]) if length >= 60 else DEFAULT_OCCUPANCY
+                    self.last_tempFactor = float_or_zero(old_line[61:66]) if length >= 66 else DEFAULT_TEMP_FACTOR
+                    self.last_segID = old_line[73:76] if length >= 76 else DEFAULT_SEG_ID
+                    self.last_charge = old_line[79:80] if length >= 80 else DEFAULT_CHARGE
+                    
+                    self._write_atom(new_fp, structure, atom_id)
+            elif line_upper.startswith("CRYST1"):
+                #Write box size in angstroms but keep rest of old line
+                box_size_format = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f} "
+                new_fp.write(box_size_format.format(
+                    box=structure.box_size,
+                ))
+                if len(old_line) > 34:
+                    new_fp.write(old_line[34:])
+                else:
+                    new_fp.write('\n')
+            elif not line_upper.startswith("END"): #keep REMARKs and other lines
+                new_fp.write(old_line)
 
-                #Write new atoms
-                self.last_label = DEFAULT_LABEL
-                for atom_id in range(len(structure.pos)):
-                    if not self.saved_atom_ids[atom_id]:
-                        self._write_atom(new_fp, structure, atom_id)
+        #Write new atoms
+        self.last_label = DEFAULT_LABEL
+        for atom_id in range(len(structure.pos)):
+            if not self.saved_atom_ids[atom_id]:
+                self._write_atom(new_fp, structure, atom_id)
 
-                self._write_all_bonds(new_fp, structure)
+        self._write_all_bonds(new_fp, structure)
 
-                new_fp.write("END\n")
+        new_fp.write("END\n")
 
 
     def save_to_file_use_defaults(self, fname, structure: MolecularStructure):
@@ -173,7 +166,7 @@ class PDBSaver(BaseSaver):
     def _write_all_bonds(self, new_fp, structure):
         bond_map = {}
         i = 0
-        for bond in structure.bonds:
+        for bond in self.corrected_bonds:
             if not self.is_bond_deleted(i):
                 bond_list = bond_map.get(bond[0] + 1, [])
                 bond_list.append(bond[1] + 1)
@@ -195,8 +188,10 @@ class PDBSaver(BaseSaver):
 
 #TODO remove
 if __name__ == "__main__":
-    INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\furiousatoms\\tests\\test_data\\CB_18\\CB_18.pdb"
-    OUTPUT_FNAME = "C:\\Users\\Pete\\Desktop\\graphdiyne_test.pdb"
+    # INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\furiousatoms\\tests\\test_data\\CB_18\\CB_18.pdb"
+    INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\test.pdb"
+    OUTPUT_FNAME = "C:\\Users\\Pete\\Desktop\\test.pdb"
+        
     structure = PDBParser().parse(INPUT_FNAME)
     deleted_particles = np.zeros(len(structure.atom_types), dtype=bool)
     deleted_particles[5] = True
