@@ -20,64 +20,87 @@ class BaseSaver:
         self.deleted_particles = deleted_particles
         self.deleted_bonds = deleted_bonds
 
-    def save_to_file(self, new_fname, old_fname, structure: MolecularStructure) -> None:
+    @abstractmethod
+    def _save_to_file(self, new_fp, old_fp, structure: MolecularStructure) -> None:
+        pass
+   
+    @abstractmethod
+    def _save_to_file_use_defaults(self, old_fp, structure: MolecularStructure) -> None:
+        pass
+
+    def save_to_file(self, new_fpath, old_fpath, structure: MolecularStructure) -> None:
+        '''
+        Assuming the file referred to by old_fp was the source of the structure data,
+        copy over any fields that were not read during parsing and save any changes to
+        the new file. Additionally, exclude any deleted atoms or bonds.
+
+        `new_fp` and `old_fp` are file pointers.
+        '''
         self.corrected_bonds = self.get_corrected_bonds(structure)
 
-        if not os.path.exists(old_fname):
+        if old_fpath == None or not os.path.exists(old_fpath):
+            print("No file exists to infer data from during saving. Using defaults instead.")
             try:
-                print("No file exists to infer data from during saving. Using defaults instead.")
-                new_fp = open(new_fname, 'w')
+                new_fp = open(new_fpath, 'w')
                 output = self._save_to_file_use_defaults(new_fp, structure)
             finally:
                 new_fp.close()
             return output
 
-        if new_fname == old_fname:
-            temp_fname = None
+        if new_fpath == old_fpath:
+            temp_fpath = None
             try:
-                old_fp = open(old_fname, 'r')
+                old_fp = open(old_fpath, 'r')
                 temp_fp = tempfile.NamedTemporaryFile(mode='w', delete=False)
                 
                 output = self._save_to_file(temp_fp, old_fp, structure)
-                temp_fname = temp_fp.name
+                temp_fpath = temp_fp.name
+            except:
+                print("Something went wrong during saving. Trying again with defaults.")
+                output = self.save_to_file_use_defaults(new_fpath, structure)
             finally:
                 old_fp.close()
                 temp_fp.close()
-                if temp_fname and os.path.exists(temp_fname):
-                    shutil.copy(temp_fname, new_fname)
-                    os.remove(temp_fname)
+                if temp_fpath and os.path.exists(temp_fpath):
+                    shutil.copy(temp_fpath, new_fpath)
+                    os.remove(temp_fpath)
         else:
             try:
-                old_fp = open(old_fname, 'r')
-                new_fp = open(new_fname, 'w')
+                old_fp = open(old_fpath, 'r')
+                new_fp = open(new_fpath, 'w')
                 
                 output = self._save_to_file(new_fp, old_fp, structure)
+            except:
+                print("Something went wrong during saving. Trying again with defaults.")
+                output = self.save_to_file_use_defaults(new_fpath, structure)
             finally:
                 old_fp.close()
                 new_fp.close()
 
         return output
-
-    @abstractmethod
-    def _save_to_file(self, new_fp, old_fp, structure: MolecularStructure) -> None:
-        pass
-
-    @abstractmethod
-    def _save_to_file_use_defaults(self, old_fp, structure: MolecularStructure) -> None:
-        pass
+    
+    def save_to_file_use_defaults(self, new_fpath, structure: MolecularStructure) -> None:
+        try:
+            new_fp = open(new_fpath, 'w')
+            output = self._save_to_file_use_defaults(new_fp, structure)
+        except:
+            print("Failed to save with default settings.")
+        finally:
+            new_fp.close()
+        return output
 
     def is_atom_deleted(self, atom_id):
         if atom_id >= len(self.deleted_particles):
-            return False
+            return False #probably a new atom
         if atom_id < 0:
-            return True
+            return True #don't save an invalid atom
         return self.deleted_particles[atom_id]
         
     def is_bond_deleted(self, bond_id):
         if bond_id >= len(self.deleted_bonds):
-            return False
+            return False #probably a new bond
         if bond_id < 0:
-            return True
+            return True #don't save an invalid bond
         return self.deleted_bonds[bond_id]
     
     def get_corrected_bonds(self, structure: MolecularStructure):
