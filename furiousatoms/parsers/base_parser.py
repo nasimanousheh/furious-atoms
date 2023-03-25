@@ -16,8 +16,8 @@ class BaseParser:
         self.bonds = []
         self.atom_types = []
         self.errors = "" #error messages to help user debug their file
-        self.lineId = 0 #index of line being processed
-        self.parserMethod = None #optional; some parsers use this to switch between how they parse a line
+        self.line_id = 0 #index of line being processed
+        self.parser_method = None #optional; some parsers use this to switch between how they parse a line
 
     def parse(self, fname) -> MolecularStructure:
         '''
@@ -33,8 +33,8 @@ class BaseParser:
                 line = fp.readline()
                 if not line:
                     break
-                self.parseLine(line)
-                self.lineId += 1
+                self.parse_line(line)
+                self.line_id += 1
 
         # warnings.warn(self.errors) #TODO display popup
 
@@ -54,5 +54,5 @@ class BaseParser:
         return MolecularStructure(self.box_size, self.positions, self.bonds, self.atom_types)
     
     @abstractmethod
-    def parseLine(self, fname) -> Tuple[list, np.array, np.array, np.array]:
+    def parse_line(self, fname) -> Tuple[list, np.array, np.array, np.array]:
         pass

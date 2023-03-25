@@ -193,6 +193,7 @@ class LAMMPSSaver(BaseSaver):
 #                 i += 1
 #             fp.write("\n")
 
+<<<<<<< HEAD
 #             #Omit angles and dihedrals sections.
 
             
@@ -216,3 +217,6 @@ if __name__ == "__main__":
             if not line:
                 break
             print(line, end='')
+=======
+            #Omit angles and dihedrals sections.
+>>>>>>> master
