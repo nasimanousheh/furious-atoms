@@ -1,4 +1,3 @@
-from furiousatoms.parsers.pdb_parser import PDBParser #TODO remove
 from furiousatoms.molecular import MolecularStructure
 from furiousatoms.parsers.parser_util import float_or_zero
 from furiousatoms.savers.base_saver import BaseSaver
@@ -45,9 +44,6 @@ class PDBSaver(BaseSaver):
         '''
         Write all data to a file using the format specified in 
         http://www.bmsc.washington.edu/CrystaLinks/man/pdb/
-
-        Assuming the file referred to by old_fname was the source of the structure data,
-        copy over any fields that were not read by our parser.
         '''
         self.saved_atom_ids = np.zeros(shape=(len(structure.pos)))
         self.atom_serial = 1
@@ -106,7 +102,7 @@ class PDBSaver(BaseSaver):
         new_fp.write("END\n")
 
 
-    def save_to_file_use_defaults(self, fname, structure: MolecularStructure):
+    def _save_to_file_use_defaults(self, new_fp, structure: MolecularStructure):
         self.atom_serial = 1
         self.last_label=DEFAULT_LABEL
         self.last_altLoc=DEFAULT_ALT_LOC
@@ -119,26 +115,25 @@ class PDBSaver(BaseSaver):
         self.last_segID=DEFAULT_SEG_ID
         self.last_charge=DEFAULT_CHARGE
 
-        with open(fname, 'w') as fp:
-            fp.write(DEFAULT_HEADER)
+        new_fp.write(DEFAULT_HEADER)
 
-            #Write box size
-            boxSizeFormat = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f}" + \
-                   "{ang[0]:7.2f}{ang[1]:7.2f}{ang[2]:7.2f} " + \
-                   "{spacegroup:<11s}{zvalue:4d}\n"
-            fp.write(boxSizeFormat.format(
-                box=structure.box_size, #size in angstroms
-                ang=[0, 0, 0], #alpha/beta/gamma (degrees)
-                spacegroup="P",
-                zvalue=1
-            ))
+        #Write box size
+        boxSizeFormat = "CRYST1{box[0]:9.3f}{box[1]:9.3f}{box[2]:9.3f}" + \
+                "{ang[0]:7.2f}{ang[1]:7.2f}{ang[2]:7.2f} " + \
+                "{spacegroup:<11s}{zvalue:4d}\n"
+        new_fp.write(boxSizeFormat.format(
+            box=structure.box_size, #size in angstroms
+            ang=[0, 0, 0], #alpha/beta/gamma (degrees)
+            spacegroup="P",
+            zvalue=1
+        ))
 
-            for i in range(len(structure.pos)):
-                self._write_atom(fp, structure, i)
+        for i in range(len(structure.pos)):
+            self._write_atom(new_fp, structure, i)
 
-            self._write_all_bonds(fp, structure)
+        self._write_all_bonds(new_fp, structure)
 
-            fp.write("END\n")
+        new_fp.write("END\n")
 
 
     def _write_atom(self, new_fp, structure, atom_id):
@@ -184,25 +179,3 @@ class PDBSaver(BaseSaver):
                 conect = "".join(conect)
                 bond_format = "CONECT{atomId:5d}{conect}\n"
                 new_fp.write(bond_format.format(atomId=atom_id, conect=conect))
-
-
-#TODO remove
-if __name__ == "__main__":
-    # INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\furious-atoms\\furiousatoms\\tests\\test_data\\CB_18\\CB_18.pdb"
-    INPUT_FNAME = "C:\\Users\\Pete\\Desktop\\test.pdb"
-    OUTPUT_FNAME = "C:\\Users\\Pete\\Desktop\\test.pdb"
-        
-    structure = PDBParser().parse(INPUT_FNAME)
-    deleted_particles = np.zeros(len(structure.atom_types), dtype=bool)
-    deleted_particles[5] = True
-    deleted_bonds = np.zeros(len(structure.bonds), dtype=bool)
-    saver = PDBSaver(deleted_particles, deleted_bonds)
-    saver.save_to_file(OUTPUT_FNAME, INPUT_FNAME, structure)
-    # saver.save_to_file_use_defaults(OUTPUT_FNAME, structure)
-
-    with open(OUTPUT_FNAME, 'r') as fp:
-        while True:
-            line = fp.readline()
-            if not line:
-                break
-            print(line, end='')
