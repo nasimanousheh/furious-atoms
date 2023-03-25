@@ -7,6 +7,7 @@ from furiousatoms import io
 from fury import disable_warnings
 
 disable_warnings()
+from warnings import warn
 
 # 3rd Party package
 import numpy as np
@@ -31,6 +32,7 @@ from furiousatoms.builders.MWNT_builder import  Ui_MWNT
 from furiousatoms.builders.Nanorope_builder import  Ui_NanoRope
 from furiousatoms.structure import bbox
 from furiousatoms.builders.electrolyte_builder import Ui_electrolyte
+from furiousatoms.general_util import simple_lookup
 from fury.utils import (normals_from_actor,
                         tangents_to_actor, update_polydata_normals,
                         tangents_from_direction_of_anisotropy)
@@ -230,7 +232,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, atom_typ in enumerate(SM.unique_types):
             if selected_item.rowIntersectsSelection(i):
                 SM.radii_spheres[SM.atom_type == atom_typ] = SM.radii_unique_types[i]
-                type_index = utils.np_lookup(SM.atom_type, atom_typ)
+                type_index = simple_lookup(SM.atom_type, atom_typ)
                 set_value_radius = SM.radii_spheres[type_index]
                 self.ui.SpinBox_atom_radius.setValue((set_value_radius))
 
@@ -457,7 +459,10 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         SM.no_vertices_all_particles = vertices.shape[0]
         SM.sec_particle = np.int(SM.no_vertices_all_particles / SM.no_atoms)
         for atom_typ in SM.unique_types:
-            type_index = utils.np_lookup(SM.atom_type, atom_typ)
+            type_index = simple_lookup(SM.atom_type, atom_typ)
+            if type_index < 0:
+                warn("No atom with type `%s` during particle resolution change"%atom_typ)
+                continue
             selected_value_radius = SM.radii_spheres[type_index]
             all_vertices_radii = 1/np.repeat(SM.radii_spheres[SM.atom_type == atom_typ], SM.no_vertices_per_particle, axis=0)
             all_vertices_radii = all_vertices_radii[:, None]
@@ -1143,7 +1148,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
         for i, typ in enumerate(SM.unique_types):
             SM.radii_spheres[SM.atom_type == typ] = SM.radii_unique_types[i]
             SM.colors[SM.atom_type == typ] = SM.colors_unique_types[i]
-            type_index = utils.np_lookup(SM.atom_type, typ)
+            type_index = simple_lookup(SM.atom_type, typ)
             set_value_radius = SM.radii_spheres[type_index]
             self.ui.SpinBox_atom_radius.setValue((set_value_radius))
             r = (SM.colors[type_index][0])*255

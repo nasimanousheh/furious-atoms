@@ -10,23 +10,23 @@ def newXYZParser():
     return parser
 
 
-def test_nextWord(newXYZParser):
+def test_next_word(newXYZParser):
     parser = newXYZParser
     parser.words = "This is a sentence.\n".split(" ")
-    assert parser.nextWord() == "This"
-    assert parser.nextWord() == "is"
-    assert parser.nextWord() == "a"
-    assert parser.nextWord() == "sentence.\n"
+    assert parser.next_word() == "This"
+    assert parser.next_word() == "is"
+    assert parser.next_word() == "a"
+    assert parser.next_word() == "sentence.\n"
     with pytest.raises(EOFError) as err:
-        parser.nextWord()
-        parser.nextWord()
+        parser.next_word()
+        parser.next_word()
 
-def test_parseLine(newXYZParser):
+def test_parse_line(newXYZParser):
     parser = newXYZParser
-    parser.lineId = 33
+    parser.line_id = 33
     LINE = "       C    -0.67848    0.00000   -0.61531"
 
-    parser.parseLine(LINE)
+    parser.parse_line(LINE)
 
     assert len(parser.atom_types) == 1
     assert parser.atom_types[0] == 'C'

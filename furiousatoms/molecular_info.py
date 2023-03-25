@@ -115,8 +115,12 @@ def get_default_molecular_info(self, SM, fine_name):
         molecule, all_info = molecular_info_loaded_file(fine_name)
     except:
         all_info = False
-        atom_types = SM.atom_type
-        atom_coords = SM.pos
+        if SM.universe_save:
+            atom_types = SM.universe_save.atoms.types
+            atom_coords = SM.universe_save.atoms.positions
+        else:
+            atom_types = SM.atom_type
+            atom_coords = SM.pos
         b = []
         atom_types = atom_types.tolist()
         for i in range(len(atom_types)):

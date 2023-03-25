@@ -2,7 +2,7 @@ import pytest
 import numpy as np
 
 @pytest.fixture
-def boxSize():
+def box_size():
     return [0, 0, 0]
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def bonds():
     return np.zeros(shape=(0, 0))
 
 @pytest.fixture
-def atomTypes():
+def atom_types():
     atom_types = np.zeros(shape=(4), dtype=str)
     atom_types[0] = 'N'
     atom_types[1] = 'C'
