@@ -64,12 +64,14 @@ class BaseSaver:
                 if temp_fpath and os.path.exists(temp_fpath):
                     shutil.copy(temp_fpath, new_fpath)
                     os.remove(temp_fpath)
+                    print("Saved successfully.")
         else:
             try:
                 old_fp = open(old_fpath, 'r')
                 new_fp = open(new_fpath, 'w')
                 
                 output = self._save_to_file(new_fp, old_fp, structure)
+                print("Saved successfully.")
             except:
                 print("Something went wrong during saving. Trying again with defaults.")
                 output = self.save_to_file_use_defaults(new_fpath, structure)
@@ -83,10 +85,12 @@ class BaseSaver:
         try:
             new_fp = open(new_fpath, 'w')
             output = self._save_to_file_use_defaults(new_fp, structure)
+            print("Saved with defaults successfully.")
         except:
             print("Failed to save with default settings.")
         finally:
             new_fp.close()
+
         return output
 
     def is_atom_deleted(self, atom_id):
