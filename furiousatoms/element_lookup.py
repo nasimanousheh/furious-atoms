@@ -1,6 +1,7 @@
 import csv
 from io import StringIO
 
+DEFAULT_MASS = 0.0
 
 elems_csv = """\
 number,symbol,name,mass,valency
@@ -124,14 +125,23 @@ number,symbol,name,mass,valency
 118,Og,Oganesson,294,0
 """
 
+def lookup_symbol_by_mass(mass: float):
+    for line in elems_csv.split()[1:]:
+        fields = line.split(",") #Format: number,symbol,name,mass,valency
+        m = float(fields[3])
 
-def lookup_element_by_mass(mass: float):
-    elems = [row for row in csv.DictReader(StringIO(elems_csv))]
-    #Search for element with mass that's up to 0.1 different from input.
-    #If it can't find one, try again with 1.0. 
-    for tolerance in (0.1, 1.0):
-        for row in elems:
-            m = float(row['mass'])
+        #Search for element with mass that's up to 0.1 different from input.
+        #If it can't find one, try again with 1.0. 
+        for tolerance in (0.1, 1.0):
             if abs(mass - m) < tolerance:
-                return row
+                return fields[1]
+    
     raise ValueError("No element exists with mass", mass)
+
+def lookup_mass_by_symbol(symbol: float):
+    for line in elems_csv.split()[1:]:
+        fields = line.split(",") #Format: number,symbol,name,mass,valency
+        if fields[1] == symbol:
+            return float(fields[3])
+    
+    raise ValueError("No element exists with symbol", symbol)

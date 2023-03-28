@@ -122,21 +122,23 @@ def test_save_to_file_atom_deletion(newLAMMPSSaver, newLAMMPSStructure):
             fp.readline()
         assert fp.readline() == "1  C -5.460000 -0.000000 0.000000\n"
         assert fp.readline() == "2  B -3.900000 -0.000000 0.000000\n"
+        #atom deleted here
         assert fp.readline() == "3  B -1.560000 -1.351000 0.000000\n"
-        for _ in range(13):
+        assert fp.readline() == "4  C -0.780000 -2.701999 0.000000\n"
+        for _ in range(11):
             fp.readline()
-        assert fp.readline() == "17  C 3.900000 -0.000000 0.000000\n"
-        assert fp.readline() == "18  B 5.460000 -0.000000 0.000000\n"
-        fp.readline() #blank
+        assert fp.readline() == "16  C 3.900000 -0.000000 0.000000\n"
+        assert fp.readline() == "17  B 5.460000 -0.000000 0.000000\n"
+        assert len(fp.readline().strip()) == 0
         assert fp.readline() == "Bonds\n"
         fp.readline() #blank
         assert fp.readline() == "1 1 1 2\n"
-        assert fp.readline() == "2 1 2 3\n"
-        assert fp.readline() == "3 1 2 7\n"
+        assert fp.readline() == "2 1 2 2\n"
+        assert fp.readline() == "3 1 2 6\n"
         for i in range(16):
             fp.readline() #skip some bonds
-        assert fp.readline() == "20 1 16 17\n"
-        assert fp.readline() == "21 1 17 18\n"
+        assert fp.readline() == "20 1 15 16\n"
+        assert fp.readline() == "21 1 16 17\n"
         fp.readline() #blank
 
 
@@ -185,14 +187,53 @@ def test_save_to_file_bond_deletion(newLAMMPSSaver, newLAMMPSStructure):
         assert len(fp.readline().strip()) == 0
 
 
-# def test_save_to_file_use_defaults(newLAMMPSSaver, newLAMMPSStructure):
-#     saver = newLAMMPSSaver
-#     structure = newLAMMPSStructure
+def test_save_to_file_use_defaults(newLAMMPSSaver, newLAMMPSStructure):
+    saver = newLAMMPSSaver
+    structure = newLAMMPSStructure
 
-#     saver.save_to_file(SAVE_FILE_PATH, NON_EXISTENT_FILE_PATH, structure)
+    saver.save_to_file(SAVE_FILE_PATH, NON_EXISTENT_FILE_PATH, structure)
 
-#     with open(SAVE_FILE_PATH, "r") as fp:
-#         TODO
+    with open(SAVE_FILE_PATH, "r") as fp:
+        #HEADER SECTION ####################################
+        fp.readline() #header
+        fp.readline() #blank
+        assert fp.readline() == "18	atoms\n"
+        assert fp.readline() == "21	bonds\n"
+        assert fp.readline() == "2	atom types\n"
+        assert fp.readline() == "1	bond types\n"
+        fp.readline() #blank
+        assert fp.readline() == "21.349000	21.349000	xlo xhi\n"
+        assert fp.readline() == "19.932500	19.932500	ylo yhi\n"
+        assert fp.readline() == "16.639000	16.639000	zlo zhi\n"
+        fp.readline() #blank
+        #BODY SECTION ####################################
+        assert fp.readline() == "Masses\n"
+        fp.readline() #blank
+        assert fp.readline() == "B 10.811000\n"
+        assert fp.readline() == "C 12.010700\n"
+        fp.readline() #blank
+        assert fp.readline().startswith("Atoms")
+        fp.readline() #blank
+        assert fp.readline() == "1  C -5.460000 -0.000000 0.000000\n"
+        assert fp.readline() == "2  B -3.900000 -0.000000 0.000000\n"
+        for i in range(14):
+            fp.readline() #skip some atoms
+        assert fp.readline() == "17  C 3.900000 -0.000000 0.000000\n"
+        assert fp.readline() == "18  B 5.460000 -0.000000 0.000000\n"
+        fp.readline() #blank
+        assert fp.readline() == "Bonds\n"
+        fp.readline() #blank
+        assert fp.readline() == "1 1 1 2\n"
+        assert fp.readline() == "2 1 2 3\n"
+        assert fp.readline() == "3 1 2 7\n"
+        for i in range(16):
+            fp.readline() #skip some bonds
+        assert fp.readline() == "20 1 16 17\n"
+        assert fp.readline() == "21 1 17 18\n"
+        #Ensure this the end of file
+        with pytest.raises(Exception):
+            assert fp.readline()
+            assert fp.readline()
 
 
 if __name__ == '__main__':
