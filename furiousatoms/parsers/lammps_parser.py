@@ -1,25 +1,44 @@
 import numpy as np
 from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero, has_bond
-from furiousatoms.element_lookup import lookup_element_by_mass
+from furiousatoms.element_lookup import lookup_symbol_by_mass
+from warnings import warn
 
 
 class LAMMPSParser(BaseParser):
     def __init__(self) -> None:
         super().__init__()
-        self.elem_info_dict = {}
+        self.id_to_symbol_dict = {}
     
     def parse_mass(self, line):
         words = line.split()
         key = words[0]
         mass = float(words[1])
-        self.elem_info_dict[key] = lookup_element_by_mass(mass)
+        try:
+            self.id_to_symbol_dict[key] = lookup_symbol_by_mass(mass)
+        except ValueError as ex:
+            self.id_to_symbol_dict[key] = mass
     
-    def get_atom_type(self, typeKey: int):
-        #Assume element symbol has already been read in by parse_mass(...).
-        #If not, return typeKey.
-        if typeKey in self.elem_info_dict:
-            return self.elem_info_dict[typeKey]['symbol']
+    def get_atom_type(self, typeKey):
+        '''
+        This method accounts for the fact that some atoms are identified by integers 
+        rather than their symbol. For example, given the masses:
+        ```
+        1 1.0   (Hydrogen)
+        2 12.0   (Carbon)
+        ```
+        The file's atoms might be:
+        ```
+        1 2 -5.46 0.0 0.0
+        2 1 -3.9 0.0 0.0
+        3 2 -3.12 -1.351 0.0
+        ```
+        Parameter `typeKey` can either be the `int` that identifies the element
+        or the element symbol itself. In either case, `typeKey` must have been
+        read in by parse_mass(...) first.
+        '''
+        if typeKey in self.id_to_symbol_dict:
+            return self.id_to_symbol_dict[typeKey]
         return typeKey
 
     def parse_atom(self, line):
