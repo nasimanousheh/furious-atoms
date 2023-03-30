@@ -11,6 +11,10 @@ from furiousatoms.parsers.gromacs_parser import GROMACSParser
 from furiousatoms.parsers.lammps_parser import LAMMPSParser
 from furiousatoms.parsers.pdb_parser import PDBParser
 from furiousatoms.parsers.xyz_parser import XYZParser
+from furiousatoms.savers.gromacs_saver import GROMACSSaver
+from furiousatoms.savers.lammps_saver import LAMMPSSaver
+from furiousatoms.savers.pdb_saver import PDBSaver
+from furiousatoms.savers.xyz_saver import XYZSaver
 
 
 def is_frozen():
@@ -97,6 +101,19 @@ def load_files(fname):
         if len(structure.bonds) > len(best_structure .bonds) or 0 == len(best_structure .pos):
             best_structure  = structure
     return best_structure 
+
+def save_file(new_path, old_path, structure, deleted_particles, deleted_bonds):
+    saver = None
+    if old_path.endswith(".pdb") or old_path.endswith(".cc1"):
+        saver = PDBSaver(deleted_particles, deleted_bonds)
+    elif old_path.endswith(".data") or old_path.endswith(".dat") or old_path.endswith(".lmp"):
+        saver  = LAMMPSSaver(deleted_particles, deleted_bonds)
+    elif old_path.endswith(".xyz"):
+        saver = XYZSaver(deleted_particles, deleted_bonds)
+    elif old_path.endswith(".gro"):
+        saver = GROMACSSaver(deleted_particles, deleted_bonds)
+    
+    saver.save_to_file(new_path, old_path, structure)
 
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.

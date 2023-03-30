@@ -309,6 +309,9 @@
                 <pointsize>10</pointsize>
                </font>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(255, 255, 255);</string>
+              </property>
               <property name="minimum">
                <double>1.300000000000000</double>
               </property>

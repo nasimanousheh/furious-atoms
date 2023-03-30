@@ -82,7 +82,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Sheet</string>
+       <string>Graphyne</string>
       </attribute>
       <widget class="QWidget" name="Build_graphen" native="true">
        <property name="geometry">
@@ -141,6 +141,9 @@
            <font>
             <pointsize>10</pointsize>
            </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(255, 255, 255);</string>
           </property>
           <item>
            <property name="text">
@@ -242,6 +245,9 @@
           </item>
           <item row="3" column="1">
            <widget class="QDoubleSpinBox" name="SpinBox_sheet_sep">
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
             <property name="decimals">
              <number>3</number>
             </property>
@@ -266,6 +272,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
             <property name="minimum">
              <double>10.000000000000000</double>
             </property>
@@ -283,6 +292,9 @@
              <font>
               <pointsize>10</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
             </property>
             <property name="minimum">
              <double>10.000000000000000</double>
@@ -345,6 +357,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
             <property name="decimals">
              <number>2</number>
             </property>
@@ -372,6 +387,9 @@
               <pointsize>10</pointsize>
              </font>
             </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
+            </property>
             <property name="decimals">
              <number>2</number>
             </property>
@@ -398,6 +416,9 @@
              <font>
               <pointsize>10</pointsize>
              </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(255, 255, 255);</string>
             </property>
             <property name="decimals">
              <number>2</number>

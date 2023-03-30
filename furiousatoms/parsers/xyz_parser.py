@@ -25,6 +25,8 @@ class XYZParser(BaseParser):
                 #search for non-blank words only.
                 self.next_word_index = 0
                 self.words = line.split()
+                if len(self.words) < 2:
+                    self.words = line.split(",")
                 
                 #Element symbol or atomic number
                 atomType = self.next_word()
