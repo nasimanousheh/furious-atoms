@@ -54,7 +54,7 @@ class LAMMPSSaver(BaseSaver):
         new_fp.write("\n")
 
 
-    def write_all_bonds(self, new_fp, old_fp, structure):
+    def write_all_bonds(self, new_fp, old_fp):
         i = 0
         self.bond_serial = 1
         while True:
@@ -102,7 +102,7 @@ class LAMMPSSaver(BaseSaver):
                 should_keep_line = False
             elif line_lower.startswith("bonds"): 
                 new_fp.write("Bonds\n\n")
-                self.write_all_bonds(new_fp, old_fp, structure)
+                self.write_all_bonds(new_fp, old_fp)
                 should_keep_line = False
             #LAMMPS HEADER ##############################
             elif line_lower.endswith("atoms"):
