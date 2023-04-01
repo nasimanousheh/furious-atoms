@@ -93,19 +93,22 @@ class LAMMPSParser(BaseParser):
         '''
         A box size dimension will look like this:
         ` -2.365000 7.095000  xlo xhi` 
-        This function checks what label is at the end of the line and extracts the hi dimension.
+        This function checks what label is at the end of the line and extracts 
+        the distance between the hi and lo dimensions.
         '''
         try:
             words = line.split()
             trimmed = line.strip()
             if len(words) >= 4: 
-                #Always parse the "hi" dimension
+                lo = float_or_zero(words[0])
+                hi = float_or_zero(words[1])
+                length = abs(hi) + abs(lo)
                 if trimmed.endswith("xlo xhi"):
-                    self.box_size[0] = float_or_zero(words[1])
+                    self.box_size[0] = length
                 elif trimmed.endswith("ylo yhi"):
-                    self.box_size[1] = float_or_zero(words[1])
+                    self.box_size[1] = length
                 elif trimmed.endswith("zlo zhi"):
-                    self.box_size[2] = float_or_zero(words[1])
+                    self.box_size[2] = length
                 else:
                     raise ValueError("Invalid format")
             else:

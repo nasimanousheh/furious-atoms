@@ -42,11 +42,11 @@ def test_parse_box_size(newLAMMPSParser):
     LINE3 = " -5.881000 16.639000  zlo zhi"
 
     parser.parse_box_size(LINE1)
-    assert parser.box_size == [21.349, 0, 0]
+    assert parser.box_size == [21.349 + 8.651000, 0, 0]
     parser.parse_box_size(LINE2)
-    assert parser.box_size == [21.349, 19.9325, 0]
+    assert parser.box_size == [21.349 + 8.651000, 19.932500 + 10.067500, 0]
     parser.parse_box_size(LINE3)
-    assert parser.box_size == [21.349, 19.9325, 16.639]
+    assert parser.box_size == [21.349 + 8.651000, 19.932500 + 10.067500, 16.639000 + 5.881000]
     
     assert len(parser.positions) == 0
     assert len(parser.bonds) == 0
