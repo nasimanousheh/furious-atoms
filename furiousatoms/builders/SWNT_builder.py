@@ -479,4 +479,3 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
                 .merge(MolecularStructure(box_size, coord_array_H_indice, bonds_hydrogen, atom_types_Hydrogen))
             # If the user chooses "All", hydrogenated swnt structure will be returned:
             return merged_swnt_hydrogen
-                # return univ _swnt

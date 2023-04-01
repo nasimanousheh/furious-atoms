@@ -406,12 +406,12 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                         s.pos[i*ATOM_COUNT + j][k] = atom[k]
                     s.pos[i*ATOM_COUNT + j][2] -= sheet_separation * i
 
-            new_atom_types = np.zeros(shape=(ATOM_COUNT * num_sheets), dtype=type(atom_types[0]))
-            new_atom_types[:ATOM_COUNT] = atom_types
-            atom_types = new_atom_types
+            new_atom_types = np.zeros(shape=(ATOM_COUNT * num_sheets), dtype=type(s.atom_types[0]))
+            new_atom_types[:ATOM_COUNT] = s.atom_types
+            s.atom_types = new_atom_types
             for i in range(1, num_sheets):
                 for j in range(ATOM_COUNT):
-                    atom_types[i*ATOM_COUNT + j] = atom_types[j]
+                    s.atom_types[i*ATOM_COUNT + j] = s.atom_types[j]
 
             BOND_COUNT = len(s.bonds)
             new_bonds = np.zeros(shape=(BOND_COUNT * num_sheets, BOND_DIM), dtype='int')
@@ -423,8 +423,5 @@ class Ui_graphyne(QtWidgets.QMainWindow):
                         #Make the bonds point to the new sheet's atoms
                         s.bonds[i*BOND_COUNT + j][k] = s.bonds[j][k] + (ATOM_COUNT * i)
 
-        #Center atoms inside box
-        for k in range(0, POS_DIM):
-            s.pos[:,k] -= s.pos[:,k].mean()
-        
+        s.center()        
         return s

@@ -206,6 +206,8 @@ class Ui_NanoRope(QtWidgets.QMainWindow):
             structure_1.bonds = np.copy(original_structure.bonds)
 
             entire_structure = entire_structure.merge(structure_1, offset_bonds=True)
+
+        entire_structure.box_size = [box_lx, box_ly, box_lz]
         entire_structure.center()
         window = self.win.create_mdi_child()
         window.make_title()
@@ -442,6 +444,7 @@ def SWNT_builder(H_termination_SWNT, n, m, N, length, bond_length, species=('C',
     two_end_atom_types_H = list(['H']*num_hydrogen)
     merged_swnt_two_end_H = MolecularStructure(box_size, coord_array_swnt, all_bonds_swnt, atom_types_swnt) \
             .merge(MolecularStructure(box_size, pos_two_end_H, two_end_bonds_H, two_end_atom_types_H))
+    merged_swnt_two_end_H.center()
 
     if H_termination_SWNT == 'Both ends':
         return merged_swnt_two_end_H

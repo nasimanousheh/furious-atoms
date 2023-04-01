@@ -186,6 +186,7 @@ def extend_the_sheets(structure_info, num_sheets, sheet_separation):
         entire_structure = entire_structure.merge(sub_structure, offset_bonds=True)
     
     entire_structure.box_size = structure_info.box_size
+    entire_structure.center()
 
     return entire_structure
 

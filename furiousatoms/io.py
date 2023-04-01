@@ -4,6 +4,7 @@ import sys
 
 import furiousatoms
 from PySide2 import QtCore, QtUiTools
+from warnings import warn
 
 from fury.lib import Texture, ImageReader2Factory, ImageFlip
 from furiousatoms.molecular import MolecularStructure
@@ -113,7 +114,12 @@ def save_file(new_path, old_path, structure, deleted_particles, deleted_bonds):
     elif old_path.endswith(".gro"):
         saver = GROMACSSaver(deleted_particles, deleted_bonds)
     
+    if not saver:
+        warn("Could not decide on which saver to use. Using the default format (XYZ).")
+        saver = XYZSaver(deleted_particles, deleted_bonds)
+        
     saver.save_to_file(new_path, old_path, structure)
+
 
 def read_cubemap(folderRoot, fileRoot, ext, key):
     """Read the cube map.

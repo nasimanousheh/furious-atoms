@@ -935,19 +935,21 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             return
         SM = self.get_SM_active_window()
 
-        old_path = active_window.file_path
-        if os.path.exists(old_path):
-            old_file_name = os.path.basename(old_path)
-            file_extension = os.path.splitext(old_file_name)[1]
-
+        if hasattr(active_window, 'file_path'):
+            old_path = active_window.file_path
+            file_extension = os.path.splitext(os.path.basename(old_path))[1]
             new_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter='*%s'%(file_extension))
-            if not new_path:
-                return
-            save_file(new_path, old_path, SM.structure_to_save, SM.deleted_particles, SM.deleted_bonds)
         else:
-            pass
-            # new_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
-            #TODO if old file was deleted after being loaded in, write the structure using default fields.
+            #If the structure was created by Furious Atoms rather than being loaded 
+            #in, there will be no file to load from--but the user should still specify
+            #their save file type via `old_path`.
+            new_path, _ = QtWidgets.QFileDialog.getSaveFileName(self, self.tr('Save'), filter= 'LAMMPS (*.data);;PDB (*.pdb);;GROMACS (*.gro);;XYZ (*.xyz)')
+            file_extension = os.path.splitext(os.path.basename(new_path))[1]
+            old_path = "/NO_ORIGINAL_FILE" + file_extension
+
+        if not new_path:
+            return
+        save_file(new_path, old_path, SM.structure_to_save, SM.deleted_particles, SM.deleted_bonds)
     
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.Close and self.window is obj:
