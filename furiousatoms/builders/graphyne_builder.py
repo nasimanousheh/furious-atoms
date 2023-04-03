@@ -41,12 +41,6 @@ class Ui_graphyne(QtWidgets.QMainWindow):
     def get_info_graphyne(self):
         edge_length_x = float(self.graphyne.doubleSpinBox_lx_extent.text())
         edge_length_y = float(self.graphyne.doubleSpinBox_ly_extent.text())
-        try:
-            box_lx = float(self.graphyne.SpinBox_lx.text())
-            box_ly = float(self.graphyne.SpinBox_ly.text())
-            box_lz = float(self.graphyne.SpinBox_lz.text())
-        except:
-            box_lx = box_lx = box_lz = 0
 
         try:
             num_sheets = int(self.graphyne.SpinBox_num_sheets.text())
@@ -66,6 +60,14 @@ class Ui_graphyne(QtWidgets.QMainWindow):
 
         graphyne = self.build_graphyne(edge_length_x, edge_length_y, graphyne_type)
         
+        try:
+            box_lx = float(self.graphyne.SpinBox_lx.text())
+            box_ly = float(self.graphyne.SpinBox_ly.text())
+            box_lz = float(self.graphyne.SpinBox_lz.text())
+        except:
+            box_lx = box_lx = box_lz = 0
+        graphyne.box_size = [box_lx, box_ly, box_lz]
+
         window = self.win.create_mdi_child()
         window.make_title()
         window.load_structure(graphyne)

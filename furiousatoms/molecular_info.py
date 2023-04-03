@@ -116,10 +116,10 @@ def get_default_molecular_info(self, SM, fine_name):
     except:
         all_info = False
         if SM.universe_save:
-            atom_types = SM.universe_save.atoms.types
-            atom_coords = SM.universe_save.atoms.positions
+            atom_types = SM.universe_save.atom_types
+            atom_coords = SM.universe_save.pos
         else:
-            atom_types = SM.atom_type
+            atom_types = SM.atom_types
             atom_coords = SM.pos
         b = []
         atom_types = atom_types.tolist()

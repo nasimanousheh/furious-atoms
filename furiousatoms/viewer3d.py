@@ -125,7 +125,7 @@ class Viewer3D(QtWidgets.QWidget):
                 molecular_structure.bonds,
                 molecular_structure.atom_types
         )
-        self.universe_manager.structure_to_save = molecular_structure
+        self.universe_manager.universe_save = molecular_structure
 
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()
@@ -151,6 +151,12 @@ class Viewer3D(QtWidgets.QWidget):
         structure = io.load_files(un)
         if not structure:
             return success
+        # structure.box_size = [0, 0, 0]
+        structure.box_size = [
+            max(structure.pos[:,0]) - min(structure.pos[:,0]), 
+            max(structure.pos[:,1]) - min(structure.pos[:,1]), 
+            max(structure.pos[:,2]) - min(structure.pos[:,2])
+        ]
         self.load_structure(structure)
         success = True
         return success
