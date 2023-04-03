@@ -631,6 +631,15 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
             self.ui.radioButton_skybox.setChecked(False)
             self.ui.Widget_sky_box_effect.setEnabled(False)
             self.ui.Widget_VTK_style.setEnabled(True)
+        
+        if self.ui.radioButton_Ribbon.isChecked():
+            self.VTK_style_ribbon()
+        elif self.ui.radioButton_Ball_Stick.isChecked():
+            self.VTK_style_ball_stick()
+        elif self.ui.radioButton_Stick.isChecked():
+            self.VTK_style_stick()
+        elif self.ui.radioButton_Sphere.isChecked():
+            self.VTK_style_sphere()
 
     def switch_to_sky_box(self):
         active_window = self.active_mdi_child()
