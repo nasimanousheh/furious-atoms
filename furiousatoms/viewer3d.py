@@ -12,6 +12,7 @@ from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
 from fury.utils import (normals_from_actor, tangents_to_actor,
                         tangents_from_direction_of_anisotropy, update_polydata_normals)
+from furiousatoms.bond_guesser import guess_bonds
 
 
 def sky_box_effect_atom(scene, actor, universem):
@@ -113,6 +114,10 @@ class Viewer3D(QtWidgets.QWidget):
         self.is_untitled = False
 
         structure = io.load_files(fname)
+
+        #TODO: concatenate bonds
+        structure.bonds = guess_bonds(structure)
+
         self.load_structure(structure)
         if len(structure.pos) > 0 and len(structure.pos) == len(structure.atom_types):
             return True
@@ -151,7 +156,6 @@ class Viewer3D(QtWidgets.QWidget):
         structure = io.load_files(un)
         if not structure:
             return success
-        # structure.box_size = [0, 0, 0]
         structure.box_size = [
             max(structure.pos[:,0]) - min(structure.pos[:,0]), 
             max(structure.pos[:,1]) - min(structure.pos[:,1]), 
