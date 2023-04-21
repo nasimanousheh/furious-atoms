@@ -177,7 +177,7 @@ def lookup_num_bonds_by_atomic_number(num: int):
         num -= L
     else:
         if num > 4:
-            return 4 - num #FIXME
+            return L - num
         return num
     
     if num > M:
@@ -195,3 +195,12 @@ def lookup_num_bonds_by_atomic_number(num: int):
         return num
     
     return DEFAULT_NUM_BONDS
+
+
+if __name__ == "__main__":
+    #Check entire periodic table for invalid results
+    for atomic_number in range(118):
+        max_bonds = lookup_num_bonds_by_atomic_number(atomic_number)
+        print(atomic_number)
+        assert max_bonds >= 0
+        assert max_bonds <= 4

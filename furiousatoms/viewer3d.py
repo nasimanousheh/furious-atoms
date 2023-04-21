@@ -121,7 +121,7 @@ class Viewer3D(QtWidgets.QWidget):
         if len(structure.bonds) > 0:
             should_validate_bonds = True
         
-        structure.bonds = guess_bonds(structure)
+        # structure.bonds = guess_bonds(structure)
         print("new bond count:", len(structure.bonds))
 
         if should_validate_bonds:

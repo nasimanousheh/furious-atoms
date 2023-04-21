@@ -21,8 +21,6 @@ def generate_max_bonds_map(structure):
         type_without_numbers = ''.join([i for i in typ if not i.isdigit()]) #For ions like C6 or C4, treat as C
         atomic_number = periodic_table.atomic_number(type_without_numbers)
         max_num_bonds = lookup_num_bonds_by_atomic_number(atomic_number)
-        if max_num_bonds < 1:
-            max_num_bonds = 1
 
         max_bonds_map[typ] = max_num_bonds
 
@@ -51,6 +49,8 @@ def connections_map_to_array(connections_map, num_bonds, to_remove=None):
             bond_arr[i][0] = atom1
             bond_arr[i][1] = atom2
             i += 1
+            if atom1 in connections_map[atom2]: #avoid duplicate bond
+                connections_map[atom2].remove(atom1)
     return bond_arr
 
 
@@ -111,6 +111,10 @@ def guess_bonds(structure):
         src_id = src_node.data.id
         src_typ = structure.atom_types[src_id]
         src_vdw = type_to_vdw_map[src_typ]
+
+        if len(connections_map[src_id]) >= max_bonds_map[src_typ]: #check if the element hold more bonds
+            continue
+        
         '''
         k is the number of neighbors to check if there is a bond with.
         A small k gives better performance, but it may not find every 
@@ -127,18 +131,18 @@ def guess_bonds(structure):
             dst_id = dst_node[0].data.id
             dst_typ = structure.atom_types[dst_id]
             dst_vdw = type_to_vdw_map[dst_typ]
-            is_double_bond = False #TODO unused double bond
                        
             existing_dst_bonds = connections_map[dst_id]
-            if len(existing_dst_bonds) >= STRICT_MAX_BONDS or src_id in existing_dst_bonds \
-            or dst_id in connections_map[src_id]:
+            if len(existing_dst_bonds) >= STRICT_MAX_BONDS \
+             or src_id in existing_dst_bonds \
+             or dst_id in connections_map[src_id] \
+             or len(existing_dst_bonds) >= max_bonds_map[dst_typ]:
                 continue
             
             if distance < (src_vdw + dst_vdw) * FUDGE_FACTOR and distance > MIN_CUTOFF:
+                #Add the bond twice in order to track the max number of bonds based on each atom
                 connections_map[src_id].append(dst_id)
-                if is_double_bond:
-                    connections_map[dst_id].append(src_id)
-                    num_bonds += 1
+                connections_map[dst_id].append(src_id)
                 num_bonds += 1
 
     return connections_map_to_array(connections_map, num_bonds)
