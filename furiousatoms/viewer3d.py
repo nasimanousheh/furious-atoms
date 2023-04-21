@@ -7,6 +7,7 @@ from furiousatoms.molecular import MolecularStructure, ViewerMemoryManager
 from furiousatoms.builders.fullerenes_builder import load_CC1_file
 from furiousatoms import io
 from fury import window, actor, utils, pick, material
+from furiousatoms.validation import finalize_bonds
 from furiousatoms.warning_message import Ui_warning_atom_delete, Ui_warning_bond_delete
 from fury.data import fetch_viz_cubemaps, read_viz_cubemap
 from fury.io import load_cubemap_texture
@@ -114,11 +115,27 @@ class Viewer3D(QtWidgets.QWidget):
         self.is_untitled = False
 
         structure = io.load_files(fname)
+        print("bond count:", len(structure.bonds))
 
-        #TODO: concatenate bonds
+        should_validate_bonds = False
+        if len(structure.bonds) > 0:
+            should_validate_bonds = True
+        
+        #Guess bonds and add them to the structure, allowing duplicates
+        # guesses = guess_bonds(structure)
+        # guessed_structure = MolecularStructure.create_empty()
+        # guessed_structure.bonds = guesses
+        # structure = structure.merge(guessed_structure)
+
         structure.bonds = guess_bonds(structure)
+        print("new bond count:", len(structure.bonds))
+
+        if should_validate_bonds:
+            structure.bonds = finalize_bonds(structure)
+            print("validated bond count:", len(structure.bonds))
 
         self.load_structure(structure)
+        
         if len(structure.pos) > 0 and len(structure.pos) == len(structure.atom_types):
             return True
         return False

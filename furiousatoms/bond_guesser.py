@@ -28,6 +28,30 @@ def generate_max_bonds_map(structure):
 
     return max_bonds_map
 
+def generate_connections_map(structure):
+    '''
+    Creates a adjacency list where every index represents one atom 
+    and a list of neighbor atoms it is bonded to.
+    '''
+    ATOM_COUNT = len(structure.pos)
+    connections_map = [[] for i in range(ATOM_COUNT)]
+    for atom1, atom2 in structure.bonds:
+        if atom1 > -1 and atom2 > -1 and atom1 <= ATOM_COUNT and atom2 <= ATOM_COUNT:
+            connections_map[atom1].append(atom2)
+    return connections_map
+
+def connections_map_to_array(connections_map, num_bonds, to_remove=None):
+    bond_arr = np.zeros(shape=(num_bonds, 2), dtype=int)
+    i = 0
+    for atom1 in range(len(connections_map)):
+        for atom2 in connections_map[atom1]:
+            if to_remove != None:
+                if atom1 in to_remove and atom2 in to_remove.get(atom1):
+                    continue
+            bond_arr[i][0] = atom1
+            bond_arr[i][1] = atom2
+            i += 1
+    return bond_arr
 
 
 class KDTreeItem(object):
@@ -57,8 +81,8 @@ def guess_bonds(structure):
     #get its knn (4 nearest neighbors) B, C, D, E.
     #Check if the distance between A and B is < cutff (or sum of vdw).
 
-    MIN_CUTOFF = 0.2
-    FUDGE_FACTOR = 0.8 #0.6
+    MIN_CUTOFF = 0
+    FUDGE_FACTOR = 1.2 #MDAnalysis uses 0.55
     STRICT_MAX_BONDS = 4 #by law of chemistry, no atom can form >4 bonds
 
     type_to_vdw_map = generate_vdw_radii_map(structure)
@@ -66,8 +90,9 @@ def guess_bonds(structure):
 
     atom_count = len(structure.pos)
     point_list = []
-    for i in range(atom_count):
-        point_list.append(KDTreeItem(structure.pos[i], i))
+    for atom_id in range(atom_count):
+        #Saving atom_id to the tree tells us the atom's original index
+        point_list.append(KDTreeItem(structure.pos[atom_id], atom_id))
     
     tree = kdtree.create(point_list=point_list, dimensions=3)
     
@@ -78,15 +103,14 @@ def guess_bonds(structure):
         all_nodes.append(node)
     all_nodes.sort(key=lambda node: -max_bonds_map[structure.atom_types[node.data.id]])
 
-    connections_map = {} #example: {1: [2,3], 2: [1], 3: [1]}
+    #Prevents duplicate bonds
+    connections_map = generate_connections_map(structure)
+    num_bonds = len(structure.bonds)
 
-    bond_list = []
     for src_node in all_nodes: #src = source
         src_id = src_node.data.id
         src_typ = structure.atom_types[src_id]
         src_vdw = type_to_vdw_map[src_typ]
-        if src_id not in connections_map:
-            connections_map[src_id] = []
         '''
         k is the number of neighbors to check if there is a bond with.
         A small k gives better performance, but it may not find every 
@@ -101,19 +125,20 @@ def guess_bonds(structure):
         for dst_node in tree.search_knn(src_node.data, k): #dst = destination (neighbor atom)
             distance = dst_node[1]
             dst_id = dst_node[0].data.id
-            existing_dst_bonds = connections_map.get(dst_id, [])
-            if len(existing_dst_bonds) >= STRICT_MAX_BONDS or src_id in existing_dst_bonds:
-                continue
-            
             dst_typ = structure.atom_types[dst_id]
             dst_vdw = type_to_vdw_map[dst_typ]
+            is_double_bond = False #TODO unused double bond
+                       
+            existing_dst_bonds = connections_map[dst_id]
+            if len(existing_dst_bonds) >= STRICT_MAX_BONDS or src_id in existing_dst_bonds \
+            or dst_id in connections_map[src_id]:
+                continue
+            
             if distance < (src_vdw + dst_vdw) * FUDGE_FACTOR and distance > MIN_CUTOFF:
-                bond_list.append([src_id, dst_id])
-                #Record the connection to avoid making a duplicate bond
-                connections_map.get(src_id).append(dst_id)
-                if dst_id not in connections_map:
-                    connections_map[dst_id] = []
-                connections_map.get(dst_id).append(src_id)
+                connections_map[src_id].append(dst_id)
+                if is_double_bond:
+                    connections_map[dst_id].append(src_id)
+                    num_bonds += 1
+                num_bonds += 1
 
-    bond_arr = np.array(bond_list, dtype=int)
-    return bond_arr
+    return connections_map_to_array(connections_map, num_bonds)

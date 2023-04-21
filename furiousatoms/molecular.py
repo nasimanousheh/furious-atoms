@@ -72,7 +72,7 @@ class MolecularStructure:
             types_merged[i] = typ
             i += 1
 
-        return MolecularStructure(s2.box_size, pos_merged, bonds_merged, types_merged)
+        return MolecularStructure(s1.box_size, pos_merged, bonds_merged, types_merged)
 
     def center(self):
         for k in range(3):
