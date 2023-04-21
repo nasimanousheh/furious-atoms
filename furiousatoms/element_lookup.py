@@ -177,21 +177,21 @@ def lookup_num_bonds_by_atomic_number(num: int):
         num -= L
     else:
         if num > 4:
-            return DEFAULT_NUM_BONDS
+            return 4 - num #FIXME
         return num
     
     if num > M:
         num -= M
     else:
         if num > 4:
-            return DEFAULT_NUM_BONDS
+            return M - num
         return num
     
     if num > N:
         num -= N
     else:
         if num > 4:
-            return DEFAULT_NUM_BONDS
+            num = DEFAULT_NUM_BONDS #Uncertain for high atomic numbers
         return num
     
     return DEFAULT_NUM_BONDS

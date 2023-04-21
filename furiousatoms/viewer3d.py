@@ -121,12 +121,6 @@ class Viewer3D(QtWidgets.QWidget):
         if len(structure.bonds) > 0:
             should_validate_bonds = True
         
-        #Guess bonds and add them to the structure, allowing duplicates
-        # guesses = guess_bonds(structure)
-        # guessed_structure = MolecularStructure.create_empty()
-        # guessed_structure.bonds = guesses
-        # structure = structure.merge(guessed_structure)
-
         structure.bonds = guess_bonds(structure)
         print("new bond count:", len(structure.bonds))
 
