@@ -958,7 +958,7 @@ class FuriousAtomsApp(QtWidgets.QMainWindow):
 
         if not new_path:
             return
-        save_file(new_path, old_path, SM.universe_save, SM.deleted_particles, SM.deleted_bonds)
+        save_file(new_path, old_path, SM.structure_for_saving, SM.deleted_particles, SM.deleted_bonds)
     
     def eventFilter(self, obj, event):
         if event.type() == QtCore.QEvent.Close and self.window is obj:
