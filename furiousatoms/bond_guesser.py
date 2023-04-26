@@ -96,12 +96,12 @@ def guess_bonds(structure):
     
     tree = kdtree.create(point_list=point_list, dimensions=3)
     
-    #Sort the atoms by the valence so that the atoms that can form the least number
-    #of bonds (like hydrogen) are towards the front.
+    #Sort the atoms by the valence so that the atoms that can form the most number
+    #of bonds (like carbon) are towards the front.
     all_nodes = []
     for node in tree.inorder():
         all_nodes.append(node)
-    all_nodes.sort(key=lambda node: -max_bonds_map[structure.atom_types[node.data.id]])
+    all_nodes.sort(key=lambda node: max_bonds_map[structure.atom_types[node.data.id]])
 
     #Prevents duplicate bonds
     connections_map = generate_connections_map(structure)

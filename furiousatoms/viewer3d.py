@@ -121,7 +121,7 @@ class Viewer3D(QtWidgets.QWidget):
         if len(structure.bonds) > 0:
             should_validate_bonds = True
         
-        # structure.bonds = guess_bonds(structure)
+        structure.bonds = guess_bonds(structure)
         print("new bond count:", len(structure.bonds))
 
         if should_validate_bonds:
@@ -141,7 +141,7 @@ class Viewer3D(QtWidgets.QWidget):
                 molecular_structure.bonds,
                 molecular_structure.atom_types
         )
-        self.universe_manager.universe_save = molecular_structure
+        self.universe_manager.structure_for_saving = molecular_structure
 
         self.particles_connect_callbacks()
         self.bonds_connect_callbacks()
