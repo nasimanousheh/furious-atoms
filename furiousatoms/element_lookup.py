@@ -98,7 +98,7 @@ number,symbol,name,mass,valency
 91,Pa,protactinium,231.0359,5
 92,U,uranium,238.0289,6
 93,Np,Neptunium,237.064,5
-94,Pu, Plutonium,244.064,3
+94,Pu,Plutonium,244.064,3
 95,Am,Americium,243.061,3
 96,Cm,Curium,247.070,3
 97,Bk,Berkelium,247.070,3
@@ -125,6 +125,7 @@ number,symbol,name,mass,valency
 118,Og,Oganesson,294,0
 """
 
+
 def lookup_symbol_by_mass(mass: float):
     for line in elems_csv.split()[1:]:
         fields = line.split(",") #Format: number,symbol,name,mass,valency
@@ -138,6 +139,7 @@ def lookup_symbol_by_mass(mass: float):
     
     raise ValueError("No element exists with mass", mass)
 
+
 def lookup_mass_by_symbol(symbol: float):
     for line in elems_csv.split()[1:]:
         fields = line.split(",") #Format: number,symbol,name,mass,valency
@@ -145,3 +147,60 @@ def lookup_mass_by_symbol(symbol: float):
             return float(fields[3])
     
     raise ValueError("No element exists with symbol", symbol)
+
+
+def lookup_num_bonds_by_atomic_number(num: int):
+    '''
+    Returns the maximum number of bonds that the element can form.
+    '''
+    #K, L, M, and N are the names of shells in chemistry, and these
+    #are the max number of electrons each can hold.
+    K = 2
+    L = 8
+    M = 8
+    N = 18
+    DEFAULT_NUM_BONDS = 4
+
+    '''
+    Fill up the smallest shells first.
+    The number of electrons remaining tells the atom's valence.
+    '''
+    if num > K:
+        num -= K
+    else:
+        if num == 2:
+            return 0 #helium
+        else:
+            return 1 #hydrogen
+    
+    if num >= L:
+        num -= L
+    else:
+        if num > 4:
+            return L - num
+        return num
+    
+    if num > M:
+        num -= M
+    else:
+        if num > 4:
+            return M - num
+        return num
+    
+    if num > N:
+        num -= N
+    else:
+        if num > 4:
+            num = DEFAULT_NUM_BONDS #Uncertain for high atomic numbers
+        return num
+    
+    return DEFAULT_NUM_BONDS
+
+
+if __name__ == "__main__":
+    #Check entire periodic table for invalid results
+    for atomic_number in range(118):
+        max_bonds = lookup_num_bonds_by_atomic_number(atomic_number)
+        print(atomic_number)
+        assert max_bonds >= 0
+        assert max_bonds <= 4
