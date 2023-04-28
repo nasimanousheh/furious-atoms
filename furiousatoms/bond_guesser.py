@@ -5,11 +5,22 @@ from furiousatoms.element_lookup import lookup_num_bonds_by_atomic_number
 
 def generate_vdw_radii_map(structure):
     type_to_vdw_map = {}
-    for typ in np.unique(structure.atom_types):        
-        type_without_numbers = ''.join([i for i in typ if not i.isdigit()]) #For ions like C6 or C4, treat as C
-        atomic_number = periodic_table.atomic_number(type_without_numbers)
-        vdw = periodic_table.GetVDWRadius(atomic_number)
-        #If VDW is unknown, use 0 and do not form bonds with that element.
+    for typ in np.unique(structure.atom_types):
+        '''
+        Element symbols can come in many formats, for example: "C", "C6", "CB".
+        However, out of those 3, our periodic table only has an atomic number and VDW for "C". 
+        So, the algorithm checks for a match with CB, then C, then identifies vdw=1.7.
+        However, if the symbol was "G" or "L", the element would be unknown.
+        '''
+        i = len(typ)
+        while i > 0:
+            substr = typ[:i]
+            atomic_number = periodic_table.atomic_number(substr)
+            vdw = periodic_table.GetVDWRadius(atomic_number)
+            if vdw > 0:
+                break
+            i -= 1
+        #If VDW is still unknown, use 0 and do not form bonds with that element.
 
         type_to_vdw_map[typ] = vdw
 
