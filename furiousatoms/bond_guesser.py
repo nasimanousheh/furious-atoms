@@ -3,6 +3,9 @@ import numpy as np
 import kdtree
 from furiousatoms.element_lookup import lookup_num_bonds_by_atomic_number
 
+#This file uses PyPi's KDTree https://pypi.org/project/kdtree/#history
+#TODO: Convert PyPi KDTree to Scipy KDTree, which is faster.
+
 def generate_vdw_radii_map(structure):
     type_to_vdw_map = {}
     for typ in np.unique(structure.atom_types):

@@ -3,6 +3,9 @@ from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero
 
 class GROMACSParser(BaseParser):
+    '''
+    Based on https://manual.gromacs.org/archive/5.0.3/online/gro.html
+    '''
     def __init__(self) -> None:
         super().__init__()
         self.num_atoms = 2 ** 31 #default is near max int

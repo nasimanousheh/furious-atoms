@@ -3,6 +3,10 @@ from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero, has_bond
 
 class PDBParser(BaseParser):
+    '''
+    Based on http://www.bmsc.washington.edu/CrystaLinks/man/pdb/part_62.html
+    '''
+    
     def parse_line(self, line):
         lineUpper = line.upper()
         if lineUpper.startswith("CONECT"): #Note the spelling. 
