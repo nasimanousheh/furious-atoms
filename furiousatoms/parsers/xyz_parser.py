@@ -3,6 +3,10 @@ from furiousatoms.parsers.base_parser import BaseParser
 from furiousatoms.parsers.parser_util import float_or_zero
 
 class XYZParser(BaseParser):
+    '''
+    Based on https://www.cgl.ucsf.edu/chimera/docs/UsersGuide/xyz.html
+    '''
+
     def __init__(self) -> None:
         super().__init__()
         self.next_word_index = 0

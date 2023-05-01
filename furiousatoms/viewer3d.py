@@ -115,18 +115,15 @@ class Viewer3D(QtWidgets.QWidget):
         self.is_untitled = False
 
         structure = io.load_files(fname)
-        print("bond count:", len(structure.bonds))
 
         should_validate_bonds = False
         if len(structure.bonds) > 0:
             should_validate_bonds = True
         
         structure.bonds = guess_bonds(structure)
-        print("new bond count:", len(structure.bonds))
 
         if should_validate_bonds:
             structure.bonds = finalize_bonds(structure)
-            print("validated bond count:", len(structure.bonds))
 
         self.load_structure(structure)
         

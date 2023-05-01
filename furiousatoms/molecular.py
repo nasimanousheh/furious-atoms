@@ -107,7 +107,8 @@ class ViewerMemoryManager:
         periodic_table = PTable()
         self.opacity = 1.0
         for i, typ in enumerate(self.unique_types):
-            color = periodic_table.atom_color(periodic_table.atomic_number(typ))
+            atomic_number = guess_atomic_number(typ)
+            color = periodic_table.atom_color(atomic_number)
             color = np.hstack((color, self.opacity))
             self.colors_unique_types[i] = color
         for i, typ in enumerate(self.atom_types):
@@ -208,3 +209,22 @@ class ViewerMemoryManager:
             l_actors += [self.bond_actor, ]
 
         return l_actors
+
+def guess_atomic_number(symbol: str):
+    '''
+    Element symbols can come in many formats, for example: "C", "C6", "CB".
+    However, out of those 3, our periodic table only has an atomic number and VDW for "C". 
+    So, the algorithm checks for a match with CB, then C, then identifies vdw=1.7.
+    However, if the symbol was "G" or "L", the element would be unknown.
+    '''
+    i = len(symbol)
+    while i > 0:
+        substr = symbol[:i]
+        atomic_number = periodic_table.atomic_number(substr)
+        if atomic_number > 0:
+            break
+        i -= 1
+    
+    if atomic_number == None:
+        return 0
+    return atomic_number

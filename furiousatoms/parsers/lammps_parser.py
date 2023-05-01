@@ -6,6 +6,9 @@ from warnings import warn
 
 
 class LAMMPSParser(BaseParser):
+    '''
+    Based on https://www.smcm.iqfr.csic.es/docs/lammps/read_data.html
+    '''
     def __init__(self) -> None:
         super().__init__()
         self.id_to_symbol_dict = {}
