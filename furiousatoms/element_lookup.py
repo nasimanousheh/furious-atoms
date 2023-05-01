@@ -1,6 +1,3 @@
-import csv
-from io import StringIO
-
 DEFAULT_MASS = 0.0
 
 elems_csv = """\
@@ -140,7 +137,7 @@ def lookup_symbol_by_mass(mass: float):
     raise ValueError("No element exists with mass", mass)
 
 
-def lookup_mass_by_symbol(symbol: float):
+def lookup_mass_by_symbol(symbol: str):
     for line in elems_csv.split()[1:]:
         fields = line.split(",") #Format: number,symbol,name,mass,valency
         if fields[1] == symbol:
